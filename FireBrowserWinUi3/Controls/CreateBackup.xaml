@@ -16,7 +16,7 @@
         <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
-    <Grid Padding="20" >
+    <Grid Padding="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -55,6 +55,12 @@
                 Width="300"
                 Height="4"
                 IsIndeterminate="True" />
+            <Button
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Click="CloseButton_Click">
+                Close
+            </Button>
         </StackPanel>
 
     </Grid>

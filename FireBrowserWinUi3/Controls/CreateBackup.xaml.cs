@@ -158,6 +158,7 @@ namespace FireBrowserWinUi3.Controls
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            AppService.IsAppGoingToClose = true; 
             this.Close();
         }
     }
