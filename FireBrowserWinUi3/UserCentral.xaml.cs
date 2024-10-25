@@ -106,7 +106,11 @@ namespace FireBrowserWinUi3
             {
                 Windowing.SetWindowPos(hWnd, Windowing.HWND_BOTTOM, 0, 0, 0, 0, Windowing.SWP_NOSIZE);
             }
-            await AppService.ConfigureSettingsWindow(usr);
+            await Windowing.DialogWindow(usr);
+            Windowing.Center(usr);
+            Windowing.ShowWindow(WindowNative.GetWindowHandle(usr), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
+           
+            
         }
 
         private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
