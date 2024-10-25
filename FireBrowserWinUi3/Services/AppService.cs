@@ -61,7 +61,7 @@ public static class AppService
                 await CloseCancelToken(cancellationToken);
                 await Task.FromException<CancellationToken>(e);
             }
-            
+
             if (IsAppGoingToClose)
             {
                 //throw new ApplicationException("Exiting Application by user");
@@ -205,8 +205,8 @@ public static class AppService
             }
             else
             {
-                
-                ActiveWindow = new UserCentral(); 
+
+                ActiveWindow = new UserCentral();
                 ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
                 ConfigureWindowAppearance();
                 ActiveWindow.Activate();
@@ -241,7 +241,7 @@ public static class AppService
 
         if (appWindow != null)
         {
-            appWindow.MoveAndResize(new RectInt32(600, 600, 900, 600));
+            appWindow.MoveAndResize(new RectInt32(600, 600, 900, 900));
             appWindow.MoveInZOrderAtTop();
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             // need this for inquires down line for window placement. 
@@ -259,7 +259,6 @@ public static class AppService
 
     private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
     {
-   
 
         var userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
         if (!Directory.Exists(userExist))

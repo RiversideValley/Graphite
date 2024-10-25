@@ -2,10 +2,11 @@
     x:Class="FireBrowserWinUi3.UserCentral"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:bool="using:FireBrowserWinUi3.Services.Converters"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Media"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dllimg="using:FireBrowserWinUi3Assets"
-    xmlns:firebrowser="using:FireBrowserWinUi3.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:FireBrowserWinUi3.Services.Models"
     mc:Ignorable="d">
@@ -87,7 +88,26 @@
                         <Button>
                             <Button.Flyout>
                                 <Flyout>
-                                    <TextBlock FontSize="14" Text="{x:Bind ViewModel.User.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Grid
+                                        Width="400"
+                                        Height="600"
+                                        Margin="0,0,10,0">
+                                        <StackPanel>
+                                            <TextBlock
+                                                FontSize="20"
+                                                FontWeight="Bold"
+                                                Text="Microsoft 365" />
+                                            <ListView x:Name="NavViewOffice365">
+
+                                                <ListViewItem Content="Outlook" Tag="https://outlook.office.com/mail/" />
+                                                <ListViewItem Content="OneDrive" Tag="https://onedrive.live.com" />
+                                                <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word?auth=2" />
+                                                <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel?auth=2" />
+                                                <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint?auth=2" />
+                                            </ListView>
+                                        </StackPanel>
+
+                                    </Grid>
                                 </Flyout>
                             </Button.Flyout>
                             <Image
@@ -127,18 +147,28 @@
                 Foreground="{ThemeResource ApplicationHeaderForegroundThemeBrush}"
                 Text="Select a User" />
 
+
             <ScrollViewer
+                x:Name="ScrollingUsers"
                 Grid.Row="2"
                 HorizontalScrollMode="Disabled"
                 VerticalScrollBarVisibility="Auto">
+
+
                 <ListView
                     x:Name="UserListView"
                     Padding="6"
                     x:FieldModifier="Public"
-                    Background="{ThemeResource AccentControlElevationBorderBrush}"
                     ItemsSource="{x:Bind ViewModel.Users, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectedItem="{x:Bind ViewModel.User, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectionChanged="UserListView_SelectionChanged">
+                    <ListView.Background>
+                        <ImageBrush
+                            AlignmentX="Center"
+                            AlignmentY="Bottom"
+                            ImageSource="ms-appx:///Assets/fireglobe.jfif"
+                            Opacity=".6" />
+                    </ListView.Background>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:UserExtend">
                             <Grid Padding="8" ColumnSpacing="12">
@@ -155,6 +185,7 @@
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     FontSize="16"
+                                    FontWeight="ExtraBold"
                                     Text="{Binding FireUser.Username, Mode=OneTime}" />
                             </Grid>
                         </DataTemplate>

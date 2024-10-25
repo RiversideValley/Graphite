@@ -144,6 +144,7 @@
     <None Remove="Controls\ProfileCommander.xaml" />
     <None Remove="Controls\ResetCore.xaml" />
     <None Remove="Controls\RestoreBackUp.xaml" />
+    <None Remove="Controls\_Code_Examples.xaml" />
     <None Remove="Pages\ApiDash.xaml" />
     <None Remove="Pages\Patch\BackUpDialog.xaml" />
     <None Remove="Pages\Patch\RestoreBackupDialog.xaml" />
@@ -264,6 +265,9 @@
     <None Update="buy.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\_Code_Examples.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\Patch\UpLoadBackup.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,10 +6,13 @@ using CommunityToolkit.Mvvm.Input;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3Core.Helpers;
 using FireBrowserWinUi3MultiCore;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -17,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.Email;
 using Windows.Storage.Streams;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace FireBrowserWinUi3.Services.ViewModels
 {
@@ -59,27 +63,31 @@ namespace FireBrowserWinUi3.Services.ViewModels
         }
 
         [RelayCommand]
-        private void GenerateAndSend()
+        private void GenerateAndSend(UserEntity file)
         {
-            // Example SAS generation logic
-            string blobUri = "https://yourstorageaccount.blob.core.windows.net/yourcontainer/yourfile";
-            BlobServiceClient blobServiceClient = new BlobServiceClient("YourConnectionString");
-            BlobClient blobClient = new BlobClient(new Uri(blobUri));
+            // no selected file leave
 
-            BlobSasBuilder sasBuilder = new BlobSasBuilder
+            if (FileSelected is null) return;
+
+            // get ref to file on Azure Blob Storage
+
+            var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
+            var storageAccount = CloudStorageAccount.Parse(connString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference("firebackups");
+            var blob = container.GetBlockBlobReference(FileSelected.BlobName);
+
+            var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
             {
-                BlobContainerName = blobClient.BlobContainerName,
-                BlobName = blobClient.Name,
-                Resource = "b",
-                StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
-                ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
-            };
-            sasBuilder.SetPermissions(BlobSasPermissions.Read);
+                Permissions = SharedAccessBlobPermissions.Read,
+                SharedAccessExpiryTime = DateTime.UtcNow.AddHours(1) // Token valid for 1 hour
+            });
 
-            Uri sasUri = blobClient.GenerateSasUri(sasBuilder);
-
+            var sasUrl = blob.Uri.AbsoluteUri + sasToken;
             // Logic to send email
-            SendEmailAsync(SelectedUser.Email, sasUri.ToString());
+            FileSelected.BlobUrl = sasUrl.ToString();
+            OnPropertyChanged(nameof(FileSelected));
+            //SendEmailAsync(SelectedUser.Email, sasUri.ToString());
         }
 
 

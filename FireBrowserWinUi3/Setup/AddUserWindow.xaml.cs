@@ -26,9 +26,9 @@ namespace FireBrowserWinUi3
             this.Activated += (s, e) => { Userbox.Focus(FocusState.Programmatic); };
             this.Closed += async (s, e) =>
             {
-                
+
                 await Task.Delay(420);
-                
+
                 IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserCentral));
                 if (ucHwnd != IntPtr.Zero)
                 {
@@ -139,10 +139,9 @@ namespace FireBrowserWinUi3
                 SettingsHome.Instance?.LoadUsernames();
             if (UserCentral.Instance is not null)
             {
-                UserCentral.Instance._isDataLoaded = false; 
                 await UserCentral.Instance?.LoadDataGlobally();
             }
-                
+
 
             AppService.CreateNewUsersSettings();
             IntPtr hWnd = WindowNative.GetWindowHandle(this);
@@ -151,6 +150,23 @@ namespace FireBrowserWinUi3
                 Windowing.HideWindow(hWnd);
             }
 
+
+        }
+
+        private void Button_Click_Close(object sender, RoutedEventArgs e)
+        {
+
+            IntPtr hUser = Windowing.FindWindow(null, nameof(UserCentral));
+            if (hUser != IntPtr.Zero)
+            {
+                Windowing.Center(hUser);
+            }
+
+            IntPtr hWnd = WindowNative.GetWindowHandle(this);
+            if (hWnd != IntPtr.Zero)
+            {
+                Windowing.HideWindow(hWnd);
+            }
 
         }
     }

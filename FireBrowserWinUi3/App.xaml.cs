@@ -24,7 +24,7 @@ public partial class App : Application
 
     #region DependencyInjection
 
-    public IServiceProvider Services { get; set; } 
+    public IServiceProvider Services { get; set; }
 
     public static T GetService<T>() where T : class
     {
@@ -52,6 +52,7 @@ public partial class App : Application
         services.AddSingleton<GraphService>();
         services.AddTransient<DownloadsViewModel>();
         services.AddTransient<HomeViewModel>();
+        services.AddTransient<SettingsService>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<UploadBackupViewModel>();
 
@@ -73,7 +74,7 @@ public partial class App : Application
         Environment.SetEnvironmentVariable("WEBVIEW2_CHANNEL_SEARCH_KIND", "1");
         Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--window-size=0,0 --window-position=40000,40000");
         Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
-      
+
     }
 
     private void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -104,15 +105,8 @@ public partial class App : Application
     protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
 
-        
-        if (Directory.Exists(UserDataManager.CoreFolderPath))
-        {
-            App.Current.Services = App.Current.ConfigureServices();
-        }
-        else { 
-            Directory.CreateDirectory(UserDataManager.CoreFolderPath);
-            App.Current.Services = App.Current.ConfigureServices(); 
-        }
+
+        App.Current.Services = App.Current.ConfigureServices();
 
         AppService.CancellationToken = CancellationToken.None;
 

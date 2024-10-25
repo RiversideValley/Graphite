@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Web;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -20,7 +21,6 @@ namespace FireBrowserWinUi3
 
     public sealed partial class UserCentral : Window
     {
-        private readonly AppWindow appWindow;
         public static UserCentral Instance { get; private set; }
         public UC_Viewmodel ViewModel { get; set; }
         public static bool IsOpen { get; private set; }
@@ -31,29 +31,23 @@ namespace FireBrowserWinUi3
             InitializeComponent();
             ViewModel = new UC_Viewmodel { ParentWindow = this, ParentGrid = GridUserCentral };
             Instance = this;
-            Activated += async (_, _) =>
+            UserListView.Loaded += async (_, _) =>
             {
-                if (!_isDataLoaded)
-                {
-                    await LoadDataGlobally();
-                    _isDataLoaded = true;
-                }
+                await LoadDataGlobally();
             };
-
             // Get the AppWindow for this window
             Windowing.DialogWindow(this).ConfigureAwait(false);
+
+
         }
+
 
         public async Task LoadDataGlobally()
         {
-            if (!_isDataLoaded)
-            {
-                string coreFolderPath = UserDataManager.CoreFolderPath;
-                ViewModel.Users = await GetUsernameFromCoreFolderPath(coreFolderPath);
-                UserListView.ItemsSource = ViewModel.Users;
-                ViewModel.RaisePropertyChanges(nameof(ViewModel.Users));
-                _isDataLoaded = true;
-            }
+            string coreFolderPath = UserDataManager.CoreFolderPath;
+            ViewModel.Users = await GetUsernameFromCoreFolderPath(coreFolderPath);
+            UserListView.ItemsSource = ViewModel.Users;
+            ViewModel.RaisePropertyChanges(nameof(ViewModel.Users));
         }
 
         private async Task<List<UserExtend>> GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
@@ -97,7 +91,7 @@ namespace FireBrowserWinUi3
         private async void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             var usr = new AddUserWindow();
-            usr.Closed +=  (s, e) =>
+            usr.Closed += (s, e) =>
             {
                 AppService.ActiveWindow = this;
             };
@@ -109,15 +103,15 @@ namespace FireBrowserWinUi3
             await Windowing.DialogWindow(usr);
             Windowing.Center(usr);
             Windowing.ShowWindow(WindowNative.GetWindowHandle(usr), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
-           
-            
+
+
         }
 
         private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (appWindow != null)
+            if (this.AppWindow != null)
             {
-                var presenter = appWindow.Presenter as OverlappedPresenter;
+                var presenter = this.AppWindow.Presenter as OverlappedPresenter;
                 if (presenter != null)
                 {
                     presenter.Minimize();
