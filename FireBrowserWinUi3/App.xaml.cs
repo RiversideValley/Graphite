@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserWinUi3.Services;
+using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
+using FireBrowserWinUi3MultiCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
@@ -22,7 +24,7 @@ public partial class App : Application
 
     #region DependencyInjection
 
-    public IServiceProvider Services { get; set; }
+    public IServiceProvider Services { get; set; } 
 
     public static T GetService<T>() where T : class
     {
@@ -46,10 +48,9 @@ public partial class App : Application
         services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider =>
             provider.GetRequiredService<WeakReferenceMessenger>());
         services.AddSingleton<DownloadService>();
+        services.AddSingleton<MsalAuthService>();
+        services.AddSingleton<GraphService>();
         services.AddTransient<DownloadsViewModel>();
-
-        services.AddSingleton<SettingsService>();
-
         services.AddTransient<HomeViewModel>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<UploadBackupViewModel>();
@@ -72,6 +73,7 @@ public partial class App : Application
         Environment.SetEnvironmentVariable("WEBVIEW2_CHANNEL_SEARCH_KIND", "1");
         Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--window-size=0,0 --window-position=40000,40000");
         Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
+      
     }
 
     private void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -101,6 +103,17 @@ public partial class App : Application
 
     protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+
+        
+        if (Directory.Exists(UserDataManager.CoreFolderPath))
+        {
+            App.Current.Services = App.Current.ConfigureServices();
+        }
+        else { 
+            Directory.CreateDirectory(UserDataManager.CoreFolderPath);
+            App.Current.Services = App.Current.ConfigureServices(); 
+        }
+
         AppService.CancellationToken = CancellationToken.None;
 
         await AppService.WindowsController(AppService.CancellationToken);
@@ -114,10 +127,6 @@ public partial class App : Application
             base.Exit();
         else
             base.OnLaunched(args);
-
-
-
-        //var az = new AzBackupService(AzureStorage, "storelean", "FireBackups", new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false});
 
     }
 

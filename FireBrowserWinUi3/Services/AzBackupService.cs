@@ -55,7 +55,7 @@ namespace FireBrowserWinUi3.Services
 
         protected internal string TableName { get; set; } = "TrackerBackups";
         protected internal object UserWindows { get; set; }
-
+        
         protected FireBrowserWinUi3MultiCore.User FireUser { get; set; }
 
 
@@ -200,6 +200,7 @@ namespace FireBrowserWinUi3.Services
 
                 _pca = new Lazy<Task<IPublicClientApplication>>(InitializeMsalWithCache);
 
+                
                 AuthenticationResult token = await GetTokenInteractivelyAsync();
 
                 AppService.Dispatcher?.TryEnqueue(() =>
@@ -425,19 +426,20 @@ namespace FireBrowserWinUi3.Services
                  *  //var principal = DisplayCurrentUserInformation().ConfigureAwait(false);
                  */
 
+                await AppService.MsalService.SignInAsync();
 
-                var azGraphUser = await GraphUserInformationAsync();
+                var azGraphUser =  await AppService.GraphService.GetUserInfoAsync(); 
 
-                if (azGraphUser is AuthenticationResult auth)
+                if (azGraphUser is Microsoft.Graph.Models.User auth)
                 {
                     user = AuthService.CurrentUser ?? new();
-                    user.Email = auth.Account.Username;
+                    user.Email = auth.UserPrincipalName;;
 
-                    try
-                    {
-                        await GetUserProfilePicture(auth);
-                    }
-                    catch {; } // do nothing is a error is thrown.  move on maybe do something later. 
+                    //try
+                    //{
+                    //    await GetUserProfilePicture(auth);
+                    //}
+                    //catch {; } // do nothing is a error is thrown.  move on maybe do something later. 
 
                     if (GetUserNameEx(NameFormats.NameDisplay, name, ref size))
                     {
@@ -502,7 +504,7 @@ namespace FireBrowserWinUi3.Services
             }
         }
 
-        public async Task<List<UserEntity>> GetUploadFileByUser(string email)
+        public List<UserEntity> GetUploadFileByUser(string email)
         {
             try
             {

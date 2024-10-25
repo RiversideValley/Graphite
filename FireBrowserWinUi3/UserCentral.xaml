@@ -2,6 +2,7 @@
     x:Class="FireBrowserWinUi3.UserCentral"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bool="using:FireBrowserWinUi3.Services.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dllimg="using:FireBrowserWinUi3Assets"
     xmlns:firebrowser="using:FireBrowserWinUi3.Controls"
@@ -70,8 +71,25 @@
                         Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
                         Icon="Admin"
                         Label="Admin" />
+                    <AppBarButton
+                        Width="Auto"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ViewModel.LoginToMicrosoftCommand}"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Account"
+                        Label="Sign In Microsoft" />
                 </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Image
+                        Width="36"
+                        Height="36"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="{x:Bind ViewModel.MsProfilePicture, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}" />
                     <AppBarButton
                         x:Name="MinimizeBtn"
                         Click="MinimizeBtn_Click"
@@ -82,14 +100,13 @@
 
                     <AppBarButton
                         x:Name="CloseBtn"
-                        Command="{x:Bind ViewModel.ExitWindow, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.ExitWindowCommand, Mode=OneWay}"
                         Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
                         Icon="Cancel"
                         Label="Close App"
                         ToolTipService.ToolTip="Exit Application" />
                 </StackPanel>
             </Grid>
-
             <TextBlock
                 Grid.Row="1"
                 Margin="0,16"

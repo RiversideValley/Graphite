@@ -48,7 +48,7 @@
                         x:Name="FileUploaded"
                         MaxHeight="135"
                         Margin="4,0,0,4"
-                        Background="{ThemeResource AccentAcrylicBackgroundFillColorBaseBrush}"
+                        Background="{ThemeResource AccentAAFillColorSecondaryBrush}"
                         BorderBrush="{ThemeResource AccentAAFillColorTertiaryBrush}"
                         BorderThickness=".5"
                         CornerRadius="4"
@@ -59,7 +59,7 @@
                                 <Grid>
                                     <StackPanel
                                         Padding="2"
-                                        BorderBrush="{ThemeResource AccentAAFillColorTertiaryBrush}"
+                                        BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                                         BorderThickness=".5"
                                         Orientation="Vertical"
                                         Spacing="4">

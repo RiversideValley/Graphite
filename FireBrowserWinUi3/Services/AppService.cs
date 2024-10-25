@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages.Patch;
+using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Setup;
 using FireBrowserWinUi3Core.Helpers;
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Graphics;
+using Windows.Services.Maps;
 using WinRT.Interop;
 
 namespace FireBrowserWinUi3.Services;
@@ -35,7 +37,8 @@ public static class AppService
     public static bool IsAppGoingToOpen { get; set; }
     public static bool IsAppNewUser { get; set; }
     public static bool IsAppUserAuthenicated { get; set; }
-
+    public static IAuthenticationService MsalService { get; set; }
+    public static IGraphService GraphService { get; set; }
     public static DispatcherQueue Dispatcher { get; set; }
 
 
@@ -47,8 +50,18 @@ public static class AppService
             string resetFilePath = Path.Combine(Path.GetTempPath(), "Reset.set");
             string backupFilePath = Path.Combine(Path.GetTempPath(), "backup.fireback");
             string restoreFilePath = Path.Combine(Path.GetTempPath(), "restore.fireback");
+            try
+            {
+                MsalService = App.GetService<MsalAuthService>();
+                GraphService = App.GetService<GraphService>();
 
-
+            }
+            catch (Exception e)
+            {
+                await CloseCancelToken(cancellationToken);
+                await Task.FromException<CancellationToken>(e);
+            }
+            
             if (IsAppGoingToClose)
             {
                 //throw new ApplicationException("Exiting Application by user");
@@ -246,10 +259,7 @@ public static class AppService
 
     private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
     {
-        if (Directory.Exists(UserDataManager.CoreFolderPath))
-        {
-            App.Current.Services = App.Current.ConfigureServices();
-        }
+   
 
         var userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
         if (!Directory.Exists(userExist))

@@ -5,8 +5,10 @@ using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3Core.Helpers;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -22,6 +24,12 @@ namespace FireBrowserWinUi3
         public UserExtend User { get; set; }
         public Window ParentWindow { get; set; }
         public UIElement ParentGrid { get; set; }
+        public bool IsCoreFolder { get { return _IsCoreFolder(); } }
+        public bool IsMsLogin { get; set; }
+        public BitmapImage MsProfilePicture { get; set; }   
+
+        //public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility IsMsLoginVisibility { get { return IsMsLogin ? Visibility.Visible : Visibility.Collapsed; ; } } 
 
         private Func<bool> _IsCoreFolder = () =>
         {
@@ -40,16 +48,32 @@ namespace FireBrowserWinUi3
             return false;
         };
 
-        public bool IsCoreFolder { get { return _IsCoreFolder(); } }
+        
+        [RelayCommand]
+        private async Task LoginToMicrosoft() {
 
+            IsMsLogin = await AppService.MsalService.SignInAsync();
+            if (IsMsLogin) {
+                using (var stream = await AppService.GraphService.GetUserPhotoAsync()) {
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    memoryStream.Position = 0;
 
-        private ICommand _exitWindow;
-        public ICommand ExitWindow => _exitWindow ??= new RelayCommand(() =>
-        {
+                    var bitmapImage = new BitmapImage();
+                    await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                    MsProfilePicture = bitmapImage;
+                    RaisePropertyChanges(nameof(MsProfilePicture));
+                } 
+            }
+            
+            RaisePropertyChanges(nameof(IsMsLoginVisibility));
+        }
+
+        [RelayCommand]
+        private void ExitWindow() {
             AppService.IsAppGoingToClose = true;
             ParentWindow?.Close();
-
-        });
+        }
 
         [RelayCommand]
         private void AdminCenter()

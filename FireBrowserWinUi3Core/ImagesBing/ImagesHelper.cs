@@ -25,5 +25,6 @@ public class ImagesHelper
             Debug.WriteLine($"{ex.Message}");
             // Handle the exception as needed: log, display to the user, etc.
         }
+        
     }
 }

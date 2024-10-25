@@ -24,7 +24,7 @@ namespace FireBrowserWinUi3
         public static UserCentral Instance { get; private set; }
         public UC_Viewmodel ViewModel { get; set; }
         public static bool IsOpen { get; private set; }
-        private bool _isDataLoaded = false;
+        public bool _isDataLoaded { get; set; }
 
         public UserCentral()
         {
@@ -97,7 +97,7 @@ namespace FireBrowserWinUi3
         private async void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             var usr = new AddUserWindow();
-            usr.Closed += (s, e) =>
+            usr.Closed +=  (s, e) =>
             {
                 AppService.ActiveWindow = this;
             };

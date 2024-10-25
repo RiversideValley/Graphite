@@ -39,8 +39,8 @@ namespace FireBrowserWinUi3.Services.ViewModels
             var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
             var AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
 
-            var list = AzBackup.GetUploadFileByUser("fizzledbydizzle@live.com").ConfigureAwait(false);
-            FilesUpload = [.. list.GetAwaiter().GetResult()];
+            var list = AzBackup.GetUploadFileByUser("fizzledbydizzle@live.com");
+            FilesUpload = [.. list];
         }
 
 
