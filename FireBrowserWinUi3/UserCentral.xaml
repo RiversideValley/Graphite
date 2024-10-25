@@ -83,13 +83,23 @@
                     Grid.Column="2"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Image
-                        Width="36"
-                        Height="36"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Source="{x:Bind ViewModel.MsProfilePicture, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}" />
+                    <Grid Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}">
+                        <Button>
+                            <Button.Flyout>
+                                <Flyout>
+                                    <TextBlock FontSize="14" Text="{x:Bind ViewModel.User.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Flyout>
+                            </Button.Flyout>
+                            <Image
+                                Width="36"
+                                Height="36"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Source="{x:Bind ViewModel.MsProfilePicture, Mode=OneWay}" />
+                        </Button>
+
+                    </Grid>
+
                     <AppBarButton
                         x:Name="MinimizeBtn"
                         Click="MinimizeBtn_Click"
