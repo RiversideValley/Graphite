@@ -651,7 +651,7 @@
                         <Flyout>
                             <Grid
                                 Width="200"
-                                Height="200"
+                                Height="400"
                                 Margin="0,0,10,0">
                                 <StackPanel>
                                     <TextBlock
