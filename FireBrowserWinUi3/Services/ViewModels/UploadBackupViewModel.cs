@@ -25,6 +25,8 @@ using System.Net.Http;
 using FireBrowserWinUi3.Pages.Patch;
 using Microsoft.UI.Xaml.Controls;
 using CommunityToolkit.WinUI.Behaviors;
+using Windows.Storage.AccessCache;
+using Windows.Storage;
 
 namespace FireBrowserWinUi3.Services.ViewModels
 {

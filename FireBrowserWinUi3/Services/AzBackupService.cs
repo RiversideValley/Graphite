@@ -250,13 +250,33 @@ namespace FireBrowserWinUi3.Services
                 }
                 else
                 {
-                    await blockBlob.DownloadToFileAsync(UserDataManager.CoreFolderPath, FileMode.CreateNew);
-                    //await blockBlob.DownloadToFileAsync(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), FileMode.CreateNew);
-                    Console.WriteLine("Blob downloaded: local file did not exist.");
+                    try
+                    {
+                        using (var stream = new MemoryStream())
+                        {
+                            await blockBlob.DownloadToStreamAsync(stream);
+                            stream.Position = 0;
+                            using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
+                            {
+                                await stream.CopyToAsync(fs_ms);
+                            }
+                            Console.WriteLine("Blob downloaded and saved to file.");
+                        }
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        Console.WriteLine($"Access denied: {ex.Message}");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                        Console.WriteLine("Blob downloaded: local file did not exist.");
+                    }
+
+                    return new ResponseAZFILE(blobName, LocalFilePath);
+
                 }
-
-                return new ResponseAZFILE(blobName, LocalFilePath);
-
             }
             catch (Exception ex)
             {
@@ -264,7 +284,9 @@ namespace FireBrowserWinUi3.Services
                 throw;
             }
 
+            return null;
         }
+
         private string ComputeMD5Hash(string filePath)
         {
             using (var md5 = MD5.Create())
