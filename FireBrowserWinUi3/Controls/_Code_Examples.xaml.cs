@@ -145,6 +145,43 @@ namespace FireBrowserWinUi3.Controls
         //        ExceptionLogger.LogException(ex);
         //        throw;
         //    }
+        /*
+         * public static async Task DownloadBlobDirectory(CloudBlobDirectory blobDirectory, string destPath)
+{
+    if (!Directory.Exists(destPath))
+    {
+        await FileUtils.CreateDirectory(destPath);
+    }
 
+    IEnumerable<IListBlobItem> blobs = await ListBlobsFlat(blobDirectory);
+    var tasks = new List<Task>();
+
+    using (var md5 = new MD5CryptoServiceProvider())
+    {
+        foreach (var blobItem in blobs)
+        {
+            var blob = (CloudBlockBlob)blobItem;
+            await blob.FetchAttributesAsync();
+            string relativePath = GetLocalRelativePath(blob, blobDirectory);
+            var localFilePath = Path.Combine(destPath, relativePath);
+            string dirPath = Path.GetDirectoryName(localFilePath);
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            if (File.Exists(localFilePath))
+            {
+                string hash = ComputeMd5Hash(md5, localFilePath);
+                if (hash == blob.Properties.ContentMD5)
+                {
+                    continue;
+                }
+            }
+            tasks.Add(blob.DownloadToFileAsync(localFilePath, FileMode.Create));
+        }
+    }
+    await Task.WhenAll(tasks);
+}
+         */
     }
 }

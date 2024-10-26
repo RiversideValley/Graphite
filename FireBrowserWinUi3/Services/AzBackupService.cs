@@ -2,6 +2,8 @@
 using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Identity;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Models;
@@ -12,6 +14,7 @@ using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Desktop;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.UI.Dispatching;
@@ -26,6 +29,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Security.Principal;
 using System.Text;
@@ -208,6 +212,70 @@ namespace FireBrowserWinUi3.Services
 
         }
 
+        public async Task<ResponseAZFILE> DownloadBackupFile(string blobName)
+        {
+            try
+            {
+                IRandomAccessStream fileStream;
+                var storageAccount = CloudStorageAccount.Parse(ConnString);
+                var blobClient = storageAccount.CreateCloudBlobClient();
+                var container = blobClient.GetContainerReference("firebackups");
+                var response = new object();
+                var fileName = blobName;
+                // Upload the file to Azure Blob Storage
+                var blockBlob = container.GetBlockBlobReference(fileName);
+                var LocalFilePath = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), blobName));
+                BlobServiceClient _blobServiceClient = new BlobServiceClient(ConnString);
+                BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
+                BlobClient blobClientArgs = containerClient.GetBlobClient(blobName);
+                Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blobClientArgs.GetPropertiesAsync();
+
+                if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, blobName)))
+                {
+                    string localFileHash = ComputeMD5Hash(LocalFilePath.FullName);
+                    string blobHash = blobProperties.ContentHash != null
+                        ? Convert.ToBase64String(blobProperties.ContentHash)
+                        : string.Empty;
+
+                    if (localFileHash != blobHash)
+                    {
+                        // Download the blob if hashes don't match
+                        await blockBlob.DownloadToFileAsync(UserDataManager.CoreFolderPath, FileMode.CreateNew);
+                        Console.WriteLine("Blob downloaded: local file hash did not match.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Local file is up to date.");
+                    }
+                }
+                else
+                {
+                    await blockBlob.DownloadToFileAsync(UserDataManager.CoreFolderPath, FileMode.CreateNew);
+                    //await blockBlob.DownloadToFileAsync(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), FileMode.CreateNew);
+                    Console.WriteLine("Blob downloaded: local file did not exist.");
+                }
+
+                return new ResponseAZFILE(blobName, LocalFilePath);
+
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogger.LogException(ex);
+                throw;
+            }
+
+        }
+        private string ComputeMD5Hash(string filePath)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filePath))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return Convert.ToBase64String(hash);
+                }
+            }
+        }
         public async Task<ResponseAZFILE> UploadFileToBlobAsync(string blobName, IRandomAccessStream fileStream)
         {
             try

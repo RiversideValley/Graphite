@@ -21,6 +21,10 @@ using System.Windows.Input;
 using Windows.ApplicationModel.Email;
 using Windows.Storage.Streams;
 using Windows.ApplicationModel.DataTransfer;
+using System.Net.Http;
+using FireBrowserWinUi3.Pages.Patch;
+using Microsoft.UI.Xaml.Controls;
+using CommunityToolkit.WinUI.Behaviors;
 
 namespace FireBrowserWinUi3.Services.ViewModels
 {
@@ -29,12 +33,13 @@ namespace FireBrowserWinUi3.Services.ViewModels
         public ObservableCollection<EmailUser> Users { get; set; }
         public ObservableCollection<UserEntity> FilesUpload { get; set; }
         public EmailUser SelectedUser { get; set; }
+        internal AzBackupService azBackup { get; set; }
 
         [ObservableProperty]
         private UserEntity _FileSelected;
         public UploadBackupViewModel()
         {
-            var user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult() ; 
+            var user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult();
 
             if (user is not null)
             {
@@ -44,16 +49,32 @@ namespace FireBrowserWinUi3.Services.ViewModels
                 };
 
                 var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
-                var AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
+                azBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
 
-                var list = AzBackup.GetUploadFileByUser(user.Username);
+                var list = azBackup.GetUploadFileByUser(user.Username);
                 FilesUpload = [.. list];
             }
         }
 
         [RelayCommand]
-        private void SelectFile()
+        private async Task SelectFile()
         {
+            if (FileSelected is null)
+            {
+                UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file from the list");
+                return;
+            }
+
+            await azBackup.DownloadBackupFile(FileSelected.BlobName);
+            var note = new Notification
+            {
+                Title = "Backup Manager \n",
+                Message = $"Your backup file has been downloaded:\n{FileSelected.Timestamp.Value.ToLocalTime()} Restore Point !",
+                Severity = InfoBarSeverity.Informational,
+                IsIconVisible = true,
+                Duration = TimeSpan.FromSeconds(4)
+            };
+            UpLoadBackup.Instance?.NotificationQueue.Show(note);
 
         }
         private async Task SendEmailAsync(string toEmail, string sasUrl)

@@ -27,10 +27,11 @@ namespace FireBrowserWinUi3.Pages.Patch
     public sealed partial class UpLoadBackup : Window
     {
         public UploadBackupViewModel ViewModel { get; }
+        public static UpLoadBackup Instance { get; set; }
         public UpLoadBackup()
         {
+            Instance = this;
             ViewModel = new();
-
             this.InitializeComponent();
 
         }
