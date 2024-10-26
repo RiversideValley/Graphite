@@ -5,6 +5,7 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using FireBrowserWinUi3.Controls;
+using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3Core.Helpers;
@@ -230,7 +231,7 @@ namespace FireBrowserWinUi3.Services
                 BlobClient blobClientArgs = containerClient.GetBlobClient(blobName);
                 Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blobClientArgs.GetPropertiesAsync();
 
-                if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, blobName)))
+                if (File.Exists(LocalFilePath.FullName))
                 {
                     string localFileHash = ComputeMD5Hash(LocalFilePath.FullName);
                     string blobHash = blobProperties.ContentHash != null
@@ -240,12 +241,34 @@ namespace FireBrowserWinUi3.Services
                     if (localFileHash != blobHash)
                     {
                         // Download the blob if hashes don't match
-                        await blockBlob.DownloadToFileAsync(UserDataManager.CoreFolderPath, FileMode.CreateNew);
-                        Console.WriteLine("Blob downloaded: local file hash did not match.");
+                        try
+                        {
+                            using (var stream = new MemoryStream())
+                            {
+                                await blockBlob.DownloadToStreamAsync(stream);
+                                stream.Position = 0;
+                                using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
+                                {
+                                    await stream.CopyToAsync(fs_ms);
+                                }
+                            }
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
+                            return null;
+                        }
+                        catch (Exception ex)
+                        {
+                            UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured : {ex.Message}");
+                            return null;
+                        }
+
+                        return new ResponseAZFILE(blobName, LocalFilePath);
                     }
                     else
                     {
-                        Console.WriteLine("Local file is up to date.");
+                        UpLoadBackup.Instance.NotificationQueue.Show($"File is up to date");
                     }
                 }
                 else
@@ -265,14 +288,15 @@ namespace FireBrowserWinUi3.Services
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        Console.WriteLine($"Access denied: {ex.Message}");
-
+                        UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
+                        return null;
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error: {ex.Message}");
-                        Console.WriteLine("Blob downloaded: local file did not exist.");
+                        UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured:\n{ex.Message}");
+                        return null;
                     }
+
 
                     return new ResponseAZFILE(blobName, LocalFilePath);
 

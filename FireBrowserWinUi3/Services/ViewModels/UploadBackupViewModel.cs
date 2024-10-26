@@ -67,7 +67,9 @@ namespace FireBrowserWinUi3.Services.ViewModels
                 return;
             }
 
-            await azBackup.DownloadBackupFile(FileSelected.BlobName);
+            var result = await azBackup.DownloadBackupFile(FileSelected.BlobName);
+            if (result is null) return;
+
             var note = new Notification
             {
                 Title = "Backup Manager \n",
