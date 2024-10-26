@@ -50,18 +50,7 @@ public static class AppService
             string resetFilePath = Path.Combine(Path.GetTempPath(), "Reset.set");
             string backupFilePath = Path.Combine(Path.GetTempPath(), "backup.fireback");
             string restoreFilePath = Path.Combine(Path.GetTempPath(), "restore.fireback");
-            try
-            {
-                MsalService = App.GetService<MsalAuthService>();
-                GraphService = App.GetService<GraphService>();
-
-            }
-            catch (Exception e)
-            {
-                await CloseCancelToken(cancellationToken);
-                await Task.FromException<CancellationToken>(e);
-            }
-
+           
             if (IsAppGoingToClose)
             {
                 //throw new ApplicationException("Exiting Application by user");
@@ -241,7 +230,7 @@ public static class AppService
 
         if (appWindow != null)
         {
-            appWindow.MoveAndResize(new RectInt32(600, 600, 900, 900));
+            appWindow.MoveAndResize(new RectInt32(600, 600, 900, 700));
             appWindow.MoveInZOrderAtTop();
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             // need this for inquires down line for window placement. 
@@ -275,7 +264,7 @@ public static class AppService
 
         CheckNormal(AuthService.CurrentUser.Username);
 
-        App.Current.m_window = new MainWindow();
+        ActiveWindow = App.Current.m_window = new MainWindow();
         Windowing.Center(App.Current.m_window);
         IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
         App.Current.m_window.Activate();

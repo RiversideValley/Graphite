@@ -2,8 +2,10 @@
 // Licensed under the MIT License.
 
 using FireBrowserWinUi3.Services.Contracts;
+using FireBrowserWinUi3Exceptions;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,20 +16,19 @@ namespace FireBrowserWinUi3.Services
 {
     public class GraphService : IGraphService
     {
-        private IAuthenticationService _authenticationService;
-
+        
         private User _user;
-        private Stream _userPhoto;
         private TimeZoneInfo _userTimeZone;
+        public  BitmapImage ProfileMicrosoft {  get; set; }  
 
         public GraphService()
         {
-            _authenticationService = App.GetService<MsalAuthService>();
+            
         }
 
         public Task CreateEventAsync(Event newEvent)
         {
-            var graphClient = _authenticationService.GraphClient;
+            var graphClient = AppService.MsalService.GraphClient;
 
             return graphClient.Me.Events.PostAsync(newEvent);
         }
@@ -48,7 +49,7 @@ namespace FireBrowserWinUi3.Services
         }
         public Task<EventCollectionResponse> GetCalendarForDateTimeRangeAsync(DateTime start, DateTime end, TimeZoneInfo timeZone)
         {
-            var graphClient = _authenticationService.GraphClient;
+            var graphClient = AppService.MsalService.GraphClient;
 
             var timeZoneString = DeviceInfo.GetDevicePlatformAsync() == "Desktop" ?
                 timeZone.StandardName : timeZone.Id;
@@ -75,50 +76,64 @@ namespace FireBrowserWinUi3.Services
 
         public async Task<User> GetUserInfoAsync()
         {
-            var graphClient = _authenticationService.GraphClient;
-
-            if (_authenticationService.IsSignedIn)
+            try
             {
-                if (_user == null)
+                
+
+                if (AppService.MsalService.IsSignedIn)
                 {
-                    // Get the user, cache for subsequent calls
-                    _user = await graphClient.Me.GetAsync(
-                        requestConfiguration =>
-                        {
-                            requestConfiguration.QueryParameters.Select =
-                                new[] { "displayName", "mail", "mailboxSettings", "userPrincipalName" };
-                        });
+                    if (_user == null)
+                    {
+                        // Get the user, cache for subsequent calls
+                        _user = await AppService.MsalService.GraphClient.Me.GetAsync();
+                    }
                 }
-            }
-            else
-            {
-                _user = null;
-            }
+                else
+                {
+                    _user = null;
+                }
 
-            return _user;
+                return _user;
+            }
+            catch (Exception e)
+            {
+                ExceptionLogger.LogException(e);
+            }
+            
+            return null;
+            
         }
 
         public async Task<Stream> GetUserPhotoAsync()
         {
-            var graphClient = _authenticationService.GraphClient;
+            var graphClient = AppService.MsalService.GraphClient;
+            Stream _userPhoto;
 
-            if (_authenticationService.IsSignedIn)
+            if (AppService.MsalService.IsSignedIn)
             {
-                if (_userPhoto == null)
-                {
                     // Get the user photo, cache for subsequent calls
-                    _userPhoto = await graphClient.Me
-                        .Photo
-                        .Content
-                        .GetAsync();
+                _userPhoto = await graphClient.Me
+                    .Photo
+                    .Content
+                    .GetAsync();
+
+                if (_userPhoto is not null)
+                {
+                    if (ProfileMicrosoft is null)
+                    {
+                            var memoryStream = new MemoryStream();
+                            await _userPhoto.CopyToAsync(memoryStream);
+                            memoryStream.Position = 0;
+                            var bitmapImage = new BitmapImage();
+                            await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                            ProfileMicrosoft = bitmapImage; 
+                            
+                    }
+                    return _userPhoto ;
                 }
             }
-            else
-            {
-                _userPhoto = null;
-            }
 
-            return _userPhoto;
+            return null;    
         }
 
        

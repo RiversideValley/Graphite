@@ -3,6 +3,7 @@ using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
+using FireBrowserWinUi3Exceptions;
 using FireBrowserWinUi3MultiCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Services.Maps;
 using Path = System.IO.Path;
 
 namespace FireBrowserWinUi3;
@@ -108,20 +110,42 @@ public partial class App : Application
 
         App.Current.Services = App.Current.ConfigureServices();
 
+       
         AppService.CancellationToken = CancellationToken.None;
 
-        await AppService.WindowsController(AppService.CancellationToken);
-
-        while (!AppService.CancellationToken.IsCancellationRequested)
+        try
         {
-            await Task.Delay(1500);
+            AppService.MsalService = App.GetService<MsalAuthService>();
+            AppService.GraphService = App.GetService<GraphService>();
+
+        }
+        catch (Exception e)
+        {
+            
+            ExceptionLogger.LogException(e);
         }
 
-        if (AppService.IsAppGoingToClose == true)
-            base.Exit();
-        else
-            base.OnLaunched(args);
+        try
+        {
+            await AppService.WindowsController(AppService.CancellationToken);
 
+            while (!AppService.CancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(1500);
+            }
+
+            if (AppService.IsAppGoingToClose == true)
+                base.Exit();
+            else
+                base.OnLaunched(args);
+
+        }
+        catch (Exception ex)
+        {
+            await AppService.CloseCancelToken(AppService.CancellationToken);
+            ExceptionLogger.LogException(ex);   
+        }
+        
     }
 
     public Window m_window;

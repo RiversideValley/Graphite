@@ -25,7 +25,10 @@ namespace FireBrowserWinUi3
         public Window ParentWindow { get; set; }
         public UIElement ParentGrid { get; set; }
         public bool IsCoreFolder { get { return _IsCoreFolder(); } }
-        public bool IsMsLogin { get; set; }
+       
+        [ObservableProperty]
+        [NotifyPropertyChangedRecipients]
+        private bool _IsMsLogin;
         public BitmapImage MsProfilePicture { get; set; }   
 
         //public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
@@ -48,24 +51,48 @@ namespace FireBrowserWinUi3
             return false;
         };
 
+        [RelayCommand(CanExecute = nameof(IsMsLogin))]
+        private async Task MsLogOut() {
+            
+            if (IsMsLogin)
+            {
+                await AppService.MsalService?.SignOutAsync();
+                IsMsLogin = AppService.MsalService.IsSignedIn;
+                RaisePropertyChanges(nameof(IsMsLoginVisibility));
+                
+            }
+                
+        }
         
         [RelayCommand]
         private async Task LoginToMicrosoft() {
 
-            IsMsLogin = await AppService.MsalService.SignInAsync();
-            if (IsMsLogin) {
-                using (var stream = await AppService.GraphService.GetUserPhotoAsync()) {
-                    var memoryStream = new MemoryStream();
-                    await stream.CopyToAsync(memoryStream);
-                    memoryStream.Position = 0;
+            IsMsLogin = await AppService.MsalService?.SignInAsync();
+            RaisePropertyChanges(nameof(IsMsLogin));
 
-                    var bitmapImage = new BitmapImage();
-                    await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
-                    MsProfilePicture = bitmapImage;
-                    RaisePropertyChanges(nameof(MsProfilePicture));
-                } 
+            if (IsMsLogin) {
+                
+                if (AppService.GraphService.ProfileMicrosoft is null)
+                {
+                    using (var stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync())
+                    {
+                        var memoryStream = new MemoryStream();
+                        await stream.CopyToAsync(memoryStream);
+                        memoryStream.Position = 0;
+
+                        var bitmapImage = new BitmapImage();
+                        await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                        MsProfilePicture = bitmapImage;
+                        RaisePropertyChanges(nameof(MsProfilePicture));
+                    }
+                }
+                else
+                {
+                    MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
+                }
+                
+                
             }
-            
             RaisePropertyChanges(nameof(IsMsLoginVisibility));
         }
 
@@ -74,7 +101,7 @@ namespace FireBrowserWinUi3
             AppService.IsAppGoingToClose = true;
             ParentWindow?.Close();
         }
-
+        
         [RelayCommand]
         private void AdminCenter()
         {

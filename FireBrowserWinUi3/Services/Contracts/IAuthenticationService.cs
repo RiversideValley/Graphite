@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Graph;
+using Microsoft.Identity.Client;
 
 namespace FireBrowserWinUi3.Services.Contracts
 {
@@ -37,5 +38,7 @@ namespace FireBrowserWinUi3.Services.Contracts
         /// Sign out the user.
         /// </summary>
         public Task SignOutAsync();
+
+        public Task<IAccount> GetUserAccountAsync();
     }
 }

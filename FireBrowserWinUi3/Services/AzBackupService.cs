@@ -87,12 +87,12 @@ namespace FireBrowserWinUi3.Services
 
                 await AppService.MsalService.SignInAsync();
 
-                var azGraphUser = await AppService.GraphService.GetUserInfoAsync();
+                var azGraphUser = await AppService.MsalService.GetUserAccountAsync();
 
-                if (azGraphUser is Microsoft.Graph.Models.User auth)
+                if (azGraphUser is IAccount auth)
                 {
                     user = AuthService.CurrentUser ?? new();
-                    user.Email = auth.UserPrincipalName; ;
+                    user.Email = auth.Username;
 
                     //try
                     //{
@@ -216,7 +216,7 @@ namespace FireBrowserWinUi3.Services
                 var blobClient = storageAccount.CreateCloudBlobClient();
                 var container = blobClient.GetContainerReference("firebackups");
                 var response = new object();
-                var fileName = Guid.NewGuid().ToString() + "_" + blobName;
+                var fileName = blobName;
                 // Upload the file to Azure Blob Storage
                 var blockBlob = container.GetBlockBlobReference(fileName);
 

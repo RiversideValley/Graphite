@@ -1,8 +1,10 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using FireBrowserWinUi3.Services.Contracts;
+using FireBrowserWinUi3Exceptions;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
@@ -11,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using WinRT.Interop;
 using static System.Formats.Asn1.AsnWriter;
 namespace FireBrowserWinUi3.Services
 {
@@ -55,17 +59,36 @@ namespace FireBrowserWinUi3.Services
 
         public async Task<bool> SignInAsync()
         {
-            // First attempt to get a token silently
-            var result = await GetTokenSilentlyAsync();
-            if (result == null)
+            try
             {
-                // If silent attempt didn't work, try an
-                // interactive sign in
-                result = await GetTokenInteractivelyAsync();
-            }
+                var result = await GetTokenSilentlyAsync();
+                if (result == null)
+                {
+                    // If silent attempt didn't work, try an
+                    // interactive sign in
+                    result = await GetTokenInteractivelyAsync();
+                }
 
-            IsSignedIn = result is not null;
-            return IsSignedIn;
+                IsSignedIn = result is not null;
+                return IsSignedIn;
+            }
+            catch (MsalClientException)
+            {
+
+                throw;
+            }
+            catch(MsalException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+            
+                ExceptionLogger.LogException(ex);   
+            }
+            // First attempt to get a token silently
+            return false; 
+
         }
 
         public async Task SignOutAsync()
@@ -90,12 +113,19 @@ namespace FireBrowserWinUi3.Services
         private async Task<IPublicClientApplication> InitializeMsalWithCache()
         {
             // Initialize the PublicClientApplication
-            string RedirectUri = $"msal{ClientId}://auth";
+            //string RedirectUri = $"msal{ClientId}://auth";
+            string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+            //string RedirectUri = "http://localhost";
+            IntPtr mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
+         
             var builder = PublicClientApplicationBuilder
-                               
                                 .Create(ClientId)
-                               .WithWindowsEmbeddedBrowserSupport()
-                               .WithRedirectUri(RedirectUri);
+                                .WithSsoPolicy()
+                                .WithCacheOptions(new CacheOptions() { UseSharedCache = true })
+                                .WithParentActivityOrWindow(() => mainWnd)
+                                .WithWindowsDesktopFeatures(new BrokerOptions(BrokerOptions.OperatingSystems.Windows))
+                                .WithWindowsEmbeddedBrowserSupport()
+                                .WithRedirectUri(RedirectUri);
 
             builder = AddPlatformConfiguration(builder);
 
@@ -112,7 +142,7 @@ namespace FireBrowserWinUi3.Services
 
         private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask; 
             
-        private async Task<IAccount> GetUserAccountAsync()
+        public async Task<IAccount> GetUserAccountAsync()
         {
             try
             {

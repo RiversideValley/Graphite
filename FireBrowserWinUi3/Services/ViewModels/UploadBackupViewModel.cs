@@ -34,19 +34,22 @@ namespace FireBrowserWinUi3.Services.ViewModels
         private UserEntity _FileSelected;
         public UploadBackupViewModel()
         {
-            Users = new ObservableCollection<EmailUser>
+            var user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult() ; 
+
+            if (user is not null)
             {
-                new EmailUser { Name = "User1", Email = "user1@example.com" },
-                new EmailUser { Name = "User2", Email = "user2@example.com" }
-            };
+                Users = new ObservableCollection<EmailUser>
+                {
+                    new EmailUser { Name = user.Username, Email = user.Username }
+                };
 
-            var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
-            var AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
+                var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
+                var AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
 
-            var list = AzBackup.GetUploadFileByUser("fizzledbydizzle@live.com");
-            FilesUpload = [.. list];
+                var list = AzBackup.GetUploadFileByUser(user.Username);
+                FilesUpload = [.. list];
+            }
         }
-
 
         [RelayCommand]
         private void SelectFile()

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.Graph.Models;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,5 +18,7 @@ namespace FireBrowserWinUi3.Services.Contracts
         public Task<EventCollectionResponse> GetCalendarForDateTimeRangeAsync(DateTime start, DateTime end, TimeZoneInfo timeZone);
 
         public Task CreateEventAsync(Event newEvent);
+
+        public BitmapImage ProfileMicrosoft { get; set; }
     }
 }

@@ -71,7 +71,8 @@
                         Command="{x:Bind ViewModel.AdminCenterCommand}"
                         Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
                         Icon="Admin"
-                        Label="Admin" />
+                        Label="Admin"
+                        Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}" />
                     <AppBarButton
                         Width="Auto"
                         VerticalAlignment="Center"
@@ -88,26 +89,7 @@
                         <Button>
                             <Button.Flyout>
                                 <Flyout>
-                                    <Grid
-                                        Width="400"
-                                        Height="600"
-                                        Margin="0,0,10,0">
-                                        <StackPanel>
-                                            <TextBlock
-                                                FontSize="20"
-                                                FontWeight="Bold"
-                                                Text="Microsoft 365" />
-                                            <ListView x:Name="NavViewOffice365">
-
-                                                <ListViewItem Content="Outlook" Tag="https://outlook.office.com/mail/" />
-                                                <ListViewItem Content="OneDrive" Tag="https://onedrive.live.com" />
-                                                <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word?auth=2" />
-                                                <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel?auth=2" />
-                                                <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint?auth=2" />
-                                            </ListView>
-                                        </StackPanel>
-
-                                    </Grid>
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.MsLogOutCommand}">LogOut</MenuFlyoutItem>
                                 </Flyout>
                             </Button.Flyout>
                             <Image

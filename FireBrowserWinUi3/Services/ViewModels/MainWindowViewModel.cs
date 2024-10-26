@@ -1,26 +1,85 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3MultiCore;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.ViewModels;
 
 public partial class MainWindowViewModel : ObservableRecipient
 {
     internal MainWindow MainView { get; set; }
+    public bool IsMsLogin { get; set; }
+    public BitmapImage MsProfilePicture { get; set; }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(MsOptionsWebCommand))]
+    private ListViewItem _MsOptionSelected;
+    
+    //public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility IsMsLoginVisibility { get { return IsMsLogin ? Visibility.Visible : Visibility.Collapsed; ; } set {  } }
+    public Visibility IsMsButtonVisibility { get { return !IsMsLogin ? Visibility.Visible : Visibility.Collapsed; ; } set { } }
 
     [ObservableProperty] private BitmapImage _profileImage;
 
     public MainWindowViewModel(IMessenger messenger) : base(messenger)
     {
         Messenger.Register<Message_Settings_Actions>(this, ReceivedStatus);
+        ValidateMicrosoft().ConfigureAwait(false); 
     }
 
+    private async Task ValidateMicrosoft() {
+
+        IsMsLogin = AppService.MsalService.IsSignedIn;
+        if (IsMsLogin)
+        {
+            if (AppService.GraphService.ProfileMicrosoft is null)
+            {
+                await AppService.GraphService.GetUserPhotoAsync();
+                MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
+                RaisePropertyChanges(nameof(MsProfilePicture));
+            }
+        }
+        
+        RaisePropertyChanges(nameof(IsMsLoginVisibility));
+        RaisePropertyChanges(nameof(IsMsButtonVisibility));
+        
+    }
+
+    [RelayCommand]
+    private void MsOptionsWeb(object sender)
+    {
+        try
+        {
+            MainView?.NavigateToUrl((sender as ListViewItem).Tag.ToString());
+            MainView?.btnMsApps.Flyout.Hide();
+        }
+        catch (Exception)
+        {
+            Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
+        }
+        
+    }
+
+    [RelayCommand]
+    private async Task LoginToMicrosoft()
+    {
+
+        IsMsLogin = await AppService.MsalService.SignInAsync();
+        if (IsMsLogin)
+        {
+          await ValidateMicrosoft();
+        }
+
+    }
     public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
     {
         OnPropertyChanged(propertyName);
@@ -101,4 +160,6 @@ public partial class MainWindowViewModel : ObservableRecipient
         };
         MainView.NotificationQueue.Show(note);
     }
+
+    
 }
