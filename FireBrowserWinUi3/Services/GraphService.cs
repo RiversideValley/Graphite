@@ -139,7 +139,7 @@ namespace FireBrowserWinUi3.Services
                 else {
                     
                     var memoryStream = new MemoryStream();
-                    using (FileStream fileStream = new FileStream("ms-appx:///Assets", FileMode.Open, FileAccess.Read)) {
+                    using (FileStream fileStream = new FileStream("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read)) {
                         await fileStream.CopyToAsync(memoryStream);    
                         memoryStream.Position = 0;
                         var bitmapImage = new BitmapImage();
