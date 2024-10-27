@@ -5,10 +5,14 @@ using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3Exceptions;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.Security;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using Windows.System.Profile;
 
 
@@ -117,19 +121,32 @@ namespace FireBrowserWinUi3.Services
                     .Content
                     .GetAsync();
 
+
                 if (_userPhoto is not null)
                 {
                     if (ProfileMicrosoft is null)
                     {
-                            var memoryStream = new MemoryStream();
-                            await _userPhoto.CopyToAsync(memoryStream);
-                            memoryStream.Position = 0;
-                            var bitmapImage = new BitmapImage();
-                            await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
-                            ProfileMicrosoft = bitmapImage; 
-                            
+                        var memoryStream = new MemoryStream();
+                        await _userPhoto.CopyToAsync(memoryStream);
+                        memoryStream.Position = 0;
+                        var bitmapImage = new BitmapImage();
+                        await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                        ProfileMicrosoft = bitmapImage;
+
                     }
-                    return _userPhoto ;
+                    return _userPhoto;
+                }
+                else {
+                    
+                    var memoryStream = new MemoryStream();
+                    using (FileStream fileStream = new FileStream("ms-appx:///Assets", FileMode.Open, FileAccess.Read)) {
+                        await fileStream.CopyToAsync(memoryStream);    
+                        memoryStream.Position = 0;
+                        var bitmapImage = new BitmapImage();
+                        await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                        ProfileMicrosoft = bitmapImage;
+                    }
+
                 }
             }
 

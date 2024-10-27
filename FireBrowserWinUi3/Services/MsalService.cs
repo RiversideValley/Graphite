@@ -116,7 +116,15 @@ namespace FireBrowserWinUi3.Services
             //string RedirectUri = $"msal{ClientId}://auth";
             string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
             //string RedirectUri = "http://localhost";
-            IntPtr mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
+            IntPtr mainWnd = IntPtr.Zero;
+
+            mainWnd= WindowNative.GetWindowHandle(AppService.ActiveWindow);
+            if (mainWnd == IntPtr.Zero) {
+                mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
+                if (mainWnd == IntPtr.Zero) {
+                    return null; 
+                }
+            }
          
             var builder = PublicClientApplicationBuilder
                                 .Create(ClientId)
