@@ -23,7 +23,7 @@ namespace FireBrowserWinUi3.Services
     public partial class MsalAuthService : ObservableObject, IAuthenticationService, IAuthenticationProvider
     {
         private Lazy<Task<IPublicClientApplication>> _pca;
-        private string _userIdentifier = string.Empty;
+        public string _userIdentifier = string.Empty;
         protected string ClientId { get; } = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
         protected string[] scopes = ["User.Read"];
 

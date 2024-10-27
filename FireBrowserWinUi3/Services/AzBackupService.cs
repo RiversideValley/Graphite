@@ -268,7 +268,7 @@ namespace FireBrowserWinUi3.Services
                     }
                     else
                     {
-                        UpLoadBackup.Instance.NotificationQueue.Show($"File is up to date");
+                        UpLoadBackup.Instance.NotificationQueue.Show($"File is up to date", 3000, "File Notificaton");
                     }
                 }
                 else

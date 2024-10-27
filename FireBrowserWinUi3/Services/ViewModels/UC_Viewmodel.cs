@@ -103,12 +103,14 @@ namespace FireBrowserWinUi3
         }
         
         [RelayCommand]
-        private void AdminCenter()
+        private async Task AdminCenter()
         {
 
             var win = new UpLoadBackup();
             win.AppWindow.SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.CompactOverlay);
-            Windowing.DialogWindow(win);
+            await AppService.ConfigureSettingsWindow(win);
+            Windowing.Center(win);
+
             win.Activate();
 
         }
