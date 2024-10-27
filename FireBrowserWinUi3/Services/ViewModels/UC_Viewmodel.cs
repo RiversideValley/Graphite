@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 using WinRT.Interop;
 
@@ -110,7 +111,6 @@ namespace FireBrowserWinUi3
             win.AppWindow.SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.CompactOverlay);
             await AppService.ConfigureSettingsWindow(win);
             Windowing.Center(win);
-
             win.Activate();
 
         }
