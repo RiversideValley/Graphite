@@ -50,7 +50,7 @@ public static class AppService
             string resetFilePath = Path.Combine(Path.GetTempPath(), "Reset.set");
             string backupFilePath = Path.Combine(Path.GetTempPath(), "backup.fireback");
             string restoreFilePath = Path.Combine(Path.GetTempPath(), "restore.fireback");
-           
+
             if (IsAppGoingToClose)
             {
                 //throw new ApplicationException("Exiting Application by user");
@@ -264,12 +264,14 @@ public static class AppService
 
         CheckNormal(AuthService.CurrentUser.Username);
 
-        ActiveWindow?.Close(); 
+        ActiveWindow?.Close();
 
         App.Current.m_window = new MainWindow();
         Windowing.Center(App.Current.m_window);
         IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
+        Windowing.AnimateWindow(hWnd, 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
         App.Current.m_window.Activate();
+
         App.Current.m_window.AppWindow.MoveInZOrderAtTop();
 
         List<IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);

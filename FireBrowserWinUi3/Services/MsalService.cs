@@ -127,7 +127,6 @@ namespace FireBrowserWinUi3.Services
                                 .WithCacheOptions(new CacheOptions(true))
                                 .WithParentActivityOrWindow(() => mainWnd)
                                 .WithWindowsDesktopFeatures(new BrokerOptions(BrokerOptions.OperatingSystems.Windows))
-                                .WithWindowsEmbeddedBrowserSupport()
                                 .WithRedirectUri(RedirectUri);
 
             builder = AddPlatformConfiguration(builder);
@@ -141,7 +140,7 @@ namespace FireBrowserWinUi3.Services
         }
 
 
-        private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+        private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder.WithIosKeychainSecurityGroup("localStorage");//builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
 
         private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask;
 
