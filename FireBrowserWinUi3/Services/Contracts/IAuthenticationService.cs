@@ -13,7 +13,7 @@ namespace FireBrowserWinUi3.Services.Contracts
     /// Service that provides authentication methods and access to 
     /// an authenticated GraphServiceClient.
     /// </summary>
-    public interface IAuthenticationService :  INotifyPropertyChanged  
+    public interface IAuthenticationService : INotifyPropertyChanged
     {
         /// <summary>
         /// An authenticated GraphServiceClient for the signed-in user.
@@ -32,7 +32,8 @@ namespace FireBrowserWinUi3.Services.Contracts
         /// Attempts to sign in a user.
         /// </summary>
         /// <returns>true if authentication succeeds, false if not</returns>
-        public Task<bool> SignInAsync();
+
+        public Task<AuthenticationResult> SignInAsync();
 
         /// <summary>
         /// Sign out the user.

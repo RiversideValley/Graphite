@@ -71,7 +71,7 @@
                         Command="{x:Bind ViewModel.AdminCenterCommand}"
                         Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
                         Icon="Admin"
-                        Label="Admin"
+                        Label="Cloud Backups"
                         Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}" />
                     <AppBarButton
                         Width="Auto"

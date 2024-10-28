@@ -5,6 +5,7 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using FireBrowserWinUi3.Controls;
+using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3Core.Helpers;
@@ -216,21 +217,21 @@ namespace FireBrowserWinUi3.Services
         {
             try
             {
-                IRandomAccessStream fileStream;
-                var storageAccount = CloudStorageAccount.Parse(ConnString);
-                var blobClient = storageAccount.CreateCloudBlobClient();
-                var container = blobClient.GetContainerReference("firebackups");
+
+                //var storageAccount = CloudStorageAccount.Parse(ConnString);
+                //var blobClient = storageAccount.CreateCloudBlobClient();
+                //var container = blobClient.GetContainerReference("firebackups");
                 var response = new object();
                 var fileName = blobName;
                 // Upload the file to Azure Blob Storage
-                var blockBlob = container.GetBlockBlobReference(fileName);
+                //var blockBlob = container.GetBlockBlobReference(fileName);
                 var LocalFilePath = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), blobName));
                 BlobServiceClient _blobServiceClient = new BlobServiceClient(ConnString);
                 BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
-                BlobClient blobClientArgs = containerClient.GetBlobClient(blobName);
-                Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blobClientArgs.GetPropertiesAsync();
+                BlobClient blockBlob = containerClient.GetBlobClient(blobName);
+                Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blockBlob.GetPropertiesAsync();
 
-                if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, blobName)))
+                if (File.Exists(LocalFilePath.FullName))
                 {
                     string localFileHash = ComputeMD5Hash(LocalFilePath.FullName);
                     string blobHash = blobProperties.ContentHash != null
@@ -240,23 +241,66 @@ namespace FireBrowserWinUi3.Services
                     if (localFileHash != blobHash)
                     {
                         // Download the blob if hashes don't match
-                        await blockBlob.DownloadToFileAsync(UserDataManager.CoreFolderPath, FileMode.CreateNew);
-                        Console.WriteLine("Blob downloaded: local file hash did not match.");
+                        try
+                        {
+                            using (var stream = new MemoryStream())
+                            {
+                                await blockBlob.DownloadToAsync(stream);
+                                stream.Position = 0;
+                                using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
+                                {
+                                    await stream.CopyToAsync(fs_ms);
+                                }
+                            }
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
+                            return null;
+                        }
+                        catch (Exception ex)
+                        {
+                            UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured : {ex.Message}");
+                            return null;
+                        }
+
+                        return new ResponseAZFILE(blobName, LocalFilePath);
                     }
                     else
                     {
-                        Console.WriteLine("Local file is up to date.");
+                        UpLoadBackup.Instance.NotificationQueue.Show($"File is up to date", 3000, "File Notificaton");
                     }
                 }
                 else
                 {
-                    await blockBlob.DownloadToFileAsync(UserDataManager.CoreFolderPath, FileMode.CreateNew);
-                    //await blockBlob.DownloadToFileAsync(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), FileMode.CreateNew);
-                    Console.WriteLine("Blob downloaded: local file did not exist.");
+                    try
+                    {
+                        using (var stream = new MemoryStream())
+                        {
+                            await blockBlob.DownloadToAsync(stream);
+                            stream.Position = 0;
+                            using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
+                            {
+                                await stream.CopyToAsync(fs_ms);
+                            }
+                            Console.WriteLine("Blob downloaded and saved to file.");
+                        }
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured:\n{ex.Message}");
+                        return null;
+                    }
+
+
+                    return new ResponseAZFILE(blobName, LocalFilePath);
+
                 }
-
-                return new ResponseAZFILE(blobName, LocalFilePath);
-
             }
             catch (Exception ex)
             {
@@ -264,7 +308,9 @@ namespace FireBrowserWinUi3.Services
                 throw;
             }
 
+            return null;
         }
+
         private string ComputeMD5Hash(string filePath)
         {
             using (var md5 = MD5.Create())

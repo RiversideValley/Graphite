@@ -264,7 +264,9 @@ public static class AppService
 
         CheckNormal(AuthService.CurrentUser.Username);
 
-        ActiveWindow = App.Current.m_window = new MainWindow();
+        ActiveWindow?.Close(); 
+
+        App.Current.m_window = new MainWindow();
         Windowing.Center(App.Current.m_window);
         IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
         App.Current.m_window.Activate();

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3Exceptions;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
@@ -23,7 +24,7 @@ namespace FireBrowserWinUi3.Services
     public partial class MsalAuthService : ObservableObject, IAuthenticationService, IAuthenticationProvider
     {
         private Lazy<Task<IPublicClientApplication>> _pca;
-        private string _userIdentifier = string.Empty;
+        public string _userIdentifier = string.Empty;
         protected string ClientId { get; } = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
         protected string[] scopes = ["User.Read"];
 
@@ -57,7 +58,7 @@ namespace FireBrowserWinUi3.Services
             return IsSignedIn;
         }
 
-        public async Task<bool> SignInAsync()
+        public async Task<AuthenticationResult> SignInAsync()
         {
             try
             {
@@ -70,31 +71,23 @@ namespace FireBrowserWinUi3.Services
                 }
 
                 IsSignedIn = result is not null;
-                return IsSignedIn;
+                //return IsSignedIn;
+                return result;
             }
-            catch (MsalClientException)
+            catch (MsalClientException ex)
             {
-
-                throw;
-            }
-            catch(MsalException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-            
-                ExceptionLogger.LogException(ex);   
+                ExceptionLogger.LogException(ex);
             }
             // First attempt to get a token silently
-            return false; 
+            //           return false;
+            return null;
 
         }
 
         public async Task SignOutAsync()
         {
             var pca = await _pca.Value;
-// Get all accounts (there should only be one)
+            // Get all accounts (there should only be one)
             // and remove them from the cache
             var accounts = await pca.GetAccountsAsync();
             foreach (var account in accounts)
@@ -116,12 +109,22 @@ namespace FireBrowserWinUi3.Services
             //string RedirectUri = $"msal{ClientId}://auth";
             string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
             //string RedirectUri = "http://localhost";
-            IntPtr mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
-         
+            IntPtr mainWnd = IntPtr.Zero;
+
+            mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
+            if (mainWnd == IntPtr.Zero)
+            {
+                mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
+                if (mainWnd == IntPtr.Zero)
+                {
+                    return null;
+                }
+            }
+
             var builder = PublicClientApplicationBuilder
                                 .Create(ClientId)
                                 .WithSsoPolicy()
-                                .WithCacheOptions(new CacheOptions() { UseSharedCache = true })
+                                .WithCacheOptions(new CacheOptions(true))
                                 .WithParentActivityOrWindow(() => mainWnd)
                                 .WithWindowsDesktopFeatures(new BrokerOptions(BrokerOptions.OperatingSystems.Windows))
                                 .WithWindowsEmbeddedBrowserSupport()
@@ -135,13 +138,13 @@ namespace FireBrowserWinUi3.Services
 
             return pca;
 
-        } 
-    
+        }
 
-        private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) =>  builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
 
-        private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask; 
-            
+        private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+
+        private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask;
+
         public async Task<IAccount> GetUserAccountAsync()
         {
             try
@@ -169,60 +172,60 @@ namespace FireBrowserWinUi3.Services
             }
         }
 
-            private async Task<AuthenticationResult> GetTokenSilentlyAsync()
-            {
-                try
-                {
-                    var pca = await _pca.Value;
-
-                    var account = await GetUserAccountAsync();
-                    if (account == null) return null;
-
-                    return await pca.AcquireTokenSilent(scopes, account)
-                        .ExecuteAsync();
-                }
-                catch (MsalUiRequiredException)
-                {
-                    return null;
-                }
-            }
-
-            /// <summary>
-            /// Attempts to get a token interactively using the device's browser.
-            /// </summary>
-            private async Task<AuthenticationResult> GetTokenInteractivelyAsync()
+        private async Task<AuthenticationResult> GetTokenSilentlyAsync()
+        {
+            try
             {
                 var pca = await _pca.Value;
 
-                var result = await pca.AcquireTokenInteractive(scopes)
+                var account = await GetUserAccountAsync();
+                if (account == null) return null;
+
+                return await pca.AcquireTokenSilent(scopes, account)
                     .ExecuteAsync();
-
-                // Store the user ID to make account retrieval easier
-                _userIdentifier = result.Account.HomeAccountId.Identifier;
-                return result;
             }
-
-            public async Task AuthenticateRequestAsync(
-                RequestInformation request,
-                Dictionary<string, object> additionalAuthenticationContext = null,
-                CancellationToken cancellationToken = default)
+            catch (MsalUiRequiredException)
             {
-                if (request.URI.Host == "graph.microsoft.com")
-                {
-                    // First try to get the token silently
-                    var result = await GetTokenSilentlyAsync();
-                    if (result == null)
-                    {
-                        // If silent acquisition fails, try interactive
-                        result = await GetTokenInteractivelyAsync();
-                    }
-
-                    request.Headers.Add("Authorization", $"Bearer {result.AccessToken}");
-                }
+                return null;
             }
-      
+        }
+
+        /// <summary>
+        /// Attempts to get a token interactively using the device's browser.
+        /// </summary>
+        private async Task<AuthenticationResult> GetTokenInteractivelyAsync()
+        {
+            var pca = await _pca.Value;
+
+            var result = await pca.AcquireTokenInteractive(scopes)
+                .ExecuteAsync();
+
+            // Store the user ID to make account retrieval easier
+            _userIdentifier = result.Account.HomeAccountId.Identifier;
+            return result;
+        }
+
+        public async Task AuthenticateRequestAsync(
+            RequestInformation request,
+            Dictionary<string, object> additionalAuthenticationContext = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (request.URI.Host == "graph.microsoft.com")
+            {
+                // First try to get the token silently
+                var result = await GetTokenSilentlyAsync();
+                if (result == null)
+                {
+                    // If silent acquisition fails, try interactive
+                    result = await GetTokenInteractivelyAsync();
+                }
+
+                request.Headers.Add("Authorization", $"Bearer {result.AccessToken}");
+            }
+        }
+
     }
-    
+
 
 
 }

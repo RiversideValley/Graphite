@@ -188,7 +188,7 @@ public sealed partial class WebContent : Page
         };
 
 
-        s.CoreWebView2.NavigationStarting +=  (sender, args) =>
+        s.CoreWebView2.NavigationStarting += (sender, args) =>
         {
             ProgressLoading.IsIndeterminate = true;
             ProgressLoading.Visibility = Visibility.Visible;
@@ -273,6 +273,38 @@ public sealed partial class WebContent : Page
             param?.TabView.TabItems.Add(window.CreateNewTab(typeof(WebContent), args.Uri));
             args.Handled = true;
         };
+
+        // doesn't work for auth into ms page, althogh a cool way of looking at the traffic
+        // for each request 
+
+
+        //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+
+        //s.CoreWebView2.WebResourceRequested += async (sender, args) =>
+        //{
+        //    if (!AppService.MsalService.IsSignedIn) return;
+
+        //    var answer = await AppService.MsalService.SignInAsync();
+
+        //    string script = $"localStorage.setItem('auth_token', '{answer.AccessToken}');";
+        //    // Execute script to set token in local storage
+        //    await sender.ExecuteScriptAsync(script);
+
+        //    var request = args.Request;
+        //    var headers = request.Headers;
+
+        //    if (answer.AccessToken is not null)
+        //    {
+        //        headers.SetHeader("Authorization", $"Bearer {answer.AccessToken}");
+        //        var cookieManager = sender.CookieManager;
+        //        var cookie = cookieManager.CreateCookie("Authorization", $"Authorization=Bearer {answer.AccessToken}", "https://www.microsoft365.com", "/");
+        //        cookieManager.AddOrUpdateCookie(cookie);
+        //    }
+
+        //};
+
+        // Navigate to the desired URL
+
 
     }
 

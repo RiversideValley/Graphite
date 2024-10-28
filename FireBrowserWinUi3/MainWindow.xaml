@@ -664,12 +664,12 @@
                                                 <core:InvokeCommandAction Command="{x:Bind ViewModelMain.MsOptionsWebCommand}" CommandParameter="{Binding ElementName=NavViewOffice365, Path=SelectedItem}" />
                                             </core:EventTriggerBehavior>
                                         </interactivity:Interaction.Behaviors>
-                                        <ListViewItem Content="Microsoft 365" Tag="https://www.office.com/?auth=1" />
-                                        <ListViewItem Content="Outlook" Tag="https://outlook.office.com/mail/?auth=1" />
-                                        <ListViewItem Content="OneDrive" Tag="https://onedrive.live.com/login/" />
-                                        <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=1" />
-                                        <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=1" />
-                                        <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint/?auth=1" />
+                                        <ListViewItem Content="Microsoft 365" Tag="https://www.microsoft365.com/?auth=2" />
+                                        <ListViewItem Content="Outlook" Tag="https://www.microsoft365.com/outlook/?auth=2" />
+                                        <ListViewItem Content="OneDrive" Tag="https://www.microsoft365.com/onedrive/?auth=2" />
+                                        <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=2" />
+                                        <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=2" />
+                                        <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint/?auth=2" />
                                     </ListView>
                                 </StackPanel>
 
@@ -710,10 +710,7 @@
                     Foreground="{ThemeResource TextFillColorDisabledBrush}"
                     IsDoubleTapEnabled="True"
                     Style="{StaticResource QuietButtonStyle}">
-                    <FontIcon
-                        d:Glyph="&#xE72E;"
-                        FontFamily="{StaticResource FluentIcons}"
-                        Glyph="{x:Bind ViewModel.SecurityIcon, Mode=OneWay}" />
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="{x:Bind ViewModel.SecurityIcon, Mode=OneWay}" />
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyout.MenuFlyoutPresenterStyle>

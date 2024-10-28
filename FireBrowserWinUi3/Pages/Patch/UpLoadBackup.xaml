@@ -17,20 +17,32 @@
     </Window.SystemBackdrop>
     <Grid>
         <TextBlock
-            Margin="4"
+            Grid.Row="1"
+            Margin="2,32,2,2"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-            Text="Backup Request" />
-        <ContentPresenter Margin="2,32,2,2" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+            FontSize="28"
+            FontWeight="SemiBold"
+            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+            Text="Backup File Request" />
+        <ContentPresenter Margin="2,72,2,2" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
             <Grid
                 x:Name="MainGrid"
                 Margin="{ThemeResource ContentDialogBorderWidth}"
                 Padding="10">
+
                 <StackPanel
                     Padding="2"
                     Orientation="Vertical"
-                    Spacing="8">
+                    Spacing="12">
+                    <TextBlock
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        FontSize="24"
+                        FontStyle="Italic"
+                        FontWeight="ExtraBold"
+                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                        Text="{x:Bind ViewModel.SelectedUser.Email, Mode=OneWay}" />
                     <TextBox
                         x:Name="OutFile"
                         FontSize="14"
@@ -38,7 +50,8 @@
                         IsEnabled="False"
                         PlaceholderText="File Selected..."
                         Text="{x:Bind ViewModel.FileSelected.BlobName, Mode=OneWay}" />
-                    <ComboBox
+
+                    <!--<ComboBox
                         x:Name="UserComboBox"
                         Margin="0,10,0,10"
                         CompositeMode="Inherit"
@@ -46,10 +59,10 @@
                         Foreground="AntiqueWhite"
                         ItemsSource="{x:Bind ViewModel.Users, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="Receiver Name"
-                        SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=OneWay}" />
+                        SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
                     <ListView
                         x:Name="FileUploaded"
-                        MaxHeight="350"
+                        MaxHeight="250"
                         Margin="4,0,0,4"
                         BorderBrush="{ThemeResource AccentAAFillColorTertiaryBrush}"
                         BorderThickness=".5"
@@ -78,16 +91,35 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <StackPanel Orientation="Horizontal" Spacing="10">
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="10">
                         <Button
                             Command="{x:Bind ViewModel.SelectFileCommand}"
-                            Content="Select File"
+                            Content="Download Backup"
                             RequestedTheme="Light" />
                         <Button
                             Command="{x:Bind ViewModel.GenerateAndSendCommand}"
                             CommandParameter="{x:Bind ViewModel.FileSelected, Mode=OneTime}"
-                            Content="Generate SAS Token and Send Email"
+                            Content="Generate SAS Token and Share Url"
                             RequestedTheme="Light" />
+                    </StackPanel>
+                    <StackPanel
+                        x:Name="FileNewSas"
+                        Margin="6"
+                        Padding="4"
+                        VerticalAlignment="Bottom"
+                        BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
+                        BorderThickness=".5"
+                        Orientation="Vertical"
+                        Spacing="10"
+                        Visibility="{x:Bind ViewModel.IsFileNewSas, Mode=OneWay}">
+                        <TextBlock FontFamily="Arial Times New Roman" FontSize="23">Copy and Paste Into Browser ( Urls are valid for 1 hour. )</TextBlock>
+                        <TextBox
+                            Height="100"
+                            Text="{x:Bind ViewModel.FileNewSas.BlobUrl, Mode=OneWay}"
+                            TextWrapping="Wrap" />
                     </StackPanel>
 
                 </StackPanel>
@@ -102,22 +134,23 @@
                     <TextBlock x:Uid="AppName" Style="{ThemeResource NavigationViewItemHeaderTextStyle}" />
 
                 </StackPanel>
-
+                <InfoBar
+                    MaxWidth="480"
+                    Margin="5,0,25,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource AppBarBorderThemeBrush}"
+                    BorderThickness="1.5"
+                    Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
+                    </interactivity:Interaction.Behaviors>
+                </InfoBar>
             </Grid>
+
         </ContentPresenter>
-        <InfoBar
-            MaxWidth="480"
-            Margin="5,0,25,5"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
-            BorderBrush="{ThemeResource AppBarBorderThemeBrush}"
-            BorderThickness="1.5"
-            Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
-            <interactivity:Interaction.Behaviors>
-                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
-            </interactivity:Interaction.Behaviors>
-        </InfoBar>
+
     </Grid>
 
 </Window>

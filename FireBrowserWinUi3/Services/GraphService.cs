@@ -5,10 +5,14 @@ using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3Exceptions;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.Security;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using Windows.System.Profile;
 
 
@@ -16,14 +20,14 @@ namespace FireBrowserWinUi3.Services
 {
     public class GraphService : IGraphService
     {
-        
+
         private User _user;
         private TimeZoneInfo _userTimeZone;
-        public  BitmapImage ProfileMicrosoft {  get; set; }  
+        public BitmapImage ProfileMicrosoft { get; set; }
 
         public GraphService()
         {
-            
+
         }
 
         public Task CreateEventAsync(Event newEvent)
@@ -53,7 +57,7 @@ namespace FireBrowserWinUi3.Services
 
             var timeZoneString = DeviceInfo.GetDevicePlatformAsync() == "Desktop" ?
                 timeZone.StandardName : timeZone.Id;
-            
+
             return graphClient.Me
                 .CalendarView
                 .GetAsync(requestConfiguration =>
@@ -78,7 +82,7 @@ namespace FireBrowserWinUi3.Services
         {
             try
             {
-                
+
 
                 if (AppService.MsalService.IsSignedIn)
                 {
@@ -99,9 +103,9 @@ namespace FireBrowserWinUi3.Services
             {
                 ExceptionLogger.LogException(e);
             }
-            
+
             return null;
-            
+
         }
 
         public async Task<Stream> GetUserPhotoAsync()
@@ -111,31 +115,46 @@ namespace FireBrowserWinUi3.Services
 
             if (AppService.MsalService.IsSignedIn)
             {
-                    // Get the user photo, cache for subsequent calls
+                // Get the user photo, cache for subsequent calls
                 _userPhoto = await graphClient.Me
                     .Photo
                     .Content
                     .GetAsync();
 
+
                 if (_userPhoto is not null)
                 {
                     if (ProfileMicrosoft is null)
                     {
-                            var memoryStream = new MemoryStream();
-                            await _userPhoto.CopyToAsync(memoryStream);
-                            memoryStream.Position = 0;
-                            var bitmapImage = new BitmapImage();
-                            await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
-                            ProfileMicrosoft = bitmapImage; 
-                            
+                        var memoryStream = new MemoryStream();
+                        await _userPhoto.CopyToAsync(memoryStream);
+                        memoryStream.Position = 0;
+                        var bitmapImage = new BitmapImage();
+                        await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                        ProfileMicrosoft = bitmapImage;
+
                     }
-                    return _userPhoto ;
+                    return _userPhoto;
+                }
+                else
+                {
+
+                    var memoryStream = new MemoryStream();
+                    using (FileStream fileStream = new FileStream("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read))
+                    {
+                        await fileStream.CopyToAsync(memoryStream);
+                        memoryStream.Position = 0;
+                        var bitmapImage = new BitmapImage();
+                        await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                        ProfileMicrosoft = bitmapImage;
+                    }
+
                 }
             }
 
-            return null;    
+            return null;
         }
 
-       
+
     }
 }
