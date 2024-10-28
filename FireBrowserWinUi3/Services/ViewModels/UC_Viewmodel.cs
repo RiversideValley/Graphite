@@ -135,10 +135,10 @@ namespace FireBrowserWinUi3
             var win = new UpLoadBackup();
             win.AppWindow.SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.CompactOverlay);
             var desktop = await Windowing.SizeWindow();
-            win.AppWindow.Resize(new Windows.Graphics.SizeInt32(desktop.Value.Width / 2, desktop.Value.Height / 2));
+            win.AppWindow.MoveAndResize(new(ParentWindow.AppWindow.Position.X, 0, desktop.Value.Width / 2, desktop.Value.Height / 2));
             win.ExtendsContentIntoTitleBar = true;
-            Windowing.Center(WindowNative.GetWindowHandle(win));
-            win.Activate();
+
+            win.AppWindow?.ShowOnceWithRequestedStartupState();
         }
 
         [RelayCommand]

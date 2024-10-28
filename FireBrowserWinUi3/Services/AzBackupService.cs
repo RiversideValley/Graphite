@@ -218,13 +218,10 @@ namespace FireBrowserWinUi3.Services
             try
             {
 
-                //var storageAccount = CloudStorageAccount.Parse(ConnString);
-                //var blobClient = storageAccount.CreateCloudBlobClient();
-                //var container = blobClient.GetContainerReference("firebackups");
+
                 var response = new object();
                 var fileName = blobName;
                 // Upload the file to Azure Blob Storage
-                //var blockBlob = container.GetBlockBlobReference(fileName);
                 var LocalFilePath = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), blobName));
                 BlobServiceClient _blobServiceClient = new BlobServiceClient(ConnString);
                 BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
