@@ -20,14 +20,14 @@ namespace FireBrowserWinUi3.Services
 {
     public class GraphService : IGraphService
     {
-        
+
         private User _user;
         private TimeZoneInfo _userTimeZone;
-        public  BitmapImage ProfileMicrosoft {  get; set; }  
+        public BitmapImage ProfileMicrosoft { get; set; }
 
         public GraphService()
         {
-            
+
         }
 
         public Task CreateEventAsync(Event newEvent)
@@ -57,7 +57,7 @@ namespace FireBrowserWinUi3.Services
 
             var timeZoneString = DeviceInfo.GetDevicePlatformAsync() == "Desktop" ?
                 timeZone.StandardName : timeZone.Id;
-            
+
             return graphClient.Me
                 .CalendarView
                 .GetAsync(requestConfiguration =>
@@ -82,7 +82,7 @@ namespace FireBrowserWinUi3.Services
         {
             try
             {
-                
+
 
                 if (AppService.MsalService.IsSignedIn)
                 {
@@ -103,9 +103,9 @@ namespace FireBrowserWinUi3.Services
             {
                 ExceptionLogger.LogException(e);
             }
-            
+
             return null;
-            
+
         }
 
         public async Task<Stream> GetUserPhotoAsync()
@@ -115,7 +115,7 @@ namespace FireBrowserWinUi3.Services
 
             if (AppService.MsalService.IsSignedIn)
             {
-                    // Get the user photo, cache for subsequent calls
+                // Get the user photo, cache for subsequent calls
                 _userPhoto = await graphClient.Me
                     .Photo
                     .Content
@@ -136,11 +136,13 @@ namespace FireBrowserWinUi3.Services
                     }
                     return _userPhoto;
                 }
-                else {
-                    
+                else
+                {
+
                     var memoryStream = new MemoryStream();
-                    using (FileStream fileStream = new FileStream("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read)) {
-                        await fileStream.CopyToAsync(memoryStream);    
+                    using (FileStream fileStream = new FileStream("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read))
+                    {
+                        await fileStream.CopyToAsync(memoryStream);
                         memoryStream.Position = 0;
                         var bitmapImage = new BitmapImage();
                         await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
@@ -150,9 +152,9 @@ namespace FireBrowserWinUi3.Services
                 }
             }
 
-            return null;    
+            return null;
         }
 
-       
+
     }
 }

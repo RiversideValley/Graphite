@@ -217,19 +217,19 @@ namespace FireBrowserWinUi3.Services
         {
             try
             {
-                IRandomAccessStream fileStream;
-                var storageAccount = CloudStorageAccount.Parse(ConnString);
-                var blobClient = storageAccount.CreateCloudBlobClient();
-                var container = blobClient.GetContainerReference("firebackups");
+
+                //var storageAccount = CloudStorageAccount.Parse(ConnString);
+                //var blobClient = storageAccount.CreateCloudBlobClient();
+                //var container = blobClient.GetContainerReference("firebackups");
                 var response = new object();
                 var fileName = blobName;
                 // Upload the file to Azure Blob Storage
-                var blockBlob = container.GetBlockBlobReference(fileName);
+                //var blockBlob = container.GetBlockBlobReference(fileName);
                 var LocalFilePath = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), blobName));
                 BlobServiceClient _blobServiceClient = new BlobServiceClient(ConnString);
                 BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
-                BlobClient blobClientArgs = containerClient.GetBlobClient(blobName);
-                Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blobClientArgs.GetPropertiesAsync();
+                BlobClient blockBlob = containerClient.GetBlobClient(blobName);
+                Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blockBlob.GetPropertiesAsync();
 
                 if (File.Exists(LocalFilePath.FullName))
                 {
@@ -245,7 +245,7 @@ namespace FireBrowserWinUi3.Services
                         {
                             using (var stream = new MemoryStream())
                             {
-                                await blockBlob.DownloadToStreamAsync(stream);
+                                await blockBlob.DownloadToAsync(stream);
                                 stream.Position = 0;
                                 using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
                                 {
@@ -277,7 +277,7 @@ namespace FireBrowserWinUi3.Services
                     {
                         using (var stream = new MemoryStream())
                         {
-                            await blockBlob.DownloadToStreamAsync(stream);
+                            await blockBlob.DownloadToAsync(stream);
                             stream.Position = 0;
                             using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
                             {

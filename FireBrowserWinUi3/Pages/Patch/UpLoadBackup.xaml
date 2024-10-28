@@ -23,7 +23,7 @@
             VerticalAlignment="Top"
             FontSize="28"
             FontWeight="SemiBold"
-            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
             Text="Backup File Request" />
         <ContentPresenter Margin="2,72,2,2" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
             <Grid
