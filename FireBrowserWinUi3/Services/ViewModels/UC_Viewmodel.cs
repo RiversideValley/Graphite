@@ -137,8 +137,10 @@ namespace FireBrowserWinUi3
             var desktop = await Windowing.SizeWindow();
             win.AppWindow.MoveAndResize(new(ParentWindow.AppWindow.Position.X, 0, desktop.Value.Width / 2, desktop.Value.Height / 2));
             win.ExtendsContentIntoTitleBar = true;
-
+            Windowing.ShowWindow(WindowNative.GetWindowHandle(win), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
+            Windowing.AnimateWindow(WindowNative.GetWindowHandle(win), 2000, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_ACTIVATE);
             win.AppWindow?.ShowOnceWithRequestedStartupState();
+
         }
 
         [RelayCommand]
