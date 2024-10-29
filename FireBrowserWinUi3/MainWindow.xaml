@@ -665,7 +665,7 @@
                                             </core:EventTriggerBehavior>
                                         </interactivity:Interaction.Behaviors>
                                         <ListViewItem Content="Microsoft 365" Tag="https://www.microsoft365.com/?auth=2" />
-                                        <ListViewItem Content="Outlook" Tag="https://www.microsoft365.com/outlook/?auth=2" />
+                                        <ListViewItem Content="Outlook" Tag="https://outlook.live.com/mail/?auth=2" />
                                         <ListViewItem Content="OneDrive" Tag="https://www.microsoft365.com/onedrive/?auth=2" />
                                         <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=2" />
                                         <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=2" />

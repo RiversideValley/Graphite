@@ -182,6 +182,58 @@ namespace FireBrowserWinUi3.Controls
     }
     await Task.WhenAll(tasks);
 }
+         public List<string> ExtractCookies(AuthenticationResult result)
+    {
+        var cookies = new List<string>();
+        var cookieHeader = result.AccessToken.Split('.')[0];
+        var cookieParts = cookieHeader.Split(';');
+        foreach (var part in cookieParts)
+        {
+            cookies.Add(part.Trim());
+        }
+        return cookies;
+    }
+
+
+    public async Task SetCookiesInWebView2(CoreWebView2 webView2, List<string> cookies)
+    {
+
+
+        //foreach (var cookie in cookies)
+        //{
+        //    ;
+        //    webView2.CookieManager.AddOrUpdateCookie(cookie);
+        //}
+    }
+        
+   
+    public async Task<string> GetAccessTokenAsync()
+    {
+        var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/token");
+        var uri = "https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/token";
+        string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+        string ClientId = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("grant_type", "client_credentials"),
+            new KeyValuePair<string, string>("client_id", ClientId),
+            new KeyValuePair<string, string>("redirect_uri", RedirectUri),
+            new KeyValuePair<string, string>("scope", ".default")
+        });
+
+        request.Content = content;
+        var response = await client.SendAsync(request);
+
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        // Extract the access token from the response
+        // (You might want to use a JSON parser here)
+        return responseBody;
+    }
+
+
          */
     }
 }

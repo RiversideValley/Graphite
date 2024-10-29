@@ -14,10 +14,17 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WinRT.Interop;
+using static FireBrowserWinUi3.Services.ProcessStarter;
+using static System.Formats.Asn1.AsnWriter;
+using static System.Windows.Forms.AxHost;
 
 namespace FireBrowserWinUi3.Services.ViewModels;
 
@@ -63,13 +70,17 @@ public partial class MainWindowViewModel : ObservableRecipient
 
     }
 
+   
     [RelayCommand]
     private void MsOptionsWeb(object sender)
     {
         try
         {
+
+
             MainView?.NavigateToUrl((sender as ListViewItem).Tag.ToString());
             MainView?.btnMsApps.Flyout.Hide();
+
         }
         catch (Exception)
         {
@@ -91,27 +102,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
     }
 
-    public List<string> ExtractCookies(AuthenticationResult result)
-    {
-        var cookies = new List<string>();
-        var cookieHeader = result.AccessToken.Split('.')[0];
-        var cookieParts = cookieHeader.Split(';');
-        foreach (var part in cookieParts)
-        {
-            cookies.Add(part.Trim());
-        }
-        return cookies;
-    }
-    public async Task SetCookiesInWebView2(CoreWebView2 webView2, List<string> cookies)
-    {
 
-
-        //foreach (var cookie in cookies)
-        //{
-        //    ;
-        //    webView2.CookieManager.AddOrUpdateCookie(cookie);
-        //}
-    }
     public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
     {
         OnPropertyChanged(propertyName);

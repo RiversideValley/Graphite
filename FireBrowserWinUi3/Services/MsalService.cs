@@ -111,7 +111,9 @@ namespace FireBrowserWinUi3.Services
             //string RedirectUri = "http://localhost";
             IntPtr mainWnd = IntPtr.Zero;
 
-            mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
+            if (AppService.ActiveWindow is not null)
+                mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow!);
+
             if (mainWnd == IntPtr.Zero)
             {
                 mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);

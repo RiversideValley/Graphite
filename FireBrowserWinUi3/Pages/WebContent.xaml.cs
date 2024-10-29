@@ -1,3 +1,4 @@
+using Azure.Core;
 using CommunityToolkit.WinUI.Helpers;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Services;
@@ -16,6 +17,8 @@ using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -115,6 +118,7 @@ public sealed partial class WebContent : Page
         ShareUIHelper.ShowShareUIURL(url, title, hWnd);
     }
 
+    //static int FirstAttempt = 0;
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -277,29 +281,65 @@ public sealed partial class WebContent : Page
         // doesn't work for auth into ms page, althogh a cool way of looking at the traffic
         // for each request 
 
-
         //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
         //s.CoreWebView2.WebResourceRequested += async (sender, args) =>
         //{
+
+
         //    if (!AppService.MsalService.IsSignedIn) return;
 
-        //    var answer = await AppService.MsalService.SignInAsync();
+        //    if (FirstAttempt > 0) return;
+        //    else
+        //        FirstAttempt++;
 
-        //    string script = $"localStorage.setItem('auth_token', '{answer.AccessToken}');";
-        //    // Execute script to set token in local storage
+        //    var body = await GetAccessTokenAsync();
+
+        //    string script = $"localStorage.setItem('www.microsoft365.com','{body}'); ";
+
         //    await sender.ExecuteScriptAsync(script);
+
+        //    var answer = await AppService.MsalService.SignInAsync();
 
         //    var request = args.Request;
         //    var headers = request.Headers;
 
-        //    if (answer.AccessToken is not null)
-        //    {
-        //        headers.SetHeader("Authorization", $"Bearer {answer.AccessToken}");
-        //        var cookieManager = sender.CookieManager;
-        //        var cookie = cookieManager.CreateCookie("Authorization", $"Authorization=Bearer {answer.AccessToken}", "https://www.microsoft365.com", "/");
-        //        cookieManager.AddOrUpdateCookie(cookie);
-        //    }
+        //    headers.SetHeader("Authorization", body);
+        //    var cookieManager = sender.CookieManager;
+        //    var cookie = cookieManager.CreateCookie("Authorization", body, "https://www.microsoft365.com", "/");
+        //    cookieManager.AddOrUpdateCookie(cookie);
+
+        //    //string ClientId = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+        //    //string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+
+        //    //var postData = new Dictionary<string, string>
+        //    //{
+        //    //    { "grant_type" , "client_credentials" },
+        //    //    { "client_id", ClientId },
+        //    //    { "scope", ".default" },
+        //    //    { "code", body },
+        //    //    { "redirect_uri", RedirectUri }
+        //    //};
+
+        //    //var uri = new Uri("https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/authorize");
+
+        //    //var requestContent = new FormUrlEncodedContent(postData);
+
+        //    //var web2req = sender.Environment.CreateWebResourceRequest(
+        //    //    uri.ToString(),
+        //    //    "POST",
+        //    //    requestContent.ReadAsStream().AsRandomAccessStream(),
+        //    //    "Content-Type: application/x-www-form-urlencoded");
+
+        //    //sender.NavigateWithWebResourceRequest(web2req);
+
+        //    //if (answer.AccessToken is not null)
+        //    //{
+        //    //    headers.SetHeader("Authorization", body);
+        //    //    var cookieManager = sender.CookieManager;
+        //    //    var cookie = cookieManager.CreateCookie("Authorization", body, "https://www.microsoft365.com", "/");
+        //    //    cookieManager.AddOrUpdateCookie(cookie);
+        //    //}
 
         //};
 
@@ -308,6 +348,30 @@ public sealed partial class WebContent : Page
 
     }
 
+    public async Task<string> GetAccessTokenAsync()
+    {
+        var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/token");
+        string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+        string ClientId = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("grant_type", "client_credentials"),
+            new KeyValuePair<string, string>("client_id", ClientId),
+             new KeyValuePair<string, string>("redirect_uri", RedirectUri),
+            new KeyValuePair<string, string>("scope", ".default")
+        });
+
+        request.Content = content;
+        var response = await client.SendAsync(request);
+
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        // Extract the access token from the response
+        // (You might want to use a JSON parser here)
+        return responseBody;
+    }
     private void CoreWebView2_DownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
     {
         var mainWindow = (Application.Current as App)?.m_window as MainWindow;

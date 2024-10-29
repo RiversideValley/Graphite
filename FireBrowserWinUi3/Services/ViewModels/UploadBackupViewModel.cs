@@ -33,6 +33,7 @@ using System.Web;
 using Microsoft.Graph.Models;
 using Windows.Services.Maps;
 using FireBrowserWinUi3Exceptions;
+using Microsoft.Web.WebView2.Core;
 
 namespace FireBrowserWinUi3.Services.ViewModels
 {
@@ -41,7 +42,7 @@ namespace FireBrowserWinUi3.Services.ViewModels
         public ObservableCollection<EmailUser> Users { get; set; }
         public ObservableCollection<UserEntity> FilesUpload { get; set; }
         public EmailUser SelectedUser { get; set; }
-        internal AzBackupService azBackup { get; set; }
+        internal AzBackupService AzBackup { get; set; }
 
         [ObservableProperty]
         private UserEntity _FileSelected;
@@ -56,22 +57,18 @@ namespace FireBrowserWinUi3.Services.ViewModels
 
             if (user is not null)
             {
-                //Users = new ObservableCollection<EmailUser>
-                //{
-                //    new EmailUser { Name = user.Username, Email = user.Username }
-                //};
-                SelectedUser = new EmailUser { Name = user.Username, Email = user.Username }; 
+                SelectedUser = new EmailUser { Name = user.Username, Email = user.Username };
                 var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
-                azBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
+                AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
 
-                var list = azBackup.GetUploadFileByUser(user.Username);
+                var list = AzBackup.GetUploadFileByUser(user.Username);
                 FilesUpload = [.. list];
             }
         }
 
         partial void OnFileSelectedChanged(UserEntity value)
         {
-            FileNewSas = null; 
+            FileNewSas = null;
         }
 
         [RelayCommand]
@@ -83,7 +80,7 @@ namespace FireBrowserWinUi3.Services.ViewModels
                 return;
             }
 
-            var result = await azBackup.DownloadBackupFile(FileSelected.BlobName);
+            var result = await AzBackup.DownloadBackupFile(FileSelected.BlobName);
             if (result is null) return;
 
             var note = new Notification
@@ -97,76 +94,69 @@ namespace FireBrowserWinUi3.Services.ViewModels
             UpLoadBackup.Instance?.NotificationQueue.Show(note);
 
         }
-        [RelayCommand]
-        private async Task OutToBrowswer(string fileSasUrl) {
 
-            await Launcher.LaunchUriAsync(new Uri(fileSasUrl));
-        }
 
-        public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
-        {
-            var message = new Message
-            {
-                Subject = "Hello from FireBrowser Devs Cloud",
-                Body = new ItemBody
-                {
-                    ContentType = BodyType.Html,
-                    Content = $"<html><title>Downloadable Cloud Link</title><body><a href='{sasUrl}'>Cloud Backup Download Link</a></body></html>"
-                },
-                ToRecipients = new List<Recipient>
-            {
-                new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = toEmail
-                    }
-                }
-            }
-            };
+        //public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
+        //{
+        //    var message = new Message
+        //    {
+        //        Subject = "Hello from FireBrowser Devs Cloud",
+        //        Body = new ItemBody
+        //        {
+        //            ContentType = BodyType.Html,
+        //            Content = $"<html><title>Downloadable Cloud Link</title><body><a href='{sasUrl}'>Cloud Backup Download Link</a></body></html>"
+        //        },
+        //        ToRecipients = new List<Recipient>
+        //    {
+        //        new Recipient
+        //        {
+        //            EmailAddress = new EmailAddress
+        //            {
+        //                Address = toEmail
+        //            }
+        //        }
+        //    }
+        //    };
 
-            try
-            {
-                var user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult();
-                await AppService.MsalService.GraphClient.Users[user.Username].SendMail.PostAsync(new Microsoft.Graph.Users.Item.SendMail.SendMailPostRequestBody() { Message = message });
+        //    try
+        //    {
+        //        var user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult();
+        //        await AppService.MsalService.GraphClient.Users[user.Username].SendMail.PostAsync(new Microsoft.Graph.Users.Item.SendMail.SendMailPostRequestBody() { Message = message });
 
-            }
-            catch (Exception e)
-            {
-                ExceptionLogger.LogException(e);
-                throw;
-            }
-            
-            Console.WriteLine("Email sent successfully.");
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        ExceptionLogger.LogException(e);
+        //        throw;
+        //    }
 
-        private async Task SendEmailAsync(string toEmail, string sasUrl)
-        {
+        //    Console.WriteLine("Email sent successfully.");
+        //}
 
-            var email = new EmailMessage();
-            email.Subject = "Fire Broswer Backup Download";
-            email.To.Add(new EmailRecipient(toEmail));
-            email.Body = $"<html><title>Downloadable Cloud Link</title><body><a href='{sasUrl}'>Cloud Backup Download Link</a></body></html>";
-            email.SentTime = DateTime.Now;
-            email.Importance = EmailImportance.High;
-            await EmailManager.ShowComposeNewEmailAsync(email);
-        
-            UpLoadBackup.Instance?.NotificationQueue.Show("Your download linke was sent to your email address:" + toEmail, 2000, "FireBrowser Backup Download");
-        }
+        //private async Task SendEmailAsync(string toEmail, string sasUrl)
+        //{
+
+        //    var email = new EmailMessage();
+        //    email.Subject = "Fire Broswer Backup Download";
+        //    email.To.Add(new EmailRecipient(toEmail));
+        //    email.Body = $"<html><title>Downloadable Cloud Link</title><body><a href='{sasUrl}'>Cloud Backup Download Link</a></body></html>";
+        //    email.SentTime = DateTime.Now;
+        //    email.Importance = EmailImportance.High;
+        //    await EmailManager.ShowComposeNewEmailAsync(email);
+
+        //    UpLoadBackup.Instance?.NotificationQueue.Show("Your download linke was sent to your email address:" + toEmail, 2000, "FireBrowser Backup Download");
+        //}
 
         [RelayCommand]
-        private  void GenerateAndSend(UserEntity file)
+        private void GenerateAndSend(UserEntity file)
         {
             // no selected file leave
 
-            if (FileSelected is null) {
+            if (FileSelected is null)
+            {
                 UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file!", 3000, "Backups");
                 return;
             }
-            //if (SelectedUser is null) {
-            //    UpLoadBackup.Instance?.NotificationQueue.Show("Please select a reciptient from list", 3000, "Backups");
-            //    return;
-            //}
 
             // get ref to file on Azure Blob Storage
 
@@ -185,7 +175,7 @@ namespace FireBrowserWinUi3.Services.ViewModels
             var sasUrl = blob.Uri.AbsoluteUri + sasToken;
             sasUrl.Append('/');
             // Logic to send email
-            FileNewSas = FileSelected; 
+            FileNewSas = FileSelected;
             FileNewSas.BlobUrl = sasUrl;
 
             OnPropertyChanged(nameof(FileNewSas));

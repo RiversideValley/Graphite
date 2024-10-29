@@ -62,7 +62,7 @@ namespace FireBrowserWinUi3.Pages.Patch
             var windowHandle = WindowNative.GetWindowHandle(this);
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(20); // Adjust the interval for smoother animation
+            timer.Interval = TimeSpan.FromMilliseconds(40); // Adjust the interval for smoother animation
             timer.Tick += (s, args) => AnimateWindow(windowHandle);
             timer.Start();
 

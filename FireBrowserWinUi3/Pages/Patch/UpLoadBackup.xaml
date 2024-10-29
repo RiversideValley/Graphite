@@ -50,17 +50,7 @@
                         IsEnabled="False"
                         PlaceholderText="File Selected..."
                         Text="{x:Bind ViewModel.FileSelected.BlobName, Mode=OneWay}" />
-
-                    <!--<ComboBox
-                        x:Name="UserComboBox"
-                        Margin="0,10,0,10"
-                        CompositeMode="Inherit"
-                        DisplayMemberPath="Name"
-                        Foreground="AntiqueWhite"
-                        ItemsSource="{x:Bind ViewModel.Users, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="Receiver Name"
-                        SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
-                    <ListView
+                  <ListView
                         x:Name="FileUploaded"
                         MaxHeight="250"
                         Margin="4,0,0,4"
