@@ -207,6 +207,74 @@ namespace FireBrowserWinUi3.Controls
     }
         
    
+            // doesn't work for auth into ms page, althogh a cool way of looking at the traffic
+        // for each request 
+
+        //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+
+        //s.CoreWebView2.WebResourceRequested += async (sender, args) =>
+        //{
+
+
+        //    if (!AppService.MsalService.IsSignedIn) return;
+
+        //    if (FirstAttempt > 0) return;
+        //    else
+        //        FirstAttempt++;
+
+        //    var body = await GetAccessTokenAsync();
+
+        //    string script = $"localStorage.setItem('www.microsoft365.com','{body}'); ";
+
+        //    await sender.ExecuteScriptAsync(script);
+
+        //    var answer = await AppService.MsalService.SignInAsync();
+
+        //    var request = args.Request;
+        //    var headers = request.Headers;
+
+        //    headers.SetHeader("Authorization", body);
+        //    var cookieManager = sender.CookieManager;
+        //    var cookie = cookieManager.CreateCookie("Authorization", body, "https://www.microsoft365.com", "/");
+        //    cookieManager.AddOrUpdateCookie(cookie);
+
+        //    //string ClientId = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+        //    //string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+
+        //    //var postData = new Dictionary<string, string>
+        //    //{
+        //    //    { "grant_type" , "client_credentials" },
+        //    //    { "client_id", ClientId },
+        //    //    { "scope", ".default" },
+        //    //    { "code", body },
+        //    //    { "redirect_uri", RedirectUri }
+        //    //};
+
+        //    //var uri = new Uri("https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/authorize");
+
+        //    //var requestContent = new FormUrlEncodedContent(postData);
+
+        //    //var web2req = sender.Environment.CreateWebResourceRequest(
+        //    //    uri.ToString(),
+        //    //    "POST",
+        //    //    requestContent.ReadAsStream().AsRandomAccessStream(),
+        //    //    "Content-Type: application/x-www-form-urlencoded");
+
+        //    //sender.NavigateWithWebResourceRequest(web2req);
+
+        //    //if (answer.AccessToken is not null)
+        //    //{
+        //    //    headers.SetHeader("Authorization", body);
+        //    //    var cookieManager = sender.CookieManager;
+        //    //    var cookie = cookieManager.CreateCookie("Authorization", body, "https://www.microsoft365.com", "/");
+        //    //    cookieManager.AddOrUpdateCookie(cookie);
+        //    //}
+
+        //};
+
+        // Navigate to the desired URL
+
+
     public async Task<string> GetAccessTokenAsync()
     {
         var client = new HttpClient();
