@@ -59,10 +59,33 @@ public partial class MainWindowViewModel : ObservableRecipient
         {
             if (AppService.GraphService.ProfileMicrosoft is null)
             {
-                await AppService.GraphService.GetUserPhotoAsync();
+
+
+                using (var stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync())
+                {
+                    if (stream == null)
+                    {
+                        MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
+                        RaisePropertyChanges(nameof(MsProfilePicture));
+                        return;
+                    }
+
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    memoryStream.Position = 0;
+
+                    var bitmapImage = new BitmapImage();
+                    await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                    MsProfilePicture = bitmapImage;
+                    RaisePropertyChanges(nameof(MsProfilePicture));
+                }
+            }
+            else
+            {
                 MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
                 RaisePropertyChanges(nameof(MsProfilePicture));
             }
+
         }
 
         RaisePropertyChanges(nameof(IsMsLoginVisibility));
@@ -70,7 +93,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
     }
 
-   
+
     [RelayCommand]
     private void MsOptionsWeb(object sender)
     {

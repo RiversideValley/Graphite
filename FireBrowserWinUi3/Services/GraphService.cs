@@ -138,7 +138,6 @@ namespace FireBrowserWinUi3.Services
                 }
                 else
                 {
-
                     var memoryStream = new MemoryStream();
                     using (FileStream fileStream = new FileStream("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read))
                     {
