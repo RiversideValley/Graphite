@@ -148,8 +148,8 @@
                         <ImageBrush
                             AlignmentX="Center"
                             AlignmentY="Bottom"
-                            ImageSource="ms-appx:///Assets/fireglobe.jfif"
-                            Opacity=".6" />
+                            ImageSource="ms-appx:///Assets/globefire.jfif"
+                            Opacity="1" />
                     </ListView.Background>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:UserExtend">
