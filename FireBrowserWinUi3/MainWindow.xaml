@@ -565,6 +565,51 @@
                     </Grid>
                 </StackPanel>
             </Flyout>
+            <Flyout
+                x:Name="MsLoggedInOptions"
+                x:FieldModifier="Public"
+                Placement="Bottom">
+                <Grid
+                    Width="200"
+                    Height="400"
+                    Margin="0,0,10,0"
+                    Visibility="{x:Bind ViewModelMain.IsMsLoginVisibility, Mode=OneWay}">
+                    <StackPanel>
+                        <StackPanel Padding="4" Orientation="Vertical">
+                            <TextBlock
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Text="Microsoft 365" />
+                            <!--<AppBarButton
+                        Command="{x:Bind ViewModelMain.LoginToMicrosoftCommand}"
+                        Icon="People"
+                        Label="Login" />-->
+                        </StackPanel>
+                        <AppBarSeparator />
+                        <ListView
+                            x:Name="NavViewOffice365"
+                            Margin="4"
+                            SelectedItem="{x:Bind ViewModelMain.MsOptionSelected}">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <core:InvokeCommandAction Command="{x:Bind ViewModelMain.MsOptionsWebCommand}" CommandParameter="{Binding ElementName=NavViewOffice365, Path=SelectedItem}" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                            <ListViewItem Content="Microsoft 365" Tag="https://www.microsoft365.com/?auth=2" />
+                            <ListViewItem Content="Outlook" Tag="https://outlook.live.com/mail/?auth=1" />
+                            <ListViewItem Content="OneDrive" Tag="https://www.microsoft365.com/onedrive/?auth=2" />
+                            <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=2" />
+                            <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=2" />
+                            <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint/?auth=2" />
+                            <AppBarSeparator />
+                            <ListViewItem Content="Copilot (AI)" Tag="https://copilot.microsoft.com/?auth=2" />
+
+                        </ListView>
+                    </StackPanel>
+
+                </Grid>
+            </Flyout>
+
         </Grid.Resources>
         <firebrowser:FireBrowserTabViewContainer
             x:Name="Tabs"
@@ -633,43 +678,10 @@
                     Content="{firebrowser:FluentIcon Glyph=&#xE80F;}"
                     Style="{StaticResource QuietButtonStyle}"
                     Tag="Home" />
-                <Button ToolTipService.ToolTip="Microsoft Sign-In">
-                    <Button.Flyout>
-                        <Flyout>
-                            <Grid
-                                Width="200"
-                                Height="400"
-                                Margin="0,0,10,0"
-                                Visibility="{x:Bind ViewModelMain.IsMsButtonVisibility, Mode=OneWay}">
-                                <StackPanel>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock
-                                            FontSize="20"
-                                            FontWeight="Bold"
-                                            Text="Microsoft 365" />
-                                        <AppBarButton
-                                            Command="{x:Bind ViewModelMain.LoginToMicrosoftCommand}"
-                                            Icon="People"
-                                            Label="Login" />
-                                    </StackPanel>
-                                    <ListView x:Name="NavViewOffice365" SelectedItem="{x:Bind ViewModelMain.MsOptionSelected}">
-                                        <interactivity:Interaction.Behaviors>
-                                            <core:EventTriggerBehavior EventName="SelectionChanged">
-                                                <core:InvokeCommandAction Command="{x:Bind ViewModelMain.MsOptionsWebCommand}" CommandParameter="{Binding ElementName=NavViewOffice365, Path=SelectedItem}" />
-                                            </core:EventTriggerBehavior>
-                                        </interactivity:Interaction.Behaviors>
-                                        <ListViewItem Content="Microsoft 365" Tag="https://www.microsoft365.com/?auth=2" />
-                                        <ListViewItem Content="Outlook" Tag="https://outlook.live.com/mail/?auth=2" />
-                                        <ListViewItem Content="OneDrive" Tag="https://www.microsoft365.com/onedrive/?auth=2" />
-                                        <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=2" />
-                                        <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=2" />
-                                        <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint/?auth=2" />
-                                    </ListView>
-                                </StackPanel>
-
-                            </Grid>
-                        </Flyout>
-                    </Button.Flyout>
+                <Button
+                    Command="{x:Bind ViewModelMain.LoginToMicrosoftCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                    ToolTipService.ToolTip="Microsoft Sign-In">
                     <Image
                         Width="14"
                         Height="14"

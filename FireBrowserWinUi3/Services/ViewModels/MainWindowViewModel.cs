@@ -10,6 +10,7 @@ using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Web.WebView2.Core;
 using System;
@@ -129,7 +130,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 
             MainView?.NavigateToUrl((sender as ListViewItem).Tag.ToString());
-            //MainView?.btnMsApps.Flyout.Hide();
+            if (MainView.MsLoggedInOptions.IsOpen)
+                MainView.MsLoggedInOptions.Hide();
 
         }
         catch (Exception)
@@ -140,24 +142,21 @@ public partial class MainWindowViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private async Task LoginToMicrosoft()
+    private Task LoginToMicrosoft(object sender)
     {
-        //var answer = await AppService.MsalService.SignInAsync();
+        if (!AppService.IsAppUserAuthenicated)
+            MainView.NavigateToUrl("https://launcher.myapps.microsoft.com/api/signin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
+        else
+        {
+            IsMsLogin = true;
+            var flyout = MainView.MsLoggedInOptions;
+            //flyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+            FlyoutBase.SetAttachedFlyout((sender as Button), MainView.MsLoggedInOptions);
+            FlyoutBase.ShowAttachedFlyout((sender as Button));
+        }
 
-        //if (AppService.MsalService.IsSignedIn)
-        //{
-        //    await ValidateMicrosoft();
-        //}
+        return Task.CompletedTask;
 
-        MainView.NavigateToUrl("https://launcher.myapps.microsoft.com/api/signin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
-
-
-        //if (MainView.TabWebView is not null)
-        //{
-        //    RaisePropertyChanges(nameof(IsMsLogin));
-        //}
-
-        //await ValidateMicrosoft();
     }
 
 
