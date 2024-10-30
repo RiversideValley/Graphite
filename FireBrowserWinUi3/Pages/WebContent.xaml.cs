@@ -304,6 +304,8 @@ public sealed partial class WebContent : Page
 
         s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
         {
+            // add this msal.account.keys
+            // double check logout 
             await s.ExecuteScriptAsync("document.cookie").AsTask().ContinueWith(async cookieTask =>
             {
                 var cookies = cookieTask.Result;
