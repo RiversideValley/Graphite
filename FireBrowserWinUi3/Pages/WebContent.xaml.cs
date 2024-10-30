@@ -17,6 +17,7 @@ using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,8 +25,11 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
+using Windows.UI.WebUI;
 using WinRT.Interop;
 using static FireBrowserWinUi3.MainWindow;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace FireBrowserWinUi3.Pages;
 
@@ -192,8 +196,28 @@ public sealed partial class WebContent : Page
         };
 
 
+
         s.CoreWebView2.NavigationStarting += (sender, args) =>
         {
+
+            //s.DispatcherQueue.TryEnqueue(async () =>
+            //{
+
+            //    var user = await AppService.MsalService.SignInAsync();
+            //    if (user != null)
+            //    {
+            //        var token = user.AccessToken ?? null;
+            //        if (token == null) return;
+
+            //        string script = $"localStorage.setItem('msalToken','{token}'); ";
+
+            //        await sender.ExecuteScriptAsync(script);
+            //    }
+
+            //});
+
+
+
             ProgressLoading.IsIndeterminate = true;
             ProgressLoading.Visibility = Visibility.Visible;
 
@@ -278,7 +302,24 @@ public sealed partial class WebContent : Page
             args.Handled = true;
         };
 
-    
+        s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
+        {
+            await s.ExecuteScriptAsync("document.cookie").AsTask().ContinueWith(async cookieTask =>
+            {
+                var cookies = cookieTask.Result;
+                if (cookies.Contains("MUID"))
+                {
+                    AppService.IsAppUserAuthenicated = true;
+                }
+            });
+
+        };
+        //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+
+        //s.CoreWebView2.WebResourceRequested += async (sender, args) =>
+        //{
+
+        //};
 
     }
 

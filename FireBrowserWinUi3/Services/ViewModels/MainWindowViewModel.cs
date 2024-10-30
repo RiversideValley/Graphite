@@ -31,7 +31,10 @@ namespace FireBrowserWinUi3.Services.ViewModels;
 public partial class MainWindowViewModel : ObservableRecipient
 {
     internal MainWindow MainView { get; set; }
-    public bool IsMsLogin { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsMsLoginVisibility))]
+    public bool _IsMsLogin = AppService.IsAppUserAuthenicated;
 
     public BitmapImage MsProfilePicture { get; set; }
 
@@ -48,13 +51,13 @@ public partial class MainWindowViewModel : ObservableRecipient
     public MainWindowViewModel(IMessenger messenger) : base(messenger)
     {
         Messenger.Register<Message_Settings_Actions>(this, ReceivedStatus);
-        ValidateMicrosoft().ConfigureAwait(false);
+        //ValidateMicrosoft().ConfigureAwait(false);
     }
 
     private async Task ValidateMicrosoft()
     {
 
-        IsMsLogin = AppService.MsalService.IsSignedIn;
+        IsMsLogin = true; // AppService.MsalService.IsSignedIn;
         if (IsMsLogin)
         {
             if (AppService.GraphService.ProfileMicrosoft is null)
@@ -95,14 +98,38 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 
     [RelayCommand]
-    private void MsOptionsWeb(object sender)
+    private async Task MsOptionsWeb(object sender)
     {
         try
         {
+            //{
+            //    $"https://fizzledbydizzlelive.onmicrosoft.b2clogin.com/fizzledbydizzlelive.onmicrosoft.onmicrosoft.com/B2C_1A_signup_signin/oauth2/v2.0/authorize?client_id=<your-client-id>& redirect_uri=<your-redirect-uri>& response_type=code& scope=openid%20profile& state=<your-state>& nonce=<your-nonce>& prompt=login"
+
+            //    string ClientId = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+            //    string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
+
+            //    var postData = new Dictionary<string, string>
+            //    {
+            //        { "grant_type" , "client_credentials" },
+            //        { "client_id", ClientId },
+            //        { "scope", ".default" },
+            //        { "code", body },
+            //        { "redirect_uri", RedirectUri }
+            //    };
+
+            //    var uri = new Uri("https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/authorize");
+
+            //MainView?.NavigateToUrl("https://launcher.myapps.microsoft.com/api/signin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
+            //MainView?.NavigateToUrl("https://myapps.microsoft.com/?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
+
+
+
+            // web.Source = new("ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5");
+
 
 
             MainView?.NavigateToUrl((sender as ListViewItem).Tag.ToString());
-            MainView?.btnMsApps.Flyout.Hide();
+            //MainView?.btnMsApps.Flyout.Hide();
 
         }
         catch (Exception)
@@ -115,14 +142,22 @@ public partial class MainWindowViewModel : ObservableRecipient
     [RelayCommand]
     private async Task LoginToMicrosoft()
     {
+        //var answer = await AppService.MsalService.SignInAsync();
 
-        var answer = await AppService.MsalService.SignInAsync();
+        //if (AppService.MsalService.IsSignedIn)
+        //{
+        //    await ValidateMicrosoft();
+        //}
 
-        if (AppService.MsalService.IsSignedIn)
-        {
-            await ValidateMicrosoft();
-        }
+        MainView.NavigateToUrl("https://launcher.myapps.microsoft.com/api/signin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
 
+
+        //if (MainView.TabWebView is not null)
+        //{
+        //    RaisePropertyChanges(nameof(IsMsLogin));
+        //}
+
+        //await ValidateMicrosoft();
     }
 
 
