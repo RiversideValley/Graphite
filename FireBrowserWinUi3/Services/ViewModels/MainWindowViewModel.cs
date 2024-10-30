@@ -5,6 +5,7 @@ using CommunityToolkit.WinUI.Behaviors;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3Core.CoreUi;
 using FireBrowserWinUi3Core.Helpers;
+using FireBrowserWinUi3Exceptions;
 using FireBrowserWinUi3MultiCore;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;
@@ -99,46 +100,21 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 
     [RelayCommand]
-    private async Task MsOptionsWeb(object sender)
+    private  Task MsOptionsWeb(object sender)
     {
         try
         {
-            //{
-            //    $"https://fizzledbydizzlelive.onmicrosoft.b2clogin.com/fizzledbydizzlelive.onmicrosoft.onmicrosoft.com/B2C_1A_signup_signin/oauth2/v2.0/authorize?client_id=<your-client-id>& redirect_uri=<your-redirect-uri>& response_type=code& scope=openid%20profile& state=<your-state>& nonce=<your-nonce>& prompt=login"
-
-            //    string ClientId = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
-            //    string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
-
-            //    var postData = new Dictionary<string, string>
-            //    {
-            //        { "grant_type" , "client_credentials" },
-            //        { "client_id", ClientId },
-            //        { "scope", ".default" },
-            //        { "code", body },
-            //        { "redirect_uri", RedirectUri }
-            //    };
-
-            //    var uri = new Uri("https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/authorize?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5?scope=.default");
-
-            //MainView?.NavigateToUrl("https://launcher.myapps.microsoft.com/api/signin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
-            //MainView?.NavigateToUrl("https://myapps.microsoft.com/?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
-
-            // http://idmspecialist.com/
-
-            // web.Source = new("ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5");
-            // https://login.microsoftonline.com/fizzledbydizzlelive.onmicrosoft.com/oauth2/v2.0/authorize?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5?scope=.default
-
-            // https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=2793995e-0a7d-40d7-bd35-6968ba142197&scope=openid%20profile%20offline_access&redirect_uri=https%3A%2F%2Faccount.microsoft.com%2Fprofile&client-request-id=4cf0210d-abf0-4e60-ab52-5a288c40a636&response_mode=fragment&response_type=code&x-client-SKU=msal.js.browser&x-client-VER=2.37.1&client_info=1&code_challenge=sQi_hISGzmeuS7jjuW-Fvs8CaQ3VrT4piGS_qx_9OVI&code_challenge_method=S256&nonce=1ab7fddc-d3d9-428b-8808-332b3defc041&state=eyJpZCI6ImUxMjQ4MzcwLThiZjYtNGYxZC04MmI5LTY2YWE3MDlkNmM1MiIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0%3D
             MainView?.NavigateToUrl((sender as ListViewItem).Tag.ToString());
             if (MainView.MsLoggedInOptions.IsOpen)
                 MainView.MsLoggedInOptions.Hide();
 
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            ExceptionLogger.LogException(e);
             Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
         }
-
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -146,12 +122,10 @@ public partial class MainWindowViewModel : ObservableRecipient
     {
         if (!AppService.IsAppUserAuthenicated)
             MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&scope=openid profile offline_access&redirect_uri=https://account.microsoft.com/profile/&client-request-id=4cf0210d-abf0-4e60-ab52-5a288c40a636&response_mode=fragment&response_type=code&x-client-SKU=msal.js.browser&x-client-VER=2.37.1&client_info=1&code_challenge=sQi_hISGzmeuS7jjuW-Fvs8CaQ3VrT4piGS_qx_9OVI&code_challenge_method=S256&nonce=1ab7fddc-d3d9-428b-8808-332b3defc041&state=eyJpZCI6ImUxMjQ4MzcwLThiZjYtNGYxZC04MmI5LTY2YWE3MDlkNmM1MiIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0=");
-        //MainView.NavigateToUrl("https://launcher.myapps.microsoft.com/api/signin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5?tenantId=f0d59e50-f344-4cbc-b58a-37a7ffc5a17f");
         else
         {
             IsMsLogin = true;
             var flyout = MainView.MsLoggedInOptions;
-            //flyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             FlyoutBase.SetAttachedFlyout((sender as Button), MainView.MsLoggedInOptions);
             FlyoutBase.ShowAttachedFlyout((sender as Button));
         }
