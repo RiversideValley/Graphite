@@ -595,15 +595,23 @@
                                     <core:InvokeCommandAction Command="{x:Bind ViewModelMain.MsOptionsWebCommand}" CommandParameter="{Binding ElementName=NavViewOffice365, Path=SelectedItem}" />
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
-                            <ListViewItem Content="Microsoft 365" Tag="https://www.microsoft365.com/?auth=2" />
+                            <ListViewItem Tag="https://www.office.com/apps?auth=2">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Image
+                                        Width="24"
+                                        Height="24"
+                                        HorizontalAlignment="Left"
+                                        Source="ms-appx:///Assets/Microsoft.png" />
+                                    <TextBlock HorizontalAlignment="Right" Text="Office 365" />
+                                    <AppBarSeparator />
+                                </StackPanel>
+                            </ListViewItem>
                             <ListViewItem Content="Outlook" Tag="https://outlook.live.com/mail/?auth=1" />
-                            <ListViewItem Content="OneDrive" Tag="https://www.microsoft365.com/onedrive/?auth=2" />
-                            <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=2" />
-                            <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=2" />
-                            <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint/?auth=2" />
-                            <AppBarSeparator />
+                            <ListViewItem Content="OneDrive" Tag="https://onedrive.live.com/?auth-2" />
+                            <ListViewItem Content="Word" Tag="https://www.office.com/launch/Word/?auth=2" />
+                            <ListViewItem Content="Excel" Tag="https://www.office.com/launch/Excel?auth=2" />
+                            <ListViewItem Content="PowerPoint" Tag="https://www.office.com/launch/PowerPoint/?auth=2" />
                             <ListViewItem Content="Copilot (AI)" Tag="https://copilot.microsoft.com/?auth=2" />
-
                         </ListView>
                     </StackPanel>
 
