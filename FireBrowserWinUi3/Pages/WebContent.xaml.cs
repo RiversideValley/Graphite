@@ -8,12 +8,15 @@ using FireBrowserWinUi3Core.ShareHelper;
 using FireBrowserWinUi3DataCore.Actions;
 using FireBrowserWinUi3Exceptions;
 using FireBrowserWinUi3MultiCore;
+using FireBrowserWinUi3MultiCore.Helper;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -306,14 +309,41 @@ public sealed partial class WebContent : Page
         {
             // add this msal.account.keys
             // double check logout 
-            await s.ExecuteScriptAsync("document.cookie").AsTask().ContinueWith(async cookieTask =>
+            await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeys() {
+                                                        const keys = [];
+                                                        for (let i = 0; i < localStorage.length; i++) {
+                                                            const key = localStorage.key(i);
+                                                            if (key.includes(""msal.account"")) {
+                                                                keys.push({ key: key, value: JSON.parse(localStorage.getItem(key)), keyValue: JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem(key)))) });
+                                                            }
+                                                        }
+                                                        return keys;
+                                                    } return findMsalAccountKeys();})();"
+            ).AsTask().ContinueWith(keys =>
             {
-                var cookies = cookieTask.Result;
-                if (cookies.Contains("MUID"))
+                
+                    // Critical section here
+                JToken token = JToken.Parse(keys.Result);
+
+                if (token is JArray array)
                 {
-                    AppService.IsAppUserAuthenicated = true;
+                    if (array.Count > 0)
+                        AppService.IsAppUserAuthenicated = true;
+                   
                 }
+                
             });
+                
+             
+
+            //await s.ExecuteScriptAsync("document.cookie").AsTask().ContinueWith(async cookieTask =>
+            //{
+            //    var cookies = cookieTask.Result;
+            //    if (cookies.Contains("msal.token.keys"))
+            //    {
+            //        AppService.IsAppUserAuthenicated = true;
+            //    }
+            //});
 
         };
         //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
