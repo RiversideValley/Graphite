@@ -307,8 +307,33 @@ public sealed partial class WebContent : Page
 
         s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
         {
+
+            var head = e.Request.Headers;
+            var isHeader = head.ToList().Where(t => t.Key == "Authentication");
+            if (isHeader.Count() > 0)
+            {
+                foreach (var item in isHeader.ToList())
+                {
+                    //background logging
+                    await Task.Run(() =>
+                    {
+                        string json = JsonConvert.SerializeObject(item, Formatting.Indented);
+                        //string stdout = $"{DateTimeOffset.Now.ToLocalTime()}-{staticCounter++}:\n{json}";
+                        var helper = new JsonHelper(ExceptionLogger.MsalLogFile);
+                        helper.SaveToFile(new JArray(json)).WaitAsync(AppService.CancellationToken);
+
+                        return Task.CompletedTask;
+                    }).ConfigureAwait(false);
+                }
+
+            }
+
+
+
+
             // add this msal.account.keys
             // double check logout 
+
             await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeys() {
                                                         const keys = [];
                                                         for (let i = 0; i < localStorage.length; i++) {
@@ -316,25 +341,40 @@ public sealed partial class WebContent : Page
                                                             if (key.includes(""msal.account"")) {
                                                                 keys.push({ key: key, value: JSON.parse(localStorage.getItem(key)), keyValue: JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem(key)))) });
                                                             }
+                                                            if (key.includes(""msalToken"")) {
+                                                                keys.push({ key: key, value: key, keyValue: localStorage.getItem(key) });
+                                                            }
                                                         }
                                                         return keys;
                                                     } return findMsalAccountKeys();})();"
-            ).AsTask().ContinueWith(keys =>
-            {
-                
-                    // Critical section here
-                JToken token = JToken.Parse(keys.Result);
+                        ).AsTask().ContinueWith(async keys =>
+                        {
 
-                if (token is JArray array)
-                {
-                    if (array.Count > 0)
-                        AppService.IsAppUserAuthenicated = true;
-                   
-                }
-                
-            });
-                
-             
+                            // Critical section here
+                            JToken token = JToken.Parse(keys.Result);
+
+                            if (token is JArray array)
+                            {
+                                if (array.Count > 0)
+                                {
+                                    AppService.IsAppUserAuthenicated = true;
+                                    //background logging
+                                    await Task.Run(() =>
+                                    {
+                                        string json = JsonConvert.SerializeObject(array, Formatting.Indented);
+                                        //string stdout = $"{DateTimeOffset.Now.ToLocalTime()}-{staticCounter++}:\n{json}";
+                                        var helper = new JsonHelper(ExceptionLogger.MsalLogFile);
+                                        helper.SaveToFile(array).WaitAsync(AppService.CancellationToken);
+
+
+                                        return Task.CompletedTask;
+                                    }).ConfigureAwait(false);
+                                }
+                            }
+
+                        });
+
+
 
             //await s.ExecuteScriptAsync("document.cookie").AsTask().ContinueWith(async cookieTask =>
             //{
@@ -346,6 +386,7 @@ public sealed partial class WebContent : Page
             //});
 
         };
+
         //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
         //s.CoreWebView2.WebResourceRequested += async (sender, args) =>

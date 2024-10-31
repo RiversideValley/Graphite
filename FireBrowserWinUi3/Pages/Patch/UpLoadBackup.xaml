@@ -50,7 +50,7 @@
                         IsEnabled="False"
                         PlaceholderText="File Selected..."
                         Text="{x:Bind ViewModel.FileSelected.BlobName, Mode=OneWay}" />
-                  <ListView
+                    <ListView
                         x:Name="FileUploaded"
                         MaxHeight="250"
                         Margin="4,0,0,4"

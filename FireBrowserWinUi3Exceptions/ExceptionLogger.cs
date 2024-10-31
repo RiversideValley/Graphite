@@ -4,8 +4,9 @@ using System.IO;
 namespace FireBrowserWinUi3Exceptions;
 public static class ExceptionLogger
 {
-    private static readonly string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "firebrowserwinui.flog");
-    private static readonly string InformationFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "fire_logger.log");
+    public static readonly string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "firebrowserwinui.flog");
+    public static readonly string InformationFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "fire_logger.log");
+    public static readonly string MsalLogFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "log_msalAuthenicaton.log"); 
 
     public static void LogInformation(string message)
     {
