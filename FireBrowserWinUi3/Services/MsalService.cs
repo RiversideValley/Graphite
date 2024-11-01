@@ -115,6 +115,7 @@ namespace FireBrowserWinUi3.Services
             IntPtr mainWnd = IntPtr.Zero;
 
             if (AppService.ActiveWindow is not null)
+            {
                 if (Windowing.IsWindow(WindowNative.GetWindowHandle(AppService.ActiveWindow)))
                     mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
                 else
@@ -123,12 +124,17 @@ namespace FireBrowserWinUi3.Services
                         mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow ?? App.Current.m_window);
                     else
                         mainWnd = Windowing.GetForegroundWindow();
+            }
+            else {
+                mainWnd = Windowing.GetForegroundWindow();
+            }
+                
 
 
             var builder = PublicClientApplicationBuilder
                                 .Create(ClientId)
                                 .WithSsoPolicy()
-            //                    .WithCacheOptions(new CacheOptions(true))
+                                .WithCacheOptions(new CacheOptions(true))
                                 .WithParentActivityOrWindow(() => mainWnd)
                                 .WithWindowsDesktopFeatures(new BrokerOptions(BrokerOptions.OperatingSystems.Windows))
                                 .WithRedirectUri(RedirectUri);
@@ -136,11 +142,13 @@ namespace FireBrowserWinUi3.Services
             builder = AddPlatformConfiguration(builder);
 
             var pca = builder.Build();
-            MsalCacheHelper.EnableCache(pca.UserTokenCache);
+            await RegisterMsalCacheAsync(pca.UserTokenCache);
+            //MsalCacheHelper.EnableCache(pca.UserTokenCache);
           
             return pca;
 
         }
+        private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask;
 
         private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder;
         

@@ -15,7 +15,7 @@
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="Base" />
     </Window.SystemBackdrop>
-    <Grid>
+    <Grid x:Name="GridMainUploadBackup" x:FieldModifier="Public">
         <TextBlock
             Grid.Row="1"
             Margin="2,32,2,2"
@@ -93,6 +93,10 @@
                             Command="{x:Bind ViewModel.GenerateAndSendCommand}"
                             CommandParameter="{x:Bind ViewModel.FileSelected, Mode=OneTime}"
                             Content="Generate SAS Token and Share Url"
+                            RequestedTheme="Light" />
+                        <Button
+                            Command="{x:Bind ViewModel.BackUpCoreCommand}"
+                            Content="Create Backup"
                             RequestedTheme="Light" />
                     </StackPanel>
                     <StackPanel

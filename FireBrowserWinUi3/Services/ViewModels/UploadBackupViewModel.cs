@@ -95,7 +95,15 @@ namespace FireBrowserWinUi3.Services.ViewModels
 
         }
 
+        [RelayCommand]
+        private async Task BackUpCore()
+        {
 
+            BackUpDialog dlg = new BackUpDialog();
+            dlg.XamlRoot = UpLoadBackup.Instance?.GridMainUploadBackup.XamlRoot;
+            await dlg.ShowAsync();
+
+        }
         //public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
         //{
         //    var message = new Message
