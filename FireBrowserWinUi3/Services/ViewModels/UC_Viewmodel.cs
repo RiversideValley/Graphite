@@ -29,7 +29,7 @@ namespace FireBrowserWinUi3
     {
         public UC_Viewmodel() {
             Users = new List<UserExtend>();
-            LoginToMicrosoft().ConfigureAwait(false);
+            //LoginToMicrosoft().ConfigureAwait(false);
         }
         public List<UserExtend> Users { get; set; }
         public UserExtend User { get; set; }
