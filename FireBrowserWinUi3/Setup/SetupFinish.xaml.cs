@@ -42,6 +42,7 @@ public sealed partial class SetupFinish : Page
             IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserCentral));
             if (ucHwnd != IntPtr.Zero)
             {
+                AppService.ActiveWindow = UserCentral.Instance;
                 Windowing.Center(ucHwnd);
             }
             else

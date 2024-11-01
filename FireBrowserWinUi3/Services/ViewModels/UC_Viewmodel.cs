@@ -27,7 +27,10 @@ namespace FireBrowserWinUi3
 {
     public partial class UC_Viewmodel : ObservableRecipient
     {
-        public UC_Viewmodel() => Users = new List<UserExtend>();
+        public UC_Viewmodel() {
+            Users = new List<UserExtend>();
+            LoginToMicrosoft().ConfigureAwait(false);
+        }
         public List<UserExtend> Users { get; set; }
         public UserExtend User { get; set; }
         public Window ParentWindow { get; set; }
@@ -58,6 +61,8 @@ namespace FireBrowserWinUi3
             }
             return false;
         };
+
+        
 
         [RelayCommand(CanExecute = nameof(IsMsLogin))]
         private async Task MsLogOut()

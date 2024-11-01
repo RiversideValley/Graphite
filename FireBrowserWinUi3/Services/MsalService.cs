@@ -1,6 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using FireBrowserWinUi3.Services.Contracts;
+using FireBrowserWinUi3Core.Helpers;
 using FireBrowserWinUi3Exceptions;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
@@ -9,8 +10,10 @@ using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -112,21 +115,20 @@ namespace FireBrowserWinUi3.Services
             IntPtr mainWnd = IntPtr.Zero;
 
             if (AppService.ActiveWindow is not null)
-                mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow!);
+                if (Windowing.IsWindow(WindowNative.GetWindowHandle(AppService.ActiveWindow)))
+                    mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
+                else
+                    if (App.Current.m_window is not null)
+                    if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
+                        mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow ?? App.Current.m_window);
+                    else
+                        mainWnd = Windowing.GetForegroundWindow();
 
-            if (mainWnd == IntPtr.Zero)
-            {
-                mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
-                if (mainWnd == IntPtr.Zero)
-                {
-                    return null;
-                }
-            }
 
             var builder = PublicClientApplicationBuilder
                                 .Create(ClientId)
                                 .WithSsoPolicy()
-                                .WithCacheOptions(new CacheOptions(true))
+            //                    .WithCacheOptions(new CacheOptions(true))
                                 .WithParentActivityOrWindow(() => mainWnd)
                                 .WithWindowsDesktopFeatures(new BrokerOptions(BrokerOptions.OperatingSystems.Windows))
                                 .WithRedirectUri(RedirectUri);
@@ -134,18 +136,42 @@ namespace FireBrowserWinUi3.Services
             builder = AddPlatformConfiguration(builder);
 
             var pca = builder.Build();
-
-            await RegisterMsalCacheAsync(pca.UserTokenCache);
-
+            MsalCacheHelper.EnableCache(pca.UserTokenCache);
+          
             return pca;
 
         }
 
+        private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder;
+        
+        public static class MsalCacheHelper
+        {
+            private static readonly string CacheFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "msal_cache.json");
 
-        private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder.WithIosKeychainSecurityGroup("localStorage");//builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+            public static void EnableCache(ITokenCache tokenCache)
+            {
+                tokenCache.SetBeforeAccess(BeforeAccessNotification);
+                tokenCache.SetAfterAccess(AfterAccessNotification);
+            }
 
-        private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask;
+            private static void BeforeAccessNotification(TokenCacheNotificationArgs args)
+            {
+                if (File.Exists(CacheFilePath))
+                {
+                    byte[] data = File.ReadAllBytes(CacheFilePath);
+                    args.TokenCache.DeserializeMsalV3(data);
+                }
+            }
 
+            private static void AfterAccessNotification(TokenCacheNotificationArgs args)
+            {
+                if (args.HasStateChanged)
+                {
+                    byte[] data = args.TokenCache.SerializeMsalV3();
+                    File.WriteAllBytes(CacheFilePath, data);
+                }
+            }
+        }
         public async Task<IAccount> GetUserAccountAsync()
         {
             try
