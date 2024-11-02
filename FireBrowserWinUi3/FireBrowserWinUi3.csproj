@@ -80,6 +80,7 @@
     <Content Remove="Assets\firefox_logo.png" />
     <Content Remove="Assets\Google.png" />
     <Content Remove="Assets\index.html" />
+    <Content Remove="Assets\main.html" />
     <Content Remove="Assets\Microsoft.png" />
     <Content Remove="Assets\Prize.png" />
     <Content Remove="Assets\SegoeFluentIcons2.ttf" />

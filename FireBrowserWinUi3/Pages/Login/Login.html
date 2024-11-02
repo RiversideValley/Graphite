@@ -1,0 +1,31 @@
+﻿< !DOCTYPE html >
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Static Auth App</title>
+                    <script src="https://alcdn.msauth.net/browser/2.15.0/js/msal-browser.min.js"></script>
+                    <script>
+                        const msalConfig = {
+                            auth: {
+                            clientId: 'edfc73e2-cac9-4c47-a84c-dedd3561e8b5',
+                        authority: 'https://login.microsoftonline.com/common',
+                        redirectUri: 'http://localhost'
+                            }
+                        };
+                        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+                        function signIn() {
+                            msalInstance.loginPopup().then(response => {
+                                console.log('id_token acquired at: ' + new Date().toString());
+                                console.log(response);
+                            }).catch(error => {
+                                console.error(error);
+                            });
+        }
+                    </script>
+                </head>
+                <body>
+                    <button onclick="signIn()">Sign In</button>
+                </body>
+            </html>

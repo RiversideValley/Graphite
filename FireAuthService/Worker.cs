@@ -89,7 +89,10 @@ public class Worker : BackgroundService
 
                 if (context.Request.Url?.AbsolutePath == "/auth")
                 {
-                    await HandleAuthRequest(context);
+                    //   await HandleAuthRequest(context);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Pages", "login.html");
+                    await HandleHtmlRequest(context, filePath);
+
                 }
                 else if (context.Request.Url?.AbsolutePath == "/about")
 

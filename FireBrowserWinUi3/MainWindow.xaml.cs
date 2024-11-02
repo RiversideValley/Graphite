@@ -132,7 +132,7 @@ public sealed partial class MainWindow : Window
         string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
         string nameService = nameof(FireAuthService).ToString();
 
-        StartWorker(nameService, workerPath);
+      //  StartWorker(nameService, workerPath);
     }
 
     private void StartWorker(string _nameService, string _pathService)
@@ -140,7 +140,7 @@ public sealed partial class MainWindow : Window
 
         string solutionDir = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
         string workerProjectName = "FireAuthService";
-        string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
+        string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "win-x64", "publish", "FireAuthService.exe");
 
         // Start the worker process
         ProcessStartInfo startInfo = new ProcessStartInfo
@@ -148,8 +148,7 @@ public sealed partial class MainWindow : Window
             FileName = workerPath,
             UseShellExecute = true,
             Verb = "runas",
-            CreateNoWindow = false,
-            WindowStyle = ProcessWindowStyle.Hidden,
+            CreateNoWindow = true,
         };
 
         try
