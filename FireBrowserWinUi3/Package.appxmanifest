@@ -10,7 +10,8 @@
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
   xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"
-  IgnorableNamespaces="uap rescap uap3 uap4 desktop4 iot2">
+  xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+  IgnorableNamespaces="uap rescap uap3 uap4 desktop4 iot2 iot">
 
   <Identity
     Name="57443TechFireX.FireBrowserWinUi"
@@ -48,8 +49,7 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
 		<Extensions>
-			<uap5:Extension
-	  Category="windows.startupTask">
+			<uap5:Extension Category="windows.startupTask">
 				<uap5:StartupTask
 				  TaskId="FireBrowserWinUiStartUp"
 				  Enabled="true"
@@ -81,6 +81,8 @@
 					<uap:Logo>Assets\Icons\IncogTs.png</uap:Logo>
 				</uap:Protocol>
 			</uap:Extension>
+ 
+      
 		</Extensions>
     </Application>
   </Applications>
@@ -93,6 +95,7 @@
     <Capability Name="internetClientServer"/>
     <uap3:Capability Name="backgroundMediaPlayback"/>
     <uap:Capability Name="userAccountInformation"/>
+    <iot:Capability Name="systemManagement"/>
     <DeviceCapability Name="bluetooth"/>
   </Capabilities>
 </Package>

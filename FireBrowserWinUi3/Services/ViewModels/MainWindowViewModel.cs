@@ -103,13 +103,13 @@ public partial class MainWindowViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private  async Task LogOut() 
+    private async Task LogOut()
     {
 
         if (MainView.TabWebView is not null)
             MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/logout?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&post_logout_redirect_uri=https://bing.com");
-        
-        using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15))) 
+
+        using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15)))
         {
             try
             {
@@ -133,22 +133,22 @@ public partial class MainWindowViewModel : ObservableRecipient
             {
                 AppService.IsAppUserAuthenicated = IsMsLogin = false;
                 MainView.NotificationQueue.Show("You've been logged out of Microsoft", 15000, "Authorization");
-                RaisePropertyChanges(nameof(IsMsLogin)); 
+                RaisePropertyChanges(nameof(IsMsLogin));
                 Console.WriteLine("The task was canceled due to timeout.");
             }
         }
 
-        
-        
+
+
     }
-    
+
     [RelayCommand]
     private async Task AdminCenter()
     {
 
         if (!AppService.MsalService.IsSignedIn)
         {
-           var answer =  await AppService.MsalService.SignInAsync();
+            var answer = await AppService.MsalService.SignInAsync();
 
             if (answer is null)
             {
@@ -169,7 +169,7 @@ public partial class MainWindowViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private  Task MsOptionsWeb(object sender)
+    private Task MsOptionsWeb(object sender)
     {
         try
         {
@@ -190,7 +190,8 @@ public partial class MainWindowViewModel : ObservableRecipient
     private Task LoginToMicrosoft(object sender)
     {
         if (!AppService.IsAppUserAuthenicated)
-            MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&scope=openid profile offline_access&redirect_uri=https://account.microsoft.com/profile/&client-request-id=4cf0210d-abf0-4e60-ab52-5a288c40a636&response_mode=fragment&response_type=code&x-client-SKU=msal.js.browser&x-client-VER=2.37.1&client_info=1&code_challenge=sQi_hISGzmeuS7jjuW-Fvs8CaQ3VrT4piGS_qx_9OVI&code_challenge_method=S256&nonce=1ab7fddc-d3d9-428b-8808-332b3defc041&state=eyJpZCI6ImUxMjQ4MzcwLThiZjYtNGYxZC04MmI5LTY2YWE3MDlkNmM1MiIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0=");
+            // MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&scope=openid profile offline_access&redirect_uri=https://account.microsoft.com/profile/&client-request-id=4cf0210d-abf0-4e60-ab52-5a288c40a636&response_mode=fragment&response_type=code&x-client-SKU=msal.js.browser&x-client-VER=2.37.1&client_info=1&code_challenge=sQi_hISGzmeuS7jjuW-Fvs8CaQ3VrT4piGS_qx_9OVI&code_challenge_method=S256&nonce=1ab7fddc-d3d9-428b-8808-332b3defc041&state=eyJpZCI6ImUxMjQ4MzcwLThiZjYtNGYxZC04MmI5LTY2YWE3MDlkNmM1MiIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0=");
+            MainView.NavigateToUrl("http://localhost:12221/auth");
         else
         {
             IsMsLogin = true;

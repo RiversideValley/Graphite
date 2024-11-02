@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI.Behaviors;
+using FireAuthService;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages;
@@ -15,7 +16,10 @@ using FireBrowserWinUi3MultiCore;
 using FireBrowserWinUi3MultiCore.Helper;
 using FireBrowserWinUi3Navigator;
 using FireBrowserWinUi3QrCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -25,11 +29,14 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Security.Credentials.UI;
 using Windows.Storage;
@@ -117,11 +124,43 @@ public sealed partial class MainWindow : Window
 
         appWindow.Closing += AppWindow_Closing;
     }
-
     public async void Init()
     {
         await FireBrowserWinUi3Core.Models.Data.Init();
-        FireBrowserWinUi3Auth.TwoFactorsAuthentification.Init();
+        string solutionDir = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
+        string workerProjectName = "FireAuthService";
+        string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
+        string nameService = nameof(FireAuthService).ToString();
+
+        StartWorker(nameService, workerPath);
+    }
+
+    private void StartWorker(string _nameService, string _pathService)
+    {
+
+        string solutionDir = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
+        string workerProjectName = "FireAuthService";
+        string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
+
+        // Start the worker process
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = workerPath,
+            UseShellExecute = true,
+            Verb = "runas",
+            CreateNoWindow = false,
+            WindowStyle = ProcessWindowStyle.Hidden,
+        };
+
+        try
+        {
+            Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogger.LogException(ex);
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public void setColorsTool()
@@ -152,6 +191,8 @@ public sealed partial class MainWindow : Window
 
     private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
     {
+
+
         if (Tabs.TabItems?.Count > 1)
         {
             if (SettingsService.CoreSettings.ConfirmCloseDlg)

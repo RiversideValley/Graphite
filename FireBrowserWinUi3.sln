@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FireBrowserWinUi3Migration"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FireBrowserWinUi3License", "FireBrowserWinUi3License\FireBrowserWinUi3License.csproj", "{30E6BB01-E04B-4EE3-8A80-679AEF1D5D62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FireAuthService", "FireAuthService\FireAuthService.csproj", "{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -327,6 +329,22 @@ Global
 		{30E6BB01-E04B-4EE3-8A80-679AEF1D5D62}.Release|x64.Build.0 = Release|Any CPU
 		{30E6BB01-E04B-4EE3-8A80-679AEF1D5D62}.Release|x86.ActiveCfg = Release|Any CPU
 		{30E6BB01-E04B-4EE3-8A80-679AEF1D5D62}.Release|x86.Build.0 = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|x64.Build.0 = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Debug|x86.Build.0 = Debug|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|ARM64.Build.0 = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|x64.ActiveCfg = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|x64.Build.0 = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|x86.ActiveCfg = Release|Any CPU
+		{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

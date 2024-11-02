@@ -629,7 +629,9 @@
                                 Icon="LeaveChat"
                                 Label="Logout" />
                         </StackPanel>
-
+                        <StackPanel>
+                            <HyperlinkButton Content="Developers" NavigateUri="http://localhost:12221/about" />
+                        </StackPanel>
                     </StackPanel>
 
                 </Grid>

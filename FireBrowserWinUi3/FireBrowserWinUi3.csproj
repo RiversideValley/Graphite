@@ -41,9 +41,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
     <PackageReference Include="Microsoft.Graph" Version="5.61.0" />
     <PackageReference Include="Microsoft.Graph.Core" Version="3.1.22" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.1" />
     <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.66.0" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.66.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
@@ -171,6 +172,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FireAuthService\FireAuthService.csproj" />
     <ProjectReference Include="..\FireBrowserWinUi3AdBlockCore\FireBrowserWinUi3AdBlockCore.csproj" />
     <ProjectReference Include="..\FireBrowserWinUi3Assets\FireBrowserWinUi3Assets.csproj" />
     <ProjectReference Include="..\FireBrowserWinUi3AuthCore\FireBrowserWinUi3AuthCore.csproj" />
