@@ -645,7 +645,13 @@ public sealed partial class MainWindow : Window
             }
             else if (inputtype is "url" or "urlNOProtocol")
             {
-                string url = inputtype == "url" ? input.Trim() : "https://" + input.Trim();
+                string url = default; 
+
+                if (input.Contains("ms-appx:") || input.Contains("ms-appx-web:"))
+                    url = input.Trim();
+                else {
+                    url = inputtype == "url" ? input.Trim() : "https://" + input.Trim();
+                }
                 NavigateToUrl(url);
             }
             else

@@ -140,6 +140,7 @@
     <Content Remove="FireBrowserWinUi3Assets\Wide310x150Logo.scale-400.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\favicon.png" />
     <None Remove="Assets\UI\CrimsonUI.xaml" />
     <None Remove="ChangeUsernameCore.xaml" />
     <None Remove="Controls\CreateBackup.xaml" />
@@ -207,6 +208,9 @@
     <Content Update="Assets\featured.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\favicon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\fincog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -253,6 +257,9 @@
     </None>
     <None Update="Assets\Google.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\msal\main.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Microsoft.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -61,7 +61,6 @@ public sealed partial class WebContent : Page
         if (!AuthService.Authenticate(currentUser.Username)) return;
 
         string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
-
         Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
         Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
     }
@@ -96,7 +95,7 @@ public sealed partial class WebContent : Page
         webViewSettings.AreBrowserAcceleratorKeysEnabled = coreSettings.BrowserKeys;
         webViewSettings.IsStatusBarEnabled = coreSettings.StatusBar;
         webViewSettings.AreDefaultScriptDialogsEnabled = coreSettings.BrowserScripts;
-
+       
         SetTrackingPreventionLevel(coreSettings.TrackPrevention);
     }
 
@@ -116,6 +115,9 @@ public sealed partial class WebContent : Page
         }
 
         WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = preventionLevel;
+        
+        WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/msal", CoreWebView2HostResourceAccessKind.Allow);
+
     }
 
 
