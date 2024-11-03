@@ -4,184 +4,372 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fire Browser</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI+Variable:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --text: #ffffff;
+            --primary: #60cdff;
+            --card-background: rgba(44, 44, 44, 0.8);
+            --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            --hover-background: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
+            font-family: 'Segoe UI Variable', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WallpaperCyanDark8bit-min-qH7bDNyTlxUYdn98wvbccDlu66qfC0.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(10px);
+                z-index: 0;
+            }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
 
         header {
-            background-color: #6a1b9a; /* Purple */
-            color: #fff;
-            padding: 20px;
-            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
         }
 
-        footer {
-            padding: 10px 0;
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+            .nav-links a {
+                color: var(--text);
+                text-decoration: none;
+                font-weight: 600;
+                padding: 5px 10px;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
+
+                .nav-links a:hover {
+                    background-color: var(--hover-background);
+                }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+            .hero h1 {
+                font-size: 4rem;
+                font-weight: 700;
+                margin-bottom: 20px;
+                background: linear-gradient(45deg, var(--primary), #ffffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hero p {
+                font-size: 1.5rem;
+                margin-bottom: 30px;
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: #000000;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .cta-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(96, 205, 255, 0.3);
+            }
+
+        .features {
+            padding: 80px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+            .features h2 {
+                text-align: center;
+                font-size: 2.5rem;
+                margin-bottom: 40px;
+                background: linear-gradient(45deg, var(--primary), #ffffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+            .feature-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(96, 205, 255, 0.2);
+            }
+
+            .feature-card h3 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+                color: var(--primary);
+            }
+
+            .feature-card img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: var(--text);
+            text-align: center;
+            padding: 20px 0;
+            backdrop-filter: blur(20px);
+            margin-top: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reveal-highlight {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .reveal-highlight::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .reveal-highlight:hover::after {
+                opacity: 1;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
         }
     </style>
     <script src="https://alcdn.msauth.net/browser/2.15.0/js/msal-browser.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<!-- Rest of the HTML remains the same as in the previous version -->
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">Fire Browser</div>
+            <div class="nav-links">
+                <a href="#home" class="reveal-highlight">Home</a>
+                <a href="#features" class="reveal-highlight">Features</a>
+                <a href="#" id="loginBtn" class="reveal-highlight">Login</a>
+                <a href="http://localhost:12221/about" class="reveal-highlight">About</a>
+                <a href="http://localhost:12221/customers" class="reveal-highlight">Customers</a>
+                <a href="http://localhost:12221/repo" class="reveal-highlight">Repo</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <h1 class="animate-fadeIn">Welcome to Fire Browser</h1>
+                <p class="animate-fadeIn">Ignite your browsing experience</p>
+                <a href="#features" class="cta-button animate-fadeIn reveal-highlight">Explore Features</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="animate-fadeIn">Our Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card animate-fadeIn reveal-highlight">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/fastbrowsing-O1Y6WX3U9TaepJBvf12oJEdiMxhKrV.webp" alt="Fast Browsing">
+                        <h3>Fast Browsing</h3>
+                        <p>Experience lightning-fast web browsing with Fire Browser.</p>
+                    </div>
+                    <div class="feature-card animate-fadeIn reveal-highlight">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/secure-ppNiPkXMsdLc3w2w6AEycvYk0tKOM4.webp" alt="Secure Browsing">
+                        <h3>Secure Browsing</h3>
+                        <p>Stay safe online with our advanced security features.</p>
+                    </div>
+                    <div class="feature-card animate-fadeIn reveal-highlight">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/costum-6McUQi0ooogHQtxbXLhWPDZ8Vh0tSP.webp" alt="Customizable Interface">
+                        <h3>Customizable</h3>
+                        <p>Tailor your browsing experience to your preferences.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Fire Browser. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script>
+        // MSAL configuration and authentication logic
         const msalConfig = {
             auth: {
                 clientId: 'edfc73e2-cac9-4c47-a84c-dedd3561e8b5',
                 authority: 'https://login.microsoftonline.com/common',
                 redirectUri: 'https://account.microsoft.com/profile/',
-            },
-            cache: {
-                cacheLocation: "sessionStorage", // This configures where your cache will be stored
-                storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
-                secureCookies: false,
-            },
-            system: {
-                iframeHashTimeout: 10000,
-                loggerOptions: {
-                    loggerCallback: (level, message, containsPii) => {
-                        if (containsPii) {
-                            return;
-                        }
-                        switch (level) {
-                            case msal.LogLevel.Error:
-                                console.error(message);
-                                return;
-                            case msal.LogLevel.Info:
-                                console.info(message);
-                                return;
-                            case msal.LogLevel.Verbose:
-                                console.debug(message);
-                                return;
-                            case msal.LogLevel.Warning:
-                                console.warn(message);
-                                return;
-                        }
-                    },
-                },
-            },
+                postLogoutRedirectUri: "https://www.bing.com"
+            }
         };
 
         const loginRequest = {
-            scopes: [
-                "email",
-                "profile",
-                "User.Read",
-                "Directory.Read.All",
-            ],
-            postLogoutRedirectUri: "http://fireapp.msal/main.html",
-            forceRefresh: false,
+            scopes: ["User.ReadWrite"],
         };
 
         let accountId = "";
-        let accountName = "";
 
         const myMsal = new msal.PublicClientApplication(msalConfig);
-
-        myMsal.addEventCallback((event) => {
-            if (event.eventType === msal.EventType.LOGIN_SUCCESS && event.payload) {
-                const authResult = event.payload;
-                msalInstance.setActiveAccount(authResult.account);
-            }
-        });
 
         function handleResponse(response) {
             if (response !== null) {
                 accountId = response.account.homeAccountId;
-                // Display signed-in user content, call API, etc.
+                console.log("User signed in successfully");
             } else {
-                // In case multiple accounts exist, you can select
                 const currentAccounts = myMsal.getAllAccounts();
 
                 if (currentAccounts.length === 0) {
-                    // no accounts signed-in, attempt to sign a user in
                     myMsal.loginRedirect(loginRequest);
                 } else if (currentAccounts.length > 1) {
-                    document.getElementById("userName").innerHTML = currentAccounts[0].user;
-                    // Add choose account code here
+                    console.log("Multiple accounts detected");
                 } else if (currentAccounts.length === 1) {
                     accountId = currentAccounts[0].homeAccountId;
+                    console.log("Single account signed in");
                 }
             }
         }
-        async function signOut() {
 
-            const logoutRequest = {
-                account: myMsal.getAccountByHomeId(accountId),
-                mainWindowRedirectUri: "https://fireapp.msal/main.html",
-            };
-
-            await myMsal.logoutPopup(logoutRequest);
-        }
         function signIn() {
-            myMsal.handleRedirectPromise().then(handleResponse).then(user => { localStorage.setItem("msalToken", user.AccessToken) }).catch(error => {
+            myMsal.handleRedirectPromise().then(handleResponse).catch(error => {
                 console.error(error);
-            });;
+            });
         }
+
+        document.getElementById('loginBtn').addEventListener('click', signIn);
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.feature-card, .hero h1, .hero p, .cta-button, .features h2').forEach(el => {
+            observer.observe(el);
+        });
     </script>
-    <script async src="https://cse.google.com/cse.js?cx=c508042b055904c98">
-    </script>
-</head>
-<body>
-    <header class="p-3 text-bg-dark animate__animated animate__fadeInDown">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
-                </a>
-
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-secondary">Home </a></li>
-                    <li><a href="https://apps.microsoft.com/detail/9pcn40xxvcvb?hl=en-us&gl=US" class="nav-link px-2 text-white">Download</a></li>
-                    <li><a href="https://fireapp.msal/notfound.html" class="nav-link px-2 text-white">Pricing</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-                    <li><a href="https://firebrowser-official.vercel.app/home" class="nav-link px-2 text-white">About</a></li>
-                </ul>
-                
-                
-
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-light me-2" onclick="javascript:signIn()">Login</button>
-                    <button type="button" class="btn btn-warning" onclick="javascript:signOut()">LogOut</button>
-                </div>
-            </div>
-        </div>
-    </header>
-    
-    <div class="container justify-content-center align-items-center mt-md-0 mb-md-0 animate__animated animate__fadeIn">
-        <div class="row  mx-2 my-2">
-            
-            <div class="col-6 col-md-6 col-sm-2">
-                <div class="card" style="width: 24rem;">
-                    <img src="https://uploads.sitepoint.com/wp-content/uploads/2012/11/10_tn1.jpg" alt="Fire Browser" class="animate__animated animate__zoomIn card-img-top">
-                    <div class="card-body">
-                        <h3 class="card-title">Welcome to Fire Browser</h3>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="https://bing.com" class="btn btn-primary">Bing</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-sm-2">
-                <h6>Google Search</h6>
-                <div class="gcse-search"></div>
-            </div>
-            
-        </div>
-        <div class="row mx-2 my-2">
-            <h2 class="animate__animated animate__zoomIn">Greetings..</h2>
-        </div>
-    </div>
-    <footer class="animate__animated animate__fadeInUp footer">
-        &copy; 2024 Fire Browser. All rights reserved.
-    </footer>
-
-
 </body>
 </html>
