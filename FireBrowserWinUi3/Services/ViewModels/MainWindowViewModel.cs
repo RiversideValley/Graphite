@@ -107,7 +107,7 @@ public partial class MainWindowViewModel : ObservableRecipient
     {
 
         if (MainView.TabWebView is not null)
-            MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/logout?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&post_logout_redirect_uri=https://bing.com");
+            MainView.NavigateToUrl("https://login.microsoftonline.com/f0d59e50-f344-4cbc-b58a-37a7ffc5a17f/oauth2/v2.0/logout?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&post_logout_redirect_uri=https://fireapp.msal/index.html");
             
         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15)))
         {

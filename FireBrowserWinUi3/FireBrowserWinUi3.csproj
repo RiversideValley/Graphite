@@ -77,11 +77,15 @@
   <ItemGroup>
     <Content Remove="Assets\arc_logo.png" />
     <Content Remove="Assets\brave_logo.png" />
+    <Content Remove="Assets\favicon.ico" />
     <Content Remove="Assets\firefox_logo.png" />
     <Content Remove="Assets\Google.png" />
     <Content Remove="Assets\index.html" />
     <Content Remove="Assets\main.html" />
     <Content Remove="Assets\Microsoft.png" />
+    <Content Remove="Assets\msal\favicon.ico" />
+    <Content Remove="Assets\msal\notfound.html" />
+    <Content Remove="Assets\msal\tsconfig.json" />
     <Content Remove="Assets\Prize.png" />
     <Content Remove="Assets\SegoeFluentIcons2.ttf" />
     <Content Remove="Assets\setup_image.png" />
@@ -244,6 +248,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="Accounts.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\favicon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\arc_logo.png">

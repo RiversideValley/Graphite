@@ -18,44 +18,14 @@
             color: #fff;
             padding: 20px;
             text-align: center;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
         }
-
-        nav {
-            background-color: #333;
-        }
-
-        .nav-pills .nav-link {
-            color: #fff; /* Blue */
-            border-radius: 15px;
-        }
-
-            .nav-pills .nav-link.active {
-                background-color: #8e24aa; /* Purple */
-            }
-
-        .content {
-            padding: 20px;
-            text-align: center;
-        }
-
-            .content img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 15px;
-            }
 
         footer {
-            background-color: #333;
-            color: #fff;
             padding: 10px 0;
             text-align: center;
             position: fixed;
             bottom: 0;
             width: 100%;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
         }
     </style>
     <script src="https://alcdn.msauth.net/browser/2.15.0/js/msal-browser.min.js"></script>
@@ -68,16 +38,60 @@
                 authority: 'https://login.microsoftonline.com/common',
                 redirectUri: 'https://account.microsoft.com/profile/',
                 postLogoutRedirectUri: "https://www.bing.com"
-            }
+            },
+            cache: {
+                cacheLocation: "sessionStorage", // This configures where your cache will be stored
+                storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
+                secureCookies: false,
+            },
+            system: {
+                iframeHashTimeout: 10000,
+                loggerOptions: {
+                    loggerCallback: (level, message, containsPii) => {
+                        if (containsPii) {
+                            return;
+                        }
+                        switch (level) {
+                            case msal.LogLevel.Error:
+                                console.error(message);
+                                return;
+                            case msal.LogLevel.Info:
+                                console.info(message);
+                                return;
+                            case msal.LogLevel.Verbose:
+                                console.debug(message);
+                                return;
+                            case msal.LogLevel.Warning:
+                                console.warn(message);
+                                return;
+                        }
+                    },
+                },
+            },
         };
 
         const loginRequest = {
-            scopes: ["User.ReadWrite"],
+            scopes: [
+                "email",
+                "profile",
+                "User.Read",
+                "Directory.Read.All",
+            ],
+            postLogoutRedirectUri: "http://fireapp.msal/main.html",
+            forceRefresh: false,
         };
 
         let accountId = "";
+        let accountName = "";
 
         const myMsal = new msal.PublicClientApplication(msalConfig);
+
+        myMsal.addEventCallback((event) => {
+            if (event.eventType === msal.EventType.LOGIN_SUCCESS && event.payload) {
+                const authResult = event.payload;
+                msalInstance.setActiveAccount(authResult.account);
+            }
+        });
 
         function handleResponse(response) {
             if (response !== null) {
@@ -91,45 +105,81 @@
                     // no accounts signed-in, attempt to sign a user in
                     myMsal.loginRedirect(loginRequest);
                 } else if (currentAccounts.length > 1) {
+                    document.getElementById("userName").innerHTML = currentAccounts[0].user;
                     // Add choose account code here
                 } else if (currentAccounts.length === 1) {
                     accountId = currentAccounts[0].homeAccountId;
                 }
             }
         }
+        async function signOut() {
 
+            const logoutRequest = {
+                account: myMsal.getAccountByHomeId(accountId),
+                mainWindowRedirectUri: "https://fireapp.msal/main.html",
+            };
+
+            await myMsal.logoutPopup(logoutRequest);
+        }
         function signIn() {
-            myMsal.handleRedirectPromise().then(handleResponse).catch(error => {
+            myMsal.handleRedirectPromise().then(handleResponse).then(user => { localStorage.setItem("msalToken", user.AccessToken) }).catch(error => {
                 console.error(error);
             });;
         }
     </script>
+    <script async src="https://cse.google.com/cse.js?cx=c508042b055904c98">
+    </script>
 </head>
 <body>
-    <header class="animate__animated animate__fadeInDown">
-        <h1>Welcome to Fire Browser</h1>
+    <header class="p-3 text-bg-dark animate__animated animate__fadeInDown">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="#" class="nav-link px-2 text-secondary">Home </a></li>
+                    <li><a href="https://apps.microsoft.com/detail/9pcn40xxvcvb?hl=en-us&gl=US" class="nav-link px-2 text-white">Download</a></li>
+                    <li><a href="https://fireapp.msal/notfound.html" class="nav-link px-2 text-white">Pricing</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
+                    <li><a href="https://firebrowser-official.vercel.app/home" class="nav-link px-2 text-white">About</a></li>
+                </ul>
+                
+                
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-outline-light me-2" onclick="javascript:signIn()">Login</button>
+                    <button type="button" class="btn btn-warning" onclick="javascript:signOut()">LogOut</button>
+                </div>
+            </div>
+        </div>
     </header>
-    <nav class="nav navbar-expand-lg navbar-dark round">
-        <ul class="navbar nav-pills">
-            <li class="nav-item">
-                <a class="nav-link" href="javascript:signIn()">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:12221/about">About</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:12221/customers">Customers</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:12221/repo">Repo</a>
-            </li>
-        </ul>
-    </nav>
-    <div class="content animate__animated animate__fadeIn">
-        <img src="https://uploads.sitepoint.com/wp-content/uploads/2012/11/10_tn1.jpg" alt="Fire Browser" class="animate__animated animate__zoomIn">
-        <h2>Welcome you.</h2>
+    
+    <div class="container justify-content-center align-items-center mt-md-0 mb-md-0 animate__animated animate__fadeIn">
+        <div class="row  mx-2 my-2">
+            
+            <div class="col-md-4 col-sm-4">
+                <div class="card" style="width: 24rem;">
+                    <img src="https://uploads.sitepoint.com/wp-content/uploads/2012/11/10_tn1.jpg" alt="Fire Browser" class="animate__animated animate__zoomIn card-img-top">
+                    <div class="card-body">
+                        <h3 class="card-title">Welcome to Fire Browser</h3>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="https://bing.com" class="btn btn-primary">Bing</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-4">
+                <h6>Google Search</h6>
+                <div class="gcse-search"></div>
+            </div>
+            
+        </div>
+        <div class="row mx-2 my-2">
+            <h2 class="animate__animated animate__zoomIn">Greetings..</h2>
+        </div>
     </div>
-    <footer class="animate__animated animate__fadeInUp">
+    <footer class="animate__animated animate__fadeInUp footer">
         &copy; 2024 Fire Browser. All rights reserved.
     </footer>
 
