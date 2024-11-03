@@ -83,6 +83,7 @@
     <Content Remove="Assets\index.html" />
     <Content Remove="Assets\main.html" />
     <Content Remove="Assets\Microsoft.png" />
+    <Content Remove="Assets\msal\EventType_MSAL.js" />
     <Content Remove="Assets\msal\favicon.ico" />
     <Content Remove="Assets\msal\notfound.html" />
     <Content Remove="Assets\msal\tsconfig.json" />

@@ -629,12 +629,24 @@
                                 Icon="LeaveChat"
                                 Label="Logout" />
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <HyperlinkButton
+                        <StackPanel
+                            Margin="3"
+                            BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorBaseBrush}"
+                            BorderThickness=".5"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <Button
                                 x:Name="btnRepo"
-                                Content="Developers"
-                                NavigateUri="http://localhost:12221/repo" />
-                            <HyperlinkButton Content="Downl" NavigateUri="http://localhost:12221/about" />
+                                Command="{x:Bind ViewModelMain.MsOptionsWebCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                                Content="Fire Home"
+                                Foreground="Red"
+                                Tag="https://fireapp.msal/main.html" />
+                            <Button
+                                Command="{x:Bind ViewModelMain.MsOptionsWebCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                                Content="Download"
+                                Tag="https://apps.microsoft.com/detail/9pcn40xxvcvb/" />
                         </StackPanel>
                     </StackPanel>
 

@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 namespace FireBrowserWinUi3.Controls
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// 
     /// </summary>
     public sealed partial class _Code_Examples : Page
     {

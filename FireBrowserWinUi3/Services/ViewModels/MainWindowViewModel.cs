@@ -175,7 +175,7 @@ public partial class MainWindowViewModel : ObservableRecipient
     {
         try
         {
-            MainView?.NavigateToUrl((sender as ListViewItem).Tag.ToString());
+            MainView?.NavigateToUrl((sender as FrameworkElement).Tag.ToString());
             if (MainView.MsLoggedInOptions.IsOpen)
                 MainView.MsLoggedInOptions.Hide();
 
