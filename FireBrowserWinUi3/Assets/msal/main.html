@@ -315,7 +315,13 @@
         };
 
         const loginRequest = {
-            scopes: ["User.ReadWrite"],
+            scopes: [
+                "email",
+                "profile",
+                "User.Read",
+                "Directory.Read.All",
+                "User.ReadWrite"
+            ],
         };
 
         let accountId = "";
