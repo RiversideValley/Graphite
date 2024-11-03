@@ -118,17 +118,18 @@ namespace FireBrowserWinUi3.Services
             {
                 if (Windowing.IsWindow(WindowNative.GetWindowHandle(AppService.ActiveWindow)))
                     mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
-                else
-                    if (App.Current.m_window is not null)
-                    if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
-                        mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow ?? App.Current.m_window);
-                    else
-                        mainWnd = Windowing.GetForegroundWindow();
             }
-            else {
+            else if (App.Current.m_window is not null)
+            {
+
+                if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
+                    mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow ?? App.Current.m_window);
+            }
+            else
+            {
                 mainWnd = Windowing.GetForegroundWindow();
             }
-                
+
 
 
             var builder = PublicClientApplicationBuilder
@@ -144,14 +145,14 @@ namespace FireBrowserWinUi3.Services
             var pca = builder.Build();
             await RegisterMsalCacheAsync(pca.UserTokenCache);
             //MsalCacheHelper.EnableCache(pca.UserTokenCache);
-          
+
             return pca;
 
         }
         private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask;
 
         private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder;
-        
+
         public static class MsalCacheHelper
         {
             private static readonly string CacheFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "msal_cache.json");

@@ -629,8 +629,12 @@
                                 Icon="LeaveChat"
                                 Label="Logout" />
                         </StackPanel>
-                        <StackPanel>
-                            <HyperlinkButton Content="Developers" NavigateUri="http://localhost:12221/about" />
+                        <StackPanel Orientation="Horizontal">
+                            <HyperlinkButton
+                                x:Name="btnRepo"
+                                Content="Developers"
+                                NavigateUri="http://localhost:12221/repo" />
+                            <HyperlinkButton Content="Downl" NavigateUri="http://localhost:12221/about" />
                         </StackPanel>
                     </StackPanel>
 

@@ -100,11 +100,22 @@ public class Worker : BackgroundService
                     context.Response.Redirect("https://apps.microsoft.com/detail/9pcn40xxvcvb?hl=en-us&gl=US");
                     context.Response.Close();
                 }
+                else if (context.Request.Url?.AbsolutePath == "/favicon.ico")
+                {
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", "fincog.png");
+                    await HandleImageRequest(context, filePath);
+
+                }
                 else if (context.Request.Url?.AbsolutePath == "/index")
                 {
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Pages", "main.html");
                     await HandleHtmlRequest(context, filePath);
 
+                }
+                else if (context.Request.Url?.AbsolutePath == "/repo")
+                {
+                    context.Response.Redirect("https://github.com/FirebrowserDevs");
+                    context.Response.Close();
                 }
                 else
                 {
@@ -129,6 +140,18 @@ public class Worker : BackgroundService
 
     }
 
+    private async Task HandleImageRequest(HttpListenerContext context, string _filepath)
+    {
+
+        if (File.Exists(_filepath))
+        {
+            string htmlContent = await File.ReadAllTextAsync(_filepath); context.Response.ContentType = "image/x-icon";
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(htmlContent); context.Response.ContentLength64 = buffer.Length;
+            await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+            context.Response.OutputStream.Close();
+        }
+        else { context.Response.StatusCode = (int)HttpStatusCode.NotFound; context.Response.Close(); }
+    }
     private async Task HandleHtmlRequest(HttpListenerContext context, string _filepath)
     {
 

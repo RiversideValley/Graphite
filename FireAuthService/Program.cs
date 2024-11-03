@@ -18,8 +18,6 @@ namespace FireAuthService
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddRouting();
-                    services.AddAuthenticationCore();
                     services.AddHostedService<Worker>();
                     services.AddWindowsService(op =>
                     {
