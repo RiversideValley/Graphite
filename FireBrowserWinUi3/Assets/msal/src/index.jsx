@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,6 +37,7 @@
                 clientId: 'edfc73e2-cac9-4c47-a84c-dedd3561e8b5',
                 authority: 'https://login.microsoftonline.com/common',
                 redirectUri: 'https://account.microsoft.com/profile/',
+                postLogoutRedirectUri: "https://www.bing.com"
             },
             cache: {
                 cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -158,7 +159,7 @@
     <div class="container justify-content-center align-items-center mt-md-0 mb-md-0 animate__animated animate__fadeIn">
         <div class="row  mx-2 my-2">
             
-            <div class="col-6 col-md-6 col-sm-2">
+            <div class="col-md-4 col-sm-4">
                 <div class="card" style="width: 24rem;">
                     <img src="https://uploads.sitepoint.com/wp-content/uploads/2012/11/10_tn1.jpg" alt="Fire Browser" class="animate__animated animate__zoomIn card-img-top">
                     <div class="card-body">
@@ -168,7 +169,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-4 col-sm-2">
+            <div class="col-md-6 col-sm-4">
                 <h6>Google Search</h6>
                 <div class="gcse-search"></div>
             </div>

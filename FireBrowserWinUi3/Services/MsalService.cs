@@ -119,11 +119,12 @@ namespace FireBrowserWinUi3.Services
                 if (Windowing.IsWindow(WindowNative.GetWindowHandle(AppService.ActiveWindow)))
                     mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
             }
-            else if (App.Current.m_window is not null)
+
+            if (App.Current.m_window is not null)
             {
 
                 if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
-                    mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow ?? App.Current.m_window);
+                    mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
             }
             else
             {
