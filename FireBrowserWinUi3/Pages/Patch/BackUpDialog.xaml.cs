@@ -13,40 +13,21 @@ namespace FireBrowserWinUi3.Pages.Patch
         public bool IsBackupAllowed { get; set; } = true;
         public bool IsPremiumUser { get; set; } = false;
         private string premiumLicensePath;
+        private bool IsCloudBackup { get; set; } = false;
 
         private FireBrowserWinUi3License.AddonManager _addonManager;
-
 
         public BackUpDialog()
         {
             this.InitializeComponent();
-            premiumLicensePath = Path.Combine(AppContext.BaseDirectory, "premium.license"); // Application startup path
+            premiumLicensePath = Path.Combine(AppContext.BaseDirectory, "premium.license");
             IsPremiumUser = CheckPremiumStatus();
             CheckBackupLimit();
             _addonManager = new AddonManager();
-            CheckSubscriptionStatus();
         }
 
-        private async void CheckSubscriptionStatus()
-        {
-            bool isActive = await _addonManager.IsSubscriptionActiveAsync();
-            if (isActive)
-            {
-               
-                DateTimeOffset? expirationDate = await _addonManager.GetSubscriptionExpirationDateAsync();
-                if (expirationDate.HasValue)
-                {
-                }
-            }
-            else
-            {
-                
-            }
-        }
-        // Method to check if the premium license file exists
         private bool CheckPremiumStatus()
         {
-            // Check if the premium license file exists
             if (File.Exists(premiumLicensePath))
             {
                 IsPremiumUser = true;
@@ -61,7 +42,6 @@ namespace FireBrowserWinUi3.Pages.Patch
 
         private void CheckBackupLimit()
         {
-            // Get the Documents folder path
             string documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string backupDirectory = Path.Combine(documentsFolder);
 
@@ -75,7 +55,7 @@ namespace FireBrowserWinUi3.Pages.Patch
                     IsBackupAllowed = false;
                     InfoBarBackupWarning.IsOpen = true;
                     DefaultInfo.IsOpen = false;
-                    PrimaryButtonText = "Disabled"; // Change button text to indicate disabled
+                    PrimaryButtonText = "Disabled";
                 }
                 else
                 {
@@ -86,42 +66,37 @@ namespace FireBrowserWinUi3.Pages.Patch
             }
         }
 
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (!IsBackupAllowed)
             {
-                args.Cancel = true; // Prevent dialog close if max backups exist
+                args.Cancel = true;
                 return;
             }
 
-            // Backup creation logic
-            string tempPath = Path.GetTempPath();
-            string backupFilePath = Path.Combine(tempPath, "backup.fireback");
-            using (FileStream fs = File.Create(backupFilePath)) 
+            try
+            {
+                string tempPath = Path.GetTempPath();
+                string backupFilePath = Path.Combine(tempPath, "backup.fireback");
 
-            Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+                using (StreamWriter writer = File.CreateText(backupFilePath))
+                {
+                    writer.WriteLine(IsCloudBackup ? "cloud" : "local");
+                }
+
+               
+
+                Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+            }
+            catch (Exception ex)
+            {
+               
+            }
         }
 
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void BackupLocationToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            bool purchased = await _addonManager.PurchaseSubscriptionAsync();
-            if (purchased)
-            {
-                CheckSubscriptionStatus();
-            }
-            else
-            {
-                ContentDialog dialog = new ContentDialog
-                {
-                    Title = "Purchase Failed",
-                    Content = "Unable to complete the purchase. Please try again.",
-                    CloseButtonText = "OK"
-                };
-
-                await dialog.ShowAsync();
-            }
+            IsCloudBackup = BackupLocationToggle.IsOn;
         }
     }
 }

@@ -19,7 +19,7 @@
     <StackPanel Spacing="16" Padding="24">
         <InfoBar IsOpen="True" Severity="Warning" Title="Caution" Message="Restoring a backup will overwrite your current data." IsClosable="False"/>
         <TextBlock Text="Select a backup to restore:" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="Wrap"/>
-        <ListBox x:Name="BackupListBox" Height="200" SelectionChanged="BackupListBox_SelectionChanged">
+        <ListBox x:Name="BackupListBox" Height="83" SelectionChanged="BackupListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" TextWrapping="Wrap"/>

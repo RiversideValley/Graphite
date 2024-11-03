@@ -41,6 +41,10 @@
             Style="{ThemeResource BodyTextBlockStyle}"
             Text="A backup ensures you can restore your data if anything goes wrong during the update process."
             TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock VerticalAlignment="Center" Text="Backup Location:" />
+            <ToggleSwitch x:Name="BackupLocationToggle" OnContent="Cloud" OffContent="Local" Toggled="BackupLocationToggle_Toggled" />
+        </StackPanel>
         <InfoBar
             x:Name="EntraInfo"
             Title="Login Required"
@@ -49,10 +53,6 @@
             Message="FireBrowser is able to store you backups to the cloud now. Please log in with a Microsoft Account when prompted."
             Severity="Warning" />
         <!--  hide premuim icon until premium is available browser  -->
-        <Button
-            Click="Button_Click"
-            Content="Purchases Premium"
-            Visibility="Visible" />
     </StackPanel>
 
     <ContentDialog.PrimaryButtonStyle>
