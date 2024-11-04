@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fire Browser</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI+Variable:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WallpaperCyanDark8bit-min-qH7bDNyTlxUYdn98wvbccDlu66qfC0.png" as="image">
+    <link rel="preload" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/fastbrowsing-O1Y6WX3U9TaepJBvf12oJEdiMxhKrV.webp" as="image">
+    <link rel="preload" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/secure-ppNiPkXMsdLc3w2w6AEycvYk0tKOM4.webp" as="image">
+    <link rel="preload" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/costum-6McUQi0ooogHQtxbXLhWPDZ8Vh0tSP.webp" as="image">
     <style>
         :root {
             --text: #ffffff;
-            --primary: #60cdff;
+            --primary: #6495ED;
             --card-background: rgba(44, 44, 44, 0.8);
             --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             --hover-background: rgba(255, 255, 255, 0.1);
@@ -63,8 +67,8 @@
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(20px);
         }
-
-        nav {
+        
+          nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -108,6 +112,7 @@
                 font-size: 4rem;
                 font-weight: 700;
                 margin-bottom: 20px;
+                animation: ease-in 1.3s forwards;
                 background: linear-gradient(45deg, var(--primary), #ffffff);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -218,6 +223,24 @@
                 opacity: 1;
             }
 
+        @keyframes dropBounce {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            70% {
+                transform: translateY(0);
+            }
+
+            90% {
+                transform: translateY(-30px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -230,6 +253,7 @@
 
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out;
+
         }
 
         @media (max-width: 768px) {
@@ -257,9 +281,9 @@
                 <a href="#home" class="reveal-highlight">Home</a>
                 <a href="#features" class="reveal-highlight">Features</a>
                 <a href="#" id="loginBtn" class="reveal-highlight">Login</a>
-                <a href="http://localhost:12221/about" class="reveal-highlight">About</a>
-                <a href="http://localhost:12221/customers" class="reveal-highlight">Customers</a>
-                <a href="http://localhost:12221/repo" class="reveal-highlight">Repo</a>
+                <a href="https://firebrowser-official.vercel.app/home" class="reveal-highlight">About</a>
+                <a href="ms-windows-store://pdp/?ProductId=9pcn40xxvcvb&mode=mini" class="reveal-highlight">Store Download</a>
+                <a href="https://github.com/FirebrowserDevs/FireBrowserWinUi3" class="reveal-highlight">Repo</a>
             </div>
         </nav>
     </header>
@@ -267,7 +291,7 @@
     <main>
         <section id="home" class="hero">
             <div class="container">
-                <h1 class="animate-fadeIn">Welcome to Fire Browser</h1>
+                <h1 class="h1-animation">Welcome to Fire Browser</h1>
                 <p class="animate-fadeIn">Ignite your browsing experience</p>
                 <a href="#features" class="cta-button animate-fadeIn reveal-highlight">Explore Features</a>
             </div>
@@ -308,9 +332,9 @@
         const msalConfig = {
             auth: {
                 clientId: 'edfc73e2-cac9-4c47-a84c-dedd3561e8b5',
-                authority: 'https://login.microsoftonline.com/common',
-                redirectUri: 'https://account.microsoft.com/profile/',
-                postLogoutRedirectUri: "https://www.bing.com"
+                authority: 'https://login.microsoftonline.com/common/',
+                redirectUri: 'https://account.microsoft.com/profile',
+                postLogoutRedirectUri: "https://fireapp.msal/main.html"
             }
         };
 
