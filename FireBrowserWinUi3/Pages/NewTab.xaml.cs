@@ -143,16 +143,8 @@ public sealed partial class NewTab : Page
 
             if (!(string.IsNullOrEmpty(sender.Text)))
             {
-                var favHistory = SearchControls(sender.Text);
-                // var bingResult = SearchBingApi(sender.Text);
-                var aryHistoryItems = await Task.WhenAll(favHistory);
-
-                var suggestions = new List<HistoryItem>();
-                foreach (var historyItem in aryHistoryItems.ToList())
-                {
-                    suggestions.AddRange(historyItem.ToList());
-                }
-
+                var suggestions = await SearchControls(sender.Text);
+                
                 if (suggestions.Count > 0)
                     sender.ItemsSource = suggestions;
                 else
