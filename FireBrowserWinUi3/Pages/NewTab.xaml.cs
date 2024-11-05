@@ -195,7 +195,7 @@ public sealed partial class NewTab : Page
         }
 
         suggestions = suggestions.DistinctBy(t => t.Url).ToList();
-        return suggestions.OrderByDescending(i => i.Title!.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.LastVisitTime).DistinctBy(t => t.Url).DistinctBy(z => z.Title).ToList()e
+        return suggestions.OrderByDescending(i => i.Title!.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.LastVisitTime).DistinctBy(t => t.Url).DistinctBy(z => z.Title).ToList();
     }
 
     private async void QueryThis_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
