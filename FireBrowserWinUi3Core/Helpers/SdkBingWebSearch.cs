@@ -15,7 +15,7 @@ namespace FireBrowserWinUi3Core.Helpers
     {
         private string ApiKey => "29948d69f0294a5a9b8b75831dd06c8a";
         internal WebSearchClient WebSearchClient { get; set; }
-        internal List<string> FiltersJsonPropsSearchResponse { get; set; }
+        public List<string> FiltersJsonPropsSearchResponse { get; set; }
         public string FilterBy { get; set; }
 
         public SdkBingWebSearch()

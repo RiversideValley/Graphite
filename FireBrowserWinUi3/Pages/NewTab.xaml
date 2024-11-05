@@ -385,6 +385,8 @@
                 BorderBrush="{ThemeResource SystemAltHighColor}"
                 BorderThickness="1,1,1,1"
                 CornerRadius="5"
+                IsHoldingEnabled="True"
+                KeyDown="NewTabSearchBox_KeyDown"
                 PreviewKeyDown="NewTabSearchBox_PreviewKeyDown"
                 QuerySubmitted="NewTabSearchBox_QuerySubmittedAsync"
                 SuggestionChosen="QueryThis_SuggestionChosen"
@@ -406,7 +408,7 @@
                                     BorderThickness="2"
                                     CornerRadius="8"
                                     Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
                                         <Image
                                             x:Name="HistoryWebView"
                                             Width="24"
@@ -422,8 +424,12 @@
                                             TextWrapping="WrapWholeWords"
                                             ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}" />
                                     </StackPanel>
-                                    <TextBlock Text="{Binding Url, Mode=OneWay}" TextWrapping="NoWrap" Foreground="BlanchedAlmond" />
                                     <TextBlock
+                                        Foreground="BlanchedAlmond"
+                                        Text="{Binding Url, Mode=OneWay}"
+                                        TextWrapping="NoWrap" />
+                                    <TextBlock
+                                        Padding="2"
                                         HorizontalAlignment="Right"
                                         FontSize="12"
                                         Foreground="OrangeRed"

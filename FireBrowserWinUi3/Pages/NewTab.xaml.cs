@@ -10,6 +10,9 @@ using FireBrowserWinUi3DataCore.Actions;
 using FireBrowserWinUi3Exceptions;
 using FireBrowserWinUi3Favorites;
 using FireBrowserWinUi3MultiCore;
+using FireBrowserWinUi3MultiCore.Helper;
+using Microsoft.Bing.WebSearch;
+using Microsoft.Bing.WebSearch.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI;
@@ -95,11 +99,9 @@ public sealed partial class NewTab : Page
                 trendings.Add(new TrendingItem(item["webSearchUrl"].ToString(), item["name"].ToString(), item["image"]["url"].ToString(), item["query"]["text"].ToString()));
             }
         }
-        else
-        {
-            await Task.Delay(1000);
-            await UpdateTrending();
-        }
+
+        await Task.Delay(1000);
+
 
     }
     public record TrendingListItem(string webSearchUrl, string name, string url, string text);
@@ -132,14 +134,24 @@ public sealed partial class NewTab : Page
             await Task.Delay(200);
         }
     }
-    private void QueryThis_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private async void QueryThis_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
+
 
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
+
             if (!(string.IsNullOrEmpty(sender.Text)))
             {
-                var suggestions = SearchControls(sender.Text);
+                var favHistory = SearchControls(sender.Text);
+                var bingResult = SearchBingApi(sender.Text);
+                var aryHistoryItems = await Task.WhenAll(favHistory, bingResult);
+
+                var suggestions = new List<HistoryItem>();
+                foreach (var historyItem in aryHistoryItems.ToList())
+                {
+                    suggestions.AddRange(historyItem.ToList());
+                }
 
                 if (suggestions.Count > 0)
                     sender.ItemsSource = suggestions;
@@ -167,10 +179,60 @@ public sealed partial class NewTab : Page
 
             }
 
+            //pause execution and make thread safer... 
+            await Task.Delay(200);
 
-        }
+        };
+
     }
-    private List<HistoryItem> SearchControls(string query)
+
+    private async Task<List<HistoryItem>> SearchBingApi(string text)
+    {
+        SdkBingWebSearch sdkBingWebSearch = new SdkBingWebSearch();
+
+        var result = await sdkBingWebSearch.WebSearchResultTypesLookup(text);
+
+        if (result is null) return new List<HistoryItem>();
+
+        var items = new List<HistoryItem>();
+
+        foreach (WebPage webPage in result.WebPages?.Value)
+        {
+            var setBitmap = new BitmapImage();
+
+            try
+            {
+                var convertUrl = new Uri(webPage.Url);
+                setBitmap.UriSource = new Uri(string.Format("https://www.google.com/s2/favicons?domain_url={0}", convertUrl, convertUrl.Host));
+
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("Failed to set the uri from the web result");
+
+            }
+
+            if (setBitmap is null)
+            {
+                setBitmap.UriSource = SearchProviders.ProvidersList.Where(x => x.ProviderName.ToLowerInvariant() == "bing").FirstOrDefault().Image.UriSource;
+            }
+
+
+            items.Add(new HistoryItem
+            {
+                Title = webPage.Name!,
+                ImageSource = setBitmap,
+                Url = webPage.Url!,
+                LastVisitTime = "Bing's safe searching api.."
+            });
+        }
+
+        return items.DistinctBy(x => x.Title).OrderByDescending(z => z.LastVisitTime).ToList();
+
+    }
+
+    private Task<List<HistoryItem>> SearchControls(string query)
     {
         var suggestions = new List<HistoryItem>();
 
@@ -195,7 +257,7 @@ public sealed partial class NewTab : Page
         }
 
         suggestions = suggestions.DistinctBy(t => t.Url).ToList();
-        return suggestions.OrderByDescending(i => i.Title!.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.LastVisitTime).DistinctBy(t => t.Url).DistinctBy(z => z.Title).ToList();
+        return Task.FromResult(suggestions.OrderByDescending(i => i.Title!.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.LastVisitTime).DistinctBy(t => t.Url).DistinctBy(z => z.Title).ToList());
     }
 
     private async void QueryThis_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
@@ -558,6 +620,54 @@ public sealed partial class NewTab : Page
     private void TrendingVisible_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsTrendingVisible = TrendingVisible.IsOn);
     private void FloatingBox_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsLogoVisible = FloatingBox.IsOn);
 
+    private void NewTabSearchBox_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        int selectedSuggestionIndex = -1;
+
+        if (NewTabSearchBox.ItemsSource != null)
+        {
+            var items = NewTabSearchBox.Items.ToList();
+            if (items.Count == 0)
+                return;
+
+            if (e.Key == VirtualKey.Tab || e.Key == VirtualKey.Down)
+            {
+                selectedSuggestionIndex++;
+                if (selectedSuggestionIndex >= items.Count)
+                {
+                    selectedSuggestionIndex = 0;
+                }
+                ScrollToSelectedSuggestion(items.ElementAt(selectedSuggestionIndex) as HistoryItem);
+            }
+            else if (e.Key == VirtualKey.Up)
+            {
+                selectedSuggestionIndex--;
+                if (selectedSuggestionIndex < 0)
+                {
+                    selectedSuggestionIndex = items.Count - 1;
+                }
+                ScrollToSelectedSuggestion(items.ElementAt(selectedSuggestionIndex) as HistoryItem);
+            }
+            else if (e.Key == VirtualKey.Enter)
+            {
+                if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < items.Count)
+                {
+                    NewTabSearchBox.Text = (items.ElementAt(selectedSuggestionIndex) as HistoryItem).Title;
+                    NewTabSearchBox.IsSuggestionListOpen = false;
+                }
+            }
+        }
+    }
+
+    private void ScrollToSelectedSuggestion(HistoryItem selectedItem)
+    {
+        // Use Dispatcher to ensure the UI thread is available
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            var container = NewTabSearchBox.ContainerFromItem(selectedItem) as ListBoxItem;
+            container?.StartBringIntoView();
+        });
+    }
     private void FavoritesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!(sender is ListView listView) || listView.ItemsSource == null) return;
