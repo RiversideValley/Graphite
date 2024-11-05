@@ -696,7 +696,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+            <StackPanel
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="2">
                 <Button
                     x:Name="BackBtn"
                     Click="ToolbarButtonClick"

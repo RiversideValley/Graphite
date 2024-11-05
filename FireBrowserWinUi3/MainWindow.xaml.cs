@@ -132,7 +132,7 @@ public sealed partial class MainWindow : Window
         string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
         string nameService = nameof(FireAuthService).ToString();
 
-      //  StartWorker(nameService, workerPath);
+        StartWorker(nameService, workerPath);
     }
 
     private void StartWorker(string _nameService, string _pathService)

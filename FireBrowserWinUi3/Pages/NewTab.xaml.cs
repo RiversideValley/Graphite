@@ -1,6 +1,8 @@
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Services;
+using FireBrowserWinUi3.Services.Models;
+using FireBrowserWinUi3.Setup;
 using FireBrowserWinUi3.ViewModels;
 using FireBrowserWinUi3Core.Helpers;
 using FireBrowserWinUi3Core.ImagesBing;
@@ -11,6 +13,7 @@ using FireBrowserWinUi3MultiCore;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -24,6 +27,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Security;
 using System.Threading.Tasks;
+using Windows.System;
 using Windows.UI;
 using static FireBrowserWinUi3.MainWindow;
 using Settings = FireBrowserWinUi3Core.Models.Settings;
@@ -47,6 +51,7 @@ public sealed partial class NewTab : Page
     public NewTab()
     {
         ViewModel = App.GetService<HomeViewModel>();
+
         // init to load controls from settings, and start clock . 
         _ = ViewModel.Intialize().GetAwaiter();
         // assign to ViewModel, and or new instance.  
@@ -98,6 +103,114 @@ public sealed partial class NewTab : Page
 
     }
     public record TrendingListItem(string webSearchUrl, string name, string url, string text);
+
+    private async void NewTabSearchBox_QuerySubmittedAsync(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        if (string.IsNullOrEmpty(args.QueryText)) return;
+
+        if (isAuto && Application.Current is App app && app.m_window is MainWindow window)
+        {
+            window.DispatcherQueue.TryEnqueue(() =>
+            {
+                window.FocusUrlBox(args.QueryText);
+            });
+
+            await Task.Delay(200);
+
+            sender.DispatcherQueue.TryEnqueue(() =>
+            {
+                sender.Focus(FocusState.Programmatic);
+            });
+
+            await Task.Delay(200);
+
+            sender.DispatcherQueue.TryEnqueue(() =>
+            {
+                sender.Text = String.Empty;
+            });
+
+            await Task.Delay(200);
+        }
+    }
+    private void QueryThis_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        {
+            if (!(string.IsNullOrEmpty(sender.Text)))
+            {
+                var suggestions = SearchControls(sender.Text);
+
+                if (suggestions.Count > 0)
+                    sender.ItemsSource = suggestions;
+                else
+                {
+                    var l = new List<HistoryItem>();
+                    var h = new HistoryItem();
+                    h.Title = string.Format("{0} Searching...\r\nTopic:\t {1}", SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().ProviderName.ToUpperInvariant(), sender.Text);
+                    var bip = SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().Image;
+                    h.ImageSource = bip;
+                    l.Add(h);
+                    sender.ItemsSource = l;
+                }
+
+            }
+            else
+            {
+                var l = new List<HistoryItem>();
+                var h = new HistoryItem();
+                h.Title = "Please type to search!";
+                var bip = SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().Image;
+                h.ImageSource = bip;
+                l.Add(h);
+                sender.ItemsSource = l;
+
+            }
+
+
+        }
+    }
+    private List<HistoryItem> SearchControls(string query)
+    {
+        var suggestions = new List<HistoryItem>();
+
+        foreach (var item in ViewModel.HistoryItems)
+        {
+            if (!string.IsNullOrEmpty(item.Title) && item.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
+            {
+                suggestions.Add(item);
+            }
+
+        }
+        foreach (var item in ViewModel.FavoriteItems!)
+        {
+            var converter = new HistoryItem();
+            converter.Url = item.Url;
+            converter.Title = item.Title;
+            converter.ImageSource = new BitmapImage(new(item.IconUrlPath!));
+            if (!string.IsNullOrEmpty(converter.Title) && converter.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
+            {
+                suggestions.Add(converter);
+            }
+        }
+
+        suggestions = suggestions.DistinctBy(t => t.Url).ToList();
+        return suggestions.OrderByDescending(i => i.Title!.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.LastVisitTime).DistinctBy(t => t.Url).DistinctBy(z => z.Title).ToList()e
+    }
+
+    private async void QueryThis_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        if (args.SelectedItem is HistoryItem control)
+        {
+            sender.Text = control.Url;
+            sender.IsSuggestionListOpen = false;
+            await Task.Delay(200);
+            if (Application.Current is App app && app.m_window is MainWindow window)
+            {
+                window.NavigateToUrl(control.Url);
+            }
+        }
+    }
     private async void NewTab_Loaded(object sender, RoutedEventArgs e)
     {
         // round-robin if one or more newTab's are open apply settings. 
@@ -390,14 +503,6 @@ public sealed partial class NewTab : Page
     }
     private void Download_Click(object sender, RoutedEventArgs e) => DownloadImage().ConfigureAwait(false);
 
-    private void NewTabSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-    {
-        if (isAuto && Application.Current is App app && app.m_window is MainWindow window)
-        {
-            window.FocusUrlBox(NewTabSearchBox.Text);
-        }
-    }
-
     private void NewTabSearchBox_PreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
     {
         if (!isAuto && e.Key is Windows.System.VirtualKey.Enter && Application.Current is App app && app.m_window is MainWindow window)
@@ -420,80 +525,13 @@ public sealed partial class NewTab : Page
         {
             if (e.AddedItems.Count == 0) return;
 
-            string selection = e.AddedItems[0].ToString();
-            string url;
-
-            switch (selection)
+            if (e.AddedItems[0] is SearchProviders selection)
             {
-                case "Ask":
-                    url = "https://www.ask.com/web?q=";
-                    break;
-                case "Baidu":
-                    url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=";
-                    break;
-                case "Bing":
-                    url = "https://www.bing.com?q=";
-                    break;
-                case "DuckDuckGo":
-                    url = "https://www.duckduckgo.com?q=";
-                    break;
-                case "Ecosia":
-                    url = "https://www.ecosia.org/search?q=";
-                    break;
-                case "Google":
-                    url = "https://www.google.com/search?q=";
-                    break;
-                case "Startpage":
-                    url = "https://www.startpage.com/search?q=";
-                    break;
-                case "Qwant":
-                    url = "https://www.qwant.com/?q=";
-                    break;
-                case "Qwant Lite":
-                    url = "https://lite.qwant.com/?q=";
-                    break;
-                case "Yahoo!":
-                    url = "https://search.yahoo.com/search?p=";
-                    break;
-                case "Presearch":
-                    url = "https://presearch.com/search?q=";
-                    break;
-                case "Swisscows":
-                    url = "https://swisscows.com/web?query=";
-                    break;
-                case "Dogpile":
-                    url = "https://www.dogpile.com/serp?q=";
-                    break;
-                case "Webcrawler":
-                    url = "https://www.webcrawler.com/serp?q=";
-                    break;
-                case "You":
-                    url = "https://you.com/search?q=";
-                    break;
-                case "Excite":
-                    url = "https://results.excite.com/serp?q=";
-                    break;
-                case "Lycos":
-                    url = "https://search20.lycos.com/web/?q=";
-                    break;
-                case "Metacrawler":
-                    url = "https://www.metacrawler.com/serp?q=";
-                    break;
-                case "Mojeek":
-                    url = "https://www.mojeek.com/search?q=";
-                    break;
-                case "BraveSearch":
-                    url = "https://search.brave.com/search?q=";
-                    break;
-                default:
-                    url = "https://www.google.com/search?q=";
-                    break;
-            }
+                userSettings.EngineFriendlyName = selection.ProviderName;
+                userSettings.SearchUrl = selection.ProviderUrl;
+                ViewModel.SearchProvider = selection;
+                ViewModel.RaisePropertyChanges(nameof(ViewModel.SearchProvider));
 
-            if (!string.IsNullOrEmpty(url))
-            {
-                userSettings.EngineFriendlyName = selection;
-                userSettings.SearchUrl = url;
                 await ViewModel.SettingsService?.SaveChangesToSettings(AuthService.CurrentUser, userSettings);
             }
             NewTabSearchBox.Focus(FocusState.Programmatic);

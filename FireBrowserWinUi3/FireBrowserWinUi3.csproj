@@ -172,6 +172,7 @@
     <None Remove="Setup\SetupUi.xaml" />
     <None Remove="Setup\SetupUser.xaml" />
     <None Remove="Setup\SetupWebView.xaml" />
+    <None Remove="Styles\Thickness.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Logo.ico">
@@ -284,6 +285,9 @@
     <None Update="buy.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Styles\Thickness.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\_Code_Examples.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

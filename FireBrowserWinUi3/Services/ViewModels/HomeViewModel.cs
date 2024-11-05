@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Services;
+using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3Core.Helpers;
 using FireBrowserWinUi3Core.Models;
 using FireBrowserWinUi3Exceptions;
@@ -12,6 +13,7 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static FireBrowserWinUi3.Pages.NewTab;
@@ -64,6 +66,8 @@ public partial class HomeViewModel : ObservableRecipient
     [ObservableProperty]
     TrendingItem _trendingItem;
 
+    [ObservableProperty]
+    private SearchProviders _SearchProvider;
     public SettingsService SettingsService { get; set; }
     private DispatcherTimer timer { get; set; }
     public ObservableCollection<HistoryItem> HistoryItems { get; set; }
@@ -83,7 +87,7 @@ public partial class HomeViewModel : ObservableRecipient
         IsTrendingVisible = SettingsService.CoreSettings.IsTrendingVisible ? Visibility.Visible : Visibility.Collapsed;
         IslogoEnabled = SettingsService.CoreSettings.IsLogoVisible;
         IsLogoVisible = SettingsService.CoreSettings.IsLogoVisible ? Visibility.Visible : Visibility.Collapsed;
-
+        SearchProvider = SearchProviders.ProvidersList.FirstOrDefault(t => t.ProviderName == SettingsService.CoreSettings.EngineFriendlyName);
 
         IsFavoriteExpanded = SettingsService.CoreSettings.IsFavoritesToggled;
         IsHistoryExpanded = SettingsService.CoreSettings.IsHistoryToggled;
@@ -91,7 +95,7 @@ public partial class HomeViewModel : ObservableRecipient
         {
             BrushNtp = new SolidColorBrush((Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), SettingsService.CoreSettings.NtpTextColor));
         }
-
+        OnPropertyChanged(nameof(SearchProvider));
         OnPropertyChanged(nameof(NtpCoreVisibility));
         OnPropertyChanged(nameof(IsNtpTimeVisible));
         OnPropertyChanged(nameof(NtpTimeEnabled));
