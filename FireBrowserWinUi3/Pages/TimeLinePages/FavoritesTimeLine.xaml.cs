@@ -85,4 +85,15 @@ public sealed partial class FavoritesTimeLine : Page
         }
         FavoritesContextMenu.Hide();
     }
+
+    private void FavoritesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0)
+            if (Application.Current is App app && app.m_window is MainWindow window)
+            {
+                if (e.AddedItems.FirstOrDefault() is FavItem favItem)
+                    window.NavigateToUrl(favItem.Url);
+            }
+
+    }
 }

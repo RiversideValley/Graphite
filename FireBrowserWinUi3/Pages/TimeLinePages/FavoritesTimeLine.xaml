@@ -38,7 +38,7 @@
                 </StackPanel>
             </Button>
 
-            <ListView x:Name="FavoritesListView" Grid.Row="1" RightTapped="FavoritesListView_RightTapped">
+            <ListView x:Name="FavoritesListView" Grid.Row="1" SelectionChanged="FavoritesListView_SelectionChanged" RightTapped="FavoritesListView_RightTapped">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="firebrowserfavorites:FavItem">
                         <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="12">

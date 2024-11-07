@@ -1,4 +1,5 @@
 using FireBrowserWinUi3DataCore.Actions;
+using FireBrowserWinUi3DataCore.Models;
 using FireBrowserWinUi3Exceptions;
 using FireBrowserWinUi3MultiCore;
 using Microsoft.UI.Xaml;
@@ -104,5 +105,15 @@ public sealed partial class HistoryTimeLine : Page
                 historyItems.Remove(itemToRemove);
             }
         }
+    }
+
+    private void BigTemp_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count > 0)
+            if (Application.Current is App app && app.m_window is MainWindow window)
+            {
+                if (e.AddedItems.FirstOrDefault() is FireBrowserDatabase.HistoryItem historyItem)
+                    window.NavigateToUrl(historyItem.Url);
+            }
     }
 }

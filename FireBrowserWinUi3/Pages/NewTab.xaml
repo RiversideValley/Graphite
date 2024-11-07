@@ -527,9 +527,9 @@
             <labs:SettingsCard
                 Grid.Row="2"
                 Width="Auto"
-                MinWidth="250"
+                MinWidth="350"
                 Margin="2"
-                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
                 Background="{ThemeResource DesktopAcrylicTransparentBrush}"
                 BorderBrush="Black"
                 BorderThickness="1"
@@ -543,6 +543,7 @@
                 </labs:SettingsCard.HeaderIcon>
                 <ComboBox
                     x:Name="SearchengineSelection"
+                    HorizontalAlignment="Right"
                     ItemsSource="{x:Bind provider:SearchProviders.ProvidersList}"
                     SelectedItem="{x:Bind ViewModel.SearchProvider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectionChanged="SearchengineSelection_SelectionChanged">

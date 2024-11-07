@@ -27,7 +27,7 @@
             </Button>
         </Grid>
 
-        <ListView x:Name="BigTemp" Grid.Row="1">
+        <ListView x:Name="BigTemp" Grid.Row="1" SelectionChanged="BigTemp_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="5" RightTapped="Grid_RightTapped" ColumnDefinitions="Auto,*">
