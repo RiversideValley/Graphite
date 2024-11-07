@@ -622,8 +622,7 @@
                                 Command="{x:Bind ViewModelMain.AdminCenterCommand}"
                                 Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
                                 Icon="Admin"
-                                Label="Cloud Backups"
-                                Visibility="{x:Bind ViewModelMain.IsMsButtonVisibility, Mode=OneWay}" />
+                                Label="Cloud Backups" />
                             <AppBarButton
                                 Command="{x:Bind ViewModelMain.LogOutCommand}"
                                 Icon="LeaveChat"

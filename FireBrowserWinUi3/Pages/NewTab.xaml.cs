@@ -587,6 +587,9 @@ public sealed partial class NewTab : Page
                 ViewModel.RaisePropertyChanges(nameof(ViewModel.SearchProvider));
 
                 await ViewModel.SettingsService?.SaveChangesToSettings(AuthService.CurrentUser, userSettings);
+                userSettings = ViewModel.SettingsService.CoreSettings;
+                //SearchengineSelection.SelectedItem = selection.ProviderName; 
+
             }
             NewTabSearchBox.Focus(FocusState.Programmatic);
         }
@@ -612,44 +615,8 @@ public sealed partial class NewTab : Page
     private void TrendingVisible_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsTrendingVisible = TrendingVisible.IsOn);
     private void FloatingBox_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsLogoVisible = FloatingBox.IsOn);
 
-    private void NewTabSearchBox_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        int selectedSuggestionIndex = -1;
-
-        if (NewTabSearchBox.ItemsSource != null)
-        {
-            var items = NewTabSearchBox.Items.ToList();
-            if (items.Count == 0)
-                return;
-
-            if (e.Key == VirtualKey.Tab || e.Key == VirtualKey.Down)
-            {
-                selectedSuggestionIndex++;
-                if (selectedSuggestionIndex >= items.Count)
-                {
-                    selectedSuggestionIndex = 0;
-                }
-                ScrollToSelectedSuggestion(items.ElementAt(selectedSuggestionIndex) as HistoryItem);
-            }
-            else if (e.Key == VirtualKey.Up)
-            {
-                selectedSuggestionIndex--;
-                if (selectedSuggestionIndex < 0)
-                {
-                    selectedSuggestionIndex = items.Count - 1;
-                }
-                ScrollToSelectedSuggestion(items.ElementAt(selectedSuggestionIndex) as HistoryItem);
-            }
-            else if (e.Key == VirtualKey.Enter)
-            {
-                if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < items.Count)
-                {
-                    NewTabSearchBox.Text = (items.ElementAt(selectedSuggestionIndex) as HistoryItem).Title;
-                    NewTabSearchBox.IsSuggestionListOpen = false;
-                }
-            }
-        }
-    }
+    
+    
 
     private void ScrollToSelectedSuggestion(HistoryItem selectedItem)
     {

@@ -386,7 +386,6 @@
                 BorderThickness="1,1,1,1"
                 CornerRadius="5"
                 IsHoldingEnabled="True"
-                KeyDown="NewTabSearchBox_KeyDown"
                 PreviewKeyDown="NewTabSearchBox_PreviewKeyDown"
                 QuerySubmitted="NewTabSearchBox_QuerySubmittedAsync"
                 SuggestionChosen="QueryThis_SuggestionChosen"
