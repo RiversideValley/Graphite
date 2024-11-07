@@ -367,79 +367,163 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock
+            <StackPanel
                 Grid.Row="0"
-                FontSize="{ThemeResource TextStyleLargeFontSize}"
-                Text="Search or enter an address"
-                Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <AutoSuggestBox
-                x:Name="NewTabSearchBox"
-                x:Uid="SearchBar"
-                Grid.Row="1"
-                Width="Auto"
-                Height="40"
-                MinWidth="350"
-                HorizontalAlignment="Stretch"
-                x:FieldModifier="Public"
-                Background="Transparent"
-                BorderBrush="{ThemeResource SystemAltHighColor}"
-                BorderThickness="1,1,1,1"
-                CornerRadius="5"
-                IsHoldingEnabled="True"
-                PreviewKeyDown="NewTabSearchBox_PreviewKeyDown"
-                QuerySubmitted="NewTabSearchBox_QuerySubmittedAsync"
-                SuggestionChosen="QueryThis_SuggestionChosen"
-                TextChanged="QueryThis_TextChanged"
-                Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <AutoSuggestBox.Resources>
-                    <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="{ThemeResource SystemAltHighColor}" />
-                    <SolidColorBrush x:Key="TextControlButtonForeground" Color="{ThemeResource SystemAltHighColor}" />
-                </AutoSuggestBox.Resources>
-                <AutoSuggestBox.ItemTemplate>
-                    <DataTemplate x:DataType="history:HistoryItem">
-                        <ContentPresenter>
-                            <Grid>
-                                <StackPanel
-                                    Margin="{StaticResource XXSmallLeftTopRightBottomMargin}"
-                                    Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
-                                    VerticalAlignment="Top"
-                                    BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
-                                    BorderThickness="2"
-                                    CornerRadius="8"
-                                    Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal" Spacing="2">
-                                        <Image
-                                            x:Name="HistoryWebView"
-                                            Width="24"
-                                            Height="24"
-                                            Margin="{StaticResource XXSmallLeftTopRightBottomMargin}"
-                                            HorizontalAlignment="Left"
-                                            Source="{Binding ImageSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Orientation="Vertical"
+                Spacing="5">
+                <TextBlock
+                    FontSize="{ThemeResource TextStyleLargeFontSize}"
+                    Text="Search or enter an address"
+                    Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <AutoSuggestBox
+                    x:Name="NewTabSearchBox"
+                    x:Uid="SearchBar"
+                    Grid.Row="1"
+                    Width="Auto"
+                    Height="40"
+                    MinWidth="350"
+                    HorizontalAlignment="Stretch"
+                    x:FieldModifier="Public"
+                    Background="Transparent"
+                    BorderBrush="{ThemeResource SystemAltHighColor}"
+                    BorderThickness="1,1,1,1"
+                    CornerRadius="5"
+                    IsHoldingEnabled="True"
+                    PreviewKeyDown="NewTabSearchBox_PreviewKeyDown"
+                    QuerySubmitted="NewTabSearchBox_QuerySubmittedAsync"
+                    SuggestionChosen="QueryThis_SuggestionChosen"
+                    TextChanged="QueryThis_TextChanged"
+                    Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <AutoSuggestBox.Resources>
+                        <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="{ThemeResource SystemAltHighColor}" />
+                        <SolidColorBrush x:Key="TextControlButtonForeground" Color="{ThemeResource SystemAltHighColor}" />
+                    </AutoSuggestBox.Resources>
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="history:HistoryItem">
+                            <ContentPresenter>
+                                <Grid>
+                                    <StackPanel
+                                        Margin="{StaticResource XXSmallLeftTopRightBottomMargin}"
+                                        Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
+                                        VerticalAlignment="Top"
+                                        BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="8"
+                                        Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal" Spacing="2">
+                                            <Image
+                                                x:Name="HistoryWebView"
+                                                Width="24"
+                                                Height="24"
+                                                Margin="{StaticResource XXSmallLeftTopRightBottomMargin}"
+                                                HorizontalAlignment="Left"
+                                                Source="{Binding ImageSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock
+                                                FontSize="14"
+                                                FontWeight="ExtraBold"
+                                                Foreground="ForestGreen"
+                                                Text="{Binding Title, Mode=OneWay}"
+                                                TextWrapping="WrapWholeWords"
+                                                ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}" />
+                                        </StackPanel>
                                         <TextBlock
-                                            FontSize="14"
-                                            FontWeight="ExtraBold"
-                                            Foreground="ForestGreen"
-                                            Text="{Binding Title, Mode=OneWay}"
-                                            TextWrapping="WrapWholeWords"
-                                            ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}" />
+                                            Foreground="BlanchedAlmond"
+                                            Text="{Binding Url, Mode=OneWay}"
+                                            TextWrapping="NoWrap" />
+                                        <TextBlock
+                                            Padding="2"
+                                            HorizontalAlignment="Right"
+                                            FontSize="12"
+                                            Foreground="OrangeRed"
+                                            Text="{Binding LastVisitTime}"
+                                            TextWrapping="NoWrap" />
                                     </StackPanel>
-                                    <TextBlock
-                                        Foreground="BlanchedAlmond"
-                                        Text="{Binding Url, Mode=OneWay}"
-                                        TextWrapping="NoWrap" />
-                                    <TextBlock
-                                        Padding="2"
-                                        HorizontalAlignment="Right"
-                                        FontSize="12"
-                                        Foreground="OrangeRed"
-                                        Text="{Binding LastVisitTime}"
-                                        TextWrapping="NoWrap" />
-                                </StackPanel>
-                            </Grid>
-                        </ContentPresenter>
-                    </DataTemplate>
-                </AutoSuggestBox.ItemTemplate>
-            </AutoSuggestBox>
+                                </Grid>
+                            </ContentPresenter>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+                <SelectorBar>
+                    <SelectorBarItem>
+                        <Button
+                            x:Name="His"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            x:FieldModifier="Public"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                            Tag="History">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xE81C;" />
+                                <TextBlock Margin="10,0,0,0" Text="History" />
+                            </StackPanel>
+                        </Button>
+                    </SelectorBarItem>
+                    <SelectorBarItem>
+                        <Button
+                            x:Name="Fav"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            x:FieldModifier="Public"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                            Tag="Favorites">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xE728;" />
+                                <TextBlock Margin="10,0,0,0" Text="Favorites" />
+                            </StackPanel>
+                        </Button>
+                    </SelectorBarItem>
+                    <SelectorBarItem>
+                        <Button
+                            x:Name="Down"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            x:FieldModifier="Public"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                            Tag="Downloads">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xE896;" />
+                                <TextBlock Margin="10,0,0,0" Text="Downloads" />
+                            </StackPanel>
+                        </Button>
+                    </SelectorBarItem>
+                    <SelectorBarItem>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                            Tag="Settings">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xE713;" />
+                                <TextBlock Margin="10,0,0,0" Text="Settings" />
+                            </StackPanel>
+                        </Button>
+                    </SelectorBarItem>
+                </SelectorBar>
+            </StackPanel>
             <labs:SettingsCard
                 Grid.Row="2"
                 Width="Auto"

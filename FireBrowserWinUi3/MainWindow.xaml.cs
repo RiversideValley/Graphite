@@ -1,3 +1,4 @@
+using Azure.Core.Pipeline;
 using CommunityToolkit.WinUI.Behaviors;
 using FireAuthService;
 using FireBrowserDatabase;
@@ -16,6 +17,7 @@ using FireBrowserWinUi3MultiCore;
 using FireBrowserWinUi3MultiCore.Helper;
 using FireBrowserWinUi3Navigator;
 using FireBrowserWinUi3QrCore;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI;
@@ -32,8 +34,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.ServiceProcess;
+using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
@@ -65,7 +69,7 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.appWindow = this.AppWindow;
-        
+
         ServiceDownloads = App.GetService<DownloadService>();
         SettingsService = App.GetService<SettingsService>();
         SettingsService.Initialize();
@@ -125,9 +129,10 @@ public sealed partial class MainWindow : Window
         appWindow.Closing += AppWindow_Closing;
     }
 
-    public void LoadDependencies() {
-    
-    
+    public void LoadDependencies()
+    {
+
+
     }
     public async void Init()
     {
@@ -136,10 +141,10 @@ public sealed partial class MainWindow : Window
         string workerProjectName = "FireAuthService";
         string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
         string nameService = nameof(FireAuthService).ToString();
-       
+
     }
 
-    
+
     public void setColorsTool()
     {
         if (SettingsService.CoreSettings.ColorTV == "#000000" || SettingsService.CoreSettings.ColorTV == "#FF000000")
@@ -585,19 +590,15 @@ public sealed partial class MainWindow : Window
             ExceptionLogger.LogException(ex);
         }
     }
-    private void UrlBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    private async void UrlBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         // reload the settings due to changes from outside view. 
         SettingsService.Initialize();
-
-        string input = UrlBox.Text.ToString();
-        string inputtype = UrlHelper.GetInputType(input);
-
         try
         {
-            if (input.Contains("firebrowser://"))
+            if (FireBrowserWinUi3Core.Helpers.UrlValidater.GetValidateUrl(UrlBox.Text.ToLowerInvariant()) is Uri browserTo)
             {
-                switch (input)
+                switch (UrlBox.Text.ToLowerInvariant())
                 {
                     case "firebrowser://newtab":
                         Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
@@ -621,27 +622,82 @@ public sealed partial class MainWindow : Window
                     //  break;
                     default:
                         // default behavior
+                        if (await FireBrowserWinUi3Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
+                            NavigateToUrl(browserTo.AbsolutePath);
+                        else
+                        {
+                            string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
+                            string query = searchurl + UrlEncoder.Default.Encode(UrlBox.Text.ToLowerInvariant());
+                            NavigateToUrl(query);
+
+                        }
                         break;
                 }
-            }
-            else if (inputtype is "url" or "urlNOProtocol")
-            {
-                string url = default; 
 
-                if (input.Contains("ms-appx:") || input.Contains("ms-appx-web:"))
-                    url = input.Trim();
-                else {
-                    url = inputtype == "url" ? input.Trim() : "https://" + input.Trim();
-                }
-                NavigateToUrl(url);
             }
             else
             {
-                //Settings userSettings = UserFolderManager.LoadUserSettings(AuthService.CurrentUser);
                 string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
-                string query = searchurl + input;
+                string query = searchurl + UrlEncoder.Default.Encode(UrlBox.Text.ToLowerInvariant());
+
                 NavigateToUrl(query);
+
             }
+
+            //string input = UrlBox.Text.ToString();
+            //string inputtype = UrlHelper.GetInputType(input);
+
+            //try
+            //{
+            //    if (input.Contains("firebrowser://"))
+            //    {
+            //        switch (input)
+            //        {
+            //            case "firebrowser://newtab":
+            //                Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
+            //                SelectNewTab();
+            //                break;
+            //            case "firebrowser://settings":
+            //                Tabs.TabItems.Add(CreateNewTab(typeof(SettingsPage)));
+            //                SelectNewTab();
+            //                break;
+            //            case "firebrowser://modules":
+            //                Tabs.TabItems.Add(CreateNewTab(typeof(Pluginss)));
+            //                SelectNewTab();
+            //                break;
+            //            //case "firebrowser://vault":
+            //            //   Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
+            //            //   SelectNewTab();
+            //            //   break;
+            //            // case "firebrowser://api-route":
+            //            //  Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
+            //            //  SelectNewTab();
+            //            //  break;
+            //            default:
+            //                // default behavior
+            //                break;
+            //        }
+            //    }
+            //    else if (inputtype is "url" or "urlNOProtocol")
+            //    {
+            //        string url = default;
+
+            //        if (input.Contains("ms-appx:") || input.Contains("ms-appx-web:"))
+            //            url = input.Trim();
+            //        else
+            //        {
+            //            url = inputtype == "url" ? input.Trim() : "https://" + input.Trim();
+            //        }
+            //        NavigateToUrl(url);
+            //    }
+            //    else
+            //    {
+            //        //Settings userSettings = UserFolderManager.LoadUserSettings(AuthService.CurrentUser);
+            //        string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
+            //        string query = searchurl + input;
+            //        query = UrlEncoder.Default.Encode(query);
+            //        NavigateToUrl(query);
+            //    }
         }
         catch (Exception ex)
         {

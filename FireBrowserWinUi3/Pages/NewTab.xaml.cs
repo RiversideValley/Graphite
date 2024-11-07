@@ -144,7 +144,7 @@ public sealed partial class NewTab : Page
             if (!(string.IsNullOrEmpty(sender.Text)))
             {
                 var suggestions = await SearchControls(sender.Text);
-                
+
                 if (suggestions.Count > 0)
                     sender.ItemsSource = suggestions;
                 else
@@ -614,8 +614,8 @@ public sealed partial class NewTab : Page
     private void TrendingVisible_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsTrendingVisible = TrendingVisible.IsOn);
     private void FloatingBox_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsLogoVisible = FloatingBox.IsOn);
 
-    
-    
+
+
 
     private void ScrollToSelectedSuggestion(HistoryItem selectedItem)
     {
@@ -626,6 +626,7 @@ public sealed partial class NewTab : Page
             container?.StartBringIntoView();
         });
     }
+
     private void FavoritesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!(sender is ListView listView) || listView.ItemsSource == null) return;

@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserDatabase;
+using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3Core.Helpers;
@@ -9,6 +11,7 @@ using FireBrowserWinUi3Exceptions;
 using FireBrowserWinUi3Favorites;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -17,6 +20,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static FireBrowserWinUi3.Pages.NewTab;
+
 
 namespace FireBrowserWinUi3.ViewModels;
 public partial class HomeViewModel : ObservableRecipient
@@ -179,6 +183,42 @@ public partial class HomeViewModel : ObservableRecipient
         LoadUISettings();
     }
 
+    [RelayCommand]
+    private void ProtocolHandler(object sender)
+    {
+
+        if (Application.Current is App app && app.m_window is MainWindow window)
+        {
+            window.DispatcherQueue?.TryEnqueue(() =>
+            {
+
+                if (sender is Button btn)
+                {
+
+                    switch (btn.Tag.ToString())
+                    {
+                        case "Settings":
+                            window.Tabs.TabItems.Add(window.CreateNewTab(typeof(SettingsPage)));
+                            window.SelectNewTab();
+                            break;
+                        case "Downloads":
+                            window.UrlBox.Text = "firebrowser://downloads";
+                            window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+                            break;
+                        case "History":
+                            window.UrlBox.Text = "firebrowser://history";
+                            window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+                            break;
+                        case "Favorites":
+                            window.UrlBox.Text = "firebrowser://favorites";
+                            window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+                            break;
+                    }
+                }
+            });
+        }
+
+    }
     public Task Intialize()
     {
         UpdateUIControls();
