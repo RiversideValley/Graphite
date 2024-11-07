@@ -585,7 +585,6 @@ public sealed partial class NewTab : Page
                 userSettings.SearchUrl = selection.ProviderUrl;
                 ViewModel.SearchProvider = selection;
                 ViewModel.RaisePropertyChanges(nameof(ViewModel.SearchProvider));
-
                 await ViewModel.SettingsService?.SaveChangesToSettings(AuthService.CurrentUser, userSettings);
                 userSettings = ViewModel.SettingsService.CoreSettings;
                 //SearchengineSelection.SelectedItem = selection.ProviderName; 

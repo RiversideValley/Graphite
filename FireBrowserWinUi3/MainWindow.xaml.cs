@@ -65,7 +65,7 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.appWindow = this.AppWindow;
-
+        
         ServiceDownloads = App.GetService<DownloadService>();
         SettingsService = App.GetService<SettingsService>();
         SettingsService.Initialize();
@@ -124,6 +124,11 @@ public sealed partial class MainWindow : Window
 
         appWindow.Closing += AppWindow_Closing;
     }
+
+    public void LoadDependencies() {
+    
+    
+    }
     public async void Init()
     {
         await FireBrowserWinUi3Core.Models.Data.Init();
@@ -131,7 +136,6 @@ public sealed partial class MainWindow : Window
         string workerProjectName = "FireAuthService";
         string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
         string nameService = nameof(FireAuthService).ToString();
-
        
     }
 
@@ -583,6 +587,9 @@ public sealed partial class MainWindow : Window
     }
     private void UrlBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
+        // reload the settings due to changes from outside view. 
+        SettingsService.Initialize();
+
         string input = UrlBox.Text.ToString();
         string inputtype = UrlHelper.GetInputType(input);
 
