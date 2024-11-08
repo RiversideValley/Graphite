@@ -17,8 +17,8 @@
                 x:Name="Delete"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Style="{StaticResource TextBlockButtonStyle}"
                 Click="Delete_Click"
+                Style="{StaticResource TextBlockButtonStyle}"
                 ToolTipService.ToolTip="Delete All History">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE107;" />
@@ -27,10 +27,17 @@
             </Button>
         </Grid>
 
-        <ListView x:Name="BigTemp" Grid.Row="1" SelectionChanged="BigTemp_SelectionChanged">
+        <ListView
+            x:Name="BigTemp"
+            Grid.Row="1"
+            SelectionChanged="BigTemp_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5" RightTapped="Grid_RightTapped" ColumnDefinitions="Auto,*">
+                    <Grid
+                        Margin="5"
+                        Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
+                        ColumnDefinitions="Auto,*"
+                        RightTapped="Grid_RightTapped">
                         <Image
                             Width="32"
                             Height="32"
@@ -41,14 +48,15 @@
                                 Text="{Binding Title}"
                                 TextWrapping="Wrap" />
                             <TextBlock
+                                FontWeight="ExtraBold"
                                 Foreground="{ThemeResource SystemAccentColor}"
                                 MaxLines="2"
                                 Text="{Binding Url}"
                                 TextWrapping="Wrap" />
-                            <TextBlock 
-                                Text="{Binding LastVisitTime}" 
+                            <TextBlock
+                                HorizontalAlignment="Right"
                                 Style="{ThemeResource CaptionTextBlockStyle}"
-                                HorizontalAlignment="Right" />
+                                Text="{Binding LastVisitTime}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

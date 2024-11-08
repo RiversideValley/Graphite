@@ -34,6 +34,7 @@ using Microsoft.Graph.Models;
 using Windows.Services.Maps;
 using FireBrowserWinUi3Exceptions;
 using Microsoft.Web.WebView2.Core;
+using Microsoft.UI.Xaml.Media;
 
 namespace FireBrowserWinUi3.Services.ViewModels
 {
@@ -187,7 +188,7 @@ namespace FireBrowserWinUi3.Services.ViewModels
             FileNewSas.BlobUrl = sasUrl;
 
             OnPropertyChanged(nameof(FileNewSas));
-
+            
             //await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
             //await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
 

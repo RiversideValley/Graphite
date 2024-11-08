@@ -25,7 +25,7 @@
             FontWeight="SemiBold"
             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
             Text="Backup File Request" />
-        <ContentPresenter Margin="2,72,2,2" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+        <ScrollViewer Margin="2,72,2,2" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
             <Grid
                 x:Name="MainGrid"
                 Margin="{ThemeResource ContentDialogBorderWidth}"
@@ -93,7 +93,8 @@
                             Command="{x:Bind ViewModel.GenerateAndSendCommand}"
                             CommandParameter="{x:Bind ViewModel.FileSelected, Mode=OneTime}"
                             Content="Generate SAS Token and Share Url"
-                            RequestedTheme="Light" />
+                            RequestedTheme="Light" >
+                        </Button>
                         <Button
                             Command="{x:Bind ViewModel.BackUpCoreCommand}"
                             Content="Create Backup"
@@ -111,22 +112,11 @@
                         Visibility="{x:Bind ViewModel.IsFileNewSas, Mode=OneWay}">
                         <TextBlock FontFamily="Arial Times New Roman" FontSize="23">Copy and Paste Into Browser ( Urls are valid for 1 hour. )</TextBlock>
                         <TextBox
+                            x:Name="FileNewSasText"
                             Height="100"
                             Text="{x:Bind ViewModel.FileNewSas.BlobUrl, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
-
-                </StackPanel>
-                <StackPanel
-                    VerticalAlignment="Bottom"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <Image
-                        Width="24"
-                        Height="24"
-                        Source="{dllimg:ImageLoader ImageName=LogoApp.png}" />
-                    <TextBlock x:Uid="AppName" Style="{ThemeResource NavigationViewItemHeaderTextStyle}" />
-
                 </StackPanel>
                 <InfoBar
                     MaxWidth="480"
@@ -143,8 +133,18 @@
                 </InfoBar>
             </Grid>
 
-        </ContentPresenter>
-
+        </ScrollViewer>
+        <StackPanel
+            Margin="{ThemeResource XXSmallTopMargin}"
+            VerticalAlignment="Bottom"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Image
+                Width="24"
+                Height="24"
+                Source="{dllimg:ImageLoader ImageName=LogoApp.png}" />
+            <TextBlock x:Uid="AppName" Style="{ThemeResource NavigationViewItemHeaderTextStyle}" />
+        </StackPanel>
     </Grid>
 
 </Window>
