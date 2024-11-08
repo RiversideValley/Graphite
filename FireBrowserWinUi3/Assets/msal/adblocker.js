@@ -17,6 +17,7 @@
     function removeElements(elements) {
         elements.forEach(element => {
             if (element && element.parentElement) {
+                console.dir(element);
                 element.parentElement.removeChild(element);
             }
         });

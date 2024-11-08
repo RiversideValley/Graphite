@@ -306,32 +306,42 @@ public sealed partial class WebContent : Page
             param?.TabView.TabItems.Add(window.CreateNewTab(typeof(WebContent), args.Uri));
             args.Handled = true;
         };
+        
+        s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
+        s.CoreWebView2.WebResourceRequested +=  (sender, args) => {
+
+            if (IsLogoutRequest(args.Request))
+            {
+                AppService.IsAppUserAuthenicated = false;
+                Console.WriteLine("Usr has logged out. ");
+                s.CoreWebView2?.Navigate("https://fireapp.msal/main.html");
+                return;
+            }
+
+            if (IsLoginRequest(args.Request))
+            {
+                if (args.Request.Headers.Count() >0)
+                {
+                    var cookie = args.Request.Headers.Where(x => x.Key == "X-Microsoft-Account-Single-Sign-On-Cookies").FirstOrDefault();
+                    if (cookie.Value != null) AppService.IsAppUserAuthenicated = true; 
+                }
+            }
+
+        };
         s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
         {
 
-            var head = e.Request.Headers;
-            var isHeader = head.ToList().Where(t => t.Key == "Authentication");
-            if (isHeader.Count() > 0)
+            if (IsLoginRequest(e.Request))
             {
-                foreach (var item in isHeader.ToList())
+                var response =  e.Response;
+                if (response.StatusCode == 200 && IsLoginSuccessful(response))
                 {
-                    //background logging
-                    await Task.Run(() =>
-                    {
-                        string json = JsonConvert.SerializeObject(item, Formatting.Indented);
-                        //string stdout = $"{DateTimeOffset.Now.ToLocalTime()}-{staticCounter++}:\n{json}";
-                        var helper = new JsonHelper(ExceptionLogger.MsalLogFile);
-                        helper.SaveToFile(new JArray(json)).WaitAsync(AppService.CancellationToken);
+                    AppService.IsAppUserAuthenicated = true;
+                    Console.WriteLine("Login successful.");
 
-                        return Task.CompletedTask;
-                    }).ConfigureAwait(false);
                 }
-
             }
-
-
-
 
             // add this msal.account.keys
             // double check logout 
@@ -349,7 +359,7 @@ public sealed partial class WebContent : Page
                                                         }
                                                         return keys;
                                                     } return findMsalAccountKeys();})();"
-                        ).AsTask().ContinueWith(async keys =>
+                        ).AsTask().ContinueWith(keys =>
                         {
 
                             // Critical section here
@@ -358,38 +368,13 @@ public sealed partial class WebContent : Page
                             if (token is JArray array)
                             {
                                 if (array.Count > 0)
-                                {
                                     AppService.IsAppUserAuthenicated = true;
-                                    //background logging
-                                    await Task.Run(() =>
-                                    {
-                                        string json = JsonConvert.SerializeObject(array, Formatting.Indented);
-                                        //string stdout = $"{DateTimeOffset.Now.ToLocalTime()}-{staticCounter++}:\n{json}";
-                                        var helper = new JsonHelper(ExceptionLogger.MsalLogFile);
-                                        helper.SaveToFile(array).WaitAsync(AppService.CancellationToken);
-
-
-                                        return Task.CompletedTask;
-                                    }).ConfigureAwait(false);
-                                }
                             }
 
                         });
 
-
-
-            //await s.ExecuteScriptAsync("document.cookie").AsTask().ContinueWith(async cookieTask =>
-            //{
-            //    var cookies = cookieTask.Result;
-            //    if (cookies.Contains("msal.token.keys"))
-            //    {
-            //        AppService.IsAppUserAuthenicated = true;
-            //    }
-            //});
-
         };
 
-        //s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
         //s.CoreWebView2.WebResourceRequested += async (sender, args) =>
         //{
@@ -398,6 +383,35 @@ public sealed partial class WebContent : Page
 
     }
 
+    private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
+    {
+        // Define your login URL patterns
+        string[] loginUrls = { "https://login.live.com/login",  "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize" };
+
+        // Check if the request URL matches any known login URL patterns
+        return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private bool IsLoginSuccessful(CoreWebView2WebResourceResponseView response)
+    {
+        if (response.Headers.Count() > 0)
+        {
+            var c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
+            if (c_Set.Value is not null) return true; 
+
+        }
+        
+        return false; 
+    }
+
+    private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
+    {
+        // Define your logout URL patterns
+        string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?" };
+
+        // Check if the request URL matches any known logout URL patterns
+        return logoutUrls.Any(logoutUrl => request.Uri.StartsWith(logoutUrl, StringComparison.OrdinalIgnoreCase));
+    }
 
     private void CoreWebView2_DownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
     {
