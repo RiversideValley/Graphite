@@ -68,6 +68,15 @@ public class DbSettings
     public bool IsTrendingVisible { get; set; }
     public bool NtpCoreVisibility { get; set; }
 
+    public bool NewTabHistoryQuick { get; set; }
+
+    public bool NewTabHistoryDownloads { get; set; }
+
+    public bool NewTabHistoryFavorites { get; set; }
+
+    public bool NewTabHistoryHistory { get; set; }
+
+
     // public bool WelcomeMsg { get; set; }
 
 }
@@ -134,6 +143,10 @@ public class Settings
         self.IsAdBlockerEnabled = false;
         self.AdBlockerType = 0;
         self.Gender = "Male";
+        self.NewTabHistoryDownloads = false;
+        self.NewTabHistoryFavorites = false;
+        self.NewTabHistoryHistory = false;
+        self.NewTabHistoryQuick = false;
         //self.WelcomeMsg = true;
     }
 
@@ -217,6 +230,14 @@ public class Settings
     public bool IsSearchVisible { get; set; }
     public bool IsTrendingVisible { get; set; }
     public bool NtpCoreVisibility { get; set; }
+
+    public bool NewTabHistoryQuick { get; set; }
+
+    public bool NewTabHistoryDownloads { get; set; }
+
+    public bool NewTabHistoryFavorites { get; set; }
+
+    public bool NewTabHistoryHistory { get; set; }
 
     // public bool WelcomeMsg { get; set; }
 

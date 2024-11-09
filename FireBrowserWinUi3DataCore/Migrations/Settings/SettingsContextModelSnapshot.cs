@@ -188,6 +188,18 @@ namespace FireBrowserWinUi3DataCore.Migrations.Settings
                     b.Property<int>("TrackPrevention")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("NewTabHistoryDownloads")
+                     .HasColumnType("INTEGER");
+
+                    b.Property<int>("NewTabHistoryFavorites")
+                     .HasColumnType("INTEGER");
+
+                    b.Property<int>("NewTabHistoryQuick")
+                     .HasColumnType("INTEGER");
+
+                    b.Property<int>("NewTabHistoryHistory")
+                     .HasColumnType("INTEGER");
+
                     b.Property<bool>("Translate")
                         .HasColumnType("INTEGER");
 
@@ -258,7 +270,8 @@ namespace FireBrowserWinUi3DataCore.Migrations.Settings
                             ToolIcon = true,
                             TrackPrevention = 2,
                             Translate = true,
-                            Useragent = "WebView"
+                            Useragent = "WebView",
+                            
                         });
                 });
 #pragma warning restore 612, 618

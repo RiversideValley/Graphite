@@ -228,6 +228,7 @@ public sealed partial class NewTab : Page
     {
         var suggestions = new List<HistoryItem>();
 
+
         foreach (var item in ViewModel.HistoryItems)
         {
             if (!string.IsNullOrEmpty(item.Title) && item.Title.Contains(query, StringComparison.OrdinalIgnoreCase))

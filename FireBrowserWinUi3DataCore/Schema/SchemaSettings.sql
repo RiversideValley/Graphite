@@ -64,7 +64,12 @@ CREATE TABLE "IntialSettings" (
     "IsFavoritesVisible" INTEGER NOT NULL,
     "IsSearchVisible" INTEGER NOT NULL,
     "IsTrendingVisible" INTEGER NOT NULL,
-    "NtpCoreVisibility" INTEGER NOT NULL
+    "NtpCoreVisibility" INTEGER NOT NULL,
+    "NewTabHistoryQuick" INTEGER NOT NULL,
+    "NewTabHistoryDownloads" INTEGER NOT NULL,
+    "NewTabHistoryFavorites" INTEGER NOT NULL,
+    "NewTabHistoryHistory" INTEGER NOT NULL,
+
 );
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
