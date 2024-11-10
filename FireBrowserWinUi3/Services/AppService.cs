@@ -317,17 +317,34 @@ public static class AppService
     {
         string coreFolderPath = UserDataManager.CoreFolderPath;
         string username = GetUsernameFromCoreFolderPath(coreFolderPath, userName);
+        /* store in the datacore project sql file. Going to need to put on cloud, and 
+        1. Need function to create file in temp. 
+        2. How we push new queries / maybe in cloud for new sql or need function to update 
+        3. Migrations are for new and then Update with this new procedure for existing data... 
+        Need function after injection, before use logins, and when use authorized */
         string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
 
         AuthService.Authenticate(username);
 
         if (File.Exists(updateSql))
         {
-            SettingsActions settingsActions = new SettingsActions(AuthService.CurrentUser.Username);
-            var sql = File.ReadAllText(updateSql);
-            var IntRecCount = await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sql);
-            File.Delete(updateSql); 
+            try
+            {
+                SettingsActions settingsActions = new SettingsActions(AuthService.CurrentUser.Username);
+                var sqlIN = File.ReadAllText(updateSql);
+                await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
+                File.Delete(updateSql);
 
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogger.LogException(ex);
+                IsAppGoingToClose = true; 
+                WindowsController()
+                throw;
+            }
+
+            
         }
 
         if (username != null)
