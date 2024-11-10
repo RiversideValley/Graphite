@@ -1,4 +1,4 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using Microsoft.Data.Sqlite;
 using System;
 using System.IO;

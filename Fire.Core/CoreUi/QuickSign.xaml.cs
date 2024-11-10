@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
-using FireBrowserWinUi3Core.Helpers;
+using Fire.Core.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3Core.CoreUi;
+namespace Fire.Core.CoreUi;
 public sealed partial class QuickSign : Window
 {
     private AppWindow appWindow;
@@ -41,7 +41,7 @@ public sealed partial class QuickSign : Window
         appWindow = AppWindow.GetFromWindowId(windowId);
 
         appWindow.MoveAndResize(new RectInt32(500, 500, 720, 960));
-        FireBrowserWinUi3Core.Helpers.Windowing.Center(this);
+        Fire.Core.Helpers.Windowing.Center(this);
         appWindow.SetPresenter(AppWindowPresenterKind.Default);
         appWindow.MoveInZOrderAtTop();
         appWindow.SetIcon("accounts.ico");

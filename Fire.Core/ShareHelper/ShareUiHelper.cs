@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.ApplicationModel.DataTransfer;
 
-namespace FireBrowserWinUi3Core.ShareHelper;
+namespace Fire.Core.ShareHelper;
 public class ShareUIHelper
 {
     [System.Runtime.InteropServices.ComImport]

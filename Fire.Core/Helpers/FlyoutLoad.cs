@@ -1,7 +1,7 @@
-﻿using FireBrowserWinUi3Core.CoreUi;
+﻿using Fire.Core.CoreUi;
 using Microsoft.UI.Xaml;
 
-namespace FireBrowserWinUi3Core.Helpers;
+namespace Fire.Core.Helpers;
 
 public static class FlyoutLoad
 {

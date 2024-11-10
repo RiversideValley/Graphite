@@ -8,9 +8,9 @@ using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Models;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Core.Helpers;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;
@@ -61,10 +61,10 @@ namespace FireBrowserWinUi3.Services
         protected internal string TableName { get; set; } = "TrackerBackups";
         protected internal object UserWindows { get; set; }
 
-        protected FireBrowserWinUi3MultiCore.User FireUser { get; set; }
+        protected Fire.Browser.Core.User FireUser { get; set; }
 
 
-        private AzBackupService(FireBrowserWinUi3MultiCore.User fireUser, string _storageName, string _containerName)
+        private AzBackupService(Fire.Browser.Core.User fireUser, string _storageName, string _containerName)
         {
 
             StoragAccountName = _storageName;
@@ -72,16 +72,16 @@ namespace FireBrowserWinUi3.Services
             FireUser = fireUser;
 
         }
-        public AzBackupService(string connString, string storagAccountName, string containerName, FireBrowserWinUi3MultiCore.User user) : this(user, storagAccountName, containerName)
+        public AzBackupService(string connString, string storagAccountName, string containerName, Fire.Browser.Core.User user) : this(user, storagAccountName, containerName)
         {
             SET_AZConnectionsString(connString);
         }
         #region StorageProcedures
-        public async Task<FireBrowserWinUi3MultiCore.User> GetUserInformationAsync()
+        public async Task<Fire.Browser.Core.User> GetUserInformationAsync()
         {
             uint size = 1024;
             StringBuilder name = new StringBuilder((int)size);
-            FireBrowserWinUi3MultiCore.User user;
+            Fire.Browser.Core.User user;
 
             try
             {
@@ -192,7 +192,7 @@ namespace FireBrowserWinUi3.Services
             }
 
         }
-        public async Task<ResponseAZFILE> UploadAndStoreFile(string blobName, IRandomAccessStream fileStream, FireBrowserWinUi3MultiCore.User fireUser)
+        public async Task<ResponseAZFILE> UploadAndStoreFile(string blobName, IRandomAccessStream fileStream, Fire.Browser.Core.User fireUser)
         {
             try
             {

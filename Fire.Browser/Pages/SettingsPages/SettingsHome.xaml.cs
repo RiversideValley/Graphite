@@ -3,10 +3,10 @@ using CommunityToolkit.WinUI;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3Core.Models;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3License;
-using FireBrowserWinUi3MultiCore;
+using Fire.Core.Models;
+using Fire.Core.Exceptions;
+using Fire.Core.Licensing;
+using Fire.Browser.Core;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -76,7 +76,7 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
             return Task.CompletedTask;
         }
 
-        private FireBrowserWinUi3MultiCore.User GetUser() =>
+        private Fire.Browser.Core.User GetUser() =>
             AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
 
         private void LoadUserDataAndSettings()
@@ -197,7 +197,7 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 
         private async void ImportBookmarksItem_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new FireBrowserWinUi3Favorites.ImportBookMarks();
+            var dialog = new Fire.Data.Favorites.ImportBookMarks();
             dialog.XamlRoot = this.XamlRoot;
             await dialog.ShowAsync();
         }

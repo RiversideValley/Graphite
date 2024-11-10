@@ -1,7 +1,7 @@
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Core.Helpers;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -47,7 +47,7 @@ namespace FireBrowserWinUi3.Controls
             appWindow = AppWindow.GetFromWindowId(windowId);
             appWindow.Title = "CreateBackup";
             appWindow.MoveAndResize(new RectInt32(500, 500, 850, 500));
-            FireBrowserWinUi3Core.Helpers.Windowing.Center(this);
+            Fire.Core.Helpers.Windowing.Center(this);
             appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
             appWindow.MoveInZOrderAtTop();
             appWindow.SetIcon("backup.ico");
@@ -112,7 +112,7 @@ namespace FireBrowserWinUi3.Controls
                     {
                         var fireUser = await AzBackup.GetUserInformationAsync();
 
-                        if (fireUser is FireBrowserWinUi3MultiCore.User user)
+                        if (fireUser is Fire.Browser.Core.User user)
                         {
                             this.DispatcherQueue.TryEnqueue(async () =>
                             {
@@ -165,7 +165,7 @@ namespace FireBrowserWinUi3.Controls
             }
         }
 
-        private async Task<object> UploadFileToAzure(string fileName, FireBrowserWinUi3MultiCore.User fireUser)
+        private async Task<object> UploadFileToAzure(string fileName, Fire.Browser.Core.User fireUser)
         {
             StorageFile file = await StorageFile.GetFileFromPathAsync(fileName);
             IRandomAccessStream randomAccessStream = await file.OpenAsync(FileAccessMode.Read);

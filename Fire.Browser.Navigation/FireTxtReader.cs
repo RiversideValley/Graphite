@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace FireBrowserWinUi3Navigator;
+namespace Fire.Browser.Navigation;
 
 public class FireTxtReader
 {

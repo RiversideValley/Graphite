@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Events;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,7 +55,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
         try
         {
             DownloadActions downloadActions = new(AuthorizedUser.Username);
-            List<FireBrowserWinUi3DataCore.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
+            List<Fire.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
 
             if (items.Count > 0)
             {

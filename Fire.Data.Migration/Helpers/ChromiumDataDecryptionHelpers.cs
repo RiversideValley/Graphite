@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace FireBrowserWinUi3Migration.Helpers
+namespace Fire.Data.Migration.Helpers
 {
     public class ChromiumDataDecryptionHelpers
     {

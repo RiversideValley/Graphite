@@ -1,6 +1,6 @@
 ﻿using Windows.ApplicationModel.DataTransfer;
 
-namespace FireBrowserWinUi3Core.Helpers;
+namespace Fire.Core.Helpers;
 public class ClipBoard
 {
     public static void WriteStringToClipboard(string text)

@@ -1,10 +1,10 @@
-using FireBrowserWinUi3Exceptions;
+using Fire.Core.Exceptions;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Navigator;
+namespace Fire.Browser.Navigation;
 
 public class TLD
 {

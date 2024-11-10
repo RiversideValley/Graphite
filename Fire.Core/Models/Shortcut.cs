@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Core.Models;
+namespace Fire.Core.Models;
 
 public class Shortcut
 {

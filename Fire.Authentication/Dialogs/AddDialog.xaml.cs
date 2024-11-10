@@ -1,4 +1,4 @@
-using FireBrowserWinUi3AuthCore;
+using Fire.Authentication.Private;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
@@ -6,7 +6,7 @@ using Windows.ApplicationModel.DataTransfer;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FireBrowserWinUi3Auth.Dialogs
+namespace Fire.Authentication.Dialogs
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

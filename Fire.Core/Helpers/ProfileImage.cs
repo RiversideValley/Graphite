@@ -1,4 +1,4 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using Windows.ApplicationModel.AppService;
 
-namespace FireBrowserWinUi3Core.Helpers;
+namespace Fire.Core.Helpers;
 
 public class ProfileImage : MarkupExtension
 {

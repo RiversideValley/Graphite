@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FireBrowserWinUi3Exceptions;
+using Fire.Core.Exceptions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace FireBrowserWinUi3Core.Helpers
+namespace Fire.Core.Helpers
 {
     public partial class BingSearchApi : ObservableObject
     {

@@ -1,5 +1,5 @@
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3MultiCore;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;

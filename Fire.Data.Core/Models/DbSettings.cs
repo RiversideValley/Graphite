@@ -1,10 +1,10 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 
-namespace FireBrowserWinUi3DataCore.Models;
-public class DbSettings : FireBrowserWinUi3MultiCore.Settings
+namespace Fire.Data.Core.Models;
+public class DbSettings : Fire.Browser.Core.Settings
 {
 
-    public FireBrowserWinUi3MultiCore.Settings Settings { get; set; }
+    public Fire.Browser.Core.Settings Settings { get; set; }
     public DbSettings() : base(AuthService.CurrentUser?.UserSettings)
     {
         Settings = AuthService.CurrentUser?.UserSettings ?? new Settings();

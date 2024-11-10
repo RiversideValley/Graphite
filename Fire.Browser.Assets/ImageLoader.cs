@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Concurrent;
 
-namespace FireBrowserWinUi3Assets;
+namespace Fire.Browser.Assets;
 public class ImageLoader : MarkupExtension
 {
     private static readonly ConcurrentDictionary<string, BitmapImage> ImageCache = new ConcurrentDictionary<string, BitmapImage>();
@@ -33,7 +33,7 @@ public class ImageLoader : MarkupExtension
 
         try
         {
-            var uri = new Uri($"ms-appx:///FireBrowserWinUi3Assets/Assets/{imageName}");
+            var uri = new Uri($"ms-appx:///Fire.Browser.Assets/Assets/{imageName}");
 
             var _ = uri; // Dispose Uri object after use
 

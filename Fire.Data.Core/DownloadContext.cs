@@ -1,9 +1,9 @@
-using FireBrowserWinUi3DataCore.Models;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Models;
+using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 
-namespace FireBrowserWinUi3DataCore;
+namespace Fire.Data.Core;
 
 public class DownloadContext : DbContext
 {

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Core.Helpers.JsonReflection
+namespace Fire.Core.Helpers.JsonReflection
 {
     public static class JsonGetterPropNames
     {

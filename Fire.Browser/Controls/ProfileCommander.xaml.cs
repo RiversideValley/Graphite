@@ -2,9 +2,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.ViewModels;
-using FireBrowserWinUi3Core.CoreUi;
-using FireBrowserWinUi3MultiCore;
-using FireBrowserWinUi3MultiCore.Helper;
+using Fire.Core.CoreUi;
+using Fire.Browser.Core;
+using Fire.Browser.Core.Helper;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
@@ -80,7 +80,7 @@ public sealed partial class ProfileCommander : Flyout
 
         StorageFolder destinationFolder = await StorageFolder.GetFolderFromPathAsync(destinationFolderPath);
 
-        StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///FireBrowserWinUi3MultiCore/Assets/{iImage}"));
+        StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Core/Assets/{iImage}"));
         StorageFile destinationFile = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
 
         Console.WriteLine("Image copied successfully!");

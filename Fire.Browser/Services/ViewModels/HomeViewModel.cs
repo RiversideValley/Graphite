@@ -5,10 +5,10 @@ using FireBrowserDatabase;
 using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Core.Models;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3Favorites;
+using Fire.Core.Helpers;
+using Fire.Core.Models;
+using Fire.Core.Exceptions;
+using Fire.Data.Favorites;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -141,7 +141,7 @@ public partial class HomeViewModel : ObservableRecipient
         IsHistoryExpanded = SettingsService.CoreSettings.IsHistoryToggled;
 
         // - Use CoreSettings to save file access -> to Settings.json every 4 seconds handle in one place usings delegate...
-        await SettingsService?.SaveChangesToSettings(FireBrowserWinUi3MultiCore.AuthService.CurrentUser, SettingsService.CoreSettings);
+        await SettingsService?.SaveChangesToSettings(Fire.Browser.Core.AuthService.CurrentUser, SettingsService.CoreSettings);
     }
     public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
     {

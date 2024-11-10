@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace FireBrowserWinUi3MultiCore;
+namespace Fire.Browser.Core;
 
 public class User
 {

@@ -1,5 +1,5 @@
 <Flyout
-    x:Class="FireBrowserWinUi3Core.CoreUi.SecurityInfo"
+    x:Class="Fire.Core.CoreUi.SecurityInfo"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Placement="Bottom">

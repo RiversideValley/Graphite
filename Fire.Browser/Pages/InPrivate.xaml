@@ -2,7 +2,7 @@
     x:Class="FireBrowserWinUi3.Pages.InPrivate"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:dllimg="using:FireBrowserWinUi3Assets"
+    xmlns:dllimg="using:Fire.Browser.Assets"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid VerticalAlignment="Center" HorizontalAlignment="Center">

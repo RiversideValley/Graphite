@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3Favorites;
+﻿namespace Fire.Data.Favorites;
 public class FavItem
 {
     public string Title { get; set; }

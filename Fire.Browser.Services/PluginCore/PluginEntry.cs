@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 
-namespace FireBrowserWinUi3Services.PluginCore;
+namespace Fire.Browser.Services.PluginCore;
 public class PluginEntry
 {
     public String Name { get; set; }

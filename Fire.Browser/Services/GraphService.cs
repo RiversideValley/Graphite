@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using FireBrowserWinUi3.Services.Contracts;
-using FireBrowserWinUi3Exceptions;
+using Fire.Core.Exceptions;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Models.Security;

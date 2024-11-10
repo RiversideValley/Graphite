@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace FireBrowserWinUi3Services.PluginCore;
+namespace Fire.Browser.Services.PluginCore;
 public class PluginManager
 {
     public HashSet<String> DirectoryPaths = new HashSet<string>();

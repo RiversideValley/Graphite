@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 #nullable disable
 
-namespace FireBrowserWinUi3DataCore.Migrations;
+namespace Fire.Data.Core.Migrations;
 
 [DbContext(typeof(HistoryContext))]
 partial class HistoryContextModelSnapshot : ModelSnapshot
@@ -14,7 +14,7 @@ partial class HistoryContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
-        modelBuilder.Entity("FireBrowserWinUi3DataCore.Models.HistoryItem", b =>
+        modelBuilder.Entity("Fire.Data.Core.Models.HistoryItem", b =>
             {
                 b.Property<int>("id")
                     .ValueGeneratedOnAdd()

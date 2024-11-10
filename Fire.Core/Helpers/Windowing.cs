@@ -13,7 +13,7 @@ using Windows.Devices.Enumeration;
 using Windows.Graphics;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3Core.Helpers;
+namespace Fire.Core.Helpers;
 public class Windowing
 {
     public enum Monitor_DPI_Type : int

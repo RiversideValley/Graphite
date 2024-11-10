@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace FireBrowserWinUi3Core.Helpers;
+namespace Fire.Core.Helpers;
 public static class EncryptionHelpers
 {
     // Your additional entropy

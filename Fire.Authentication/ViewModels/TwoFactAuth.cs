@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3AuthCore;
-using FireBrowserWinUi3Core.Models;
+﻿using Fire.Authentication.Private;
+using Fire.Core.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Auth.ViewModels
+namespace Fire.Authentication.ViewModels
 {
     public class TwoFactAuth : INotifyPropertyChanged
     {

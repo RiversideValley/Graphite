@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3DataCore.Models.Contacts;
+﻿namespace Fire.Data.Core.Models.Contacts;
 public interface IDownloadItem
 {
 

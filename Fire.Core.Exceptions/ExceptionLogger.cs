@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace FireBrowserWinUi3Exceptions;
+namespace Fire.Core.Exceptions;
 public static class ExceptionLogger
 {
     public static readonly string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "firebrowserwinui.flog");

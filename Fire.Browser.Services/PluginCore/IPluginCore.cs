@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 
-namespace FireBrowserWinUi3Services.PluginCore;
+namespace Fire.Browser.Services.PluginCore;
 public class IPluginCore
 {
     public class PluginParameters

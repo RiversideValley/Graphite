@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3Core.Models;
+﻿using Fire.Core.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Core.Helpers
+namespace Fire.Core.Helpers
 {
     public static class TwoFactorsAuthentification
     {

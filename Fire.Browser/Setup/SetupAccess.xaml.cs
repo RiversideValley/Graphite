@@ -1,5 +1,5 @@
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3MultiCore;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -20,7 +20,7 @@ namespace FireBrowserWinUi3
             Langue.Text = "en-US";
         }
 
-        private FireBrowserWinUi3MultiCore.User GetUser()
+        private Fire.Browser.Core.User GetUser()
         {
             // Check if the user is authenticated.
             if (AuthService.IsUserAuthenticated)

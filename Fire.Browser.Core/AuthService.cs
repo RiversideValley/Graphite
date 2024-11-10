@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace FireBrowserWinUi3MultiCore;
+namespace Fire.Browser.Core;
 public class AuthService
 {
     private static readonly string UserDataFileName = "UsrCore.json";

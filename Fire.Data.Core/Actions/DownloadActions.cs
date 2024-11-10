@@ -1,13 +1,13 @@
-﻿using FireBrowserWinUi3DataCore.Actions.Contracts;
-using FireBrowserWinUi3DataCore.Models;
-using FireBrowserWinUi3Exceptions;
+﻿using Fire.Data.Core.Actions.Contracts;
+using Fire.Data.Core.Models;
+using Fire.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3DataCore.Actions
+namespace Fire.Data.Core.Actions
 {
 
     public class DownloadActions : IDownloadActions

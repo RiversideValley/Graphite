@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3Core.Helpers;
+﻿namespace Fire.Core.Helpers;
 
 public static class AppArguments
 {

@@ -1,5 +1,5 @@
-using FireBrowserWinUi3Auth.Dialogs;
-using FireBrowserWinUi3Auth.ViewModels;
+using Fire.Authentication.Dialogs;
+using Fire.Authentication.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -9,7 +9,7 @@ using Windows.ApplicationModel.DataTransfer;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FireBrowserWinUi3Auth.Controls
+namespace Fire.Authentication.Controls
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -42,7 +42,7 @@ namespace FireBrowserWinUi3Auth.Controls
 
         private async void Repair_Click(object sender, RoutedEventArgs e)
         {
-            await FireBrowserWinUi3Core.Helpers.TwoFactorsAuthentification.Repair();
+            await Fire.Core.Helpers.TwoFactorsAuthentification.Repair();
         }
     }
 }

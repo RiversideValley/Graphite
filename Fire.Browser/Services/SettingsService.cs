@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
@@ -43,7 +43,7 @@ public class SettingsService : ISettingsService
         }
     }
 
-    public async Task SaveChangesToSettings(User user, FireBrowserWinUi3MultiCore.Settings settings)
+    public async Task SaveChangesToSettings(User user, Fire.Browser.Core.Settings settings)
     {
         try
         {

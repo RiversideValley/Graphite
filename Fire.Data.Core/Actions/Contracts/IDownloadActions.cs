@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3DataCore.Actions.Contracts
+namespace Fire.Data.Core.Actions.Contracts
 {
     public interface IDownloadActions
     {

@@ -6,7 +6,7 @@
     xmlns:behaviors="using:Microsoft.Xaml.Interactions.Core"
     xmlns:core="using:Microsoft.Xaml.Interactions.Media"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:dllimg="using:FireBrowserWinUi3Assets"
+    xmlns:dllimg="using:Fire.Browser.Assets"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:FireBrowserWinUi3.Services.Models"
     mc:Ignorable="d">

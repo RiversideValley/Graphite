@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3MultiCore
+namespace Fire.Browser.Core
 {
     public static class BackupManager
     {

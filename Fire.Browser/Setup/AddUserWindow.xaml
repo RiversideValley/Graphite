@@ -2,7 +2,7 @@
     x:Class="FireBrowserWinUi3.AddUserWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Helper="using:FireBrowserWinUi3MultiCore.Helper"
+    xmlns:Helper="using:Fire.Browser.Core.Helper"
     Title="Add User">
 
     <Window.SystemBackdrop>

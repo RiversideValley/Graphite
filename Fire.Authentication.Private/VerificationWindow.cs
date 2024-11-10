@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FireBrowserWinUi3AuthCore;
+namespace Fire.Authentication.Private;
 
 #pragma warning disable CS8618
 public class VerificationWindow

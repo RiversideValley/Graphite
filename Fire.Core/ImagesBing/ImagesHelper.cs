@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Core.ImagesBing;
+namespace Fire.Core.ImagesBing;
 public class ImagesHelper
 {
     public async Task AppendToJsonAsync(string storedDbPath, StoredImages imageData)

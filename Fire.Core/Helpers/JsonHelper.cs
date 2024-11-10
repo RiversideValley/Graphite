@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Windows.Devices.Bluetooth.Advertisement;
-using FireBrowserWinUi3MultiCore.Helper;
+using Fire.Browser.Core.Helper;
 using Windows.ApplicationModel.AppService;
 
-namespace FireBrowserWinUi3Core.Helpers
+namespace Fire.Core.Helpers
 {
 
     public delegate Task SaveToFileDelegate(JArray newArray);

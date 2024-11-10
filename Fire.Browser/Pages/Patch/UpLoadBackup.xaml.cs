@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FireBrowserWinUi3.Services.ViewModels;
-using FireBrowserWinUi3Core.Helpers;
+using Fire.Core.Helpers;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

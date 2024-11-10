@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace FireBrowserWinUi3Core.Helpers;
+namespace Fire.Core.Helpers;
 public static class CollectionHelper
 {
     public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> enumerableList)

@@ -2,7 +2,7 @@
     x:Class="FireBrowserWinUi3.Pages.TimeLinePages.FavoritesTimeLine"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:firebrowserfavorites="using:FireBrowserWinUi3Favorites"
+    xmlns:firebrowserfavorites="using:Fire.Data.Favorites"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>

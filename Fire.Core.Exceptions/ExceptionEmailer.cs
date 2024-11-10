@@ -7,7 +7,7 @@ using Windows.ApplicationModel.Email;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace FireBrowserWinUi3Exceptions;
+namespace Fire.Core.Exceptions;
 public static class ExceptionEmailer
 {
     public static async Task LogException(Exception ex, XamlRoot root)

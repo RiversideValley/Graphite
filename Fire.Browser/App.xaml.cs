@@ -3,8 +3,8 @@ using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
@@ -67,7 +67,7 @@ public partial class App : Application
     {
         this.InitializeComponent();
         this.UnhandledException += Current_UnhandledException;
-        _ = FireBrowserWinUi3Navigator.TLD.LoadKnownDomainsAsync().ConfigureAwait(false);
+        _ = Fire.Browser.Navigation.TLD.LoadKnownDomainsAsync().ConfigureAwait(false);
 
         Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
 
@@ -80,14 +80,14 @@ public partial class App : Application
     private void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         if (!AppService.IsAppGoingToClose)
-            FireBrowserWinUi3Exceptions.ExceptionLogger.LogException(e.Exception);
+            Fire.Core.Exceptions.ExceptionLogger.LogException(e.Exception);
     }
 
     public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
     {
         try
         {
-            var users = JsonSerializer.Deserialize<List<FireBrowserWinUi3MultiCore.User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
+            var users = JsonSerializer.Deserialize<List<Fire.Browser.Core.User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
 
             return users?.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
         }
