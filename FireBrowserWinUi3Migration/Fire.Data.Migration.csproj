@@ -31,6 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FireBrowserWinUi3DataCore\FireBrowserWinUi3DataCore.csproj" />
+    <ProjectReference Include="..\FireBrowserWinUi3DataCore\Fire.Data.Core.csproj" />
   </ItemGroup>
 </Project>

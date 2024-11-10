@@ -4,12 +4,11 @@
     <UseAOT>Enabled</UseAOT>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>FireBrowserWinUi3Auth</RootNamespace>
+    <RootNamespace>FireBrowserWinUi3Navigator</RootNamespace>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <Platforms>AnyCPU;x64</Platforms>
-	<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
-	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <IsAotCompatible>True</IsAotCompatible>
@@ -33,7 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FireBrowserWinUi3AuthCore\FireBrowserWinUi3AuthCore.csproj" />
-    <ProjectReference Include="..\FireBrowserWinUi3Core\FireBrowserWinUi3Core.csproj" />
+    <ProjectReference Include="..\FireBrowserWinUi3Exceptions\Fire.Core.Exceptions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="public_domains.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
