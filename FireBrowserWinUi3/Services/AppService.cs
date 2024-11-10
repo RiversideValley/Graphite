@@ -324,6 +324,8 @@ public static class AppService
         Need function after injection, before use logins, and when use authorized */
         string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
 
+        if (userName is null) return; 
+
         AuthService.Authenticate(username);
 
         if (File.Exists(updateSql))
@@ -344,7 +346,7 @@ public static class AppService
             }
         }
 
-        if (username != null)
+        if (AuthService.IsUserAuthenticated)
         {
             
             DatabaseServices dbServer = new DatabaseServices();
