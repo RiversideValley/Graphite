@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "FireBrowserWinUi3 (Package)": {
+    "Fire-Browser (Package)": {
       "commandName": "MsixPackage"
     },
-    "FireBrowserWinUi3 (Unpackaged)": {
+    "Fire-Browser (Unpackaged)": {
       "commandName": "Project"
     }
   }
