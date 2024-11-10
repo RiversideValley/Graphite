@@ -104,7 +104,7 @@ public class DatabaseServices : IDatabaseService
         catch (Exception ex)
         {
             ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+            Console.WriteLine($"Error in Creating History Database: {ex.Message}");
         }
 
         try
@@ -121,7 +121,7 @@ public class DatabaseServices : IDatabaseService
 
         {
             ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+            Console.WriteLine($"Error in Creating Downloads Database: {ex.Message}");
         }
 
         return Task.CompletedTask;

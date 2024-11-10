@@ -332,10 +332,13 @@ public static class AppService
         {
             try
             {
-                SettingsActions settingsActions = new SettingsActions(AuthService.CurrentUser.Username);
-                var sqlIN = File.ReadAllText(updateSql);
-                await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
-                File.Delete(updateSql);
+                if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser.Username, "Settings", "Settings.db")))
+                {
+                    SettingsActions settingsActions = new SettingsActions(AuthService.CurrentUser.Username);
+                    var sqlIN = File.ReadAllText(updateSql);
+                    await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
+                    File.Delete(updateSql);
+                }
 
             }
             catch (Exception ex)
