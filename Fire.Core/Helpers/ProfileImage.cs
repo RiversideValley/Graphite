@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Windows.ApplicationModel.AppService;
 
 namespace Fire.Core.Helpers;
 

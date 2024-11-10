@@ -1,25 +1,21 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using FireBrowserWinUi3.Services.Contracts;
-using Fire.Core.Helpers;
 using Fire.Core.Exceptions;
+using Fire.Core.Helpers;
+using FireBrowserWinUi3.Services.Contracts;
 using Microsoft.Graph;
-using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
-using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using WinRT.Interop;
-using static System.Formats.Asn1.AsnWriter;
 namespace FireBrowserWinUi3.Services
 {
     // Copyright (c) Microsoft Corporation.

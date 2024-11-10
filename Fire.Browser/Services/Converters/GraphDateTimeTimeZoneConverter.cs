@@ -1,10 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.Globalization;
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml.Data;
+using System;
 
 namespace FireBrowserWinUi3.Services.Converters
 {

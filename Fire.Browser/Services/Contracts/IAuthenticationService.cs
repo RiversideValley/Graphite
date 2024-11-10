@@ -1,11 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.ComponentModel;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.Contracts
 {

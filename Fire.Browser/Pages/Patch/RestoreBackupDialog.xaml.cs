@@ -42,7 +42,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 
             // close whatever window is open ie: setup, usercentral --> need to give control back to windowscontroller....
 
-            
+
             this.Hide();
 
             if (CancelledByUser) { return; }

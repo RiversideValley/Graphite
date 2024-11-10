@@ -1,6 +1,6 @@
+using Fire.Browser.Core;
 using Fire.Core.Helpers;
 using Fire.Data.Favorites;
-using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

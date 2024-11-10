@@ -1,6 +1,6 @@
-﻿using Fire.Data.Core.Actions.Contracts;
+﻿using Fire.Browser.Core;
 using Fire.Core.Exceptions;
-using Fire.Browser.Core;
+using Fire.Data.Core.Actions.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;

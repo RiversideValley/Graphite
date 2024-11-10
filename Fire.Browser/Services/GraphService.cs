@@ -1,18 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using FireBrowserWinUi3.Services.Contracts;
 using Fire.Core.Exceptions;
-using Microsoft.Graph;
+using FireBrowserWinUi3.Services.Contracts;
 using Microsoft.Graph.Models;
-using Microsoft.Graph.Models.Security;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
 using Windows.System.Profile;
 
 

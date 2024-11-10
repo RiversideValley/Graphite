@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Fire.Browser.Core;
+using Fire.Browser.Core.Helper;
+using Fire.Core.CoreUi;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.ViewModels;
-using Fire.Core.CoreUi;
-using Fire.Browser.Core;
-using Fire.Browser.Core.Helper;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;

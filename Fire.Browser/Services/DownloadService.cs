@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Fire.Browser.Core;
+using Fire.Core.Exceptions;
+using Fire.Data.Core.Actions;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Events;
-using Fire.Data.Core.Actions;
-using Fire.Core.Exceptions;
-using Fire.Browser.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,5 +1,5 @@
-using Fire.Core.Helpers;
 using Fire.Browser.Core;
+using Fire.Core.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -13,7 +13,7 @@ using WinRT.Interop;
 namespace FireBrowserWinUi3.Controls;
 public sealed partial class RestoreBackUp : Window
 {
-    
+
     private AppWindow appWindow;
     private AppWindowTitleBar titleBar;
 

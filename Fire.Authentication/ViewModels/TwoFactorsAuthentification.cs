@@ -1,6 +1,6 @@
 ﻿using Fire.Authentication.Controls;
-using Fire.Authentication.ViewModels;
 using Fire.Authentication.Private;
+using Fire.Authentication.ViewModels;
 using Fire.Core.Models;
 using Microsoft.UI.Xaml;
 using System;

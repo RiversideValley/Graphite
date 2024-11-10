@@ -1,38 +1,30 @@
-using Azure.Core;
 using CommunityToolkit.WinUI.Helpers;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Services;
+using Fire.Browser.Core;
 using Fire.Core.CoreUi;
+using Fire.Core.Exceptions;
 using Fire.Core.Helpers;
 using Fire.Core.ShareHelper;
 using Fire.Data.Core.Actions;
-using Fire.Core.Exceptions;
-using Fire.Browser.Core;
-using Fire.Browser.Core.Helper;
+using FireBrowserWinUi3.Controls;
+using FireBrowserWinUi3.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
-using Windows.UI.WebUI;
 using WinRT.Interop;
 using static FireBrowserWinUi3.MainWindow;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace FireBrowserWinUi3.Pages;
 
@@ -95,7 +87,7 @@ public sealed partial class WebContent : Page
         webViewSettings.AreBrowserAcceleratorKeysEnabled = coreSettings.BrowserKeys;
         webViewSettings.IsStatusBarEnabled = coreSettings.StatusBar;
         webViewSettings.AreDefaultScriptDialogsEnabled = coreSettings.BrowserScripts;
-       
+
         SetTrackingPreventionLevel(coreSettings.TrackPrevention);
     }
 
@@ -115,7 +107,7 @@ public sealed partial class WebContent : Page
         }
 
         WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = preventionLevel;
-        
+
         WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/msal", CoreWebView2HostResourceAccessKind.Allow);
 
     }
@@ -306,10 +298,11 @@ public sealed partial class WebContent : Page
             param?.TabView.TabItems.Add(window.CreateNewTab(typeof(WebContent), args.Uri));
             args.Handled = true;
         };
-        
+
         s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
-        s.CoreWebView2.WebResourceRequested +=  (sender, args) => {
+        s.CoreWebView2.WebResourceRequested += (sender, args) =>
+        {
 
             if (IsLogoutRequest(args.Request))
             {
@@ -321,10 +314,10 @@ public sealed partial class WebContent : Page
 
             if (IsLoginRequest(args.Request))
             {
-                if (args.Request.Headers.Count() >0)
+                if (args.Request.Headers.Count() > 0)
                 {
                     var cookie = args.Request.Headers.Where(x => x.Key == "X-Microsoft-Account-Single-Sign-On-Cookies").FirstOrDefault();
-                    if (cookie.Value != null) AppService.IsAppUserAuthenicated = true; 
+                    if (cookie.Value != null) AppService.IsAppUserAuthenicated = true;
                 }
             }
 
@@ -334,7 +327,7 @@ public sealed partial class WebContent : Page
 
             if (IsLoginRequest(e.Request))
             {
-                var response =  e.Response;
+                var response = e.Response;
                 if (response.StatusCode == 200 && IsLoginSuccessful(response))
                 {
                     AppService.IsAppUserAuthenicated = true;
@@ -386,7 +379,7 @@ public sealed partial class WebContent : Page
     private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
     {
         // Define your login URL patterns
-        string[] loginUrls = { "https://login.live.com/login",  "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize" };
+        string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize" };
 
         // Check if the request URL matches any known login URL patterns
         return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
@@ -397,11 +390,11 @@ public sealed partial class WebContent : Page
         if (response.Headers.Count() > 0)
         {
             var c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
-            if (c_Set.Value is not null) return true; 
+            if (c_Set.Value is not null) return true;
 
         }
-        
-        return false; 
+
+        return false;
     }
 
     private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)

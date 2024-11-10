@@ -1,12 +1,12 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
+using Fire.Browser.Core;
+using Fire.Core.Exceptions;
+using Fire.Core.Licensing;
+using Fire.Core.Models;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Messages;
-using Fire.Core.Models;
-using Fire.Core.Exceptions;
-using Fire.Core.Licensing;
-using Fire.Browser.Core;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,7 +18,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Services.Store;
 
 namespace FireBrowserWinUi3.Pages.SettingsPages
 {
@@ -269,7 +268,7 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
             }
             finally
             {
-              
+
             }
         }
     }

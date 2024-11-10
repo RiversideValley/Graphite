@@ -2,11 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
+using Fire.Browser.Core;
+using Fire.Core.Exceptions;
+using Fire.Core.Helpers;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Messages;
-using Fire.Core.Helpers;
-using Fire.Core.Exceptions;
-using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -15,7 +15,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage.Streams;
 using WinRT.Interop;
 
 namespace FireBrowserWinUi3.Services.ViewModels;

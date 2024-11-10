@@ -1,5 +1,5 @@
-using FireBrowserWinUi3.Services;
 using Fire.Browser.Core;
+using FireBrowserWinUi3.Services;
 using Microsoft.UI.Xaml.Controls;
 
 namespace FireBrowserWinUi3.Pages;

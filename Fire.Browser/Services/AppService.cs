@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Fire.Browser.Core;
+using Fire.Core.Exceptions;
+using Fire.Core.Helpers;
+using Fire.Data.Core.Actions;
 using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Setup;
-using Fire.Core.Helpers;
-using Fire.Data.Core.Actions;
-using Fire.Core.Exceptions;
-using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -15,7 +14,6 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -24,7 +22,6 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Graphics;
-using Windows.Services.Maps;
 using WinRT.Interop;
 
 namespace FireBrowserWinUi3.Services;
@@ -51,7 +48,7 @@ public static class AppService
             string resetFilePath = Path.Combine(Path.GetTempPath(), "Reset.set");
             string backupFilePath = Path.Combine(Path.GetTempPath(), "backup.fireback");
             string restoreFilePath = Path.Combine(Path.GetTempPath(), "restore.fireback");
-            string updateSql = Path.Combine(Path.GetTempPath(), "update.sql"); 
+            string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
 
             if (IsAppGoingToClose)
             {
@@ -324,7 +321,7 @@ public static class AppService
         Need function after injection, before use logins, and when use authorized */
         string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
 
-        if (userName is null) return; 
+        if (userName is null) return;
 
         AuthService.Authenticate(username);
 
@@ -344,14 +341,14 @@ public static class AppService
             catch (Exception ex)
             {
                 ExceptionLogger.LogException(ex);
-                IsAppGoingToClose = true; 
+                IsAppGoingToClose = true;
                 throw;
             }
         }
 
         if (AuthService.IsUserAuthenticated)
         {
-            
+
             DatabaseServices dbServer = new DatabaseServices();
 
             try

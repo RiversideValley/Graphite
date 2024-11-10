@@ -84,13 +84,13 @@ namespace FireBrowserWinUi3.Pages.Patch
                     writer.WriteLine(IsCloudBackup ? "cloud" : "local");
                 }
 
-               
+
 
                 Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
             }
             catch (Exception ex)
             {
-               
+
             }
         }
 

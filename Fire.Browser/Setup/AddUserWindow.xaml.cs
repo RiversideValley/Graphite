@@ -1,8 +1,8 @@
-using FireBrowserWinUi3.Pages.SettingsPages;
-using FireBrowserWinUi3.Services;
-using Fire.Core.Helpers;
 using Fire.Browser.Core;
 using Fire.Browser.Core.Helper;
+using Fire.Core.Helpers;
+using FireBrowserWinUi3.Pages.SettingsPages;
+using FireBrowserWinUi3.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;

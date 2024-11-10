@@ -1,40 +1,17 @@
-﻿using Azure.Data.Tables;
-using Azure.Storage.Blobs;
-using Azure.Storage.Sas;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FireBrowserWinUi3.Services.Models;
-using Fire.Core.Helpers;
-using Fire.Browser.Core;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Windows.ApplicationModel.Email;
-using Windows.Storage.Streams;
-using Windows.ApplicationModel.DataTransfer;
-using System.Net.Http;
-using FireBrowserWinUi3.Pages.Patch;
-using Microsoft.UI.Xaml.Controls;
 using CommunityToolkit.WinUI.Behaviors;
-using Windows.Storage.AccessCache;
-using Windows.Storage;
+using Fire.Browser.Core;
+using FireBrowserWinUi3.Pages.Patch;
+using FireBrowserWinUi3.Services.Models;
 using Microsoft.UI.Xaml;
-using Windows.System;
-using System.Web;
-using Microsoft.Graph.Models;
-using Windows.Services.Maps;
-using Fire.Core.Exceptions;
-using Microsoft.Web.WebView2.Core;
-using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.ViewModels
 {
@@ -188,7 +165,7 @@ namespace FireBrowserWinUi3.Services.ViewModels
             FileNewSas.BlobUrl = sasUrl;
 
             OnPropertyChanged(nameof(FileNewSas));
-            
+
             //await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
             //await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
 

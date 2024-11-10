@@ -1,14 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Fire.Browser.Core.Helper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using Windows.Devices.Bluetooth.Advertisement;
-using Fire.Browser.Core.Helper;
-using Windows.ApplicationModel.AppService;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fire.Core.Helpers
 {

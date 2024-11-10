@@ -1,19 +1,15 @@
+using Fire.Browser.Core;
+using Fire.Core.Helpers;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
-using Fire.Core.Helpers;
-using Fire.Browser.Core;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web;
-using Windows.Graphics;
 using WinRT.Interop;
 
 namespace FireBrowserWinUi3

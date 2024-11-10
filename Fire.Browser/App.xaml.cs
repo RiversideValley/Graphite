@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Fire.Core.Exceptions;
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
-using Fire.Core.Exceptions;
-using Fire.Browser.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
@@ -14,7 +12,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Services.Maps;
 using Path = System.IO.Path;
 
 namespace FireBrowserWinUi3;
@@ -108,7 +105,7 @@ public partial class App : Application
 
         App.Current.Services = App.Current.ConfigureServices();
 
-       
+
         AppService.CancellationToken = CancellationToken.None;
 
         try
@@ -119,7 +116,7 @@ public partial class App : Application
         }
         catch (Exception e)
         {
-            
+
             ExceptionLogger.LogException(e);
         }
 
@@ -141,9 +138,9 @@ public partial class App : Application
         catch (Exception ex)
         {
             await AppService.CloseCancelToken(AppService.CancellationToken);
-            ExceptionLogger.LogException(ex);   
+            ExceptionLogger.LogException(ex);
         }
-        
+
     }
 
     public Window m_window;

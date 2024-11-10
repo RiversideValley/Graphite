@@ -1,33 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Fire.Core.Helpers;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
-using Fire.Core.Helpers;
-using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Windows.ApplicationModel.Background;
 using WinRT.Interop;
 
 namespace FireBrowserWinUi3
 {
     public partial class UC_Viewmodel : ObservableRecipient
     {
-        public UC_Viewmodel() {
+        public UC_Viewmodel()
+        {
             Users = new List<UserExtend>();
             //LoginToMicrosoft().ConfigureAwait(false);
         }
@@ -62,7 +53,7 @@ namespace FireBrowserWinUi3
             return false;
         };
 
-        
+
 
         [RelayCommand(CanExecute = nameof(IsMsLogin))]
         private async Task MsLogOut()

@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.Models
 {
@@ -46,7 +44,7 @@ namespace FireBrowserWinUi3.Services.Models
             new SearchProviders(new BitmapImage(new Uri("https://search.brave.com/favicon.ico")), "https://search.brave.com/search?q=", "BraveSearch", 19)
         };
 
-        
+
         public static string GetSearchProviderUrl(string providerName)
         {
             var provider = SearchProviders.ProvidersList

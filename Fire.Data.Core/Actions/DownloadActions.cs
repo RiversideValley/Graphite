@@ -1,6 +1,6 @@
-﻿using Fire.Data.Core.Actions.Contracts;
+﻿using Fire.Core.Exceptions;
+using Fire.Data.Core.Actions.Contracts;
 using Fire.Data.Core.Models;
-using Fire.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

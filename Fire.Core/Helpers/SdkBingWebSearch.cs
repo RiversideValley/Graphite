@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Fire.Core.Helpers.JsonReflection;
 using Fire.Core.Exceptions;
 using Microsoft.Bing.WebSearch;
 using Microsoft.Bing.WebSearch.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Fire.Core.Helpers

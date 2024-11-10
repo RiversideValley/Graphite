@@ -71,9 +71,9 @@ public sealed partial class ResetCore : Window
         await RestartApplication();
     }
 
-    private  Task RestartApplication()
+    private Task RestartApplication()
     {
         Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
-        return Task.CompletedTask; 
+        return Task.CompletedTask;
     }
 }

@@ -1,25 +1,9 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
-using FireBrowserWinUi3.Services.ViewModels;
 using Fire.Core.Helpers;
-using Microsoft.UI.Composition;
+using FireBrowserWinUi3.Services.ViewModels;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,

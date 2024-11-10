@@ -1,5 +1,5 @@
-using Fire.Data.Core.Models;
 using Fire.Browser.Core;
+using Fire.Data.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 
