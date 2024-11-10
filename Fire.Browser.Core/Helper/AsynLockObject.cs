@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3MultiCore.Helper
+namespace Fire.Browser.Core.Helper
 {
     public class AsyncLockObject
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FireBrowserWinUi3AuthCore;
+namespace Fire.Authentication.Private;
 
 public class TimeCorrection
 {

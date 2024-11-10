@@ -1,7 +1,7 @@
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3DataCore.Models;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Actions;
+using Fire.Data.Core.Models;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;

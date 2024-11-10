@@ -1,7 +1,7 @@
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,7 +16,7 @@ public sealed partial class SetupWebView : Page
         this.InitializeComponent();
     }
 
-    private FireBrowserWinUi3MultiCore.User GetUser()
+    private Fire.Browser.Core.User GetUser()
     {
         // Check if the user is authenticated.
         if (AuthService.IsUserAuthenticated)

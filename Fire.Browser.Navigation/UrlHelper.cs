@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace FireBrowserWinUi3Navigator;
+namespace Fire.Browser.Navigation;
 public class UrlHelper
 {
     public static string GetInputType(string input) => IsURL(input) ? "url" : IsURLWithoutProtocol(input) ? "urlNOProtocol" : "searchquery";

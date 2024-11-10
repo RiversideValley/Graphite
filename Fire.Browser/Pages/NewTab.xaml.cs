@@ -4,13 +4,13 @@ using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3.Setup;
 using FireBrowserWinUi3.ViewModels;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Core.ImagesBing;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3Favorites;
-using FireBrowserWinUi3MultiCore;
-using FireBrowserWinUi3MultiCore.Helper;
+using Fire.Core.Helpers;
+using Fire.Core.ImagesBing;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Data.Favorites;
+using Fire.Browser.Core;
+using Fire.Browser.Core.Helper;
 using Microsoft.Bing.WebSearch;
 using Microsoft.Bing.WebSearch.Models;
 using Microsoft.UI;
@@ -34,7 +34,7 @@ using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI;
 using static FireBrowserWinUi3.MainWindow;
-using Settings = FireBrowserWinUi3Core.Models.Settings;
+using Settings = Fire.Core.Models.Settings;
 
 namespace FireBrowserWinUi3.Pages;
 
@@ -46,7 +46,7 @@ public sealed partial class NewTab : Page
     public List<TrendingItem> trendings = new List<TrendingItem>();
     public HomeViewModel ViewModel { get; set; }
     private HistoryActions HistoryActions { get; } = new HistoryActions(AuthService.CurrentUser.Username);
-    FireBrowserWinUi3MultiCore.Settings userSettings { get; set; }
+    Fire.Browser.Core.Settings userSettings { get; set; }
     SettingsService SettingsService { get; }
 
     Passer param;
@@ -370,7 +370,7 @@ public sealed partial class NewTab : Page
         param = e.Parameter as Passer;
     }
 
-    public static Brush GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, FireBrowserWinUi3MultiCore.Settings userSettings)
+    public static Brush GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, Fire.Browser.Core.Settings userSettings)
     {
         switch (backgroundType)
         {
@@ -512,7 +512,7 @@ public sealed partial class NewTab : Page
             ExceptionLogger.LogException(ex);
         }
     }
-    private void UpdateUserSettings(Action<FireBrowserWinUi3MultiCore.Settings> updateAction)
+    private void UpdateUserSettings(Action<Fire.Browser.Core.Settings> updateAction)
     {
         if (AuthService.CurrentUser != null)
         {

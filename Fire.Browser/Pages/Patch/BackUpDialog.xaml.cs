@@ -1,4 +1,4 @@
-using FireBrowserWinUi3License;
+using Fire.Core.Licensing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -15,7 +15,7 @@ namespace FireBrowserWinUi3.Pages.Patch
         private string premiumLicensePath;
         private bool IsCloudBackup { get; set; } = false;
 
-        private FireBrowserWinUi3License.AddonManager _addonManager;
+        private Fire.Core.Licensing.AddonManager _addonManager;
 
         public BackUpDialog()
         {

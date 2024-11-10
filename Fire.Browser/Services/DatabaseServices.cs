@@ -1,7 +1,7 @@
 ﻿using FireBrowserWinUi3.Services.Contracts;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 using System;

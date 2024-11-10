@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3AuthCore;
+﻿namespace Fire.Authentication.Private;
 
 public interface IKeyProvider
 {

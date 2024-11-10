@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3Core.Models;
+﻿namespace Fire.Core.Models;
 
 public class Settings
 {

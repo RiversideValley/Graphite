@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3DataCore.Actions;
+﻿using Fire.Data.Core.Actions;
 using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.Contracts;
 
 public interface ISettingsService
 {
-    Task SaveChangesToSettings(FireBrowserWinUi3MultiCore.User user, FireBrowserWinUi3MultiCore.Settings settings);
-    FireBrowserWinUi3MultiCore.Settings CoreSettings { get; }
+    Task SaveChangesToSettings(Fire.Browser.Core.User user, Fire.Browser.Core.Settings settings);
+    Fire.Browser.Core.Settings CoreSettings { get; }
     SettingsActions Actions { get; }
 }

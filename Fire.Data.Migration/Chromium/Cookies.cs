@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3Migration.Helpers;
+﻿using Fire.Data.Migration.Helpers;
 using Microsoft.Data.Sqlite;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System;
 using System.IO;
 
-namespace FireBrowserWinUi3Migration.Chromium;
+namespace Fire.Data.Migration.Chromium;
 
 public static class Cookies
 {

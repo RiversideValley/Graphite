@@ -1,13 +1,13 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-using FireBrowserWinUi3DataCore.Models;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Models;
+using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 
-namespace FireBrowserWinUi3DataCore;
+namespace Fire.Data.Core;
 
 public class HistoryContext : DbContext
 {

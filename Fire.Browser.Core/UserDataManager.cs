@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace FireBrowserWinUi3MultiCore;
+namespace Fire.Browser.Core;
 
 public static class UserDataManager
 {

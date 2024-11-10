@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3DataCore.Models;
+﻿using Fire.Data.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 
-namespace FireBrowserWinUi3Migration;
+namespace Fire.Data.Migration;
 
 public class MigrationData
 {

@@ -1,7 +1,7 @@
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -34,7 +34,7 @@ public sealed partial class DownloadFlyout : Flyout
         {
             DownloadItemsListView.Items.Clear();
             DownloadActions downloadActions = new DownloadActions(AuthService.CurrentUser.Username);
-            List<FireBrowserWinUi3DataCore.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
+            List<Fire.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
 
             if (items.Count > 0)
             {

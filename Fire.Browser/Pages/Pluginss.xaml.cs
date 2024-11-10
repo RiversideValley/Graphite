@@ -1,5 +1,5 @@
-using FireBrowserWinUi3MultiCore;
-using FireBrowserWinUi3Services.PluginCore;
+using Fire.Browser.Core;
+using Fire.Browser.Services.PluginCore;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 

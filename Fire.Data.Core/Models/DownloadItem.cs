@@ -1,7 +1,7 @@
-﻿using FireBrowserWinUi3DataCore.Models.Contacts;
+﻿using Fire.Data.Core.Models.Contacts;
 using System.ComponentModel.DataAnnotations;
 
-namespace FireBrowserWinUi3DataCore.Models;
+namespace Fire.Data.Core.Models;
 public class DownloadItem : IDownloadItem
 {
     [Key]

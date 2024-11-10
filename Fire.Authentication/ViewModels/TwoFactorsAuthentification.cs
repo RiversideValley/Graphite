@@ -1,13 +1,13 @@
-﻿using FireBrowserWinUi3Auth.Controls;
-using FireBrowserWinUi3Auth.ViewModels;
-using FireBrowserWinUi3AuthCore;
-using FireBrowserWinUi3Core.Models;
+﻿using Fire.Authentication.Controls;
+using Fire.Authentication.ViewModels;
+using Fire.Authentication.Private;
+using Fire.Core.Models;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Auth
+namespace Fire.Authentication
 {
     public static class TwoFactorsAuthentification
     {
@@ -30,7 +30,7 @@ namespace FireBrowserWinUi3Auth
 
         private static void InitializeData()
         {
-            var items = Task.Run(() => FireBrowserWinUi3Core.Helpers.TwoFactorsAuthentification.Load()).Result;
+            var items = Task.Run(() => Fire.Core.Helpers.TwoFactorsAuthentification.Load()).Result;
 
             foreach (var item in items)
             {
@@ -69,7 +69,7 @@ namespace FireBrowserWinUi3Auth
             twoFactAuth.Start();
 
             Items.Add(twoFactAuth);
-            FireBrowserWinUi3Core.Helpers.TwoFactorsAuthentification.Items.Add(item);
+            Fire.Core.Helpers.TwoFactorsAuthentification.Items.Add(item);
         }
     }
 }

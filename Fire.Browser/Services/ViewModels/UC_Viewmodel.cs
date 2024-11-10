@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
-using FireBrowserWinUi3Core.Helpers;
+using Fire.Core.Helpers;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

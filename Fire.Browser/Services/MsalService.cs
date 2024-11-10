@@ -1,8 +1,8 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using FireBrowserWinUi3.Services.Contracts;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Exceptions;
+using Fire.Core.Helpers;
+using Fire.Core.Exceptions;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Client;

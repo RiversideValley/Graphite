@@ -1,6 +1,6 @@
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Favorites;
-using FireBrowserWinUi3MultiCore;
+using Fire.Core.Helpers;
+using Fire.Data.Favorites;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -19,7 +19,7 @@ public sealed partial class FavoritesTimeLine : Page
         LoadFavs();
     }
 
-    public FireBrowserWinUi3MultiCore.User user = AuthService.CurrentUser;
+    public Fire.Browser.Core.User user = AuthService.CurrentUser;
     public FavManager fs = new FavManager();
 
     string ctmtext;

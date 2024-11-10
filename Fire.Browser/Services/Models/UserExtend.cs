@@ -1,4 +1,4 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using System.IO;
 
 namespace FireBrowserWinUi3.Services.Models
@@ -12,7 +12,7 @@ namespace FireBrowserWinUi3.Services.Models
         {
             FireUser = user;
             string path = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username, "profile_image.jpg");
-            PicturePath = File.Exists(path) ? path : "ms-appx:///FireBrowserWinUi3Assets/Assets/user.png";
+            PicturePath = File.Exists(path) ? path : "ms-appx:///Fire.Browser.Assets/Assets/user.png";
         }
     }
 }

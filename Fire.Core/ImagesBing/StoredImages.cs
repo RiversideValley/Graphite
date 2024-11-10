@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3Core.ImagesBing;
+﻿namespace Fire.Core.ImagesBing;
 
 public class StoredImages
 {

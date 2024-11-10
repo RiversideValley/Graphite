@@ -1,5 +1,5 @@
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3MultiCore;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -19,7 +19,7 @@ namespace FireBrowserWinUi3.Setup
         public UserSettings()
         {
             InitializeComponent();
-            AppService.AppSettings = new FireBrowserWinUi3MultiCore.Settings(true).Self;
+            AppService.AppSettings = new Fire.Browser.Core.Settings(true).Self;
             NavView.SelectedItem = NavView.MenuItems[0]; // Select the first item by default
         }
 

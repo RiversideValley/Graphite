@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FireBrowserWinUi3AuthCore;
+namespace Fire.Authentication.Private;
 
 public class OtpUri
 {

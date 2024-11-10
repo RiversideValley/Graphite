@@ -1,8 +1,8 @@
 using FireBrowserWinUi3.Pages.SettingsPages;
 using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3MultiCore;
-using FireBrowserWinUi3MultiCore.Helper;
+using Fire.Core.Helpers;
+using Fire.Browser.Core;
+using Fire.Browser.Core.Helper;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -84,7 +84,7 @@ namespace FireBrowserWinUi3
 
             StorageFolder destinationFolder = await StorageFolder.GetFolderFromPathAsync(destinationFolderPath);
 
-            StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///FireBrowserWinUi3MultiCore/Assets/{iImage}"));
+            StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Core/Assets/{iImage}"));
             StorageFile destinationFile = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
 
             Console.WriteLine("Image copied successfully!");
@@ -122,7 +122,7 @@ namespace FireBrowserWinUi3
                 UserSettings = null
             };
 
-            List<FireBrowserWinUi3MultiCore.User> users = new List<FireBrowserWinUi3MultiCore.User>();
+            List<Fire.Browser.Core.User> users = new List<Fire.Browser.Core.User>();
             users.Add(newUser);
 
             AuthService.AddUser(newUser);

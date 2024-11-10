@@ -29,7 +29,7 @@ public sealed partial class ResetCore : Window
         appWindow = AppWindow.GetFromWindowId(windowId);
 
         appWindow.MoveAndResize(new RectInt32(500, 500, 850, 500));
-        FireBrowserWinUi3Core.Helpers.Windowing.Center(this);
+        Fire.Core.Helpers.Windowing.Center(this);
         appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
         appWindow.MoveInZOrderAtTop();
         appWindow.ShowOnceWithRequestedStartupState();

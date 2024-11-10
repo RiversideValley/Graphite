@@ -1,9 +1,9 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace FireBrowserWinUi3DataCore.Models;
+namespace Fire.Data.Core.Models;
 
 public class DbUser
 {

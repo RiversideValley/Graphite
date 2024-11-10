@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 
-namespace FireBrowserWinUi3Services.PluginCore;
+namespace Fire.Browser.Services.PluginCore;
 public class XamlPluginEntry : PluginEntry
 {
     public XamlPluginEntry(IPluginBase p) : base(p)

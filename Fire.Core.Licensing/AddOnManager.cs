@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.Services.Store;
 using Windows.System;
 
-namespace FireBrowserWinUi3License
+namespace Fire.Core.Licensing
 {
     public class AddonManager
     {

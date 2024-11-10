@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace FireBrowserWinUi3AuthCore;
+namespace Fire.Authentication.Private;
 
 public class InMemoryKey : IKeyProvider
 {

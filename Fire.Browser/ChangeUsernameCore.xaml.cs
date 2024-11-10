@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static FireBrowserWinUi3MultiCore.AuthService;
+using static Fire.Browser.Core.AuthService;
 
 namespace FireBrowserWinUi3;
 
@@ -18,7 +18,7 @@ public sealed partial class ChangeUsernameCore : Window
     public ChangeUsernameCore()
     {
         this.AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(500, 500, 850, 500));
-        FireBrowserWinUi3Core.Helpers.Windowing.Center(this);
+        Fire.Core.Helpers.Windowing.Center(this);
         this.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
         this.AppWindow.MoveInZOrderAtTop();
         this.AppWindow.ShowOnceWithRequestedStartupState();

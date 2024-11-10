@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace FireBrowserWinUi3Favorites;
+namespace Fire.Data.Favorites;
 public class FavManager
 {
     private readonly string _favoritesDbPath;

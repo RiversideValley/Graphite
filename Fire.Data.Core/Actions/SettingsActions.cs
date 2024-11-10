@@ -1,11 +1,11 @@
-﻿using FireBrowserWinUi3DataCore.Actions.Contracts;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3MultiCore;
+﻿using Fire.Data.Core.Actions.Contracts;
+using Fire.Core.Exceptions;
+using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3DataCore.Actions;
+namespace Fire.Data.Core.Actions;
 public class SettingsActions : IUISettings
 {
     public SettingsActions(string username)

@@ -12,7 +12,7 @@ using Windows.Data.Xml.Dom;
 using Windows.Storage;
 
 
-namespace FireBrowserWinUi3Core.Helpers
+namespace Fire.Core.Helpers
 {
 
     public class UrlValidater

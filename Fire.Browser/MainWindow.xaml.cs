@@ -6,15 +6,15 @@ using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
-using FireBrowserWinUi3Core.Helpers;
-using FireBrowserWinUi3Core.Models;
-using FireBrowserWinUi3Core.ShareHelper;
-using FireBrowserWinUi3DataCore.Actions;
-using FireBrowserWinUi3Exceptions;
-using FireBrowserWinUi3Favorites;
-using FireBrowserWinUi3MultiCore;
-using FireBrowserWinUi3MultiCore.Helper;
-using FireBrowserWinUi3Navigator;
+using Fire.Core.Helpers;
+using Fire.Core.Models;
+using Fire.Core.ShareHelper;
+using Fire.Data.Core.Actions;
+using Fire.Core.Exceptions;
+using Fire.Data.Favorites;
+using Fire.Browser.Core;
+using Fire.Browser.Core.Helper;
+using Fire.Browser.Navigation;
 using FireBrowserWinUi3QrCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -44,9 +44,9 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
 using WinRT.Interop;
-using Settings = FireBrowserWinUi3MultiCore.Settings;
-using User = FireBrowserWinUi3MultiCore.User;
-using Windowing = FireBrowserWinUi3Core.Helpers.Windowing;
+using Settings = Fire.Browser.Core.Settings;
+using User = Fire.Browser.Core.User;
+using Windowing = Fire.Core.Helpers.Windowing;
 
 namespace FireBrowserWinUi3;
 
@@ -132,7 +132,7 @@ public sealed partial class MainWindow : Window
     }
     public async void Init()
     {
-        await FireBrowserWinUi3Core.Models.Data.Init();
+        await Fire.Core.Models.Data.Init();
         string solutionDir = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
         //string workerProjectName = "FireAuthService";
         //string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
@@ -182,7 +182,7 @@ public sealed partial class MainWindow : Window
                     if (!(Application.Current is App currentApp) || !(currentApp.m_window is MainWindow mainWindow))
                         return;
 
-                    FireBrowserWinUi3Core.CoreUi.ConfirmAppClose quickConfigurationDialog = new()
+                    Fire.Core.CoreUi.ConfirmAppClose quickConfigurationDialog = new()
                     {
                         XamlRoot = mainWindow.Content.XamlRoot
                     };
@@ -362,7 +362,7 @@ public sealed partial class MainWindow : Window
 
     private void LoadUserDataAndSettings()
     {
-        FireBrowserWinUi3MultiCore.User currentUser = AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
+        Fire.Browser.Core.User currentUser = AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
 
         if (currentUser == null || (!AuthService.IsUserAuthenticated && !AuthService.Authenticate(currentUser?.Username)))
         {
@@ -592,7 +592,7 @@ public sealed partial class MainWindow : Window
         SettingsService.Initialize();
         try
         {
-            if (FireBrowserWinUi3Core.Helpers.UrlValidater.GetValidateUrl(UrlBox.Text.ToLowerInvariant()) is Uri browserTo)
+            if (Fire.Core.Helpers.UrlValidater.GetValidateUrl(UrlBox.Text.ToLowerInvariant()) is Uri browserTo)
             {
                 switch (UrlBox.Text.ToLowerInvariant())
                 {
@@ -618,7 +618,7 @@ public sealed partial class MainWindow : Window
                     //  break;
                     default:
                         // default behavior
-                        if (await FireBrowserWinUi3Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
+                        if (await Fire.Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
                             NavigateToUrl(browserTo.AbsolutePath);
                         else
                         {
@@ -1019,7 +1019,7 @@ public sealed partial class MainWindow : Window
 
     private async void FetchBrowserHistory()
     {
-        //FireBrowserWinUi3MultiCore.User user = AuthService.CurrentUser;
+        //Fire.Browser.Core.User user = AuthService.CurrentUser;
         try
         {
             HistoryActions historyActions = new HistoryActions(AuthService.CurrentUser.Username);
@@ -1098,7 +1098,7 @@ public sealed partial class MainWindow : Window
 
         deleteMenuItem.Click += async (s, args) =>
         {
-            if (!(AuthService.CurrentUser is FireBrowserWinUi3MultiCore.User user)) return;
+            if (!(AuthService.CurrentUser is Fire.Browser.Core.User user)) return;
 
             string username = user.Username;
             string databasePath = Path.Combine(
@@ -1223,7 +1223,7 @@ public sealed partial class MainWindow : Window
 
             if (authResult == UserConsentVerificationResult.Verified)
             {
-                FireBrowserWinUi3Auth.TwoFactorsAuthentification.ShowFlyout(Secure);
+                Fire.Authentication.TwoFactorsAuthentification.ShowFlyout(Secure);
             }
             else
             {
@@ -1235,7 +1235,7 @@ public sealed partial class MainWindow : Window
             Console.WriteLine($"Error authenticating: {ex.Message}");
         }
     }
-    private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e) { FireBrowserWinUi3Core.Helpers.FlyoutLoad.ShowFlyout(Secure); }
+    private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e) { Fire.Core.Helpers.FlyoutLoad.ShowFlyout(Secure); }
     private async void SaveQrImage_Click(object sender, RoutedEventArgs e)
     {
         if (TabContent.Content is WebContent webContent)
@@ -1303,7 +1303,7 @@ public sealed partial class MainWindow : Window
 
     private void Secure_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
     {
-        FireBrowserWinUi3Core.Helpers.FlyoutLoad.ShowFlyout(Secure);
+        Fire.Core.Helpers.FlyoutLoad.ShowFlyout(Secure);
     }
 
     private void UrlBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3MultiCore;
+namespace Fire.Browser.Core;
 
 public static class UserFolderManager
 {

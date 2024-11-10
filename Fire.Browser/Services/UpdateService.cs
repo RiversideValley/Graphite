@@ -15,20 +15,20 @@ public class UpdateService
 
     // Local DLL file names
     private readonly string[] localFileNames = {
-    "FireBrowserWinUi3AdBlockCore.dll",
+    "Fire.Browser.Adblock.dll",
     "FireBrowserWinUi3Setup.dll",
     "FireBrowserWinUi3QrCore.dll",
-    "FireBrowserWinUi3Navigator.dll",
-    "FireBrowserWinUi3MultiCore.dll",
-    "FireBrowserWinUi3Modules.dll",
-    "FireBrowserWinUi3Favorites.dll",
-    "FireBrowserWinUi3Exceptions.dll",
-    "FireBrowserWinUi3DataCore.dll",
-    "FireBrowserWinUi3Database.dll",
-    "FireBrowserWinUi3Core.dll",
-    "FireBrowserWinUi3Auth.dll",
-    "FireBrowserWinUi3AuthCore.dll",
-    "FireBrowserWinUi3Assets.dll"
+    "Fire.Browser.Navigation.dll",
+    "Fire.Browser.Core.dll",
+    "Fire.Browser.Extensions.dll",
+    "Fire.Data.Favorites.dll",
+    "Fire.Core.Exceptions.dll",
+    "Fire.Data.Core.dll",
+    "Fire.Data.dll",
+    "Fire.Core.dll",
+    "Fire.Authentication.dll",
+    "Fire.Authentication.Private.dll",
+    "Fire.Browser.Assets.dll"
 };
 
     public async Task CheckUpdateAsync()

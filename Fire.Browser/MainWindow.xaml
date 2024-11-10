@@ -7,10 +7,10 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:firebrowser="using:FireBrowserWinUi3.Controls"
-    xmlns:firebrowserfavorites="using:FireBrowserWinUi3Favorites"
+    xmlns:firebrowserfavorites="using:Fire.Data.Favorites"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:person="using:FireBrowserWinUi3Core.Helpers"
+    xmlns:person="using:Fire.Core.Helpers"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>

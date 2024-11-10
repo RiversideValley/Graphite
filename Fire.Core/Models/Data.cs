@@ -1,8 +1,8 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3Core.Models;
+namespace Fire.Core.Models;
 
 public class Data
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace FireBrowserWinUi3MultiCore;
+namespace Fire.Browser.Core;
 public class DbSettings
 {
 

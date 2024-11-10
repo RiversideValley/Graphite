@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FireBrowserWinUi3MultiCore;
+namespace Fire.Browser.Core;
 
 public class UserDataResult
 {

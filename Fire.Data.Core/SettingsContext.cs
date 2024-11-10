@@ -1,9 +1,9 @@
-﻿using FireBrowserWinUi3MultiCore;
+﻿using Fire.Browser.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 
-namespace FireBrowserWinUi3DataCore;
+namespace Fire.Data.Core;
 // https://andywatt83.medium.com/testing-entity-framework-migrations-9bc5dc25190b
 //https://www.thinktecture.com/en/entity-framework-core/changing-db-migration-schema-at-runtime-in-2-1/
 //https://www.milanjovanovic.tech/blog/efcore-migrations-a-detailed-guide
@@ -31,6 +31,6 @@ public class SettingsContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        //modelBuilder.Entity<Settings>().HasData(new FireBrowserWinUi3MultiCore.Settings(true).Self);
+        //modelBuilder.Entity<Settings>().HasData(new Fire.Browser.Core.Settings(true).Self);
     }
 }

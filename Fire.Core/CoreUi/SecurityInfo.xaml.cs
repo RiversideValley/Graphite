@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace FireBrowserWinUi3Core.CoreUi;
+namespace Fire.Core.CoreUi;
 
 public sealed partial class SecurityInfo : Flyout
 {

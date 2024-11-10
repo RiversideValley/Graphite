@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using static FireBrowserWinUi3Services.PluginCore.IPluginCore;
+using static Fire.Browser.Services.PluginCore.IPluginCore;
 
-namespace FireBrowserWinUi3Services.PluginCore;
+namespace Fire.Browser.Services.PluginCore;
 public interface IPluginBase
 {
     public String Name { get; set; }

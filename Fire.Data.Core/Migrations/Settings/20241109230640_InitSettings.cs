@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace FireBrowserWinUi3DataCore.Migrations.Settings
+namespace Fire.Data.Core.Migrations.Settings
 {
     /// <inheritdoc />
     public partial class InitSettings : Migration

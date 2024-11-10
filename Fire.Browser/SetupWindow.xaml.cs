@@ -1,4 +1,4 @@
-using FireBrowserWinUi3Core.Helpers;
+using Fire.Core.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;

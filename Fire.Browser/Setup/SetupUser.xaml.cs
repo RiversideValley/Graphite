@@ -1,5 +1,5 @@
-using FireBrowserWinUi3Assets;
-using FireBrowserWinUi3MultiCore;
+using Fire.Browser.Assets;
+using Fire.Browser.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -39,12 +39,12 @@ namespace FireBrowserWinUi3
 
         private async Task CreateUserOnStartup()
         {
-            FireBrowserWinUi3MultiCore.User newUser = new FireBrowserWinUi3MultiCore.User
+            Fire.Browser.Core.User newUser = new Fire.Browser.Core.User
             {
                 Username = UserName.Text,
             };
 
-            List<FireBrowserWinUi3MultiCore.User> users = new List<FireBrowserWinUi3MultiCore.User> { newUser }; UserFolderManager.CreateUserFolders(newUser);
+            List<Fire.Browser.Core.User> users = new List<Fire.Browser.Core.User> { newUser }; UserFolderManager.CreateUserFolders(newUser);
             UserDataManager.SaveUsers(users);
             AuthService.AddUser(newUser);
             AuthService.Authenticate(newUser.Username);
@@ -58,7 +58,7 @@ namespace FireBrowserWinUi3
             {
                 var destinationFolder = await StorageFolder.GetFolderFromPathAsync(
                     Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username));
-                var imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///FireBrowserWinUi3Assets/Assets/{selectedImageName}"));
+                var imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Assets/Assets/{selectedImageName}"));
                 await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
             }
             catch (Exception ex)
