@@ -2,5 +2,5 @@
 
 public interface IKeyProvider
 {
-    byte[] ComputeHmac(OtpHashMode mode, byte[] data);
+	byte[] ComputeHmac(OtpHashMode mode, byte[] data);
 }

@@ -11,26 +11,26 @@ namespace Fire.Data.Core;
 // https://learn.microsoft.com/en-us/azure-data-studio/extensions/schema-compare-extension?view=sql-server-ver16
 public class SettingsContext : DbContext
 {
-    public DbSet<Settings> Settings { get; set; }
-    public string ConnectionPath { get; set; }
-    public SettingsContext(string username)
-    {
-        if (username == null)
-        {
-            throw new ArgumentNullException(nameof(username));
-        }
-        else
-        {
-            ConnectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
-        }
-    }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
-    }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        //modelBuilder.Entity<Settings>().HasData(new Fire.Browser.Core.Settings(true).Self);
-    }
+	public DbSet<Settings> Settings { get; set; }
+	public string ConnectionPath { get; set; }
+	public SettingsContext(string username)
+	{
+		if (username == null)
+		{
+			throw new ArgumentNullException(nameof(username));
+		}
+		else
+		{
+			ConnectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
+		}
+	}
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	{
+		optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+	}
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		base.OnModelCreating(modelBuilder);
+		//modelBuilder.Entity<Settings>().HasData(new Fire.Browser.Core.Settings(true).Self);
+	}
 }

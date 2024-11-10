@@ -4,26 +4,26 @@ using System;
 namespace Fire.Browser.Services.PluginCore;
 public class PluginEntry
 {
-    public String Name { get; set; }
-    public String Description { get; set; }
+	public String Name { get; set; }
+	public String Description { get; set; }
 
-    IPluginBase Plugin = null;
+	IPluginBase Plugin = null;
 
-    public UserControl form { get; set; } = null;
+	public UserControl form { get; set; } = null;
 
-    public PluginEntry(IPluginBase p)
-    {
-        Plugin = p;
+	public PluginEntry(IPluginBase p)
+	{
+		Plugin = p;
 
-        this.Name = p.Name;
-        this.Description = p.Description;
+		this.Name = p.Name;
+		this.Description = p.Description;
 
-        var response = p.Initialize(null);
+		var response = p.Initialize(null);
 
-        // Check if the response contains a form
-        if (response is IPluginCore.RpResponse formResponse)
-        {
-            form = formResponse.Form;
-        }
-    }
+		// Check if the response contains a form
+		if (response is IPluginCore.RpResponse formResponse)
+		{
+			form = formResponse.Form;
+		}
+	}
 }

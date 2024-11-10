@@ -5,21 +5,21 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FireBrowserWinUi3.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SplitTabPage : Page
-    {
-        public SplitTabPage()
-        {
-            this.InitializeComponent();
-            LeftFrame.Navigate(typeof(NewTab));
-            RightFrame.Navigate(typeof(NewTab));
-        }
-        public void CloseWebViews()
-        {
-            (LeftFrame.Content as WebContent).WebViewElement.Close();
-            (RightFrame.Content as WebContent).WebViewElement.Close();
-        }
-    }
+	/// <summary>
+	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// </summary>
+	public sealed partial class SplitTabPage : Page
+	{
+		public SplitTabPage()
+		{
+			this.InitializeComponent();
+			LeftFrame.Navigate(typeof(NewTab));
+			RightFrame.Navigate(typeof(NewTab));
+		}
+		public void CloseWebViews()
+		{
+			(LeftFrame.Content as WebContent).WebViewElement.Close();
+			(RightFrame.Content as WebContent).WebViewElement.Close();
+		}
+	}
 }

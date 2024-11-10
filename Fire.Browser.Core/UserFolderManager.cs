@@ -5,15 +5,15 @@ namespace Fire.Browser.Core;
 
 public static class UserFolderManager
 {
-    private static readonly string[] SubFolderNames = ["Settings", "Database", "Browser", "Modules"];
+	private static readonly string[] SubFolderNames = ["Settings", "Database", "Browser", "Modules"];
 
-    public static void CreateUserFolders(User user)
-    {
-        var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username);
+	public static void CreateUserFolders(User user)
+	{
+		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username);
 
-        Parallel.ForEach(SubFolderNames, folderName =>
-            Directory.CreateDirectory(Path.Combine(userFolderPath, folderName)));
-    }
+		Parallel.ForEach(SubFolderNames, folderName =>
+			Directory.CreateDirectory(Path.Combine(userFolderPath, folderName)));
+	}
 
 
 }

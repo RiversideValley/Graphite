@@ -4,5 +4,5 @@ namespace Fire.Core.CoreUi;
 
 public sealed partial class UI : ContentDialog
 {
-    public UI() => InitializeComponent();
+	public UI() => InitializeComponent();
 }

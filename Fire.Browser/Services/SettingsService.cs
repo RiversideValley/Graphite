@@ -12,65 +12,65 @@ using System.Threading.Tasks;
 namespace FireBrowserWinUi3.Services;
 public class SettingsService : ISettingsService
 {
-    #region MemberProps
-    public SettingsActions Actions { get; set; }
-    public User CurrentUser { get; set; }
-    public Settings CoreSettings { get; set; }
-    #endregion
-    internal IMessenger Messenger { get; set; }
-    public SettingsService()
-    {
-        Initialize();
-        Messenger = App.GetService<IMessenger>();
-    }
+	#region MemberProps
+	public SettingsActions Actions { get; set; }
+	public User CurrentUser { get; set; }
+	public Settings CoreSettings { get; set; }
+	#endregion
+	internal IMessenger Messenger { get; set; }
+	public SettingsService()
+	{
+		Initialize();
+		Messenger = App.GetService<IMessenger>();
+	}
 
-    public async void Initialize()
-    {
-        try
-        {
+	public async void Initialize()
+	{
+		try
+		{
 
-            if (AuthService.IsUserAuthenticated)
-            {
-                CurrentUser = AuthService.CurrentUser ?? null;
-                Actions = new SettingsActions(AuthService.CurrentUser.Username);
-                CoreSettings = await Actions?.GetSettingsAsync();
-            }
+			if (AuthService.IsUserAuthenticated)
+			{
+				CurrentUser = AuthService.CurrentUser ?? null;
+				Actions = new SettingsActions(AuthService.CurrentUser.Username);
+				CoreSettings = await Actions?.GetSettingsAsync();
+			}
 
-        }
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-        }
-    }
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+		}
+	}
 
-    public async Task SaveChangesToSettings(User user, Fire.Browser.Core.Settings settings)
-    {
-        try
-        {
+	public async Task SaveChangesToSettings(User user, Fire.Browser.Core.Settings settings)
+	{
+		try
+		{
 
-            if (!AuthService.IsUserAuthenticated) return;
+			if (!AuthService.IsUserAuthenticated) return;
 
-            AppService.AppSettings = settings;
-            if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-            {
-                await Actions?.SettingsContext.Database.MigrateAsync();
-            }
+			AppService.AppSettings = settings;
+			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+			{
+				await Actions?.SettingsContext.Database.MigrateAsync();
+			}
 
-            await Actions?.UpdateSettingsAsync(settings);
-            // get new from database. 
-            CoreSettings = await Actions?.GetSettingsAsync();
+			await Actions?.UpdateSettingsAsync(settings);
+			// get new from database. 
+			CoreSettings = await Actions?.GetSettingsAsync();
 
-            var obj = new object();
-            lock (obj)
-            {
-                Messenger?.Send(new Message_Settings_Actions(EnumMessageStatus.Settings));
-            }
-        }
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+			var obj = new object();
+			lock (obj)
+			{
+				Messenger?.Send(new Message_Settings_Actions(EnumMessageStatus.Settings));
+			}
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+			Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
 
-        }
-    }
+		}
+	}
 }

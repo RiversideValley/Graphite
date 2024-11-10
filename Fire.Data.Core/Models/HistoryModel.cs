@@ -5,24 +5,24 @@ namespace Fire.Data.Core.Models;
 
 public class HistoryItem : IHistoryItem
 {
-    [Key]
-    public int id { get; set; }
-    public string last_visit_time { get; set; }
-    public string url { get; set; }
-    public string title { get; set; }
-    public int visit_count { get; set; }
-    public int typed_count { get; set; }
-    public int hidden { get; set; }
+	[Key]
+	public int id { get; set; }
+	public string last_visit_time { get; set; }
+	public string url { get; set; }
+	public string title { get; set; }
+	public int visit_count { get; set; }
+	public int typed_count { get; set; }
+	public int hidden { get; set; }
 
-    public HistoryItem(string last_visit_time, string url, string title, int visit_count, int typed_count, int hidden)
-    {
-        this.last_visit_time = last_visit_time;
-        this.url = url;
-        this.title = title;
-        this.visit_count = visit_count;
-        this.typed_count = typed_count;
-        this.hidden = hidden;
-    }
+	public HistoryItem(string last_visit_time, string url, string title, int visit_count, int typed_count, int hidden)
+	{
+		this.last_visit_time = last_visit_time;
+		this.url = url;
+		this.title = title;
+		this.visit_count = visit_count;
+		this.typed_count = typed_count;
+		this.hidden = hidden;
+	}
 }
 
 /*

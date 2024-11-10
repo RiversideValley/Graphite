@@ -8,49 +8,49 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace Fire.Authentication.Dialogs
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class AddDialog : ContentDialog
-    {
-        public AddDialog()
-        {
-            this.InitializeComponent();
-        }
+	/// <summary>
+	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// </summary>
+	public sealed partial class AddDialog : ContentDialog
+	{
+		public AddDialog()
+		{
+			this.InitializeComponent();
+		}
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Hide();
-        }
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			Hide();
+		}
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            secretBox.Text = secretBox.Text.Replace(" ", "");
-            secretBox.Text = secretBox.Text.Replace("-", "");
+		private void Button_Click_1(object sender, RoutedEventArgs e)
+		{
+			secretBox.Text = secretBox.Text.Replace(" ", "");
+			secretBox.Text = secretBox.Text.Replace("-", "");
 
-            if (secretBox.Text.Length > 0) // 0 for testing purposes
-            {
-                TwoFactorsAuthentification.Add(nameBox.Text, secretBox.Text);
-            }
+			if (secretBox.Text.Length > 0) // 0 for testing purposes
+			{
+				TwoFactorsAuthentification.Add(nameBox.Text, secretBox.Text);
+			}
 
-            Hide();
-        }
+			Hide();
+		}
 
-        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
-        {
-            secretBox.Text = secretBox.Text.Replace(" ", "");
-            secretBox.Text = secretBox.Text.Replace("-", "");
+		private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+		{
+			secretBox.Text = secretBox.Text.Replace(" ", "");
+			secretBox.Text = secretBox.Text.Replace("-", "");
 
-            if (secretBox.Text.Length > 0) // For testing purpose (the normal min value should be 16)
-            {
-                Totp totp = new(Base32Encoding.ToBytes(secretBox.Text));
-                string code = totp.ComputeTotp();
+			if (secretBox.Text.Length > 0) // For testing purpose (the normal min value should be 16)
+			{
+				Totp totp = new(Base32Encoding.ToBytes(secretBox.Text));
+				string code = totp.ComputeTotp();
 
-                var package = new DataPackage();
-                package.SetText(code);
-                Clipboard.SetContent(package);
-            }
+				var package = new DataPackage();
+				package.SetText(code);
+				Clipboard.SetContent(package);
+			}
 
-        }
-    }
+		}
+	}
 }

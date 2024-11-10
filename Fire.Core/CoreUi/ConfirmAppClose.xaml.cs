@@ -4,5 +4,5 @@ namespace Fire.Core.CoreUi;
 
 public sealed partial class ConfirmAppClose : ContentDialog
 {
-    public ConfirmAppClose() => InitializeComponent();
+	public ConfirmAppClose() => InitializeComponent();
 }

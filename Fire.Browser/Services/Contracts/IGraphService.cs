@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.Contracts
 {
-    public interface IGraphService
-    {
-        public Task<User> GetUserInfoAsync();
+	public interface IGraphService
+	{
+		public Task<User> GetUserInfoAsync();
 
-        public Task<Stream> GetUserPhotoAsync();
+		public Task<Stream> GetUserPhotoAsync();
 
-        public Task<EventCollectionResponse> GetCalendarForDateTimeRangeAsync(DateTime start, DateTime end, TimeZoneInfo timeZone);
+		public Task<EventCollectionResponse> GetCalendarForDateTimeRangeAsync(DateTime start, DateTime end, TimeZoneInfo timeZone);
 
-        public Task CreateEventAsync(Event newEvent);
+		public Task CreateEventAsync(Event newEvent);
 
-        public BitmapImage ProfileMicrosoft { get; set; }
-    }
+		public BitmapImage ProfileMicrosoft { get; set; }
+	}
 }

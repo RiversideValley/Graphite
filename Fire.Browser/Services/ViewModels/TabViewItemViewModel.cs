@@ -3,5 +3,5 @@
 namespace FireBrowserWinUi3.ViewModels;
 public partial class TabViewItemViewModel : ObservableObject
 {
-    [ObservableProperty] public bool _IsTooltipEnabled;
+	[ObservableProperty] public bool _IsTooltipEnabled;
 }

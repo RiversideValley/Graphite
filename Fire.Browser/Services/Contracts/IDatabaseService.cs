@@ -3,5 +3,5 @@
 namespace FireBrowserWinUi3.Services.Contracts;
 public interface IDatabaseService
 {
-    Task<Task> DatabaseCreationValidation();
+	Task<Task> DatabaseCreationValidation();
 }

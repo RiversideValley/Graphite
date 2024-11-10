@@ -4,20 +4,20 @@ using System.ComponentModel.DataAnnotations;
 namespace Fire.Data.Core.Models;
 public class DownloadItem : IDownloadItem
 {
-    [Key]
-    public int id { get; set; }
-    public string guid { get; set; }
-    public string current_path { get; set; }
-    public string end_time { get; set; }
-    public long start_time { get; set; }
+	[Key]
+	public int id { get; set; }
+	public string guid { get; set; }
+	public string current_path { get; set; }
+	public string end_time { get; set; }
+	public long start_time { get; set; }
 
-    public DownloadItem(string guid, string current_path, string end_time, long start_time)
-    {
-        this.guid = guid;
-        this.current_path = current_path;
-        this.end_time = end_time;
-        this.start_time = start_time;
-    }
+	public DownloadItem(string guid, string current_path, string end_time, long start_time)
+	{
+		this.guid = guid;
+		this.current_path = current_path;
+		this.end_time = end_time;
+		this.start_time = start_time;
+	}
 }
 
 /*

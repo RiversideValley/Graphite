@@ -4,17 +4,17 @@ namespace Fire.Authentication.Private;
 
 public class TimeCorrection
 {
-    public static readonly TimeCorrection UncorrectedInstance = new TimeCorrection();
+	public static readonly TimeCorrection UncorrectedInstance = new TimeCorrection();
 
-    private TimeCorrection() => CorrectionFactor = TimeSpan.FromSeconds(0);
+	private TimeCorrection() => CorrectionFactor = TimeSpan.FromSeconds(0);
 
-    public TimeCorrection(DateTime correctUtc) => CorrectionFactor = DateTime.UtcNow - correctUtc;
+	public TimeCorrection(DateTime correctUtc) => CorrectionFactor = DateTime.UtcNow - correctUtc;
 
-    public TimeCorrection(DateTime correctTime, DateTime referenceTime) => CorrectionFactor = referenceTime - correctTime;
+	public TimeCorrection(DateTime correctTime, DateTime referenceTime) => CorrectionFactor = referenceTime - correctTime;
 
-    public DateTime GetCorrectedTime(DateTime referenceTime) => referenceTime - CorrectionFactor;
+	public DateTime GetCorrectedTime(DateTime referenceTime) => referenceTime - CorrectionFactor;
 
-    public DateTime CorrectedUtcNow => GetCorrectedTime(DateTime.UtcNow);
+	public DateTime CorrectedUtcNow => GetCorrectedTime(DateTime.UtcNow);
 
-    public TimeSpan CorrectionFactor { get; }
+	public TimeSpan CorrectionFactor { get; }
 }

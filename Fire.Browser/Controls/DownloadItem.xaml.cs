@@ -16,177 +16,177 @@ namespace FireBrowserWinUi3.Controls;
 
 public sealed partial class DownloadItem : ListViewItem
 {
-    private CoreWebView2DownloadOperation _downloadOperation;
-    private string _filePath;
+	private CoreWebView2DownloadOperation _downloadOperation;
+	private string _filePath;
 
-    private int Progress { get; set; } = 0;
-    private string EstimatedEnd { get; set; } = string.Empty;
-    public DownloadService ServiceDownloads { get; set; }
+	private int Progress { get; set; } = 0;
+	private string EstimatedEnd { get; set; } = string.Empty;
+	public DownloadService ServiceDownloads { get; set; }
 
-    public DownloadItem(string filepath)
-    {
-        this.InitializeComponent();
+	public DownloadItem(string filepath)
+	{
+		this.InitializeComponent();
 
-        _filePath = filepath;
-        fileName.Text = Path.GetFileName(_filePath);
+		_filePath = filepath;
+		fileName.Text = Path.GetFileName(_filePath);
 
-        progressRing.Visibility = Visibility.Collapsed;
-        ResourceLoader resourceLoader = new();
-        subtitle.Text = resourceLoader.GetString("OpenDownload");
+		progressRing.Visibility = Visibility.Collapsed;
+		ResourceLoader resourceLoader = new();
+		subtitle.Text = resourceLoader.GetString("OpenDownload");
 
-        SetIcon();
-    }
+		SetIcon();
+	}
 
-    public DownloadItem(CoreWebView2DownloadOperation downloadOperation)
-    {
-        this.InitializeComponent();
+	public DownloadItem(CoreWebView2DownloadOperation downloadOperation)
+	{
+		this.InitializeComponent();
 
-        _downloadOperation = downloadOperation;
-        _filePath = _downloadOperation.ResultFilePath;
-        _downloadOperation.BytesReceivedChanged += _downloadOperation_BytesReceivedChanged;
-        _downloadOperation.StateChanged += _downloadOperation_StateChanged;
-        _downloadOperation.EstimatedEndTimeChanged += _downloadOperation_EstimatedEndTimeChanged;
+		_downloadOperation = downloadOperation;
+		_filePath = _downloadOperation.ResultFilePath;
+		_downloadOperation.BytesReceivedChanged += _downloadOperation_BytesReceivedChanged;
+		_downloadOperation.StateChanged += _downloadOperation_StateChanged;
+		_downloadOperation.EstimatedEndTimeChanged += _downloadOperation_EstimatedEndTimeChanged;
 
-        fileName.Text = Path.GetFileName(_filePath);
+		fileName.Text = Path.GetFileName(_filePath);
 
-        SetIcon();
-    }
+		SetIcon();
+	}
 
-    private void _downloadOperation_EstimatedEndTimeChanged(CoreWebView2DownloadOperation sender, object args)
-    {
-        EstimatedEnd = sender.EstimatedEndTime;
-    }
+	private void _downloadOperation_EstimatedEndTimeChanged(CoreWebView2DownloadOperation sender, object args)
+	{
+		EstimatedEnd = sender.EstimatedEndTime;
+	}
 
-    private void _downloadOperation_StateChanged(CoreWebView2DownloadOperation sender, object args)
-    {
-        switch (sender.State)
-        {
-            case CoreWebView2DownloadState.Completed:
-                progressRing.Visibility = Visibility.Collapsed;
-                ResourceLoader resourceLoader = new();
-                subtitle.Text = resourceLoader.GetString("OpenDownload");
-                SetIcon();
-                break;
+	private void _downloadOperation_StateChanged(CoreWebView2DownloadOperation sender, object args)
+	{
+		switch (sender.State)
+		{
+			case CoreWebView2DownloadState.Completed:
+				progressRing.Visibility = Visibility.Collapsed;
+				ResourceLoader resourceLoader = new();
+				subtitle.Text = resourceLoader.GetString("OpenDownload");
+				SetIcon();
+				break;
 
-            case CoreWebView2DownloadState.Interrupted:
-                // TODO: Handle interrupted state
-                break;
+			case CoreWebView2DownloadState.Interrupted:
+				// TODO: Handle interrupted state
+				break;
 
-            case CoreWebView2DownloadState.InProgress:
-                progressRing.Visibility = Visibility.Visible;
-                break;
-        }
-    }
+			case CoreWebView2DownloadState.InProgress:
+				progressRing.Visibility = Visibility.Visible;
+				break;
+		}
+	}
 
-    private void _downloadOperation_BytesReceivedChanged(CoreWebView2DownloadOperation sender, object args)
-    {
-        try
-        {
-            long progress = 100 * sender.BytesReceived / sender.TotalBytesToReceive;
-            subtitle.Text = $"{(int)progress}%";
-            progressRing.Value = (int)progress;
+	private void _downloadOperation_BytesReceivedChanged(CoreWebView2DownloadOperation sender, object args)
+	{
+		try
+		{
+			long progress = 100 * sender.BytesReceived / sender.TotalBytesToReceive;
+			subtitle.Text = $"{(int)progress}%";
+			progressRing.Value = (int)progress;
 
-            if (progress >= 100)
-            {
-                progressRing.Visibility = Visibility.Collapsed;
-                SetIcon();
-                ResourceLoader resourceLoader = new();
-                subtitle.Text = resourceLoader.GetString("OpenDownload");
+			if (progress >= 100)
+			{
+				progressRing.Visibility = Visibility.Collapsed;
+				SetIcon();
+				ResourceLoader resourceLoader = new();
+				subtitle.Text = resourceLoader.GetString("OpenDownload");
 
-                SimulateDownloadCompletion(sender);
-            }
-        }
-        catch
-        {
-            // TODO: Handle exceptions
-        }
-    }
+				SimulateDownloadCompletion(sender);
+			}
+		}
+		catch
+		{
+			// TODO: Handle exceptions
+		}
+	}
 
-    private async void SimulateDownloadCompletion(CoreWebView2DownloadOperation downloadOperation)
-    {
-        await Task.Delay(1000);
+	private async void SimulateDownloadCompletion(CoreWebView2DownloadOperation downloadOperation)
+	{
+		await Task.Delay(1000);
 
-        downloadOperation.GetType().GetMethod("OnDownloadStateChange", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            ?.Invoke(downloadOperation, new object[] { CoreWebView2DownloadState.Completed });
+		downloadOperation.GetType().GetMethod("OnDownloadStateChange", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+			?.Invoke(downloadOperation, new object[] { CoreWebView2DownloadState.Completed });
 
-        if (File.Exists(_filePath))
-        {
-            ServiceDownloads ??= App.GetService<DownloadService>();
-            await ServiceDownloads.InsertAsync(_filePath, downloadOperation.EstimatedEndTime.ToString(), DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-        }
-    }
+		if (File.Exists(_filePath))
+		{
+			ServiceDownloads ??= App.GetService<DownloadService>();
+			await ServiceDownloads.InsertAsync(_filePath, downloadOperation.EstimatedEndTime.ToString(), DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+		}
+	}
 
-    private void SetIcon()
-    {
-        try
-        {
-            var icon = GetSmallFileIcon(_filePath);
+	private void SetIcon()
+	{
+		try
+		{
+			var icon = GetSmallFileIcon(_filePath);
 
-            if (icon != null)
-            {
-                using MemoryStream stream = new MemoryStream();
-                icon.Save(stream);
-                stream.Position = 0;
+			if (icon != null)
+			{
+				using MemoryStream stream = new MemoryStream();
+				icon.Save(stream);
+				stream.Position = 0;
 
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.SetSource(stream.AsRandomAccessStream());
-                iconImage.Source = bitmapImage;
-            }
-        }
-        catch (FileNotFoundException)
-        {
-            // TODO: Handle file not found
-        }
-    }
+				BitmapImage bitmapImage = new BitmapImage();
+				bitmapImage.SetSource(stream.AsRandomAccessStream());
+				iconImage.Source = bitmapImage;
+			}
+		}
+		catch (FileNotFoundException)
+		{
+			// TODO: Handle file not found
+		}
+	}
 
-    private Icon GetSmallFileIcon(string filePath)
-    {
-        SHFILEINFO shinfo = new SHFILEINFO();
-        IntPtr hImgSmall = Win32.SHGetFileInfo(filePath, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
+	private Icon GetSmallFileIcon(string filePath)
+	{
+		SHFILEINFO shinfo = new SHFILEINFO();
+		IntPtr hImgSmall = Win32.SHGetFileInfo(filePath, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
 
-        if (hImgSmall != IntPtr.Zero)
-        {
-            Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
-            Win32.DestroyIcon(shinfo.hIcon);
-            return icon;
-        }
+		if (hImgSmall != IntPtr.Zero)
+		{
+			Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
+			Win32.DestroyIcon(shinfo.hIcon);
+			return icon;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private void ListViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
-    {
-        if (_downloadOperation?.State == CoreWebView2DownloadState.Completed || _downloadOperation == null)
-        {
-            FlyoutShowOptions flyoutShowOptions = new FlyoutShowOptions
-            {
-                Position = e.GetPosition(this)
-            };
-            contextMenu.ShowAt(this, flyoutShowOptions);
-        }
-    }
+	private void ListViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
+	{
+		if (_downloadOperation?.State == CoreWebView2DownloadState.Completed || _downloadOperation == null)
+		{
+			FlyoutShowOptions flyoutShowOptions = new FlyoutShowOptions
+			{
+				Position = e.GetPosition(this)
+			};
+			contextMenu.ShowAt(this, flyoutShowOptions);
+		}
+	}
 
-    private static class Win32
-    {
-        public const uint SHGFI_ICON = 0x100;
-        public const uint SHGFI_SMALLICON = 0x1;
+	private static class Win32
+	{
+		public const uint SHGFI_ICON = 0x100;
+		public const uint SHGFI_SMALLICON = 0x1;
 
-        [DllImport("shell32.dll")]
-        public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
+		[DllImport("shell32.dll")]
+		public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool DestroyIcon(IntPtr hIcon);
-    }
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern bool DestroyIcon(IntPtr hIcon);
+	}
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    private struct SHFILEINFO
-    {
-        public IntPtr hIcon;
-        public int iIcon;
-        public uint dwAttributes;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-        public string szDisplayName;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-        public string szTypeName;
-    }
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+	private struct SHFILEINFO
+	{
+		public IntPtr hIcon;
+		public int iIcon;
+		public uint dwAttributes;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+		public string szDisplayName;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+		public string szTypeName;
+	}
 }

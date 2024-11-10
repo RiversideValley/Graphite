@@ -8,77 +8,77 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace FireBrowserWinUi3
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SetupAccess : Page
-    {
-        public SetupAccess()
-        {
-            this.InitializeComponent();
-            Langue.SelectedItem = "en-US";
-            Langue.Text = "en-US";
-        }
+	/// <summary>
+	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// </summary>
+	public sealed partial class SetupAccess : Page
+	{
+		public SetupAccess()
+		{
+			this.InitializeComponent();
+			Langue.SelectedItem = "en-US";
+			Langue.Text = "en-US";
+		}
 
-        private Fire.Browser.Core.User GetUser()
-        {
-            // Check if the user is authenticated.
-            if (AuthService.IsUserAuthenticated)
-            {
-                // Return the authenticated user.
-                return AuthService.CurrentUser;
-            }
+		private Fire.Browser.Core.User GetUser()
+		{
+			// Check if the user is authenticated.
+			if (AuthService.IsUserAuthenticated)
+			{
+				// Return the authenticated user.
+				return AuthService.CurrentUser;
+			}
 
-            // If no user is authenticated, return null or handle as needed.
-            return null;
-        }
+			// If no user is authenticated, return null or handle as needed.
+			return null;
+		}
 
-        private void LiteMode_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (sender is ToggleSwitch toggleSwitch)
-            {
+		private void LiteMode_Toggled(object sender, RoutedEventArgs e)
+		{
+			if (sender is ToggleSwitch toggleSwitch)
+			{
 
-                // Assuming 'url' and 'selection' have been defined earlier
-                var autoSettingValue = toggleSwitch.IsOn;
+				// Assuming 'url' and 'selection' have been defined earlier
+				var autoSettingValue = toggleSwitch.IsOn;
 
-                AppService.AppSettings.LightMode = autoSettingValue;
+				AppService.AppSettings.LightMode = autoSettingValue;
 
-            }
-        }
+			}
+		}
 
-        private void Langue_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string selection = e.AddedItems[0].ToString();
-            string type;
+		private void Langue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			string selection = e.AddedItems[0].ToString();
+			string type;
 
-            switch (selection)
-            {
-                case "nl-NL":
-                    type = "nl-NL";
+			switch (selection)
+			{
+				case "nl-NL":
+					type = "nl-NL";
 
-                    break;
-                case "en-US":
-                    type = "en-US";
+					break;
+				case "en-US":
+					type = "en-US";
 
-                    break;
+					break;
 
-                // Add other cases for different search engines.
-                default:
-                    // Handle the case when selection doesn't match any of the predefined options.
-                    type = "en-US";
+				// Add other cases for different search engines.
+				default:
+					// Handle the case when selection doesn't match any of the predefined options.
+					type = "en-US";
 
-                    break;
-            }
+					break;
+			}
 
-            if (!string.IsNullOrEmpty(type))
-            {
-                AppService.AppSettings.Lang = type;
-            }
-        }
+			if (!string.IsNullOrEmpty(type))
+			{
+				AppService.AppSettings.Lang = type;
+			}
+		}
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SetupWebView));
-        }
-    }
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			Frame.Navigate(typeof(SetupWebView));
+		}
+	}
 }
