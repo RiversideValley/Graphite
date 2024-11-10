@@ -1,37 +1,63 @@
-<div align="center">
-  <img src="FireBrowserWinUi3/Assets/fincog.png" height="75" width="75" />
-  <h1>FireBrowserWinUi</h1>
-</div>
+![Screenshot-NoBackgroundCrop,Margin,NoRoundedCorner](https://github.com/user-attachments/assets/ec2fa1dd-2990-48e0-a747-97b5cc87b9ac)
 
-### A modern Web browser with a beautiful UI built with the WinUI3 and the WebView2 SDK.
+Introducing **Fire Browser**, a beautiful, blazingly fast web browser built with Microsoft's powerful `WindowsAppSDK` and `WebView2`. It leverages Microsoft Entra for secure login and offers a suite of powerful features designed to enhance your browsing experience.
 
-# Features:
-- Blazingly fast
-- Low ram usage
-- Browse the web
-- Search suggestions
-- Reading mode
-- QR Code generator
-- Pinned sites
-- Focus mode
-- Note on websites
-- Compact overlay
-- Split browsing
-- Freeform
+## 📋 Features
 
-# Upcoming Stuff Eta 31 - Dec - 2024
-- AES 256 random key genarated encryption for storing credit data en autofill
+- **Blazingly Fast**: Experience lightning-fast browsing speeds.
+- **Low RAM Usage**: Optimized to use minimal system resources.
+- **Browse the Web**: Seamlessly navigate your favorite websites.
+- **Search Suggestions**: Get real-time search suggestions as you type.
+- **Reading Mode**: Enjoy a distraction-free reading experience.
+- **QR Code Generator**: Easily generate QR codes for any URL.
+- **Pinned Sites**: Quickly access your favorite sites with pinned tabs.
+- **Focus Mode**: Minimize distractions and stay focused.
+- **Note on Websites**: Add and save notes directly on web pages.
+- **Compact Overlay**: Keep your browser always on top with a compact overlay.
+- **Split Browsing**: View multiple sites side-by-side.
+- **Freeform**: Customize your browsing experience with flexible layouts.
 
-# NOTE:
-if your building the project on windows 10 make sure to use the 2004 sdk as that works best for 22h2 and any older build that supports visual studio 2022.
-# Screenshots
+## 🛠️ Building from source
 
-<div style="display: flex; align-items: center;">
-   <img src="images/Image1New.png" />
-   <img src="images/image2.png" />
-   <img src="images/image3.png" />
-   <img src="images/image4.png" />
-</div>
+#### 1. Prerequisites
 
-# License
-GPL v3.0
+- [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) with the following individual components:
+    - Windows 11 SDK
+    - .NET 8 SDK
+- Git for Windows
+- [Windows App SDK](https://learn.microsoft.com/windows/apps/windows-app-sdk/downloads#current-releases)
+    
+#### 2. Clone the repository
+
+```ps
+git clone https://github.com/FirebrowserDevs/FireBrowserWinUi3
+```
+
+This will create a local copy of the repository.
+
+#### 3. Build the project
+
+To build Fire Browser for development, open the `Fire-Browser.sln` item in Visual Studio. Right-click on the `Fire.Browser` packaging project in solution explorer and select ‘Set as Startup item’.
+
+### 🛜 Usage
+
+After installation, launch Fire Browser and log in using your Microsoft credentials. Explore the various features and customize your browsing experience to suit your needs.
+
+## 🙋 Contributing
+
+Want to contribute to this project? Let us know with an [issue](https://github.com/FirebrowserDevs/FireBrowserWinUi3/issues) that communicates your intent to create a [pull request](https://github.com/FirebrowserDevs/FireBrowserWinUi3/pulls).
+
+Looking for a place to start? Check out the [task board](https://github.com/orgs/FirebrowserDevs/projects/2), where you can sort tasks by size and priority.
+
+## ⚖️ License
+
+This project is licensed under the `GNU/GPL 3.0` license. See the `LICENSE.md` file for in the root directory for details.
+
+## 😇 Acknowledgements
+
+Fire Browser is made with love by C# developers in the Netherlands. We thank all contributors and users for their support.
+
+---
+
+![Screenshot-BackgroundCrop,NoMargin,RoundedCorner](https://github.com/user-attachments/assets/6bc05259-46ef-48a2-bc16-81d2aecb012d)
+
