@@ -180,7 +180,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FireAuthService\FireAuthService.csproj" />
     <ProjectReference Include="..\FireBrowserWinUi3AdBlockCore\FireBrowserWinUi3AdBlockCore.csproj" />
     <ProjectReference Include="..\FireBrowserWinUi3Assets\FireBrowserWinUi3Assets.csproj" />
     <ProjectReference Include="..\FireBrowserWinUi3AuthCore\FireBrowserWinUi3AuthCore.csproj" />
@@ -389,6 +388,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Remove="Controls\ResetCore.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Workers\" />
   </ItemGroup>
   <PropertyGroup>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>

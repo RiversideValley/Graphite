@@ -51,6 +51,7 @@ public static class AppService
             string resetFilePath = Path.Combine(Path.GetTempPath(), "Reset.set");
             string backupFilePath = Path.Combine(Path.GetTempPath(), "backup.fireback");
             string restoreFilePath = Path.Combine(Path.GetTempPath(), "restore.fireback");
+            string updateSql = Path.Combine(Path.GetTempPath(), "update.sql"); 
 
             if (IsAppGoingToClose)
             {

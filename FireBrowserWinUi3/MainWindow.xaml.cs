@@ -1,6 +1,5 @@
 using Azure.Core.Pipeline;
 using CommunityToolkit.WinUI.Behaviors;
-using FireAuthService;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages;
@@ -17,9 +16,6 @@ using FireBrowserWinUi3MultiCore;
 using FireBrowserWinUi3MultiCore.Helper;
 using FireBrowserWinUi3Navigator;
 using FireBrowserWinUi3QrCore;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -138,9 +134,9 @@ public sealed partial class MainWindow : Window
     {
         await FireBrowserWinUi3Core.Models.Data.Init();
         string solutionDir = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
-        string workerProjectName = "FireAuthService";
-        string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
-        string nameService = nameof(FireAuthService).ToString();
+        //string workerProjectName = "FireAuthService";
+        //string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
+        //string nameService = nameof(FireAuthService).ToString();
 
     }
 
