@@ -21,7 +21,7 @@ namespace Fire.Core.Helpers
 
                 if (encryptedData != null)
                 {
-                    File.WriteAllBytes(Data.TotpFilePath, encryptedData);
+                    File.WriteAllBytes(Models.Data.TotpFilePath, encryptedData);
                 }
                 else
                 {
@@ -38,9 +38,9 @@ namespace Fire.Core.Helpers
         {
             try
             {
-                if (File.Exists(Data.TotpFilePath))
+                if (File.Exists(Models.Data.TotpFilePath))
                 {
-                    byte[] encryptedJsonString = File.ReadAllBytes(Data.TotpFilePath);
+                    byte[] encryptedJsonString = File.ReadAllBytes(Models.Data.TotpFilePath);
                     string jsonString = EncryptionHelpers.UnprotectToString(encryptedJsonString);
 
                     if (!string.IsNullOrEmpty(jsonString))
@@ -73,9 +73,9 @@ namespace Fire.Core.Helpers
         {
             try
             {
-                if (File.Exists(Data.TotpFilePath))
+                if (File.Exists(Models.Data.TotpFilePath))
                 {
-                    byte[] encryptedJsonString = File.ReadAllBytes(Data.TotpFilePath);
+                    byte[] encryptedJsonString = File.ReadAllBytes(Models.Data.TotpFilePath);
                     string jsonString = EncryptionHelpers.UnprotectToString(encryptedJsonString);
 
                     if (string.IsNullOrEmpty(jsonString))
