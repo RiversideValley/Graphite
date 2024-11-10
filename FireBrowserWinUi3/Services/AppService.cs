@@ -340,11 +340,8 @@ public static class AppService
             {
                 ExceptionLogger.LogException(ex);
                 IsAppGoingToClose = true; 
-                WindowsController()
                 throw;
             }
-
-            
         }
 
         if (username != null)
