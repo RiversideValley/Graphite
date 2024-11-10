@@ -15,15 +15,31 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid x:Name="TitleBar" Grid.Row="0" VerticalAlignment="Center" Canvas.ZIndex="1" ColumnSpacing="10" Padding="10,5">
+        <Grid
+            x:Name="TitleBar"
+            Grid.Row="0"
+            Padding="10,5"
+            VerticalAlignment="Center"
+            Canvas.ZIndex="1"
+            ColumnSpacing="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image Margin="5" Width="32" Height="32" Source="{asset:ImageLoader ImageName=ui.png}" />
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="16">
-          <Run Text="Settings" />
-          <Run CharacterSpacing="100" FontWeight="Light" Text="UI" />
+            <Image
+                Width="32"
+                Height="32"
+                Margin="5"
+                Source="{asset:ImageLoader ImageName=ui.png}" />
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                FontSize="16">
+                <Run Text="Settings" />
+                <Run
+                    CharacterSpacing="100"
+                    FontWeight="Light"
+                    Text="UI" />
             </TextBlock>
         </Grid>
         <Grid
@@ -139,36 +155,60 @@
                     </ctr:SettingsExpander.Items>
                 </ctr:SettingsExpander>
                 <ctr:SettingsExpander
-     Margin="0,1,0,0"
-     Description="Change Ui Elements"
-     Header="Ui Settings">
+                    Margin="0,1,0,0"
+                    Description="Change Ui Elements"
+                    Header="Ui Settings">
                     <ctr:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEB3C;" />
                     </ctr:SettingsExpander.HeaderIcon>
                     <ctr:SettingsExpander.Items>
-                        <ctr:SettingsCard Margin="0,1,0,0" Description="Show Search On Home Page" Header="Search Visible">
+                        <ctr:SettingsCard
+                            Margin="0,1,0,0"
+                            Description="Show Search On Home Page"
+                            Header="Search Visible">
                             <ctr:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF78B;"/>
+                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF78B;" />
                             </ctr:SettingsCard.HeaderIcon>
-                            <ToggleSwitch x:Name="SearchHome" Toggled="SearchHome_Toggled"  IsOn="True" />
+                            <ToggleSwitch
+                                x:Name="SearchHome"
+                                IsOn="True"
+                                Toggled="SearchHome_Toggled" />
                         </ctr:SettingsCard>
-                        <ctr:SettingsCard Margin="0,1,0,0" Description="Show History On Home Page" Header="History Visible">
+                        <ctr:SettingsCard
+                            Margin="0,1,0,0"
+                            Description="Show History On Home Page"
+                            Header="History Visible">
                             <ctr:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;"/>
+                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;" />
                             </ctr:SettingsCard.HeaderIcon>
-                            <ToggleSwitch x:Name="HistoryHome" Toggled="HistoryHome_Toggled"  IsOn="True"/>
+                            <ToggleSwitch
+                                x:Name="HistoryHome"
+                                IsOn="True"
+                                Toggled="HistoryHome_Toggled" />
                         </ctr:SettingsCard>
-                        <ctr:SettingsCard Margin="0,1,0,0" Description="Show Favorites On Home Page" Header="Favorites Visible">
+                        <ctr:SettingsCard
+                            Margin="0,1,0,0"
+                            Description="Show Favorites On Home Page"
+                            Header="Favorites Visible">
                             <ctr:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE734;"/>
+                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE734;" />
                             </ctr:SettingsCard.HeaderIcon>
-                            <ToggleSwitch x:Name="FavoritesHome" Toggled="FavoritesHome_Toggled"  IsOn="True" />
+                            <ToggleSwitch
+                                x:Name="FavoritesHome"
+                                IsOn="True"
+                                Toggled="FavoritesHome_Toggled" />
                         </ctr:SettingsCard>
-                        <ctr:SettingsCard Margin="0,1,0,0" Description="Show Trending On Home Page" Header="Trending Visible">
+                        <ctr:SettingsCard
+                            Margin="0,1,0,0"
+                            Description="Show Trending On Home Page"
+                            Header="Trending Visible">
                             <ctr:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE7B5;"/>
+                                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE7B5;" />
                             </ctr:SettingsCard.HeaderIcon>
-                            <ToggleSwitch x:Name="TrendingHome" Toggled="TrendingHome_Toggled"  IsOn="True" />
+                            <ToggleSwitch
+                                x:Name="TrendingHome"
+                                IsOn="True"
+                                Toggled="TrendingHome_Toggled" />
                         </ctr:SettingsCard>
                     </ctr:SettingsExpander.Items>
                 </ctr:SettingsExpander>

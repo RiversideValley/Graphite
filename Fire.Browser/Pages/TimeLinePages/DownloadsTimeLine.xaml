@@ -6,27 +6,36 @@
 
     <Grid Padding="16">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Downloads" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,16"/>
+        <TextBlock
+            Margin="0,0,0,16"
+            Style="{ThemeResource TitleTextBlockStyle}"
+            Text="Downloads" />
 
         <ListView
             x:Name="DownloadItemsListView"
-            x:FieldModifier="Public"
             Grid.Row="1"
+            x:FieldModifier="Public"
             ItemsSource="{x:Bind ViewModel.ItemsListView, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="8">
-                        <FontIcon Glyph="&#xE896;" FontFamily="{StaticResource FluentIcons}" Margin="0,0,12,0"/>
+                    <Grid Padding="8" ColumnDefinitions="Auto,*,Auto">
+                        <FontIcon
+                            Margin="0,0,12,0"
+                            FontFamily="{StaticResource FluentIcons}"
+                            Glyph="&#xE896;" />
                         <StackPanel Grid.Column="1" Spacing="4">
-                            <TextBlock Text="{Binding FileName}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="{Binding Status}" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{Binding FileName}" />
+                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{Binding Status}" />
                         </StackPanel>
-                        <Button Grid.Column="2" Style="{ThemeResource TextBlockButtonStyle}" Click="Button_Click">
-                            <FontIcon Glyph="&#xE74D;" FontFamily="{StaticResource FluentIcons}"/>
+                        <Button
+                            Grid.Column="2"
+                            Click="Button_Click"
+                            Style="{ThemeResource TextBlockButtonStyle}">
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE74D;" />
                         </Button>
                     </Grid>
                 </DataTemplate>

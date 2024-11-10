@@ -6,9 +6,9 @@
 
     <ScrollViewer>
         <StackPanel Spacing="2">
-            <labs:SettingsCard Header="Search Engine" Margin="0,10,0,0">
+            <labs:SettingsCard Margin="0,10,0,0" Header="Search Engine">
                 <labs:SettingsCard.HeaderIcon>
-                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE721;"/>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE721;" />
                 </labs:SettingsCard.HeaderIcon>
                 <ComboBox x:Name="SearchengineSelection" SelectionChanged="SearchengineSelection_SelectionChanged">
                     <x:String>Google</x:String>
@@ -36,108 +36,150 @@
 
             <labs:SettingsExpander Header="Navigation Icons">
                 <labs:SettingsExpander.HeaderIcon>
-                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE759;"/>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE759;" />
                 </labs:SettingsExpander.HeaderIcon>
                 <labs:SettingsExpander.Items>
                     <labs:SettingsCard Header="Back">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72B;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72B;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="BackSettings" Toggled="ToggleSetting_Toggled" Tag="BackButton"/>
+                        <ToggleSwitch
+                            x:Name="BackSettings"
+                            Tag="BackButton"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Forward">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72A;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72A;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="ForwardSettings" Toggled="ToggleSetting_Toggled" Tag="ForwardButton"/>
+                        <ToggleSwitch
+                            x:Name="ForwardSettings"
+                            Tag="ForwardButton"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Refresh">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72C;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72C;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="ReloadSettings" Toggled="ToggleSetting_Toggled" Tag="RefreshButton"/>
+                        <ToggleSwitch
+                            x:Name="ReloadSettings"
+                            Tag="RefreshButton"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Home">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE80F;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE80F;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="HomeSettings" Toggled="ToggleSetting_Toggled" Tag="HomeButton"/>
+                        <ToggleSwitch
+                            x:Name="HomeSettings"
+                            Tag="HomeButton"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
 
             <labs:SettingsExpander Header="Toolbar icons">
                 <labs:SettingsExpander.HeaderIcon>
-                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE737;"/>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE737;" />
                 </labs:SettingsExpander.HeaderIcon>
                 <labs:SettingsExpander.Items>
                     <labs:SettingsCard Header="Downloads">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE896;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE896;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Dwbl" Toggled="ToggleSetting_Toggled" Tag="Downloads"/>
+                        <ToggleSwitch
+                            x:Name="Dwbl"
+                            Tag="Downloads"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Favorites List">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE728;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE728;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Frbl" Toggled="ToggleSetting_Toggled" Tag="FavoritesL"/>
+                        <ToggleSwitch
+                            x:Name="Frbl"
+                            Tag="FavoritesL"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Favorites">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE734;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE734;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="FlAd" Toggled="ToggleSetting_Toggled" Tag="Favorites"/>
+                        <ToggleSwitch
+                            x:Name="FlAd"
+                            Tag="Favorites"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="History">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Hsbl" Toggled="ToggleSetting_Toggled" Tag="Historybtn"/>
+                        <ToggleSwitch
+                            x:Name="Hsbl"
+                            Tag="Historybtn"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="QR">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xED14;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xED14;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Qrbl" Toggled="ToggleSetting_Toggled" Tag="QrCode"/>
+                        <ToggleSwitch
+                            x:Name="Qrbl"
+                            Tag="QrCode"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Web Tools">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE70F;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE70F;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Tlbl" Toggled="ToggleSetting_Toggled" Tag="ToolIcon"/>
+                        <ToggleSwitch
+                            x:Name="Tlbl"
+                            Tag="ToolIcon"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
 
             <labs:SettingsExpander Header="Tools Menu icons">
                 <labs:SettingsExpander.HeaderIcon>
-                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE70F;"/>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE70F;" />
                 </labs:SettingsExpander.HeaderIcon>
                 <labs:SettingsExpander.Items>
                     <labs:SettingsCard Header="Force Dark Mode">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Drbl" Toggled="ToggleSetting_Toggled" Tag="DarkIcon"/>
+                        <ToggleSwitch
+                            x:Name="Drbl"
+                            Tag="DarkIcon"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Translation">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE87E;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE87E;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Trbl" Toggled="ToggleSetting_Toggled" Tag="Translate"/>
+                        <ToggleSwitch
+                            x:Name="Trbl"
+                            Tag="Translate"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Reading Mode">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE736;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE736;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Read" Toggled="ToggleSetting_Toggled" Tag="ReadButton"/>
+                        <ToggleSwitch
+                            x:Name="Read"
+                            Tag="ReadButton"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Basic AdBlock">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEA18;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEA18;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="Adbl" Toggled="ToggleSetting_Toggled" Tag="AdblockBtn"/>
+                        <ToggleSwitch
+                            x:Name="Adbl"
+                            Tag="AdblockBtn"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
@@ -147,45 +189,67 @@
                     <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEB3C;" />
                 </labs:SettingsExpander.HeaderIcon>
                 <labs:SettingsExpander.Items>
-                    <labs:SettingsCard Header="Search Visible" Description="Show Search On Home Page">
+                    <labs:SettingsCard Description="Show Search On Home Page" Header="Search Visible">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF78B;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF78B;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="SearchHome" Toggled="SearchHome_Toggled" IsOn="True" Tag="HomeSearch"/>
+                        <ToggleSwitch
+                            x:Name="SearchHome"
+                            IsOn="True"
+                            Tag="HomeSearch"
+                            Toggled="SearchHome_Toggled" />
                     </labs:SettingsCard>
-                    <labs:SettingsCard Header="History Visible" Description="Show History On Home Page">
+                    <labs:SettingsCard Description="Show History On Home Page" Header="History Visible">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="HistoryHome" Toggled="HistoryHome_Toggled" IsOn="True" Tag="HomeHistory"/>
+                        <ToggleSwitch
+                            x:Name="HistoryHome"
+                            IsOn="True"
+                            Tag="HomeHistory"
+                            Toggled="HistoryHome_Toggled" />
                     </labs:SettingsCard>
-                    <labs:SettingsCard Header="Favorites Visible" Description="Show Favorites On Home Page">
+                    <labs:SettingsCard Description="Show Favorites On Home Page" Header="Favorites Visible">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE734;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE734;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="FavoritesHome" Toggled="FavoritesHome_Toggled" IsOn="True" Tag="HomeFavorites"/>
+                        <ToggleSwitch
+                            x:Name="FavoritesHome"
+                            IsOn="True"
+                            Tag="HomeFavorites"
+                            Toggled="FavoritesHome_Toggled" />
                     </labs:SettingsCard>
-                    <labs:SettingsCard Header="Trending Visible" Description="Show Trending On Home Page">
+                    <labs:SettingsCard Description="Show Trending On Home Page" Header="Trending Visible">
                         <labs:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE7B5;"/>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE7B5;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch x:Name="TrendingHome" Toggled="TrendingHome_Toggled" IsOn="True" Tag="HomeTrending"/>
+                        <ToggleSwitch
+                            x:Name="TrendingHome"
+                            IsOn="True"
+                            Tag="HomeTrending"
+                            Toggled="TrendingHome_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
 
             <labs:SettingsCard Header="Open in new tab">
                 <labs:SettingsCard.HeaderIcon>
-                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC6C;"/>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC6C;" />
                 </labs:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="OpenNew" Toggled="ToggleSetting_Toggled" Tag="OpenTabHandel"/>
+                <ToggleSwitch
+                    x:Name="OpenNew"
+                    Tag="OpenTabHandel"
+                    Toggled="ToggleSetting_Toggled" />
             </labs:SettingsCard>
 
             <labs:SettingsCard Header="Close confirm dialog">
                 <labs:SettingsCard.HeaderIcon>
-                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC6C;"/>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC6C;" />
                 </labs:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="Confirm" Toggled="ToggleSetting_Toggled" Tag="ConfirmCloseDlg"/>
+                <ToggleSwitch
+                    x:Name="Confirm"
+                    Tag="ConfirmCloseDlg"
+                    Toggled="ToggleSetting_Toggled" />
             </labs:SettingsCard>
         </StackPanel>
     </ScrollViewer>

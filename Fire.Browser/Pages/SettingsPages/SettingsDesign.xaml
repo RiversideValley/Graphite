@@ -5,14 +5,14 @@
     xmlns:labs="using:CommunityToolkit.WinUI.Controls">
 
     <StackPanel Margin="0,10,0,0">
-        <labs:SettingsCard Header="Auto Fill TextBox" Description="Autofills the address bar from the Minibar">
+        <labs:SettingsCard Description="Autofills the address bar from the Minibar" Header="Auto Fill TextBox">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEDA8;" />
             </labs:SettingsCard.HeaderIcon>
             <ToggleSwitch x:Name="AutoTog" Toggled="AutoTog_Toggled" />
         </labs:SettingsCard>
 
-        <labs:SettingsCard Header="Color Toolbar" Description="Change toolbar color">
+        <labs:SettingsCard Description="Change toolbar color" Header="Color Toolbar">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
             </labs:SettingsCard.HeaderIcon>
@@ -26,7 +26,7 @@
             </Button>
         </labs:SettingsCard>
 
-        <labs:SettingsCard Header="TabView background color" Description="Change TabView background color">
+        <labs:SettingsCard Description="Change TabView background color" Header="TabView background color">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
             </labs:SettingsCard.HeaderIcon>
@@ -40,7 +40,7 @@
             </Button>
         </labs:SettingsCard>
 
-        <labs:SettingsCard Header="NTP Text Color" Description="Change the NTP's (New Tab page's) text color">
+        <labs:SettingsCard Description="Change the NTP's (New Tab page's) text color" Header="NTP Text Color">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
             </labs:SettingsCard.HeaderIcon>
@@ -54,7 +54,7 @@
             </Button>
         </labs:SettingsCard>
 
-        <labs:SettingsExpander Header="NTP background image" Description="Change the New Tab page's background image">
+        <labs:SettingsExpander Description="Change the New Tab page's background image" Header="NTP background image">
             <labs:SettingsExpander.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEC6C;" />
             </labs:SettingsExpander.HeaderIcon>

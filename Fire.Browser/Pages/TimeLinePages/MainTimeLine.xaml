@@ -5,42 +5,57 @@
     xmlns:icon="using:FireBrowserWinUi3.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <NavigationView 
+    <NavigationView
         x:Name="NavigationView"
-        PaneDisplayMode="Top"
-        IsSettingsVisible="False"
         IsBackButtonVisible="Collapsed"
         IsBackEnabled="False"
-        Loaded="NavigationView_Loaded"
+        IsSettingsVisible="False"
         ItemInvoked="NavigationView_ItemInvoked"
+        Loaded="NavigationView_Loaded"
+        PaneDisplayMode="Top"
         SelectionChanged="NavigationView_SelectionChanged">
         <NavigationView.Resources>
             <Thickness x:Key="NavigationViewHeaderMargin">1</Thickness>
         </NavigationView.Resources>
         <NavigationView.MenuItems>
-            <NavigationViewItem x:Uid="TimelineNavItemApps" Tag="apps" Content="Apps">
+            <NavigationViewItem
+                x:Uid="TimelineNavItemApps"
+                Content="Apps"
+                Tag="apps">
                 <NavigationViewItem.Icon>
-                    <icon:FluentIcon Glyph="&#xE8F9;"/>
+                    <icon:FluentIcon Glyph="&#xE8F9;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem x:Name="NavViewItemHistory" Tag="history" Content="History">
+            <NavigationViewItem
+                x:Name="NavViewItemHistory"
+                Content="History"
+                Tag="history">
                 <NavigationViewItem.Icon>
-                    <icon:FluentIcon Glyph="&#xE81C;"/>
+                    <icon:FluentIcon Glyph="&#xE81C;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem x:Name="NavViewItemFavorites" Tag="favorites" Content="Favorites">
+            <NavigationViewItem
+                x:Name="NavViewItemFavorites"
+                Content="Favorites"
+                Tag="favorites">
                 <NavigationViewItem.Icon>
-                    <icon:FluentIcon Glyph="&#xE728;"/>
+                    <icon:FluentIcon Glyph="&#xE728;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem x:Name="NavViewItemDownloads" Tag="downloads" Content="Downloads">
+            <NavigationViewItem
+                x:Name="NavViewItemDownloads"
+                Content="Downloads"
+                Tag="downloads">
                 <NavigationViewItem.Icon>
-                    <icon:FluentIcon Glyph="&#xE896;"/>
+                    <icon:FluentIcon Glyph="&#xE896;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
         </NavigationView.MenuItems>
         <ScrollViewer x:Name="scroll" Background="Transparent">
-            <Frame x:Name="ContentFrame" IsTabStop="True" NavigationFailed="ContentFrame_NavigationFailed"/>
+            <Frame
+                x:Name="ContentFrame"
+                IsTabStop="True"
+                NavigationFailed="ContentFrame_NavigationFailed" />
         </ScrollViewer>
     </NavigationView>
 </Page>

@@ -7,44 +7,47 @@
     <StackPanel Margin="0,10,0,0">
         <labs:SettingsExpander x:Uid="FireBrowser - StartUp" Header="FireBrowser AutoStart">
             <labs:SettingsExpander.HeaderIcon>
-                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF8A6;"/>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF8A6;" />
             </labs:SettingsExpander.HeaderIcon>
             <labs:SettingsExpander.Items>
                 <labs:SettingsCard ContentAlignment="Left">
-                    <CheckBox x:Name="LaunchOnStartupToggle" Content="FireBrowser AutoStart" Click="LaunchOnStartupToggle_Click"/>
+                    <CheckBox
+                        x:Name="LaunchOnStartupToggle"
+                        Click="LaunchOnStartupToggle_Click"
+                        Content="FireBrowser AutoStart" />
                 </labs:SettingsCard>
             </labs:SettingsExpander.Items>
         </labs:SettingsExpander>
 
-        <labs:SettingsCard Header="FireBrowser Lite Mode" Description="Enables Lite Mode, which brings performance optimizations at the cost of more resource-heavy features">
+        <labs:SettingsCard Description="Enables Lite Mode, which brings performance optimizations at the cost of more resource-heavy features" Header="FireBrowser Lite Mode">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEC4A;" />
             </labs:SettingsCard.HeaderIcon>
-            <ToggleSwitch x:Name="LiteMode" Toggled="LiteMode_Toggled"/>
+            <ToggleSwitch x:Name="LiteMode" Toggled="LiteMode_Toggled" />
         </labs:SettingsCard>
 
-        <labs:SettingsCard Header="FireBrowser Welcome Message" Description="Enables Welcome Message, this has small impact on performance">
+        <labs:SettingsCard Description="Enables Welcome Message, this has small impact on performance" Header="FireBrowser Welcome Message">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8BD;" />
             </labs:SettingsCard.HeaderIcon>
-            <ToggleSwitch x:Name="WelcomeMesg" Toggled="WelcomeMesg_Toggled"/>
+            <ToggleSwitch x:Name="WelcomeMesg" Toggled="WelcomeMesg_Toggled" />
         </labs:SettingsCard>
 
-        <labs:SettingsExpander Header="FireBrowser - Speech Engine" Description="Change the language of the speech engine">
+        <labs:SettingsExpander Description="Change the language of the speech engine" Header="FireBrowser - Speech Engine">
             <labs:SettingsExpander.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEFA9;" />
             </labs:SettingsExpander.HeaderIcon>
             <labs:SettingsExpander.Items>
                 <labs:SettingsCard>
-                    <ComboBox x:Name="Langue" SelectionChanged="Langue_SelectionChanged"/>
+                    <ComboBox x:Name="Langue" SelectionChanged="Langue_SelectionChanged" />
                 </labs:SettingsCard>
                 <labs:SettingsCard>
-                    <ComboBox x:Name="Gender" SelectionChanged="Gender_SelectionChanged"/>
+                    <ComboBox x:Name="Gender" SelectionChanged="Gender_SelectionChanged" />
                 </labs:SettingsCard>
             </labs:SettingsExpander.Items>
         </labs:SettingsExpander>
 
-        <labs:SettingsCard Header="Exception logging" Description="Change logger level">
+        <labs:SettingsCard Description="Change logger level" Header="Exception logging">
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE783;" />
             </labs:SettingsCard.HeaderIcon>

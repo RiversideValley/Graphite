@@ -4,32 +4,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Title="Reset Confirmation"
-    PrimaryButtonText="Confirm"
-    SecondaryButtonText="Cancel"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     CornerRadius="8"
-    DefaultButton="Secondary">
+    DefaultButton="Secondary"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="Confirm"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    SecondaryButtonText="Cancel">
 
     <ContentDialog.Background>
-        <AcrylicBrush TintColor="{ThemeResource SystemAltHighColor}" TintOpacity="0.7" FallbackColor="{ThemeResource SystemChromeMediumLowColor}"/>
+        <AcrylicBrush
+            FallbackColor="{ThemeResource SystemChromeMediumLowColor}"
+            TintColor="{ThemeResource SystemAltHighColor}"
+            TintOpacity="0.7" />
     </ContentDialog.Background>
 
     <StackPanel Margin="24" Spacing="16">
-        <InfoBar IsOpen="True" Severity="Warning" Title="Warning" Message="This action will remove all users and the core folder." IsClosable="False"/>
-        <TextBlock Text="Are you sure you want to reset the full browser app?" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="Wrap"/>
-        <TextBlock Text="This action cannot be undone. Please make sure you have backed up any important data before proceeding." Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="Wrap"/>
+        <InfoBar
+            Title="Warning"
+            IsClosable="False"
+            IsOpen="True"
+            Message="This action will remove all users and the core folder."
+            Severity="Warning" />
+        <TextBlock
+            Style="{ThemeResource SubtitleTextBlockStyle}"
+            Text="Are you sure you want to reset the full browser app?"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Style="{ThemeResource BodyTextBlockStyle}"
+            Text="This action cannot be undone. Please make sure you have backed up any important data before proceeding."
+            TextWrapping="Wrap" />
     </StackPanel>
 
     <ContentDialog.PrimaryButtonStyle>
         <Style TargetType="Button">
-            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="CornerRadius" Value="4" />
         </Style>
     </ContentDialog.PrimaryButtonStyle>
 
     <ContentDialog.SecondaryButtonStyle>
-        <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-            <Setter Property="CornerRadius" Value="4"/>
+        <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+            <Setter Property="CornerRadius" Value="4" />
         </Style>
     </ContentDialog.SecondaryButtonStyle>
 </ContentDialog>

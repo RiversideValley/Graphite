@@ -93,8 +93,7 @@
                             Command="{x:Bind ViewModel.GenerateAndSendCommand}"
                             CommandParameter="{x:Bind ViewModel.FileSelected, Mode=OneTime}"
                             Content="Generate SAS Token and Share Url"
-                            RequestedTheme="Light" >
-                        </Button>
+                            RequestedTheme="Light" />
                         <Button
                             Command="{x:Bind ViewModel.BackUpCoreCommand}"
                             Content="Create Backup"

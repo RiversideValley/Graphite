@@ -15,15 +15,31 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid x:Name="TitleBar" Grid.Row="0" VerticalAlignment="Center" Canvas.ZIndex="1" ColumnSpacing="10" Padding="10,5">
+        <Grid
+            x:Name="TitleBar"
+            Grid.Row="0"
+            Padding="10,5"
+            VerticalAlignment="Center"
+            Canvas.ZIndex="1"
+            ColumnSpacing="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image Margin="5" Width="32" Height="32" Source="{asset:ImageLoader ImageName=algemeen.png}" />
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="16">
-   <Run Text="Settings" />
-   <Run CharacterSpacing="100" FontWeight="Light" Text="Genarel" />
+            <Image
+                Width="32"
+                Height="32"
+                Margin="5"
+                Source="{asset:ImageLoader ImageName=algemeen.png}" />
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                FontSize="16">
+                <Run Text="Settings" />
+                <Run
+                    CharacterSpacing="100"
+                    FontWeight="Light"
+                    Text="Genarel" />
             </TextBlock>
         </Grid>
         <Grid Grid.Row="1" Margin="20">

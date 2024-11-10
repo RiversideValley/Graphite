@@ -6,24 +6,40 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="500" Height="600">
+    <Grid
+        Width="500"
+        Height="600"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid x:Name="Header" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" 
-              PointerPressed="Header_PointerPressed" PointerReleased="Header_PointerReleased">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Padding="8">
-                <Button Style="{StaticResource ButtonRevealStyle}" Click="PopOut_Click" IsEnabled="False" Margin="0,0,4,0">
-                    <FontIcon Glyph="&#xF7ED;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+        <Grid
+            x:Name="Header"
+            Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+            PointerPressed="Header_PointerPressed"
+            PointerReleased="Header_PointerReleased">
+            <StackPanel
+                Padding="8"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="0,0,4,0"
+                    Click="PopOut_Click"
+                    IsEnabled="False"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF7ED;" />
                 </Button>
-                <Button Style="{StaticResource ButtonRevealStyle}" Click="CloseButton_Click">
-                    <FontIcon Glyph="&#xE8BB;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                <Button Click="CloseButton_Click" Style="{StaticResource ButtonRevealStyle}">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8BB;" />
                 </Button>
             </StackPanel>
         </Grid>
 
-        <WebView2 x:Name="webView" Grid.Row="1" Margin="8"/>
+        <WebView2
+            x:Name="webView"
+            Grid.Row="1"
+            Margin="8" />
     </Grid>
 </UserControl>

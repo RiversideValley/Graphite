@@ -5,33 +5,57 @@
     xmlns:asset="using:Fire.Browser.Assets"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="FireBrowserSetup - Changing Username...">
+    Title="FireBrowserSetup - Changing Username..."
+    mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
     <Grid RowDefinitions="Auto,*">
-        <Grid x:Name="TitleBar" Height="48" ColumnSpacing="8" Padding="12,0">
+        <Grid
+            x:Name="TitleBar"
+            Height="48"
+            Padding="12,0"
+            ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Image Height="24" Source="{asset:ImageLoader ImageName=user.png}" />
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{ThemeResource BodyStrongTextBlockStyle}">
-                FireBrowserWinUi3 - Changing Username...
-                <Run Text="BETA" FontWeight="Light" CharacterSpacing="2" />
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Style="{ThemeResource BodyStrongTextBlockStyle}">
+                FireBrowserWinUi3 - Changing Username...<Run
+                    CharacterSpacing="2"
+                    FontWeight="Light"
+                    Text="BETA" />
             </TextBlock>
         </Grid>
 
         <Grid Grid.Row="1" Padding="20">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
-                <ProgressRing IsActive="True" Width="50" Height="50" />
-                <TextBlock Text="Please Wait... Changing Username Of Your Profile. It Will Auto Restart. Takes 4s"
-                           TextAlignment="Center" TextWrapping="Wrap" Style="{ThemeResource BodyTextBlockStyle}" />
-                <TextBlock x:Name="Username" Text="old -> new" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                <Button x:Name="ManualRestart" Click="ManaulRestart_Click" Style="{ThemeResource AccentButtonStyle}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="20">
+                <ProgressRing
+                    Width="50"
+                    Height="50"
+                    IsActive="True" />
+                <TextBlock
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="Please Wait... Changing Username Of Your Profile. It Will Auto Restart. Takes 4s"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="Username"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="old -&gt; new" />
+                <Button
+                    x:Name="ManualRestart"
+                    Click="ManaulRestart_Click"
+                    Style="{ThemeResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
                         <TextBlock Text="(Manually Restart) Only Use If Auto Restart Fails" />

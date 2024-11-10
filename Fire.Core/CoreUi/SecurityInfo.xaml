@@ -5,32 +5,54 @@
     Placement="Bottom">
 
     <Flyout.FlyoutPresenterStyle>
-        <Style TargetType="FlyoutPresenter" BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="MaxHeight" Value="Infinity"/>
-            <Setter Property="MaxWidth" Value="Infinity"/>
-            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
+        <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="MaxHeight" Value="Infinity" />
+            <Setter Property="MaxWidth" Value="Infinity" />
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
         </Style>
     </Flyout.FlyoutPresenterStyle>
 
     <Grid Width="350" Height="210">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid Height="35">
-            <FontIcon x:Name="SSLFlyoutIcon" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="{StaticResource FluentIcons}"/>
-            <TextBlock x:Name="SSLFlyoutHeader" Text="Website Security" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" />
-            <FontIcon x:Name="CerftIcon" Margin="0,0,12,0" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="{StaticResource FluentIcons}" Glyph="&#xEB95;"/>
+            <FontIcon
+                x:Name="SSLFlyoutIcon"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource FluentIcons}" />
+            <TextBlock
+                x:Name="SSLFlyoutHeader"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{ThemeResource BaseTextBlockStyle}"
+                Text="Website Security" />
+            <FontIcon
+                x:Name="CerftIcon"
+                Margin="0,0,12,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource FluentIcons}"
+                Glyph="&#xEB95;" />
         </Grid>
 
         <StackPanel Grid.Row="1" Margin="16,8,16,16">
-            <TextBlock x:Name="SiteUrl" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-            <Rectangle Height="1" Margin="0,8,0,16" Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
-            <TextBlock x:Name="Status" TextWrapping="WrapWholeWords"/>
+            <TextBlock
+                x:Name="SiteUrl"
+                HorizontalAlignment="Center"
+                TextWrapping="Wrap" />
+            <Rectangle
+                Height="1"
+                Margin="0,8,0,16"
+                Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+            <TextBlock x:Name="Status" TextWrapping="WrapWholeWords" />
         </StackPanel>
     </Grid>
 </Flyout>

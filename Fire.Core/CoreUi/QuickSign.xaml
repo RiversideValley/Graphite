@@ -10,11 +10,27 @@
 
     <Grid>
         <Grid.Resources>
-            <CommandBarFlyout x:Name="Ctx" Placement="BottomEdgeAlignedLeft" ShowMode="Transient">
-                <AppBarButton x:Uid="Back" Click="ContextMenuItem_Click" Icon="Back" Tag="MenuBack" ToolTipService.ToolTip="Back" />
-                <AppBarButton Click="ContextMenuItem_Click" Icon="Forward" Tag="Forward" ToolTipService.ToolTip="Forward" />
+            <CommandBarFlyout
+                x:Name="Ctx"
+                Placement="BottomEdgeAlignedLeft"
+                ShowMode="Transient">
+                <AppBarButton
+                    x:Uid="Back"
+                    Click="ContextMenuItem_Click"
+                    Icon="Back"
+                    Tag="MenuBack"
+                    ToolTipService.ToolTip="Back" />
+                <AppBarButton
+                    Click="ContextMenuItem_Click"
+                    Icon="Forward"
+                    Tag="Forward"
+                    ToolTipService.ToolTip="Forward" />
                 <CommandBarFlyout.SecondaryCommands>
-                    <AppBarButton Click="ContextMenuItem_Click" Icon="Refresh" Label="Refresh" Tag="Refresh">
+                    <AppBarButton
+                        Click="ContextMenuItem_Click"
+                        Icon="Refresh"
+                        Label="Refresh"
+                        Tag="Refresh">
                         <AppBarButton.KeyboardAccelerators>
                             <KeyboardAccelerator Key="R" Modifiers="Control" />
                         </AppBarButton.KeyboardAccelerators>

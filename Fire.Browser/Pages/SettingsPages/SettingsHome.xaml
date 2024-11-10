@@ -12,13 +12,13 @@
             <Grid>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <PersonPicture Width="64" ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}" />
-                    <!-- hide premuim icon until premium is available browser-->
+                    <!--  hide premuim icon until premium is available browser  -->
                     <ImageIcon
                         Width="32"
                         Height="32"
                         Source="{asset:ImageLoader ImageName=Prize.png}"
-                        ToolTipService.ToolTip="You Have Premium Browser License" 
-                        Visibility="Collapsed"/>
+                        ToolTipService.ToolTip="You Have Premium Browser License"
+                        Visibility="Collapsed" />
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock
                             x:Name="User"
@@ -28,29 +28,38 @@
                     </StackPanel>
                 </StackPanel>
                 <Button
-    x:Name="UserActionBtn"
-    HorizontalAlignment="Right"
-    VerticalAlignment="Top">
+                    x:Name="UserActionBtn"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE712;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE712;" />
                         </StackPanel>
                     </Button.Content>
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem x:Name="ImportBookmarksItem" Text="Import Bookmarks" Click="ImportBookmarksItem_Click">
+                            <MenuFlyoutItem
+                                x:Name="ImportBookmarksItem"
+                                Click="ImportBookmarksItem_Click"
+                                Text="Import Bookmarks">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8B7;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Name="Prm" Text="Add Premium" Click="Prm_Click">
+                            <MenuFlyoutItem
+                                x:Name="Prm"
+                                Click="Prm_Click"
+                                Text="Add Premium">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8B7;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Name="LogOutItem" Text="Log Out" Click="LogOutBtn_Click">
+                            <MenuFlyoutItem
+                                x:Name="LogOutItem"
+                                Click="LogOutBtn_Click"
+                                Text="Log Out">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE7E8;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>
@@ -150,7 +159,7 @@
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
-            <TextBlock x:Name="Version"/>
+            <TextBlock x:Name="Version" />
         </StackPanel>
     </ScrollViewer>
 </Page>

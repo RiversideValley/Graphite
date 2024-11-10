@@ -13,17 +13,17 @@
             IsEnabled="{x:Bind ViewModel.IsTooltipEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ToolTip.Content>
                 <controls:HeaderedContentControl
-        x:Name="ImgTabViewHeader"
-        Width="300"
-        Height="240"
-        CornerRadius="8"
-        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-        BorderThickness="1">
+                    x:Name="ImgTabViewHeader"
+                    Width="300"
+                    Height="240"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
                     <Image
-            x:Name="ImgTabViewItem"
-            Stretch="UniformToFill"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center" />
+                        x:Name="ImgTabViewItem"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stretch="UniformToFill" />
                 </controls:HeaderedContentControl>
             </ToolTip.Content>
         </ToolTip>

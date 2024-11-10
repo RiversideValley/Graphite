@@ -4,60 +4,64 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <NavigationView x:Name="NavView"
-            Loaded="NavView_Loaded"
-            ItemInvoked="NavView_ItemInvoked"
-            IsBackButtonVisible="Collapsed"
-            SelectionChanged="NavView_SelectionChanged"
-            IsSettingsVisible="False">
+    <NavigationView
+        x:Name="NavView"
+        IsBackButtonVisible="Collapsed"
+        IsSettingsVisible="False"
+        ItemInvoked="NavView_ItemInvoked"
+        Loaded="NavView_Loaded"
+        SelectionChanged="NavView_SelectionChanged">
         <NavigationView.MenuItems>
-            <NavigationViewItem Tag="SettingsHome" Content="Home">
+            <NavigationViewItem Content="Home" Tag="SettingsHome">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Home.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Home.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="Design" Content="Design and Themes (New)">
+            <NavigationViewItem Content="Design and Themes (New)" Tag="Design">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Style.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Style.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="Privacy" Content="Privacy">
+            <NavigationViewItem Content="Privacy" Tag="Privacy">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Privacy.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Privacy.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="WebView" Content="WebView">
+            <NavigationViewItem Content="WebView" Tag="WebView">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Webset.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Webset.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="NewTab" Content="New Tab">
+            <NavigationViewItem Content="New Tab" Tag="NewTab">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Tabs.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Tabs.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="Enqryption" Content="Enqryption">
+            <NavigationViewItem Content="Enqryption" Tag="Enqryption">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/enqryption.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/enqryption.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="Accessibility" Content="Accessibility">
+            <NavigationViewItem Content="Accessibility" Tag="Accessibility">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Accessibility.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Accessibility.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Tag="About" Content="About">
+            <NavigationViewItem Content="About" Tag="About">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/About.png"/>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/About.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
         </NavigationView.MenuItems>
         <NavigationView.AutoSuggestBox>
-            <AutoSuggestBox x:Name="NavViewSearchBox" QueryIcon="Find"/>
+            <AutoSuggestBox x:Name="NavViewSearchBox" QueryIcon="Find" />
         </NavigationView.AutoSuggestBox>
         <ScrollViewer>
-            <Frame x:Name="ContentFrame" Padding="12,0,12,24" IsTabStop="True"
-                NavigationFailed="ContentFrame_NavigationFailed"/>
+            <Frame
+                x:Name="ContentFrame"
+                Padding="12,0,12,24"
+                IsTabStop="True"
+                NavigationFailed="ContentFrame_NavigationFailed" />
         </ScrollViewer>
     </NavigationView>
 </Page>

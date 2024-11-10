@@ -5,49 +5,52 @@
     xmlns:local="using:FireBrowserWinUi3.Setup">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt"/>
+        <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
-    
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0"
-                       Text="{x:Bind UserName, Mode=OneTime}"
-                       Style="{ThemeResource CaptionTextBlockStyle}"
-                       FontSize="16"
-                       FontStyle="Italic"
-                       Margin="12,12,0,12"
-                       HorizontalAlignment="Left"/>
+            <TextBlock
+                Grid.Column="0"
+                Margin="12,12,0,12"
+                HorizontalAlignment="Left"
+                FontSize="16"
+                FontStyle="Italic"
+                Style="{ThemeResource CaptionTextBlockStyle}"
+                Text="{x:Bind UserName, Mode=OneTime}" />
 
-            <NavigationView Grid.Column="1"
-                            x:Name="NavView"
-                            IsBackButtonVisible="Collapsed"
-                            IsSettingsVisible="False"
-                            PaneDisplayMode="Top"
-                            SelectionChanged="NavView_SelectionChanged"
-                            Background="Transparent">
+            <NavigationView
+                x:Name="NavView"
+                Grid.Column="1"
+                Background="Transparent"
+                IsBackButtonVisible="Collapsed"
+                IsSettingsVisible="False"
+                PaneDisplayMode="Top"
+                SelectionChanged="NavView_SelectionChanged">
                 <NavigationView.MenuItems>
-                    <NavigationViewItem Content="SetupUI" Tag="SetupUi"/>
-                    <NavigationViewItem Content="SetupAlgemeen" Tag="SetupAlgemeen"/>
-                    <NavigationViewItem Content="SetupPrivacy" Tag="SetupPrivacy"/>
-                    <NavigationViewItem Content="SetupAccess" Tag="SetupAccess"/>
-                    <NavigationViewItem Content="SetupWebView" Tag="SetupWebView"/>
-                    <NavigationViewItem Content="SetupFinish" Tag="SetupFinish"/>
+                    <NavigationViewItem Content="SetupUI" Tag="SetupUi" />
+                    <NavigationViewItem Content="SetupAlgemeen" Tag="SetupAlgemeen" />
+                    <NavigationViewItem Content="SetupPrivacy" Tag="SetupPrivacy" />
+                    <NavigationViewItem Content="SetupAccess" Tag="SetupAccess" />
+                    <NavigationViewItem Content="SetupWebView" Tag="SetupWebView" />
+                    <NavigationViewItem Content="SetupFinish" Tag="SetupFinish" />
                 </NavigationView.MenuItems>
             </NavigationView>
         </Grid>
 
-        <Frame Grid.Row="1"
-               x:Name="ContentFrame"
-               IsNavigationStackEnabled="False"/>
+        <Frame
+            x:Name="ContentFrame"
+            Grid.Row="1"
+            IsNavigationStackEnabled="False" />
     </Grid>
 </Window>
