@@ -1,0 +1,63 @@
+<Page
+    x:Class="FireBrowserWinUi3.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <NavigationView x:Name="NavView"
+            Loaded="NavView_Loaded"
+            ItemInvoked="NavView_ItemInvoked"
+            IsBackButtonVisible="Collapsed"
+            SelectionChanged="NavView_SelectionChanged"
+            IsSettingsVisible="False">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Tag="SettingsHome" Content="Home">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Home.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="Design" Content="Design and Themes (New)">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Style.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="Privacy" Content="Privacy">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Privacy.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="WebView" Content="WebView">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Webset.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="NewTab" Content="New Tab">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Tabs.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="Enqryption" Content="Enqryption">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/enqryption.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="Accessibility" Content="Accessibility">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Accessibility.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Tag="About" Content="About">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="ms-appx:///Assets/Icons/About.png"/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
+        <NavigationView.AutoSuggestBox>
+            <AutoSuggestBox x:Name="NavViewSearchBox" QueryIcon="Find"/>
+        </NavigationView.AutoSuggestBox>
+        <ScrollViewer>
+            <Frame x:Name="ContentFrame" Padding="12,0,12,24" IsTabStop="True"
+                NavigationFailed="ContentFrame_NavigationFailed"/>
+        </ScrollViewer>
+    </NavigationView>
+</Page>

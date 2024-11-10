@@ -1,0 +1,83 @@
+<Page
+    x:Class="FireBrowserWinUi3.Pages.SettingsPages.SettingsDesign"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls">
+
+    <StackPanel Margin="0,10,0,0">
+        <labs:SettingsCard Header="Auto Fill TextBox" Description="Autofills the address bar from the Minibar">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEDA8;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ToggleSwitch x:Name="AutoTog" Toggled="AutoTog_Toggled" />
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Header="Color Toolbar" Description="Change toolbar color">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
+            </labs:SettingsCard.HeaderIcon>
+            <Button>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF354;" />
+                <Button.Flyout>
+                    <Flyout>
+                        <ColorPicker x:Name="ColorTBPicker" ColorChanged="ColorTBPicker_ColorChanged" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Header="TabView background color" Description="Change TabView background color">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
+            </labs:SettingsCard.HeaderIcon>
+            <Button>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF354;" />
+                <Button.Flyout>
+                    <Flyout>
+                        <ColorPicker x:Name="ColorTVPicker" ColorChanged="ColorTVPicker_ColorChanged" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Header="NTP Text Color" Description="Change the NTP's (New Tab page's) text color">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
+            </labs:SettingsCard.HeaderIcon>
+            <Button>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF354;" />
+                <Button.Flyout>
+                    <Flyout>
+                        <ColorPicker x:Name="ColorNtpPicker" ColorChanged="ColorNtpPicker_ColorChanged" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </labs:SettingsCard>
+
+        <labs:SettingsExpander Header="NTP background image" Description="Change the New Tab page's background image">
+            <labs:SettingsExpander.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEC6C;" />
+            </labs:SettingsExpander.HeaderIcon>
+            <labs:SettingsExpander.Items>
+                <labs:SettingsCard Header="Change color">
+                    <labs:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
+                    </labs:SettingsCard.HeaderIcon>
+                    <Button x:Name="Color">
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF354;" />
+                        <Button.Flyout>
+                            <Flyout>
+                                <ColorPicker x:Name="ColorBackGroundPicker" ColorChanged="ColorBackGroundPicker_ColorChanged" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </labs:SettingsCard>
+            </labs:SettingsExpander.Items>
+            <ComboBox x:Name="Type" SelectionChanged="Type_SelectionChanged">
+                <x:String>Default</x:String>
+                <x:String>Featured</x:String>
+                <x:String>Custom</x:String>
+            </ComboBox>
+        </labs:SettingsExpander>
+    </StackPanel>
+</Page>
