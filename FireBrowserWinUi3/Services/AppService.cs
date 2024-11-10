@@ -317,14 +317,27 @@ public static class AppService
     {
         string coreFolderPath = UserDataManager.CoreFolderPath;
         string username = GetUsernameFromCoreFolderPath(coreFolderPath, userName);
+        string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
+
+        AuthService.Authenticate(username);
+
+        if (File.Exists(updateSql))
+        {
+            SettingsActions settingsActions = new SettingsActions(AuthService.CurrentUser.Username);
+            var sql = File.ReadAllText(updateSql);
+            var IntRecCount = await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sql);
+            File.Delete(updateSql); 
+
+        }
 
         if (username != null)
         {
-            AuthService.Authenticate(username);
+            
             DatabaseServices dbServer = new DatabaseServices();
 
             try
             {
+
                 await dbServer.DatabaseCreationValidation();
                 await dbServer.InsertUserSettings();
             }
