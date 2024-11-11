@@ -613,7 +613,7 @@ public sealed partial class MainWindow : Window
 					default:
 						// default behavior
 						if (await Fire.Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
-							NavigateToUrl(browserTo.AbsolutePath);
+							NavigateToUrl(browserTo.AbsoluteUri);
 						else
 						{
 							string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
