@@ -5,11 +5,11 @@ using Microsoft.UI.Xaml.Controls;
 namespace FireBrowserWinUi3.Pages;
 public sealed partial class InPrivate : Page
 {
-	Settings userSettings = new Settings(true).Self; // new UserFolderManager.TempLoadPrivate("Private");
+	private readonly Settings userSettings = new Settings(true).Self; // new UserFolderManager.TempLoadPrivate("Private");
 
 	public InPrivate()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 		Init();
 	}
 
@@ -23,7 +23,7 @@ public sealed partial class InPrivate : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			userSettings.DisableJavaScript = autoSettingValue;
 
@@ -36,7 +36,7 @@ public sealed partial class InPrivate : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			userSettings.DisableWebMess = autoSettingValue;
 

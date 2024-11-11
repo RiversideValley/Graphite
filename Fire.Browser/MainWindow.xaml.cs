@@ -58,7 +58,7 @@ public sealed partial class MainWindow : Window
 	public string BackDropType = "Base";
 	public MainWindow()
 	{
-		this.appWindow = this.AppWindow;
+		appWindow = AppWindow;
 
 		ServiceDownloads = App.GetService<DownloadService>();
 		SettingsService = App.GetService<SettingsService>();
@@ -74,12 +74,12 @@ public sealed partial class MainWindow : Window
 
 		ArgsPassed();
 		LoadUserDataAndSettings(); // Load data and settings for the new user
-		LoadUserSettings();
+		_ = LoadUserSettings();
 		Init();
 
-		this.SizeChanged += async (s, e) =>
+		SizeChanged += async (s, e) =>
 		{
-			SemaphoreSlim semaphoreSlim = new SemaphoreSlim(3);
+			SemaphoreSlim semaphoreSlim = new(3);
 			IntPtr hWnd = Windowing.GetForegroundWindow();
 			await Task.Delay(100);
 
@@ -87,31 +87,31 @@ public sealed partial class MainWindow : Window
 			{
 				await semaphoreSlim.WaitAsync();
 
-				Windowing.GetWindowRect(hWnd, out Windowing.RECT rect);
+				_ = Windowing.GetWindowRect(hWnd, out Windowing.RECT rect);
 
-				var sizeWindow = await Windowing.SizeWindow();
+				Windows.Graphics.SizeInt32? sizeWindow = await Windowing.SizeWindow();
 				// Get the monitor dimensions
-				var screenWidth = (int)sizeWindow.Value.Width;
-				var screenHeight = (int)sizeWindow.Value.Height;
+				int screenWidth = sizeWindow.Value.Width;
+				int screenHeight = sizeWindow.Value.Height;
 
 				// Calculate the maximum allowed dimensions
 				int maxWidth = screenWidth / 4;
 				int maxHeight = screenHeight / 3;
 
-				if (this.appWindow.Size.Width < maxWidth)
+				if (appWindow.Size.Width < maxWidth)
 				{
 					await Task.Delay(60);
-					Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, maxWidth, appWindow.Size.Height, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
+					_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, maxWidth, appWindow.Size.Height, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
 					Windowing.FlashWindow(hWnd);
 
 				}
 				if (appWindow.Size.Height < maxHeight)
 				{
 					await Task.Delay(60);
-					Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, appWindow.Size.Width, maxHeight, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
+					_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, appWindow.Size.Width, maxHeight, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
 					Windowing.FlashWindow(hWnd);
 				}
-				semaphoreSlim.Release();
+				_ = semaphoreSlim.Release();
 			}
 			e.Handled = true;
 		};
@@ -127,7 +127,7 @@ public sealed partial class MainWindow : Window
 	public async void Init()
 	{
 		await Fire.Core.Models.Data.Init();
-		string solutionDir = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
+		_ = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
 		//string workerProjectName = "FireAuthService";
 		//string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
 		//string nameService = nameof(FireAuthService).ToString();
@@ -137,26 +137,26 @@ public sealed partial class MainWindow : Window
 
 	public void setColorsTool()
 	{
-		if (SettingsService.CoreSettings.ColorTV == "#000000" || SettingsService.CoreSettings.ColorTV == "#FF000000")
+		if (SettingsService.CoreSettings.ColorTV is "#000000" or "#FF000000")
 		{
 			Tabs.Background = new SolidColorBrush(Colors.Transparent);
 		}
 		else
 		{
 			string colorw = SettingsService.CoreSettings.ColorTV;
-			var color = (Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), colorw);
-			var brush = new SolidColorBrush(color);
+			Windows.UI.Color color = (Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), colorw);
+			SolidColorBrush brush = new(color);
 			Tabs.Background = brush;
 		}
-		if (SettingsService.CoreSettings.ColorTool == "#000000" || SettingsService.CoreSettings.ColorTool == "#FF000000")
+		if (SettingsService.CoreSettings.ColorTool is "#000000" or "#FF000000")
 		{
 			ClassicToolbar.Background = new SolidColorBrush(Colors.Transparent);
 		}
 		else
 		{
 			string colorw = SettingsService.CoreSettings.ColorTool;
-			var color = (Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), colorw);
-			var brush = new SolidColorBrush(color);
+			Windows.UI.Color color = (Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), colorw);
+			SolidColorBrush brush = new(color);
 			ClassicToolbar.Background = brush;
 		}
 	}
@@ -173,8 +173,10 @@ public sealed partial class MainWindow : Window
 				{
 					args.Cancel = true;
 
-					if (!(Application.Current is App currentApp) || !(currentApp.m_window is MainWindow mainWindow))
+					if (Application.Current is not App currentApp || currentApp.m_window is not MainWindow mainWindow)
+					{
 						return;
+					}
 
 					Fire.Core.CoreUi.ConfirmAppClose quickConfigurationDialog = new()
 					{
@@ -187,7 +189,7 @@ public sealed partial class MainWindow : Window
 						await Task.Delay(250);
 						Application.Current.Exit();
 					};
-					await quickConfigurationDialog.ShowAsync();
+					_ = await quickConfigurationDialog.ShowAsync();
 				}
 				catch (Exception ex)
 				{
@@ -199,7 +201,7 @@ public sealed partial class MainWindow : Window
 		args.Cancel = false;
 	}
 
-	bool incog = false;
+	private bool incog = false;
 
 	private async void ArgsPassed()
 	{
@@ -222,7 +224,7 @@ public sealed partial class MainWindow : Window
 		if (!string.IsNullOrEmpty(AppArguments.FireBrowserPdf))
 		{
 			StorageFile file = await StorageFile.GetFileFromPathAsync(AppArguments.FireBrowserPdf);
-			var files = new List<IStorageItem> { file }.AsReadOnly();
+			ReadOnlyCollection<IStorageItem> files = new List<IStorageItem> { file }.AsReadOnly();
 			if (files.Count > 0)
 			{
 				Tabs.TabItems.Add(CreateNewTab(typeof(WebContent), files[1]));
@@ -233,8 +235,12 @@ public sealed partial class MainWindow : Window
 		if (!string.IsNullOrEmpty(AppArguments.FireBrowserIncog))
 		{
 			Tabs.TabItems.Add(CreateNewIncog(typeof(InPrivate)));
-			var controlsToDisable = new Control[] { Fav, His, History, Down, DownBtn, FavoritesButton, UserFrame };
-			foreach (var control in controlsToDisable) control.IsEnabled = false;
+			Control[] controlsToDisable = new Control[] { Fav, His, History, Down, DownBtn, FavoritesButton, UserFrame };
+			foreach (Control control in controlsToDisable)
+			{
+				control.IsEnabled = false;
+			}
+
 			NewTab.Visibility = Visibility.Collapsed;
 			NewWindow.Visibility = Visibility.Collapsed;
 			//Profile.IsEnabled = false;
@@ -253,7 +259,7 @@ public sealed partial class MainWindow : Window
 
 	private void InPrivateUser()
 	{
-		var newUser = new User
+		User newUser = new()
 		{
 			Id = Guid.NewGuid(),
 			Username = "Private",
@@ -264,16 +270,18 @@ public sealed partial class MainWindow : Window
 		AuthService.AddUser(newUser);
 		UserFolderManager.CreateUserFolders(newUser);
 		AuthService.CurrentUser.Username = newUser.Username;
-		AuthService.Authenticate(newUser.Username);
+		_ = AuthService.Authenticate(newUser.Username);
 	}
 
 	public void LoadUsernames()
 	{
-		var currentUsername = AuthService.CurrentUser?.Username;
+		string currentUsername = AuthService.CurrentUser?.Username;
 		UserListView.Items.Clear();
 
 		if (!(UserListView.IsEnabled = currentUsername is null || !currentUsername.Contains("Private")))
+		{
 			return;
+		}
 
 		AuthService.GetAllUsernames()
 			.Where(u => u != currentUsername && !u.Contains("Private"))
@@ -283,7 +291,7 @@ public sealed partial class MainWindow : Window
 
 	public void SmallUpdates()
 	{
-		var source = TabWebView.CoreWebView2.Source?.ToString() ?? string.Empty;
+		string source = TabWebView.CoreWebView2.Source?.ToString() ?? string.Empty;
 		UrlBox.Text = ViewModel.Securitytype = source;
 
 		(ViewModel.SecurityIcon, ViewModel.SecurityIcontext, ViewModel.Securitytext) = source switch
@@ -298,17 +306,19 @@ public sealed partial class MainWindow : Window
 
 	public void TitleTop()
 	{
-		var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-		var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		appWindow = AppWindow.GetFromWindowId(windowId);
 		appWindow.SetIcon("logo.ico");
 
 		if (!AppWindowTitleBar.IsCustomizationSupported())
+		{
 			throw new Exception("Unsupported OS version.");
+		}
 
-		var titleBar = appWindow.TitleBar;
+		AppWindowTitleBar titleBar = appWindow.TitleBar;
 		titleBar.ExtendsContentIntoTitleBar = true;
-		var btnColor = Colors.Transparent;
+		Windows.UI.Color btnColor = Colors.Transparent;
 		titleBar.BackgroundColor = titleBar.ButtonBackgroundColor =
 			titleBar.InactiveBackgroundColor = titleBar.ButtonInactiveBackgroundColor =
 			titleBar.ButtonHoverBackgroundColor = btnColor;
@@ -325,8 +335,8 @@ public sealed partial class MainWindow : Window
 	{
 		IntPtr hWnd = WindowNative.GetWindowHandle(this);
 		Microsoft.UI.WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		var view = AppWindow.GetFromWindowId(wndId);
-		var margin = fullscreen ? new Thickness(0, -40, 0, 0) : new Thickness(0, 35, 0, 0);
+		AppWindow view = AppWindow.GetFromWindowId(wndId);
+		Thickness margin = fullscreen ? new Thickness(0, -40, 0, 0) : new Thickness(0, 35, 0, 0);
 
 		view.SetPresenter(fullscreen ? AppWindowPresenterKind.FullScreen : AppWindowPresenterKind.Default);
 
@@ -339,7 +349,7 @@ public sealed partial class MainWindow : Window
 	{
 		IntPtr hWnd = WindowNative.GetWindowHandle(this);
 		Microsoft.UI.WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		var view = AppWindow.GetFromWindowId(wndId);
+		AppWindow view = AppWindow.GetFromWindowId(wndId);
 
 		view.SetPresenter(fullscreen ? AppWindowPresenterKind.FullScreen : AppWindowPresenterKind.Default);
 		isFull = fullscreen;
@@ -391,7 +401,7 @@ public sealed partial class MainWindow : Window
 		element.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
 	}
 
-	private int maxTabItems = 20;
+	private readonly int maxTabItems = 20;
 	private void TabView_AddTabButtonClick(TabView sender, object args)
 	{
 		if (sender.TabItems.Count < maxTabItems)
@@ -415,16 +425,16 @@ public sealed partial class MainWindow : Window
 
 	public FireBrowserTabViewItem CreateNewTab(Type? page = null, object param = null, int index = -1)
 	{
-		index = Tabs.TabItems.Count;
+		_ = Tabs.TabItems.Count;
 
-		var newItem = new FireBrowserTabViewItem
+		FireBrowserTabViewItem newItem = new()
 		{
 			Header = "NewTab",
 			IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.Home },
 			Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
 		};
 
-		var passer = new Passer
+		Passer passer = new()
 		{
 			Tab = newItem,
 			TabView = Tabs,
@@ -436,7 +446,7 @@ public sealed partial class MainWindow : Window
 		passer.ViewModel.CurrentAddress = "";
 
 		double margin = ClassicToolbar.Height;
-		var frame = new Frame
+		Frame frame = new()
 		{
 			HorizontalAlignment = HorizontalAlignment.Stretch,
 			VerticalAlignment = VerticalAlignment.Stretch,
@@ -445,7 +455,7 @@ public sealed partial class MainWindow : Window
 
 		if (page != null)
 		{
-			frame.Navigate(page, passer);
+			_ = frame.Navigate(page, passer);
 		}
 
 		newItem.Content = frame;
@@ -459,10 +469,10 @@ public sealed partial class MainWindow : Window
 	public FireBrowserTabViewContainer TabViewContainer => Tabs;
 	private double GetScaleAdjustment()
 	{
-		var hWnd = WindowNative.GetWindowHandle(this);
-		var wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		var displayArea = DisplayArea.GetFromWindowId(wndId, DisplayAreaFallback.Primary);
-		var hMonitor = Win32Interop.GetMonitorFromDisplayId(displayArea.DisplayId);
+		nint hWnd = WindowNative.GetWindowHandle(this);
+		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		DisplayArea displayArea = DisplayArea.GetFromWindowId(wndId, DisplayAreaFallback.Primary);
+		nint hMonitor = Win32Interop.GetMonitorFromDisplayId(displayArea.DisplayId);
 
 		// Get the effective DPI for the monitor
 		_ = Windowing.GetDpiForMonitor(hMonitor, Windowing.Monitor_DPI_Type.MDT_Effective_DPI, out uint dpiX, out uint dpiY);
@@ -488,9 +498,9 @@ public sealed partial class MainWindow : Window
 		{
 			double scaleAdjustment = GetScaleAdjustment();
 			Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
-			var customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
+			Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
 
-			var dragRects = new Windows.Graphics.RectInt32[2];
+			Windows.Graphics.RectInt32[] dragRects = new Windows.Graphics.RectInt32[2];
 
 			for (int i = 0; i < 2; i++)
 			{
@@ -499,7 +509,7 @@ public sealed partial class MainWindow : Window
 					X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
 					Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
 					Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
-					Width = (int)((Apptitlebar.ActualWidth / 2) * scaleAdjustment)
+					Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
 				};
 			}
 
@@ -515,31 +525,37 @@ public sealed partial class MainWindow : Window
 	{
 		double scaleAdjustment = GetScaleAdjustment();
 		Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
-		var customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
+		Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
 
-		var dragRectsList = new List<Windows.Graphics.RectInt32>();
+		List<Windows.Graphics.RectInt32> dragRectsList = new();
 
 		for (int i = 0; i < 2; i++)
 		{
-			var dragRect = new Windows.Graphics.RectInt32
+			Windows.Graphics.RectInt32 dragRect = new()
 			{
 				X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
 				Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
 				Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
-				Width = (int)((Apptitlebar.ActualWidth / 2) * scaleAdjustment)
+				Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
 			};
 
 			dragRectsList.Add(dragRect);
 		}
 
-		var dragRects = dragRectsList.ToArray();
+		Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
 
 		appWindow.TitleBar?.SetDragRectangles(dragRects);
 	}
 	private void Tabs_TabItemsChanged(TabView sender, IVectorChangedEventArgs args)
 	{
-		if (sender.TabItems.Count <= 0) Application.Current.Exit();
-		else sender.CanReorderTabs = sender.CanDragTabs = sender.TabItems.Count > 1;
+		if (sender.TabItems.Count <= 0)
+		{
+			Application.Current.Exit();
+		}
+		else
+		{
+			sender.CanReorderTabs = sender.CanDragTabs = sender.TabItems.Count > 1;
+		}
 	}
 	public Passer CreatePasser(object parameter = null)
 	{
@@ -551,24 +567,31 @@ public sealed partial class MainWindow : Window
 			Param = parameter,
 		};
 	}
-	public void SelectNewTab() => Tabs.SelectedIndex = Tabs.TabItems.Count - 1;
+	public void SelectNewTab()
+	{
+		Tabs.SelectedIndex = Tabs.TabItems.Count - 1;
+	}
+
 	public void FocusUrlBox(string text)
 	{
 		UrlBox.Text = text;
-		UrlBox.Focus(FocusState.Programmatic);
+		_ = UrlBox.Focus(FocusState.Programmatic);
 	}
-	public void FocusWebView() => TabWebView.Focus(FocusState.Programmatic);
+	public void FocusWebView()
+	{
+		_ = TabWebView.Focus(FocusState.Programmatic);
+	}
 
 	public void NavigateToUrl(string uri)
 	{
 		try
 		{
-			if (!(TabContent.Content is WebContent webContent))
+			if (TabContent.Content is not WebContent webContent)
 			{
 				launchurl ??= uri;
-				TabContent.Navigate(typeof(WebContent), CreatePasser(uri));
+				_ = TabContent.Navigate(typeof(WebContent), CreatePasser(uri));
 				// newTab is not browsing to new site.
-				DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
+				_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
 
 				return;
 			}
@@ -613,7 +636,9 @@ public sealed partial class MainWindow : Window
 					default:
 						// default behavior
 						if (await Fire.Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
+						{
 							NavigateToUrl(browserTo.AbsoluteUri);
+						}
 						else
 						{
 							string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
@@ -718,21 +743,48 @@ public sealed partial class MainWindow : Window
 		{
 			if (TabContent.Content is WebContent)
 			{
-				if (isBack) TabWebView.CoreWebView2.GoBack();
-				else TabWebView.CoreWebView2.GoForward();
+				if (isBack)
+				{
+					TabWebView.CoreWebView2.GoBack();
+				}
+				else
+				{
+					TabWebView.CoreWebView2.GoForward();
+				}
 			}
 			else
 			{
-				if (isBack) TabContent.GoBack();
-				else TabContent.GoForward();
+				if (isBack)
+				{
+					TabContent.GoBack();
+				}
+				else
+				{
+					TabContent.GoForward();
+				}
 			}
 		}
 	}
 
-	private bool CanGoBack() => CanNavigate(true);
-	private bool CanGoForward() => CanNavigate(false);
-	private void GoBack() => Go(true);
-	private void GoForward() => Go(false);
+	private bool CanGoBack()
+	{
+		return CanNavigate(true);
+	}
+
+	private bool CanGoForward()
+	{
+		return CanNavigate(false);
+	}
+
+	private void GoBack()
+	{
+		Go(true);
+	}
+
+	private void GoForward()
+	{
+		Go(false);
+	}
 
 	#endregion
 
@@ -756,17 +808,17 @@ public sealed partial class MainWindow : Window
 				break;
 			case "Refresh" when TabContent.Content is WebContent:
 				TabWebView.CoreWebView2.Reload();
-				NotificationQueue.Show("Refreshing...", 1200);
+				_ = NotificationQueue.Show("Refreshing...", 1200);
 
 				break;
 			case "Home" when TabContent.Content is WebContent:
 				if (incog == true)
 				{
-					TabContent.Navigate(typeof(InPrivate));
+					_ = TabContent.Navigate(typeof(InPrivate));
 				}
 				else
 				{
-					TabContent.Navigate(typeof(NewTab));
+					_ = TabContent.Navigate(typeof(NewTab));
 				}
 				UrlBox.Text = "";
 				passer.Tab.Header = WebContent.IsIncognitoModeEnabled ? "Incognito" : "NewTab";
@@ -783,22 +835,20 @@ public sealed partial class MainWindow : Window
 			case "QRCode" when TabContent.Content is WebContent:
 				try
 				{
-					QRCodeGenerator qrGenerator = new QRCodeGenerator();
+					QRCodeGenerator qrGenerator = new();
 					QRCodeData qrCodeData = qrGenerator.CreateQrCode((TabContent.Content as WebContent).WebViewElement.CoreWebView2.Source.ToString(), QRCodeGenerator.ECCLevel.M);
-					BitmapByteQRCode qrCodeBmp = new BitmapByteQRCode(qrCodeData);
+					BitmapByteQRCode qrCodeBmp = new(qrCodeData);
 					byte[] qrCodeImageBmp = qrCodeBmp.GetGraphic(20);
 
-					using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-					using (DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0)))
-					{
-						writer.WriteBytes(qrCodeImageBmp);
-						await writer.StoreAsync();
+					using InMemoryRandomAccessStream stream = new();
+					using DataWriter writer = new(stream.GetOutputStreamAt(0));
+					writer.WriteBytes(qrCodeImageBmp);
+					_ = await writer.StoreAsync();
 
-						var image = new BitmapImage();
-						await image.SetSourceAsync(stream);
+					BitmapImage image = new();
+					await image.SetSourceAsync(stream);
 
-						QRCodeImage.Source = image;
-					}
+					QRCodeImage.Source = image;
 				}
 				catch
 				{
@@ -806,12 +856,12 @@ public sealed partial class MainWindow : Window
 				}
 				break;
 			case "ReadingMode" when TabContent.Content is WebContent:
-				var uriread = new Uri("ms-appx:///Services/WebHelpers/ReadabilityWeb.js");
+				Uri uriread = new("ms-appx:///Services/WebHelpers/ReadabilityWeb.js");
 				StorageFile ReadabilityWebFile = await StorageFile.GetFileFromApplicationUriAsync(uriread);
 
 				// Read the contents of the DarkModeWeb.js file asynchronously
 				string jscript = await FileIO.ReadTextAsync(ReadabilityWebFile);
-				await (TabContent.Content as WebContent).WebViewElement.CoreWebView2.ExecuteScriptAsync(jscript);
+				_ = await (TabContent.Content as WebContent).WebViewElement.CoreWebView2.ExecuteScriptAsync(jscript);
 				break;
 			case "AdBlock":
 
@@ -820,30 +870,30 @@ public sealed partial class MainWindow : Window
 				FavoriteUrl.Text = TabWebView.CoreWebView2.Source;
 				break;
 			case "AddFavorite":
-				FavManager fv = new FavManager();
+				FavManager fv = new();
 				fv.SaveFav(FavoriteTitle.Text.ToString(), FavoriteUrl.Text.ToString());
 				AddFav.Flyout?.Hide();
-				var note = new Notification
+				Notification note = new()
 				{
 					Title = $"Added To Favorites",
 					Message = FavoriteTitle.Text.ToString(),
 					Severity = InfoBarSeverity.Informational,
 					Duration = TimeSpan.FromSeconds(1.5)
 				};
-				NotificationQueue.Show(note);
+				_ = NotificationQueue.Show(note);
 				break;
 			case "Favorites":
-				FavManager fs = new FavManager();
+				FavManager fs = new();
 				List<FavItem> favorites = fs.LoadFav();
 				FavoritesListView.ItemsSource = favorites;
 				break;
 			case "DarkMode" when TabContent.Content is WebContent:
-				var uri = new Uri("ms-appx:///Services/WebHelpers/DarkModeWeb.js");
+				Uri uri = new("ms-appx:///Services/WebHelpers/DarkModeWeb.js");
 				StorageFile darkmodeFile = await StorageFile.GetFileFromApplicationUriAsync(uri);
 
 				// Read the contents of the DarkModeWeb.js file asynchronously
 				string jscriptdark = await FileIO.ReadTextAsync(darkmodeFile);
-				await (TabContent.Content as WebContent).WebViewElement.CoreWebView2.ExecuteScriptAsync(jscriptdark);
+				_ = await (TabContent.Content as WebContent).WebViewElement.CoreWebView2.ExecuteScriptAsync(jscriptdark);
 
 				break;
 			case "History":
@@ -859,13 +909,15 @@ public sealed partial class MainWindow : Window
 	private async Task MainWinSaveResources()
 	{
 		if (SettingsService?.CoreSettings?.ResourceSave == false)
+		{
 			return;
+		}
 
-		var list = TabViewContainer?.TabItems?.ToList();
+		List<object> list = TabViewContainer?.TabItems?.ToList();
 
 		list!.ForEach(async (tab) =>
 		{
-			var CurrentTab = tab as FireBrowserTabViewItem;
+			FireBrowserTabViewItem CurrentTab = tab as FireBrowserTabViewItem;
 
 			// covers all tabs.- in future if we are selecting desired tab that's playing we could add a check NO TO Stop video from playing hence were selecting that tab.
 
@@ -877,7 +929,7 @@ public sealed partial class MainWindow : Window
 					if (web.WebView?.Source is not null)
 					{
 						await web.WebView.EnsureCoreWebView2Async();
-						await web.WebView.CoreWebView2!.ExecuteScriptAsync(
+						_ = await web.WebView.CoreWebView2!.ExecuteScriptAsync(
 										@"(function() { 
                                 try
                                 {
@@ -913,12 +965,12 @@ public sealed partial class MainWindow : Window
 			// 2014-02-04 added to stop a video from playing when selection is made to a different tab / save on memory resources. 
 			if (e.RemovedItems.Count > 0)
 			{
-				e.RemovedItems.All((tab) =>
+				_ = e.RemovedItems.All((tab) =>
 				{
 					if (tab is FireBrowserTabViewItem viewedItem)
 					{
 						//need pip mode automaticcly open en close 
-						DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
+						_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
 					}
 					return false;
 				});
@@ -934,11 +986,14 @@ public sealed partial class MainWindow : Window
 	}
 
 	//public static async void OpenNewWindow(Uri uri) =>  await Windows.System.Launcher.LaunchUriAsync(uri);
-	public static async void OpenNewWindow(Uri uri) => await Windows.System.Launcher.LaunchUriAsync(uri);
+	public static async void OpenNewWindow(Uri uri)
+	{
+		_ = await Windows.System.Launcher.LaunchUriAsync(uri);
+	}
 
 	public void ShareUi(string Url, string Title)
 	{
-		var hWnd = WindowNative.GetWindowHandle(this);
+		nint hWnd = WindowNative.GetWindowHandle(this);
 		ShareUIHelper.ShowShareUIURL(Url, Title, hWnd);
 	}
 
@@ -971,21 +1026,21 @@ public sealed partial class MainWindow : Window
 				break;
 			case "Downloads":
 				UrlBox.Text = "firebrowser://downloads";
-				TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "History":
 				UrlBox.Text = "firebrowser://history";
-				TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "InPrivate":
 				OpenNewWindow(new Uri("firebrowserincog://"));
 				break;
 			case "SplitTab":
-				TabContent.Navigate(typeof(SplitTabPage));
+				_ = TabContent.Navigate(typeof(SplitTabPage));
 				break;
 			case "Favorites":
 				UrlBox.Text = "firebrowser://favorites";
-				TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 				break;
 		}
 	}
@@ -996,7 +1051,7 @@ public sealed partial class MainWindow : Window
 	{
 		try
 		{
-			HistoryActions historyActions = new HistoryActions(AuthService.CurrentUser.Username);
+			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			await historyActions.DeleteAllHistoryItems();
 
 			HistoryTemp.ItemsSource = null;
@@ -1016,7 +1071,7 @@ public sealed partial class MainWindow : Window
 		//Fire.Browser.Core.User user = AuthService.CurrentUser;
 		try
 		{
-			HistoryActions historyActions = new HistoryActions(AuthService.CurrentUser.Username);
+			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			browserHistory = await historyActions.GetAllHistoryItems();
 			HistoryTemp.ItemsSource = browserHistory;
 		}
@@ -1031,10 +1086,10 @@ public sealed partial class MainWindow : Window
 
 	public FireBrowserTabViewItem CreateNewIncog(Type? page = null, object? param = null, int index = -1)
 	{
-		index = Tabs.TabItems.Count;
+		_ = Tabs.TabItems.Count;
 		UrlBox.Text = "";
 
-		var newItem = new FireBrowserTabViewItem
+		FireBrowserTabViewItem newItem = new()
 		{
 			Header = $"Incognito",
 			IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.BlockContact },
@@ -1042,7 +1097,7 @@ public sealed partial class MainWindow : Window
 		};
 
 
-		var passer = new Passer
+		Passer passer = new()
 		{
 			Tab = newItem,
 			TabView = Tabs,
@@ -1050,7 +1105,7 @@ public sealed partial class MainWindow : Window
 			Param = param
 		};
 
-		var frame = new Frame
+		Frame frame = new()
 		{
 			HorizontalAlignment = HorizontalAlignment.Stretch,
 			VerticalAlignment = VerticalAlignment.Stretch,
@@ -1065,26 +1120,32 @@ public sealed partial class MainWindow : Window
 
 	private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
 	{
-		if (!(args.Tab?.Content is Frame tabContent)) return;
+		if (args.Tab?.Content is not Frame tabContent)
+		{
+			return;
+		}
 
 		if (tabContent.Content is WebContent webContent && webContent.WebViewElement != null)
 		{
 			webContent.WebViewElement.Close();
 		}
 
-		(sender as TabView)?.TabItems?.Remove(args.Tab);
+		_ = (sender?.TabItems?.Remove(args.Tab));
 	}
 
 	private string selectedHistoryItem;
 	private void Grid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
 	{
-		if (((FrameworkElement)sender).DataContext is not HistoryItem historyItem) return;
+		if (((FrameworkElement)sender).DataContext is not HistoryItem historyItem)
+		{
+			return;
+		}
 
 		selectedHistoryItem = historyItem.Url;
 
-		var flyout = new MenuFlyout();
+		MenuFlyout flyout = new();
 
-		var deleteMenuItem = new MenuFlyoutItem
+		MenuFlyoutItem deleteMenuItem = new()
 		{
 			Text = "Delete This Record",
 			Icon = new FontIcon { Glyph = "\uE74D" }
@@ -1092,7 +1153,10 @@ public sealed partial class MainWindow : Window
 
 		deleteMenuItem.Click += async (s, args) =>
 		{
-			if (!(AuthService.CurrentUser is Fire.Browser.Core.User user)) return;
+			if (AuthService.CurrentUser is not Fire.Browser.Core.User user)
+			{
+				return;
+			}
 
 			string username = user.Username;
 			string databasePath = Path.Combine(
@@ -1103,15 +1167,17 @@ public sealed partial class MainWindow : Window
 				"History.db"
 			);
 
-			HistoryActions historyActions = new HistoryActions(AuthService.CurrentUser.Username);
+			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			await historyActions.DeleteHistoryItem(selectedHistoryItem);
 			await Task.Delay(1000);
 
 			if (HistoryTemp.ItemsSource is ObservableCollection<HistoryItem> historyItems)
 			{
-				var itemToRemove = historyItems.FirstOrDefault(item => item.Url == selectedHistoryItem);
+				HistoryItem itemToRemove = historyItems.FirstOrDefault(item => item.Url == selectedHistoryItem);
 				if (itemToRemove != null)
-					historyItems.Remove(itemToRemove);
+				{
+					_ = historyItems.Remove(itemToRemove);
+				}
 			}
 		};
 
@@ -1133,16 +1199,20 @@ public sealed partial class MainWindow : Window
 
 
 		if (HistorySearchMenuItem.Visibility is Visibility.Visible)
-			HistorySearchMenuItem.Focus(FocusState.Programmatic);
-
+		{
+			_ = HistorySearchMenuItem.Focus(FocusState.Programmatic);
+		}
 	}
 	private void FilterBrowserHistory(string searchText)
 	{
-		if (browserHistory == null) return;
+		if (browserHistory == null)
+		{
+			return;
+		}
 
 		HistoryTemp.ItemsSource = null;
 
-		var filteredHistory = new ObservableCollection<HistoryItem>(browserHistory
+		ObservableCollection<HistoryItem> filteredHistory = new(browserHistory
 			.Where(item => item.Url.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
 						   item.Title?.Contains(searchText, StringComparison.OrdinalIgnoreCase) == true));
 
@@ -1157,7 +1227,10 @@ public sealed partial class MainWindow : Window
 
 	private void FavoritesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (!(sender is ListView listView) || listView.ItemsSource == null) return;
+		if (sender is not ListView listView || listView.ItemsSource == null)
+		{
+			return;
+		}
 
 		if (listView.SelectedItem is FavItem item)
 		{
@@ -1168,7 +1241,7 @@ public sealed partial class MainWindow : Window
 			}
 			else
 			{
-				TabContent.Navigate(typeof(WebContent), CreatePasser(launchurlfav));
+				_ = TabContent.Navigate(typeof(WebContent), CreatePasser(launchurlfav));
 			}
 		}
 
@@ -1178,9 +1251,16 @@ public sealed partial class MainWindow : Window
 
 	private void HistoryTemp_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (!(sender is ListView listView) || listView.ItemsSource == null) return;
+		if (sender is not ListView listView || listView.ItemsSource == null)
+		{
+			return;
+		}
 
-		if (!(listView.SelectedItem is HistoryItem item)) return;
+		if (listView.SelectedItem is not HistoryItem item)
+		{
+			return;
+		}
+
 		string launchurlfav = item.Url;
 		if (TabContent.Content is WebContent webContent)
 		{
@@ -1188,7 +1268,7 @@ public sealed partial class MainWindow : Window
 		}
 		else
 		{
-			TabContent.Navigate(typeof(WebContent), CreatePasser(launchurlfav));
+			_ = TabContent.Navigate(typeof(WebContent), CreatePasser(launchurlfav));
 		}
 
 		listView.ItemsSource = null;
@@ -1197,11 +1277,12 @@ public sealed partial class MainWindow : Window
 
 	private void DownBtn_Click(object sender, RoutedEventArgs e)
 	{
-		var options = new Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions { Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom };
+		Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions options = new()
+		{ Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom };
 		DownloadFlyout.ShowAt(DownBtn, options);
 	}
-	private void OpenHistoryMenuItem_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://history") + (TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine))); }
-	private void OpenFavoritesMenu_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://favorites") + (TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine))); }
+	private void OpenHistoryMenuItem_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://history") + TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine)); }
+	private void OpenFavoritesMenu_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://favorites") + TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine)); }
 	private void MainUser_Click(object sender, RoutedEventArgs e)
 	{
 		UserFrame.Visibility = UserFrame?.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
@@ -1213,7 +1294,7 @@ public sealed partial class MainWindow : Window
 		try
 		{
 			// Prompt the user for biometric or PIN authentication
-			var authResult = await UserConsentVerifier.RequestVerificationAsync("Authenticate to open the 2fa data");
+			UserConsentVerificationResult authResult = await UserConsentVerifier.RequestVerificationAsync("Authenticate to open the 2fa data");
 
 			if (authResult == UserConsentVerificationResult.Verified)
 			{
@@ -1234,10 +1315,10 @@ public sealed partial class MainWindow : Window
 	{
 		if (TabContent.Content is WebContent webContent)
 		{
-			var qrCodeData = new QRCodeGenerator().CreateQrCode(webContent.WebViewElement.CoreWebView2.Source.ToString(), QRCodeGenerator.ECCLevel.M);
-			var qrCodeBmp = new BitmapByteQRCode(qrCodeData).GetGraphic(20);
+			QRCodeData qrCodeData = new QRCodeGenerator().CreateQrCode(webContent.WebViewElement.CoreWebView2.Source.ToString(), QRCodeGenerator.ECCLevel.M);
+			byte[] qrCodeBmp = new BitmapByteQRCode(qrCodeData).GetGraphic(20);
 
-			var savePicker = new Windows.Storage.Pickers.FileSavePicker
+			FileSavePicker savePicker = new()
 			{
 				SuggestedStartLocation = PickerLocationId.PicturesLibrary,
 				DefaultFileExtension = ".png",
@@ -1251,7 +1332,7 @@ public sealed partial class MainWindow : Window
 			{
 				try
 				{
-					await (await file.OpenAsync(FileAccessMode.ReadWrite)).WriteAsync(qrCodeBmp.AsBuffer());
+					_ = await (await file.OpenAsync(FileAccessMode.ReadWrite)).WriteAsync(qrCodeBmp.AsBuffer());
 				}
 				catch (Exception ex)
 				{
@@ -1262,14 +1343,19 @@ public sealed partial class MainWindow : Window
 	}
 	private async void SwitchName_Click(object sender, RoutedEventArgs e)
 	{
-		if (!(sender is Button switchButton && switchButton.DataContext is string clickedUserName)) return;
+		if (!(sender is Button switchButton && switchButton.DataContext is string clickedUserName))
+		{
+			return;
+		}
+
 		OpenNewWindow(new Uri($"firebrowseruser://{clickedUserName}"));
 		await new Shortcut().CreateShortcut(clickedUserName);
 	}
 
 	private void Profile_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
 	{
-		var options = new Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions { Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom };
+		Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions options = new()
+		{ Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom };
 		Commander.ShowAt(Profile, options);
 	}
 
@@ -1278,20 +1364,20 @@ public sealed partial class MainWindow : Window
 		if (UrlBox.Text.Contains("youtube:"))
 		{
 			UrlBox.Text = "https://www.youtube.com/results?search_query=";
-			UrlBox.Focus(FocusState.Keyboard);
-			NotificationQueue.Show("Autofill Trigger Youtube Quick Search", 2500);
+			_ = UrlBox.Focus(FocusState.Keyboard);
+			_ = NotificationQueue.Show("Autofill Trigger Youtube Quick Search", 2500);
 		}
 		if (UrlBox.Text.Equals("192"))
 		{
 			UrlBox.Text = "http://192.";
-			UrlBox.Focus(FocusState.Keyboard);
-			NotificationQueue.Show("Autofill Local Site http://...", 2500);
+			_ = UrlBox.Focus(FocusState.Keyboard);
+			_ = NotificationQueue.Show("Autofill Local Site http://...", 2500);
 		}
 		if (UrlBox.Text.Equals("search:"))
 		{
 			UrlBox.Text = $"{SettingsService.CoreSettings.SearchUrl}";
-			UrlBox.Focus(FocusState.Keyboard);
-			NotificationQueue.Show($"Autofill Search Quick {SettingsService.CoreSettings.EngineFriendlyName}", 2500);
+			_ = UrlBox.Focus(FocusState.Keyboard);
+			_ = NotificationQueue.Show($"Autofill Search Quick {SettingsService.CoreSettings.EngineFriendlyName}", 2500);
 		}
 	}
 

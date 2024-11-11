@@ -27,11 +27,11 @@ namespace FireBrowserWinUi3.Controls
 
 		public CreateBackup()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			UpdateBack();
 			InitializeWindow();
-			AppService.Dispatcher = this.DispatcherQueue;
-			var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
+			AppService.Dispatcher = DispatcherQueue;
+			string connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
 			AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
 		}
 
@@ -42,7 +42,7 @@ namespace FireBrowserWinUi3.Controls
 
 		private void InitializeWindow()
 		{
-			var hWnd = WindowNative.GetWindowHandle(this);
+			nint hWnd = WindowNative.GetWindowHandle(this);
 			WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 			appWindow = AppWindow.GetFromWindowId(windowId);
 			appWindow.Title = "CreateBackup";
@@ -62,7 +62,7 @@ namespace FireBrowserWinUi3.Controls
 			{
 				titleBar = appWindow.TitleBar;
 				titleBar.ExtendsContentIntoTitleBar = true;
-				var btnColor = Colors.Transparent;
+				Windows.UI.Color btnColor = Colors.Transparent;
 				titleBar.BackgroundColor = btnColor;
 				titleBar.ButtonBackgroundColor = btnColor;
 				titleBar.InactiveBackgroundColor = btnColor;
@@ -97,24 +97,24 @@ namespace FireBrowserWinUi3.Controls
 
 				_backupFilePath = await Task.Run(async () =>
 				{
-					var fileName = BackupManager.CreateBackup();
+					string fileName = BackupManager.CreateBackup();
 
-					DispatcherQueue.TryEnqueue(() =>
+					_ = DispatcherQueue.TryEnqueue(() =>
 					{
 						IntPtr hWnd = Windowing.FindWindow(null, nameof(CreateBackup));
 						if (hWnd != IntPtr.Zero)
 						{
-							Windowing.SetWindowPos(hWnd, Windowing.HWND_BOTTOM, 0, 0, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOMOVE | Windowing.SWP_SHOWWINDOW);
+							_ = Windowing.SetWindowPos(hWnd, Windowing.HWND_BOTTOM, 0, 0, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOMOVE | Windowing.SWP_SHOWWINDOW);
 						}
 					});
 
 					if (!IsLocalBackup)
 					{
-						var fireUser = await AzBackup.GetUserInformationAsync();
+						User fireUser = await AzBackup.GetUserInformationAsync();
 
 						if (fireUser is Fire.Browser.Core.User user)
 						{
-							this.DispatcherQueue.TryEnqueue(async () =>
+							_ = DispatcherQueue.TryEnqueue(async () =>
 							{
 								StatusTextBlock.Text = $"Backup is being uploaded to the cloud";
 								await Task.Delay(100);
@@ -122,11 +122,11 @@ namespace FireBrowserWinUi3.Controls
 
 							await Task.Delay(100);
 
-							var json = await UploadFileToAzure(fileName, user);
+							object json = await UploadFileToAzure(fileName, user);
 
 							if (json is not null)
 							{
-								this.DispatcherQueue.TryEnqueue(async () =>
+								_ = DispatcherQueue.TryEnqueue(async () =>
 								{
 									StatusTextBlock.Text = $"Successfully saved to the cloud of (FireBrowserDevs)";
 									await Task.Delay(100);
@@ -138,7 +138,7 @@ namespace FireBrowserWinUi3.Controls
 					}
 					else
 					{
-						this.DispatcherQueue.TryEnqueue(async () =>
+						_ = DispatcherQueue.TryEnqueue(async () =>
 						{
 							await Task.Delay(100);
 							StatusTextBlock.Text = $"Local backup created successfully in your Document folder as:\n{fileName}";
@@ -156,7 +156,7 @@ namespace FireBrowserWinUi3.Controls
 
 				File.Delete(backupFilePath);
 
-				Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
 			catch (Exception ex)
 			{
@@ -175,7 +175,7 @@ namespace FireBrowserWinUi3.Controls
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
 			AppService.IsAppGoingToClose = true;
-			this.Close();
+			Close();
 		}
 	}
 }

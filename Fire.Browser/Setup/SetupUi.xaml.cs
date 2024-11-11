@@ -8,21 +8,21 @@ public sealed partial class SetupUi : Page
 {
 	public SetupUi()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 		ColorTV.Text = "#000000";
 		ColorTB.Text = "#000000";
 	}
 
 	private void SetupUiBtn_Click(object sender, RoutedEventArgs e)
 	{
-		Frame.Navigate(typeof(SetupAlgemeen));
+		_ = Frame.Navigate(typeof(SetupAlgemeen));
 	}
 
 	private void AutoTog_Toggled(object sender, RoutedEventArgs e)
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.Auto = autoSettingValue;
 
 		}
@@ -51,7 +51,7 @@ public sealed partial class SetupUi : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.NtpDateTime = autoSettingValue; ;
 
 		}
@@ -79,9 +79,7 @@ public sealed partial class SetupUi : Page
 	private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		string selection = e.AddedItems[0].ToString();
-		int type = default;
-
-
+		int type;
 		switch (selection)
 		{
 			case "Default":
@@ -123,7 +121,7 @@ public sealed partial class SetupUi : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.IsSearchVisible = autoSettingValue; ;
 
 		}
@@ -134,7 +132,7 @@ public sealed partial class SetupUi : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.IsHistoryVisible = autoSettingValue; ;
 
 		}
@@ -145,7 +143,7 @@ public sealed partial class SetupUi : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.IsFavoritesVisible = autoSettingValue; ;
 
 		}
@@ -156,7 +154,7 @@ public sealed partial class SetupUi : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.IsTrendingVisible = autoSettingValue; ;
 
 		}

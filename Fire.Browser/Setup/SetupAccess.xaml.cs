@@ -15,7 +15,7 @@ namespace FireBrowserWinUi3
 	{
 		public SetupAccess()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			Langue.SelectedItem = "en-US";
 			Langue.Text = "en-US";
 		}
@@ -39,7 +39,7 @@ namespace FireBrowserWinUi3
 			{
 
 				// Assuming 'url' and 'selection' have been defined earlier
-				var autoSettingValue = toggleSwitch.IsOn;
+				bool autoSettingValue = toggleSwitch.IsOn;
 
 				AppService.AppSettings.LightMode = autoSettingValue;
 
@@ -49,27 +49,13 @@ namespace FireBrowserWinUi3
 		private void Langue_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			string selection = e.AddedItems[0].ToString();
-			string type;
-
-			switch (selection)
+			string type = selection switch
 			{
-				case "nl-NL":
-					type = "nl-NL";
-
-					break;
-				case "en-US":
-					type = "en-US";
-
-					break;
-
+				"nl-NL" => "nl-NL",
+				"en-US" => "en-US",
 				// Add other cases for different search engines.
-				default:
-					// Handle the case when selection doesn't match any of the predefined options.
-					type = "en-US";
-
-					break;
-			}
-
+				_ => "en-US",// Handle the case when selection doesn't match any of the predefined options.
+			};
 			if (!string.IsNullOrEmpty(type))
 			{
 				AppService.AppSettings.Lang = type;
@@ -78,7 +64,7 @@ namespace FireBrowserWinUi3
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			Frame.Navigate(typeof(SetupWebView));
+			_ = Frame.Navigate(typeof(SetupWebView));
 		}
 	}
 }

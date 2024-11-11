@@ -12,8 +12,8 @@ public sealed partial class SetupFinish : Page
 {
 	public SetupFinish()
 	{
-		this.InitializeComponent();
-		this.Loaded += SetupFinish_Loaded;
+		InitializeComponent();
+		Loaded += SetupFinish_Loaded;
 	}
 
 	private async void SetupFinish_Loaded(object sender, RoutedEventArgs e)
@@ -25,12 +25,14 @@ public sealed partial class SetupFinish : Page
 			IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
 			if (hWnd == IntPtr.Zero)
 			{
-				Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
 			else
 			{
 				if (Windowing.IsWindow(hWnd))
-					Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
+				{
+					_ = Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
+				}
 
 				AppService.ActiveWindow?.Close();
 			}
@@ -47,7 +49,7 @@ public sealed partial class SetupFinish : Page
 			}
 			else
 			{
-				Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
 		}
 	}

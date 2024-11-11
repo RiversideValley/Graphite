@@ -17,7 +17,7 @@ namespace FireBrowserWinUi3.Services
 	{
 
 		private User _user;
-		private TimeZoneInfo _userTimeZone;
+		private readonly TimeZoneInfo _userTimeZone;
 		public BitmapImage ProfileMicrosoft { get; set; }
 
 		public GraphService()
@@ -27,7 +27,7 @@ namespace FireBrowserWinUi3.Services
 
 		public Task CreateEventAsync(Event newEvent)
 		{
-			var graphClient = AppService.MsalService.GraphClient;
+			Microsoft.Graph.GraphServiceClient graphClient = AppService.MsalService.GraphClient;
 
 			return graphClient.Me.Events.PostAsync(newEvent);
 		}
@@ -36,8 +36,8 @@ namespace FireBrowserWinUi3.Services
 		{
 			public static string GetDevicePlatformAsync()
 			{
-				var analyticsInfo = AnalyticsInfo.VersionInfo.DeviceFamily;
-				var devicePlatform = analyticsInfo == "Windows.Desktop" ? "Desktop" :
+				string analyticsInfo = AnalyticsInfo.VersionInfo.DeviceFamily;
+				string devicePlatform = analyticsInfo == "Windows.Desktop" ? "Desktop" :
 									analyticsInfo == "Windows.Mobile" ? "Mobile" :
 									analyticsInfo == "Windows.Team" ? "HoloLens" :
 									analyticsInfo == "Windows.IoT" ? "IoT" :
@@ -48,9 +48,9 @@ namespace FireBrowserWinUi3.Services
 		}
 		public Task<EventCollectionResponse> GetCalendarForDateTimeRangeAsync(DateTime start, DateTime end, TimeZoneInfo timeZone)
 		{
-			var graphClient = AppService.MsalService.GraphClient;
+			Microsoft.Graph.GraphServiceClient graphClient = AppService.MsalService.GraphClient;
 
-			var timeZoneString = DeviceInfo.GetDevicePlatformAsync() == "Desktop" ?
+			string timeZoneString = DeviceInfo.GetDevicePlatformAsync() == "Desktop" ?
 				timeZone.StandardName : timeZone.Id;
 
 			return graphClient.Me
@@ -81,11 +81,8 @@ namespace FireBrowserWinUi3.Services
 
 				if (AppService.MsalService.IsSignedIn)
 				{
-					if (_user == null)
-					{
-						// Get the user, cache for subsequent calls
-						_user = await AppService.MsalService.GraphClient.Me.GetAsync();
-					}
+					// Get the user, cache for subsequent calls
+					_user ??= await AppService.MsalService.GraphClient.Me.GetAsync();
 				}
 				else
 				{
@@ -105,7 +102,7 @@ namespace FireBrowserWinUi3.Services
 
 		public async Task<Stream> GetUserPhotoAsync()
 		{
-			var graphClient = AppService.MsalService.GraphClient;
+			Microsoft.Graph.GraphServiceClient graphClient = AppService.MsalService.GraphClient;
 			Stream _userPhoto;
 
 			if (AppService.MsalService.IsSignedIn)
@@ -121,10 +118,10 @@ namespace FireBrowserWinUi3.Services
 				{
 					if (ProfileMicrosoft is null)
 					{
-						var memoryStream = new MemoryStream();
+						MemoryStream memoryStream = new();
 						await _userPhoto.CopyToAsync(memoryStream);
 						memoryStream.Position = 0;
-						var bitmapImage = new BitmapImage();
+						BitmapImage bitmapImage = new();
 						await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
 						ProfileMicrosoft = bitmapImage;
 
@@ -133,15 +130,13 @@ namespace FireBrowserWinUi3.Services
 				}
 				else
 				{
-					var memoryStream = new MemoryStream();
-					using (FileStream fileStream = new FileStream("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read))
-					{
-						await fileStream.CopyToAsync(memoryStream);
-						memoryStream.Position = 0;
-						var bitmapImage = new BitmapImage();
-						await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
-						ProfileMicrosoft = bitmapImage;
-					}
+					MemoryStream memoryStream = new();
+					using FileStream fileStream = new("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read);
+					await fileStream.CopyToAsync(memoryStream);
+					memoryStream.Position = 0;
+					BitmapImage bitmapImage = new();
+					await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+					ProfileMicrosoft = bitmapImage;
 
 				}
 			}

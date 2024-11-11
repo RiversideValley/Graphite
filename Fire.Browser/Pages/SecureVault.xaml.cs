@@ -12,7 +12,7 @@ namespace FireBrowserWinUi3.Pages
 	{
 		public SecureVault()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 	}
 }

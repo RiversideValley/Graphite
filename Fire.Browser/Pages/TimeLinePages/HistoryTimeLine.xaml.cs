@@ -25,7 +25,7 @@ public sealed partial class HistoryTimeLine : Page
 	{
 		try
 		{
-			var historyActions = new HistoryActions(_user.Username);
+			HistoryActions historyActions = new(_user.Username);
 			_browserHistory = await historyActions.GetAllHistoryItems();
 			BigTemp.ItemsSource = _browserHistory;
 		}
@@ -38,12 +38,15 @@ public sealed partial class HistoryTimeLine : Page
 	private void Page_Loaded(object sender, RoutedEventArgs e)
 	{
 		FetchBrowserHistory();
-		Ts.Focus(FocusState.Programmatic);
+		_ = Ts.Focus(FocusState.Programmatic);
 	}
 
 	private void FilterBrowserHistory(string searchText)
 	{
-		if (_browserHistory == null) return;
+		if (_browserHistory == null)
+		{
+			return;
+		}
 
 		// Filter and bind the browser history based on the search text
 		BigTemp.ItemsSource = new ObservableCollection<FireBrowserDatabase.HistoryItem>(
@@ -59,12 +62,15 @@ public sealed partial class HistoryTimeLine : Page
 
 	private async Task ClearDb()
 	{
-		var historyActions = new HistoryActions(_user.Username);
+		HistoryActions historyActions = new(_user.Username);
 		await historyActions.DeleteAllHistoryItems();
 		BigTemp.ItemsSource = null;
 	}
 
-	private async void Delete_Click(object sender, RoutedEventArgs e) => await ClearDb();
+	private async void Delete_Click(object sender, RoutedEventArgs e)
+	{
+		await ClearDb();
+	}
 
 	private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
 	{
@@ -76,8 +82,8 @@ public sealed partial class HistoryTimeLine : Page
 
 	private void ShowContextMenu(string selectedHistoryItem, FrameworkElement sender, Windows.Foundation.Point position)
 	{
-		var flyout = new MenuFlyout();
-		var deleteMenuItem = new MenuFlyoutItem
+		MenuFlyout flyout = new();
+		MenuFlyoutItem deleteMenuItem = new()
 		{
 			Text = "Delete This Record",
 			Icon = new FontIcon { Glyph = "\uE74D" }
@@ -85,7 +91,7 @@ public sealed partial class HistoryTimeLine : Page
 
 		deleteMenuItem.Click += async (s, args) =>
 		{
-			var historyActions = new HistoryActions(_user.Username);
+			HistoryActions historyActions = new(_user.Username);
 			await historyActions.DeleteHistoryItem(selectedHistoryItem);
 			RemoveHistoryItem(selectedHistoryItem);
 		};
@@ -98,10 +104,10 @@ public sealed partial class HistoryTimeLine : Page
 	{
 		if (BigTemp.ItemsSource is ObservableCollection<FireBrowserDatabase.HistoryItem> historyItems)
 		{
-			var itemToRemove = historyItems.FirstOrDefault(item => item.Url == selectedHistoryItem);
+			FireBrowserDatabase.HistoryItem itemToRemove = historyItems.FirstOrDefault(item => item.Url == selectedHistoryItem);
 			if (itemToRemove != null)
 			{
-				historyItems.Remove(itemToRemove);
+				_ = historyItems.Remove(itemToRemove);
 			}
 		}
 	}
@@ -109,10 +115,14 @@ public sealed partial class HistoryTimeLine : Page
 	private void BigTemp_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (e.AddedItems.Count > 0)
+		{
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 				if (e.AddedItems.FirstOrDefault() is FireBrowserDatabase.HistoryItem historyItem)
+				{
 					window.NavigateToUrl(historyItem.Url);
+				}
 			}
+		}
 	}
 }

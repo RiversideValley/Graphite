@@ -20,7 +20,7 @@ namespace FireBrowserWinUi3.Services.Models
 			Index = index;
 		}
 
-		public static List<SearchProviders> ProvidersList = new List<SearchProviders>
+		public static List<SearchProviders> ProvidersList = new()
 		{
 			new SearchProviders(new BitmapImage(new Uri("https://www.google.com/favicon.ico")), "https://www.google.com/search?q=", "Google", 0),
 			new SearchProviders(new BitmapImage(new Uri("https://www.bing.com/favicon.ico")), "https://www.bing.com/search?q=", "Bing", 1),
@@ -47,7 +47,7 @@ namespace FireBrowserWinUi3.Services.Models
 
 		public static string GetSearchProviderUrl(string providerName)
 		{
-			var provider = SearchProviders.ProvidersList
+			SearchProviders provider = SearchProviders.ProvidersList
 				.FirstOrDefault(p => p.ProviderName.Equals(providerName, StringComparison.OrdinalIgnoreCase));
 
 			return provider?.ProviderUrl ?? "https://www.google.com/search?q="; // Return a default URL if no match is found

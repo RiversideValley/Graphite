@@ -50,18 +50,18 @@ public partial class MainWindowViewModel : ObservableRecipient
 		IsMsLogin = true; // AppService.MsalService.IsSignedIn;
 		if (IsMsLogin && AppService.GraphService.ProfileMicrosoft is null)
 		{
-			using var stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
+			using Stream stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
 			if (stream == null)
 			{
 				MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
 				return;
 			}
 
-			using var memoryStream = new MemoryStream();
+			using MemoryStream memoryStream = new();
 			await stream.CopyToAsync(memoryStream);
 			memoryStream.Position = 0;
 
-			var bitmapImage = new BitmapImage();
+			BitmapImage bitmapImage = new();
 			await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
 			MsProfilePicture = bitmapImage;
 		}
@@ -75,9 +75,11 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private async Task LogOut()
 	{
 		if (MainView.TabWebView is not null)
+		{
 			MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/logout?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&post_logout_redirect_uri=https://www.bing.com");
+		}
 
-		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(10));
 		try
 		{
 			while (AppService.IsAppUserAuthenicated)
@@ -96,7 +98,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		{
 			AppService.IsAppUserAuthenicated = IsMsLogin = false;
 			MainView.NavigateToUrl("https://fireapp.msal/main.html");
-			MainView.NotificationQueue.Show("You've been logged out of Microsoft", 15000, "Authorization");
+			_ = MainView.NotificationQueue.Show("You've been logged out of Microsoft", 15000, "Authorization");
 			Console.WriteLine("The task was canceled due to timeout.");
 		}
 	}
@@ -106,25 +108,25 @@ public partial class MainWindowViewModel : ObservableRecipient
 	{
 		if (!AppService.MsalService.IsSignedIn)
 		{
-			var answer = await AppService.MsalService.SignInAsync();
+			Microsoft.Identity.Client.AuthenticationResult answer = await AppService.MsalService.SignInAsync();
 			if (answer is null)
 			{
-				MainView.NotificationQueue.Show("You must sign into the FireBrowser Application for cloudbackups!", 1000, "Backups");
+				_ = MainView.NotificationQueue.Show("You must sign into the FireBrowser Application for cloudbackups!", 1000, "Backups");
 				return;
 			}
 		}
 
-		var win = new UpLoadBackup
+		UpLoadBackup win = new()
 		{
 			ExtendsContentIntoTitleBar = true
 		};
 		win.AppWindow.SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.CompactOverlay);
-		var desktop = await Windowing.SizeWindow();
+		Windows.Graphics.SizeInt32? desktop = await Windowing.SizeWindow();
 		win.AppWindow.MoveAndResize(new(MainView.AppWindow.Position.X, 0, desktop.Value.Width / 2, desktop.Value.Height / 2));
 
-		var handle = WindowNative.GetWindowHandle(win);
-		Windowing.ShowWindow(handle, Windowing.WindowShowStyle.SW_SHOWDEFAULT);
-		Windowing.AnimateWindow(handle, 2000, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_ACTIVATE);
+		nint handle = WindowNative.GetWindowHandle(win);
+		_ = Windowing.ShowWindow(handle, Windowing.WindowShowStyle.SW_SHOWDEFAULT);
+		_ = Windowing.AnimateWindow(handle, 2000, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_ACTIVATE);
 		win.AppWindow?.ShowOnceWithRequestedStartupState();
 	}
 
@@ -139,7 +141,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		catch (Exception e)
 		{
 			ExceptionLogger.LogException(e);
-			Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
+			_ = Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
 		}
 	}
 
@@ -147,7 +149,9 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private void LoginToMicrosoft(Button sender)
 	{
 		if (!AppService.IsAppUserAuthenicated)
+		{
 			MainView.NavigateToUrl("https://fireapp.msal/main.html");
+		}
 		else
 		{
 			IsMsLogin = true;
@@ -159,7 +163,9 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private void ReceivedStatus(Message_Settings_Actions message)
 	{
 		if (message is null)
+		{
 			return;
+		}
 
 		switch (message.Status)
 		{
@@ -167,7 +173,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 				ShowLoginNotification();
 				break;
 			case EnumMessageStatus.Settings:
-				MainView.LoadUserSettings();
+				_ = MainView.LoadUserSettings();
 				break;
 			case EnumMessageStatus.Removed:
 				ShowRemovedNotification();
@@ -181,21 +187,29 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 
-	private void ShowErrorNotification(string payload) =>
+	private void ShowErrorNotification(string payload)
+	{
 		ShowNotification("FireBrowserWinUi3 Error", payload, InfoBarSeverity.Error, TimeSpan.FromSeconds(5));
+	}
 
-	private void ShowNotifyNotification(string payload) =>
+	private void ShowNotifyNotification(string payload)
+	{
 		ShowNotification("FireBrowserWinUi3 Information", payload, InfoBarSeverity.Informational, TimeSpan.FromSeconds(5));
+	}
 
-	private void ShowRemovedNotification() =>
+	private void ShowRemovedNotification()
+	{
 		ShowNotification("FireBrowserWinUi3", "User has been removed from FireBrowser!", InfoBarSeverity.Warning, TimeSpan.FromSeconds(3));
+	}
 
-	private void ShowLoginNotification() =>
+	private void ShowLoginNotification()
+	{
 		ShowNotification("FireBrowserWinUi3", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
+	}
 
 	private void ShowNotification(string title, string message, InfoBarSeverity severity, TimeSpan duration)
 	{
-		var note = new Notification
+		Notification note = new()
 		{
 			Title = $"{title}\n",
 			Message = message,
@@ -203,6 +217,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 			IsIconVisible = true,
 			Duration = duration
 		};
-		MainView.NotificationQueue.Show(note);
+		_ = MainView.NotificationQueue.Show(note);
 	}
 }

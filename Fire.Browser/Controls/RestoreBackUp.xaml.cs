@@ -19,9 +19,9 @@ public sealed partial class RestoreBackUp : Window
 
 	public RestoreBackUp()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 		InitializeWindow();
-		StartRestoreProcess().ConfigureAwait(false);
+		_ = StartRestoreProcess().ConfigureAwait(false);
 	}
 
 
@@ -54,7 +54,7 @@ public sealed partial class RestoreBackUp : Window
 		StatusTextBlock.Text = "Restoring backup...";
 		await Task.Delay(100);
 
-		await BackupManager.RestoreBackup();
+		_ = await BackupManager.RestoreBackup();
 
 		// Delete the restore file once done
 		string tempPath = Path.GetTempPath();
@@ -68,14 +68,14 @@ public sealed partial class RestoreBackUp : Window
 		StatusTextBlock.Text = "Backup restored successfully!";
 		await Task.Delay(100);
 
-		Microsoft.Windows.AppLifecycle.AppInstance.Restart(""); // Optionally restart the app if needed
+		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart(""); // Optionally restart the app if needed
 	}
 
 
 
 	private void InitializeWindow()
 	{
-		var hWnd = WindowNative.GetWindowHandle(this);
+		nint hWnd = WindowNative.GetWindowHandle(this);
 		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		appWindow = AppWindow.GetFromWindowId(windowId);
 
@@ -96,7 +96,7 @@ public sealed partial class RestoreBackUp : Window
 		{
 			titleBar = appWindow.TitleBar;
 			titleBar.ExtendsContentIntoTitleBar = true;
-			var btnColor = Colors.Transparent;
+			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.InactiveBackgroundColor = btnColor;
@@ -113,7 +113,7 @@ public sealed partial class RestoreBackUp : Window
 			CloseButtonText = "OK"
 		};
 
-		await errorDialog.ShowAsync();
-		this.Close();
+		_ = await errorDialog.ShowAsync();
+		Close();
 	}
 }

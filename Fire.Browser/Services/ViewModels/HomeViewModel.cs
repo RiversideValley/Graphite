@@ -66,9 +66,9 @@ public partial class HomeViewModel : ObservableRecipient
 	[ObservableProperty]
 	private Brush _brushNtp = new SolidColorBrush(Colors.Ivory);
 	[ObservableProperty]
-	UIElement _TeachingPoint;
+	private UIElement _TeachingPoint;
 	[ObservableProperty]
-	TrendingItem _trendingItem;
+	private TrendingItem _trendingItem;
 
 	[ObservableProperty]
 	private SearchProviders _SearchProvider;
@@ -150,12 +150,12 @@ public partial class HomeViewModel : ObservableRecipient
 
 	public ObservableCollection<FavItem> LoadFavorites()
 	{
-		ObservableCollection<FavItem> favorites = new ObservableCollection<FavItem>();
+		_ = new ObservableCollection<FavItem>();
 
 		try
 		{
-			FavManager fs = new FavManager();
-			favorites = fs.LoadFav().ToObservableCollection();
+			FavManager fs = new();
+			ObservableCollection<FavItem> favorites = fs.LoadFav().ToObservableCollection();
 
 			return favorites.ToObservableCollection();
 		}
@@ -189,7 +189,7 @@ public partial class HomeViewModel : ObservableRecipient
 
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
-			window.DispatcherQueue?.TryEnqueue(() =>
+			_ = (window.DispatcherQueue?.TryEnqueue(() =>
 			{
 
 				if (sender is Button btn)
@@ -203,19 +203,19 @@ public partial class HomeViewModel : ObservableRecipient
 							break;
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";
-							window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+							_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 							break;
 						case "History":
 							window.UrlBox.Text = "firebrowser://history";
-							window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+							_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 							break;
 						case "Favorites":
 							window.UrlBox.Text = "firebrowser://favorites";
-							window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+							_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 							break;
 					}
 				}
-			});
+			}));
 		}
 
 	}
@@ -230,7 +230,7 @@ public partial class HomeViewModel : ObservableRecipient
 	}
 	private void UpdateClock()
 	{
-		(NtpTimeText, NtpDateText) = (DateTime.Now.ToString("H:mm"), $"{DateTime.Today.DayOfWeek}, {DateTime.Today.ToString("MMMM d")}");
+		(NtpTimeText, NtpDateText) = (DateTime.Now.ToString("H:mm"), $"{DateTime.Today.DayOfWeek}, {DateTime.Today:MMMM d}");
 		OnPropertyChanged(nameof(NtpTimeText));
 		OnPropertyChanged(nameof(NtpDateText));
 	}

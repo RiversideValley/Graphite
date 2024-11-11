@@ -22,12 +22,12 @@ namespace FireBrowserWinUi3.Services
 	// Licensed under the MIT License.
 	public partial class MsalAuthService : ObservableObject, IAuthenticationService, IAuthenticationProvider
 	{
-		private Lazy<Task<IPublicClientApplication>> _pca;
+		private readonly Lazy<Task<IPublicClientApplication>> _pca;
 		public string _userIdentifier = string.Empty;
 		protected string ClientId { get; } = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
 		protected string[] scopes = ["User.Read"];
 
-		public GraphServiceClient GraphClient => new GraphServiceClient(this);
+		public GraphServiceClient GraphClient => new(this);
 
 		private bool _isSignedIn = false;
 		public bool IsSignedIn
@@ -52,7 +52,7 @@ namespace FireBrowserWinUi3.Services
 		/// </remarks>
 		public async Task<bool> IsAuthenticatedAsync()
 		{
-			var silentResult = await GetTokenSilentlyAsync();
+			AuthenticationResult silentResult = await GetTokenSilentlyAsync();
 			IsSignedIn = silentResult is not null;
 			return IsSignedIn;
 		}
@@ -61,13 +61,10 @@ namespace FireBrowserWinUi3.Services
 		{
 			try
 			{
-				var result = await GetTokenSilentlyAsync();
-				if (result == null)
-				{
-					// If silent attempt didn't work, try an
-					// interactive sign in
-					result = await GetTokenInteractivelyAsync();
-				}
+				AuthenticationResult result = await GetTokenSilentlyAsync();
+				// If silent attempt didn't work, try an
+				// interactive sign in
+				result ??= await GetTokenInteractivelyAsync();
 
 				IsSignedIn = result is not null;
 				//return IsSignedIn;
@@ -85,11 +82,11 @@ namespace FireBrowserWinUi3.Services
 
 		public async Task SignOutAsync()
 		{
-			var pca = await _pca.Value;
+			IPublicClientApplication pca = await _pca.Value;
 			// Get all accounts (there should only be one)
 			// and remove them from the cache
-			var accounts = await pca.GetAccountsAsync();
-			foreach (var account in accounts)
+			IEnumerable<IAccount> accounts = await pca.GetAccountsAsync();
+			foreach (IAccount account in accounts)
 			{
 				await pca.RemoveAsync(account);
 			}
@@ -113,14 +110,18 @@ namespace FireBrowserWinUi3.Services
 			if (AppService.ActiveWindow is not null)
 			{
 				if (Windowing.IsWindow(WindowNative.GetWindowHandle(AppService.ActiveWindow)))
+				{
 					mainWnd = WindowNative.GetWindowHandle(AppService.ActiveWindow);
+				}
 			}
 
 			if (App.Current.m_window is not null)
 			{
 
 				if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
+				{
 					mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
+				}
 			}
 			else
 			{
@@ -129,7 +130,7 @@ namespace FireBrowserWinUi3.Services
 
 
 
-			var builder = PublicClientApplicationBuilder
+			PublicClientApplicationBuilder builder = PublicClientApplicationBuilder
 								.Create(ClientId)
 								.WithSsoPolicy()
 								.WithCacheOptions(new CacheOptions(true))
@@ -139,16 +140,22 @@ namespace FireBrowserWinUi3.Services
 
 			builder = AddPlatformConfiguration(builder);
 
-			var pca = builder.Build();
+			IPublicClientApplication pca = builder.Build();
 			await RegisterMsalCacheAsync(pca.UserTokenCache);
 			//MsalCacheHelper.EnableCache(pca.UserTokenCache);
 
 			return pca;
 
 		}
-		private Task RegisterMsalCacheAsync(ITokenCache tokenCache) => Task.CompletedTask;
+		private Task RegisterMsalCacheAsync(ITokenCache tokenCache)
+		{
+			return Task.CompletedTask;
+		}
 
-		private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder) => builder;
+		private PublicClientApplicationBuilder AddPlatformConfiguration(PublicClientApplicationBuilder builder)
+		{
+			return builder;
+		}
 
 		public static class MsalCacheHelper
 		{
@@ -182,14 +189,14 @@ namespace FireBrowserWinUi3.Services
 		{
 			try
 			{
-				var pca = await _pca.Value;
+				IPublicClientApplication pca = await _pca.Value;
 
 				if (string.IsNullOrEmpty(_userIdentifier))
 				{
 					// If no saved user ID, then get the first account.
 					// There should only be one account in the cache anyway.
-					var accounts = await pca.GetAccountsAsync();
-					var account = accounts.FirstOrDefault();
+					IEnumerable<IAccount> accounts = await pca.GetAccountsAsync();
+					IAccount account = accounts.FirstOrDefault();
 
 					// Save the user ID so this is easier next time
 					_userIdentifier = account?.HomeAccountId.Identifier ?? string.Empty;
@@ -209,12 +216,12 @@ namespace FireBrowserWinUi3.Services
 		{
 			try
 			{
-				var pca = await _pca.Value;
+				IPublicClientApplication pca = await _pca.Value;
 
-				var account = await GetUserAccountAsync();
-				if (account == null) return null;
-
-				return await pca.AcquireTokenSilent(scopes, account)
+				IAccount account = await GetUserAccountAsync();
+				return account == null
+					? null
+					: await pca.AcquireTokenSilent(scopes, account)
 					.ExecuteAsync();
 			}
 			catch (MsalUiRequiredException)
@@ -228,9 +235,9 @@ namespace FireBrowserWinUi3.Services
 		/// </summary>
 		private async Task<AuthenticationResult> GetTokenInteractivelyAsync()
 		{
-			var pca = await _pca.Value;
+			IPublicClientApplication pca = await _pca.Value;
 
-			var result = await pca.AcquireTokenInteractive(scopes)
+			AuthenticationResult result = await pca.AcquireTokenInteractive(scopes)
 				.ExecuteAsync();
 
 			// Store the user ID to make account retrieval easier
@@ -246,12 +253,9 @@ namespace FireBrowserWinUi3.Services
 			if (request.URI.Host == "graph.microsoft.com")
 			{
 				// First try to get the token silently
-				var result = await GetTokenSilentlyAsync();
-				if (result == null)
-				{
-					// If silent acquisition fails, try interactive
-					result = await GetTokenInteractivelyAsync();
-				}
+				AuthenticationResult result = await GetTokenSilentlyAsync();
+				// If silent acquisition fails, try interactive
+				result ??= await GetTokenInteractivelyAsync();
 
 				request.Headers.Add("Authorization", $"Bearer {result.AccessToken}");
 			}

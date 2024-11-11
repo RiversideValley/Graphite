@@ -22,9 +22,9 @@ namespace FireBrowserWinUi3.Pages.Patch
 		{
 			Instance = this;
 			ViewModel = new();
-			this.InitializeComponent();
+			InitializeComponent();
 
-			ShowWindowSlide().ConfigureAwait(false);
+			_ = ShowWindowSlide().ConfigureAwait(false);
 		}
 
 
@@ -34,16 +34,16 @@ namespace FireBrowserWinUi3.Pages.Patch
 
 		private async Task ShowWindowSlide()
 		{
-			var desktop = await Windowing.SizeWindow();
+			Windows.Graphics.SizeInt32? desktop = await Windowing.SizeWindow();
 			// Get screen dimensions
-			screenWidth = (int)desktop.Value.Width;
-			screenHeight = (int)desktop.Value.Height;
+			screenWidth = desktop.Value.Width;
+			screenHeight = desktop.Value.Height;
 
 			// Get window dimensions
-			windowWidth = (int)this.AppWindow.Size.Width;
-			windowHeight = (int)this.AppWindow.Size.Height;
+			windowWidth = AppWindow.Size.Width;
+			windowHeight = AppWindow.Size.Height;
 
-			var windowHandle = WindowNative.GetWindowHandle(this);
+			nint windowHandle = WindowNative.GetWindowHandle(this);
 
 			timer = new DispatcherTimer();
 			timer.Interval = TimeSpan.FromMilliseconds(40); // Adjust the interval for smoother animation
@@ -70,20 +70,20 @@ namespace FireBrowserWinUi3.Pages.Patch
 			}
 
 			// Move the window to the new position
-			Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, newY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
+			_ = Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, newY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
 
 			// Stop the animation after a while
 			if (bounceCount > 30)
 			{
 				timer.Stop();
 				// Ensure window ends at the center position
-				Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, endY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
+				_ = Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, endY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
 
 			}
 		}
 		private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
 		{
-			var dataPackage = new DataPackage();
+			DataPackage dataPackage = new();
 			dataPackage.SetText(ViewModel.FileSelected.BlobUrl);
 			Clipboard.SetContent(dataPackage);
 		}

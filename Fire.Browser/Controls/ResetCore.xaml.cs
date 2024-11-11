@@ -16,15 +16,15 @@ public sealed partial class ResetCore : Window
 
 	public ResetCore()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 		InitializeWindow();
 		Thread.Sleep(1000);
-		HandleDeletion().ConfigureAwait(false);
+		_ = HandleDeletion().ConfigureAwait(false);
 	}
 
 	private void InitializeWindow()
 	{
-		var hWnd = WindowNative.GetWindowHandle(this);
+		nint hWnd = WindowNative.GetWindowHandle(this);
 		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		appWindow = AppWindow.GetFromWindowId(windowId);
 
@@ -43,7 +43,7 @@ public sealed partial class ResetCore : Window
 		{
 			titleBar = appWindow.TitleBar;
 			titleBar.ExtendsContentIntoTitleBar = true;
-			var btnColor = Colors.Transparent;
+			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.InactiveBackgroundColor = btnColor;
@@ -73,7 +73,7 @@ public sealed partial class ResetCore : Window
 
 	private Task RestartApplication()
 	{
-		Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 		return Task.CompletedTask;
 	}
 }

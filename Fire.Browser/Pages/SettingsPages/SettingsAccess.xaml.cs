@@ -28,7 +28,7 @@ public sealed partial class SettingsAccess : Page
 
 	private void ShowSupportedLanguagesAndGenders()
 	{
-		var allVoices = SpeechSynthesizer.AllVoices;
+		IReadOnlyList<VoiceInformation> allVoices = SpeechSynthesizer.AllVoices;
 
 		PopulateComboBox(Langue, allVoices.Select(v => v.Language).Distinct(), SettingsService.CoreSettings.Lang);
 		PopulateComboBox(Gender, allVoices.Select(v => v.Gender.ToString()).Distinct(), SettingsService.CoreSettings.Gender);
@@ -68,7 +68,7 @@ public sealed partial class SettingsAccess : Page
 
 	private async void InitializeStartupToggle()
 	{
-		var startup = await StartupTask.GetAsync("FireBrowserWinUiStartUp");
+		StartupTask startup = await StartupTask.GetAsync("FireBrowserWinUiStartUp");
 		UpdateToggleState(startup.State);
 	}
 
@@ -80,7 +80,7 @@ public sealed partial class SettingsAccess : Page
 
 	private async Task ToggleLaunchOnStartup(bool enable)
 	{
-		var startup = await StartupTask.GetAsync("FireBrowserWinUiStartUp");
+		StartupTask startup = await StartupTask.GetAsync("FireBrowserWinUiStartUp");
 
 		switch (startup.State)
 		{
@@ -88,7 +88,7 @@ public sealed partial class SettingsAccess : Page
 				startup.Disable();
 				break;
 			case StartupTaskState.Disabled when enable:
-				var updatedState = await startup.RequestEnableAsync();
+				StartupTaskState updatedState = await startup.RequestEnableAsync();
 				UpdateToggleState(updatedState);
 				break;
 			case StartupTaskState.DisabledByUser when enable:
@@ -102,13 +102,13 @@ public sealed partial class SettingsAccess : Page
 
 	private async Task ShowContentDialogAsync(string title, string content = null)
 	{
-		var dialog = new ContentDialog
+		ContentDialog dialog = new()
 		{
 			Title = title,
 			Content = content,
 			PrimaryButtonText = "OK"
 		};
-		await dialog.ShowAsync();
+		_ = await dialog.ShowAsync();
 	}
 
 	private async void LaunchOnStartupToggle_Click(object sender, RoutedEventArgs e)
@@ -149,7 +149,10 @@ public sealed partial class SettingsAccess : Page
 		try
 		{
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
-			if (debugMessage != null) Debug.WriteLine(debugMessage);
+			if (debugMessage != null)
+			{
+				Debug.WriteLine(debugMessage);
+			}
 		}
 		catch (Exception ex)
 		{

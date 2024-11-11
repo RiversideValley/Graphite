@@ -14,7 +14,10 @@ namespace FireBrowserWinUi3
 	{
 		private string selectedImageName = "clippy.png";
 
-		public SetupUser() => InitializeComponent();
+		public SetupUser()
+		{
+			InitializeComponent();
+		}
 
 		private void ProfileImage_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -25,29 +28,33 @@ namespace FireBrowserWinUi3
 			}
 		}
 
-		private void UserName_TextChanged(object sender, TextChangedEventArgs e) =>
+		private void UserName_TextChanged(object sender, TextChangedEventArgs e)
+		{
 			UsrBox.Text = UserName.Text;
+		}
 
-		private async void Create_Click(object sender, RoutedEventArgs e) =>
+		private async void Create_Click(object sender, RoutedEventArgs e)
+		{
 			await CreateUserAndNavigate();
+		}
 
 		private async Task CreateUserAndNavigate()
 		{
 			await CreateUserOnStartup();
-			Frame.Navigate(typeof(SetupUi));
+			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
 		private async Task CreateUserOnStartup()
 		{
-			Fire.Browser.Core.User newUser = new Fire.Browser.Core.User
+			Fire.Browser.Core.User newUser = new()
 			{
 				Username = UserName.Text,
 			};
 
-			List<Fire.Browser.Core.User> users = new List<Fire.Browser.Core.User> { newUser }; UserFolderManager.CreateUserFolders(newUser);
+			List<Fire.Browser.Core.User> users = new() { newUser }; UserFolderManager.CreateUserFolders(newUser);
 			UserDataManager.SaveUsers(users);
 			AuthService.AddUser(newUser);
-			AuthService.Authenticate(newUser.Username);
+			_ = AuthService.Authenticate(newUser.Username);
 
 			await CopyImageToUserDirectory();
 		}
@@ -56,10 +63,10 @@ namespace FireBrowserWinUi3
 		{
 			try
 			{
-				var destinationFolder = await StorageFolder.GetFolderFromPathAsync(
+				StorageFolder destinationFolder = await StorageFolder.GetFolderFromPathAsync(
 					Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username));
-				var imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Assets/Assets/{selectedImageName}"));
-				await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
+				StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Assets/Assets/{selectedImageName}"));
+				_ = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
 			}
 			catch (Exception ex)
 			{

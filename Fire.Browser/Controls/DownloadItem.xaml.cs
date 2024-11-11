@@ -16,8 +16,8 @@ namespace FireBrowserWinUi3.Controls;
 
 public sealed partial class DownloadItem : ListViewItem
 {
-	private CoreWebView2DownloadOperation _downloadOperation;
-	private string _filePath;
+	private readonly CoreWebView2DownloadOperation _downloadOperation;
+	private readonly string _filePath;
 
 	private int Progress { get; set; } = 0;
 	private string EstimatedEnd { get; set; } = string.Empty;
@@ -25,7 +25,7 @@ public sealed partial class DownloadItem : ListViewItem
 
 	public DownloadItem(string filepath)
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 
 		_filePath = filepath;
 		fileName.Text = Path.GetFileName(_filePath);
@@ -39,7 +39,7 @@ public sealed partial class DownloadItem : ListViewItem
 
 	public DownloadItem(CoreWebView2DownloadOperation downloadOperation)
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 
 		_downloadOperation = downloadOperation;
 		_filePath = _downloadOperation.ResultFilePath;
@@ -106,8 +106,8 @@ public sealed partial class DownloadItem : ListViewItem
 	{
 		await Task.Delay(1000);
 
-		downloadOperation.GetType().GetMethod("OnDownloadStateChange", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-			?.Invoke(downloadOperation, new object[] { CoreWebView2DownloadState.Completed });
+		_ = (downloadOperation.GetType().GetMethod("OnDownloadStateChange", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+			?.Invoke(downloadOperation, new object[] { CoreWebView2DownloadState.Completed }));
 
 		if (File.Exists(_filePath))
 		{
@@ -120,15 +120,15 @@ public sealed partial class DownloadItem : ListViewItem
 	{
 		try
 		{
-			var icon = GetSmallFileIcon(_filePath);
+			Icon icon = GetSmallFileIcon(_filePath);
 
 			if (icon != null)
 			{
-				using MemoryStream stream = new MemoryStream();
+				using MemoryStream stream = new();
 				icon.Save(stream);
 				stream.Position = 0;
 
-				BitmapImage bitmapImage = new BitmapImage();
+				BitmapImage bitmapImage = new();
 				bitmapImage.SetSource(stream.AsRandomAccessStream());
 				iconImage.Source = bitmapImage;
 			}
@@ -141,13 +141,13 @@ public sealed partial class DownloadItem : ListViewItem
 
 	private Icon GetSmallFileIcon(string filePath)
 	{
-		SHFILEINFO shinfo = new SHFILEINFO();
+		SHFILEINFO shinfo = new();
 		IntPtr hImgSmall = Win32.SHGetFileInfo(filePath, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), Win32.SHGFI_ICON | Win32.SHGFI_SMALLICON);
 
 		if (hImgSmall != IntPtr.Zero)
 		{
 			Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
-			Win32.DestroyIcon(shinfo.hIcon);
+			_ = Win32.DestroyIcon(shinfo.hIcon);
 			return icon;
 		}
 
@@ -158,7 +158,7 @@ public sealed partial class DownloadItem : ListViewItem
 	{
 		if (_downloadOperation?.State == CoreWebView2DownloadState.Completed || _downloadOperation == null)
 		{
-			FlyoutShowOptions flyoutShowOptions = new FlyoutShowOptions
+			FlyoutShowOptions flyoutShowOptions = new()
 			{
 				Position = e.GetPosition(this)
 			};

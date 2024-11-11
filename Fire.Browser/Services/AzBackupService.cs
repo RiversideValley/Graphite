@@ -27,7 +27,7 @@ namespace FireBrowserWinUi3.Services
 	{
 		private string AzureStorageConnectionString { get; set; }
 
-		protected private void SET_AZConnectionsString(string connString)
+		private protected void SET_AZConnectionsString(string connString)
 		{
 			Windows.Storage.ApplicationData.Current.LocalSettings.Values[nameof(AzureStorageConnectionString)] = AzureStorageConnectionString = connString;
 		}
@@ -58,7 +58,7 @@ namespace FireBrowserWinUi3.Services
 		public async Task<Fire.Browser.Core.User> GetUserInformationAsync()
 		{
 			uint size = 1024;
-			StringBuilder name = new StringBuilder((int)size);
+			StringBuilder name = new((int)size);
 			Fire.Browser.Core.User user;
 
 			try
@@ -68,9 +68,9 @@ namespace FireBrowserWinUi3.Services
                  *  //var principal = DisplayCurrentUserInformation().ConfigureAwait(false);
                  */
 
-				await AppService.MsalService.SignInAsync();
+				_ = await AppService.MsalService.SignInAsync();
 
-				var azGraphUser = await AppService.MsalService.GetUserAccountAsync();
+				IAccount azGraphUser = await AppService.MsalService.GetUserAccountAsync();
 
 				if (azGraphUser is IAccount auth)
 				{
@@ -121,13 +121,13 @@ namespace FireBrowserWinUi3.Services
 		{
 			try
 			{
-				var serviceClient = new TableServiceClient(ConnString);
-				var tableClient = serviceClient.GetTableClient(tableName);
+				TableServiceClient serviceClient = new(ConnString);
+				TableClient tableClient = serviceClient.GetTableClient(tableName);
 
 				// Create the table if it doesn't exist
-				await tableClient.CreateIfNotExistsAsync();
+				_ = await tableClient.CreateIfNotExistsAsync();
 
-				var entity = new UserEntity
+				UserEntity entity = new()
 				{
 					PartitionKey = "Users",
 					RowKey = Guid.NewGuid().ToString(),
@@ -137,7 +137,7 @@ namespace FireBrowserWinUi3.Services
 					WindowUserName = winUserName
 				};
 
-				await tableClient.UpsertEntityAsync(entity);
+				_ = await tableClient.UpsertEntityAsync(entity);
 			}
 			catch (Exception ex)
 			{
@@ -150,12 +150,12 @@ namespace FireBrowserWinUi3.Services
 		{
 			try
 			{
-				var serviceClient = new TableServiceClient(ConnString);
-				var tableClient = serviceClient.GetTableClient(TableName);
+				TableServiceClient serviceClient = new(ConnString);
+				TableClient tableClient = serviceClient.GetTableClient(TableName);
 				// Create the table if it doesn't exist
-				var files = new List<UserEntity>();
+				List<UserEntity> files = new();
 
-				foreach (var page in tableClient.Query<UserEntity>().Where(item => item.Email == email).ToList())
+				foreach (UserEntity page in tableClient.Query<UserEntity>().Where(item => item.Email == email).ToList())
 				{
 					files.Add(page);
 				}
@@ -174,10 +174,13 @@ namespace FireBrowserWinUi3.Services
 		{
 			try
 			{
-				var result = await UploadFileToBlobAsync(blobName, fileStream);
+				ResponseAZFILE result = await UploadFileToBlobAsync(blobName, fileStream);
 
 				if (result is not null)
+				{
 					await InsertOrUpdateEntityAsync(TableName, fireUser.Email ?? fireUser.WindowsUserName, result.Url.ToString(), blobName, fireUser.WindowsUserName);
+				}
+
 				return result;
 			}
 			catch (Exception ex)
@@ -197,11 +200,11 @@ namespace FireBrowserWinUi3.Services
 			{
 
 
-				var response = new object();
-				var fileName = blobName;
+				object response = new();
+				string fileName = blobName;
 				// Upload the file to Azure Blob Storage
-				var LocalFilePath = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), blobName));
-				BlobServiceClient _blobServiceClient = new BlobServiceClient(ConnString);
+				FileInfo LocalFilePath = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), blobName));
+				BlobServiceClient _blobServiceClient = new(ConnString);
 				BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
 				BlobClient blockBlob = containerClient.GetBlobClient(blobName);
 				Azure.Storage.Blobs.Models.BlobProperties blobProperties = await blockBlob.GetPropertiesAsync();
@@ -218,24 +221,20 @@ namespace FireBrowserWinUi3.Services
 						// Download the blob if hashes don't match
 						try
 						{
-							using (var stream = new MemoryStream())
-							{
-								await blockBlob.DownloadToAsync(stream);
-								stream.Position = 0;
-								using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
-								{
-									await stream.CopyToAsync(fs_ms);
-								}
-							}
+							using MemoryStream stream = new();
+							_ = await blockBlob.DownloadToAsync(stream);
+							stream.Position = 0;
+							using FileStream fs_ms = new(LocalFilePath.FullName, FileMode.Create, FileAccess.Write);
+							await stream.CopyToAsync(fs_ms);
 						}
 						catch (UnauthorizedAccessException ex)
 						{
-							UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
+							_ = UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
 							return null;
 						}
 						catch (Exception ex)
 						{
-							UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured : {ex.Message}");
+							_ = UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured : {ex.Message}");
 							return null;
 						}
 
@@ -243,32 +242,30 @@ namespace FireBrowserWinUi3.Services
 					}
 					else
 					{
-						UpLoadBackup.Instance.NotificationQueue.Show($"File is up to date", 3000, "File Notificaton");
+						_ = UpLoadBackup.Instance.NotificationQueue.Show($"File is up to date", 3000, "File Notificaton");
 					}
 				}
 				else
 				{
 					try
 					{
-						using (var stream = new MemoryStream())
+						using MemoryStream stream = new();
+						_ = await blockBlob.DownloadToAsync(stream);
+						stream.Position = 0;
+						using (FileStream fs_ms = new(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
 						{
-							await blockBlob.DownloadToAsync(stream);
-							stream.Position = 0;
-							using (var fs_ms = new FileStream(LocalFilePath.FullName, FileMode.Create, FileAccess.Write))
-							{
-								await stream.CopyToAsync(fs_ms);
-							}
-							Console.WriteLine("Blob downloaded and saved to file.");
+							await stream.CopyToAsync(fs_ms);
 						}
+						Console.WriteLine("Blob downloaded and saved to file.");
 					}
 					catch (UnauthorizedAccessException ex)
 					{
-						UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
+						_ = UpLoadBackup.Instance.NotificationQueue.Show($"Access denied: {ex.Message}");
 						return null;
 					}
 					catch (Exception ex)
 					{
-						UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured:\n{ex.Message}");
+						_ = UpLoadBackup.Instance.NotificationQueue.Show($"Exception occured:\n{ex.Message}");
 						return null;
 					}
 
@@ -288,37 +285,33 @@ namespace FireBrowserWinUi3.Services
 
 		private string ComputeMD5Hash(string filePath)
 		{
-			using (var md5 = MD5.Create())
-			{
-				using (var stream = File.OpenRead(filePath))
-				{
-					var hash = md5.ComputeHash(stream);
-					return Convert.ToBase64String(hash);
-				}
-			}
+			using MD5 md5 = MD5.Create();
+			using FileStream stream = File.OpenRead(filePath);
+			byte[] hash = md5.ComputeHash(stream);
+			return Convert.ToBase64String(hash);
 		}
 		public async Task<ResponseAZFILE> UploadFileToBlobAsync(string blobName, IRandomAccessStream fileStream)
 		{
 			try
 			{
-				var storageAccount = CloudStorageAccount.Parse(ConnString);
-				var blobClient = storageAccount.CreateCloudBlobClient();
-				var container = blobClient.GetContainerReference("firebackups");
-				var response = new object();
-				var fileName = blobName;
+				CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConnString);
+				CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+				CloudBlobContainer container = blobClient.GetContainerReference("firebackups");
+				object response = new();
+				string fileName = blobName;
 				// Upload the file to Azure Blob Storage
-				var blockBlob = container.GetBlockBlobReference(fileName);
+				CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
 
 				await blockBlob.UploadFromStreamAsync(fileStream.AsStream());
-				var blob = container.GetBlockBlobReference(fileName);
+				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
 
-				var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
+				string sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
 				{
 					Permissions = SharedAccessBlobPermissions.Read,
 					SharedAccessExpiryTime = DateTime.UtcNow.AddHours(1) // Token valid for 1 hour
 				});
 
-				var sasUrl = blockBlob.Uri.AbsoluteUri + sasToken; //blockBlob.Uri.AbsoluteUri
+				string sasUrl = blockBlob.Uri.AbsoluteUri + sasToken; //blockBlob.Uri.AbsoluteUri
 
 				return new ResponseAZFILE(blobName, sasUrl);
 
@@ -357,7 +350,7 @@ namespace FireBrowserWinUi3.Services
 			try
 			{
 				WindowsIdentity windowsIdentity = WindowsIdentity.GetCurrent();
-				WindowsPrincipal principal = new WindowsPrincipal(windowsIdentity);
+				WindowsPrincipal principal = new(windowsIdentity);
 
 				string userName = principal.Identity.Name;
 				string userSID = windowsIdentity.User.Value;
@@ -372,7 +365,7 @@ namespace FireBrowserWinUi3.Services
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error retrieving user information: {ex.Message}");
-				Task.FromException(ex);
+				_ = Task.FromException(ex);
 			}
 
 			return null;
@@ -384,16 +377,15 @@ namespace FireBrowserWinUi3.Services
 
 
 			IntPtr hProcess = GetCurrentProcess();
-			IntPtr hToken;
 
-			if (OpenProcessToken(hProcess, TOKEN_READ, out hToken))
+			if (OpenProcessToken(hProcess, TOKEN_READ, out nint hToken))
 			{
 				// Use the WindowsIdentity class to get user information
-				WindowsIdentity winId = new WindowsIdentity(hToken);
+				WindowsIdentity winId = new(hToken);
 				//var securityIdentifier = new SecurityIdentifier(winId.User.Value.ToString());
 				//var sidBytes = new byte[securityIdentifier.BinaryLength];
 				//securityIdentifier.GetBinaryForm(sidBytes, 0);
-				SecurityIdentifier sid = new SecurityIdentifier(winId.User.Value.ToString());
+				SecurityIdentifier sid = new(winId.User.Value.ToString());
 
 				// Translate the SID to a NTAccount
 				NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
@@ -456,9 +448,9 @@ namespace FireBrowserWinUi3.Services
 		}
 		public static UserNames GetAllUserNames()
 		{
-			var userNames = new UserNames();
+			UserNames userNames = new();
 			uint size = 1024;
-			StringBuilder name = new StringBuilder((int)size);
+			StringBuilder name = new((int)size);
 
 			userNames.Unknown = GetUserName(NameFormats.NameUnknown, name, ref size);
 			userNames.FullyQualifiedDN = GetUserName(NameFormats.NameFullyQualifiedDN, name, ref size);
@@ -476,16 +468,9 @@ namespace FireBrowserWinUi3.Services
 
 		private static string GetUserName(int nameFormat, StringBuilder name, ref uint size)
 		{
-			name.Clear();
+			_ = name.Clear();
 			size = 1024;
-			if (GetUserNameEx(nameFormat, name, ref size))
-			{
-				return name.ToString();
-			}
-			else
-			{
-				return $"Error: {Marshal.GetLastWin32Error()}";
-			}
+			return GetUserNameEx(nameFormat, name, ref size) ? name.ToString() : $"Error: {Marshal.GetLastWin32Error()}";
 		}
 		#endregion
 

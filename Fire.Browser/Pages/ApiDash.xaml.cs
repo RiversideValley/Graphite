@@ -27,7 +27,7 @@ namespace FireBrowserWinUi3.Pages
 			{
 				ApiItems = new ObservableCollection<ApiItem>
 				{
-					new ApiItem { Name = "Vault Api", Description = "Connection To Vault", Status = "Inactive", StatusColor = new SolidColorBrush(Colors.Red) },
+					new() { Name = "Vault Api", Description = "Connection To Vault", Status = "Inactive", StatusColor = new SolidColorBrush(Colors.Red) },
                     //new ApiItem { Name = "Services Api", Description = "Connection To Services", Status = "Inactive", StatusColor = new SolidColorBrush(Colors.Red) },
                     //new ApiItem { Name = "Data Api", Description = "Connection To Data", Status = "Inactive", StatusColor = new SolidColorBrush(Colors.Red) },
                     //new ApiItem { Name = "Account Api", Description = "Connection To Account", Status = "Inactive", StatusColor = new SolidColorBrush(Colors.Red) },
@@ -43,21 +43,19 @@ namespace FireBrowserWinUi3.Pages
 
 				try
 				{
-					using (ServiceController sc = new ServiceController(serviceName))
-					{
-						bool isRunning = sc.Status == ServiceControllerStatus.Running;
+					using ServiceController sc = new(serviceName);
+					bool isRunning = sc.Status == ServiceControllerStatus.Running;
 
-						foreach (var item in ApiItems)
-						{
-							item.Status = isRunning ? "Active" : "Inactive";
-							item.StatusColor = new SolidColorBrush(isRunning ? Colors.Green : Colors.Red);
-						}
+					foreach (ApiItem item in ApiItems)
+					{
+						item.Status = isRunning ? "Active" : "Inactive";
+						item.StatusColor = new SolidColorBrush(isRunning ? Colors.Green : Colors.Red);
 					}
 				}
 				catch
 				{
 					// Handle errors (e.g., service not found)
-					foreach (var item in ApiItems)
+					foreach (ApiItem item in ApiItems)
 					{
 						item.Status = "Unknown";
 						item.StatusColor = new SolidColorBrush(Colors.Gray);
@@ -68,22 +66,20 @@ namespace FireBrowserWinUi3.Pages
 
 		public ApiDash()
 		{
-			this.InitializeComponent();
-			this.DataContext = new ApiDashViewModel();
+			InitializeComponent();
+			DataContext = new ApiDashViewModel();
 		}
 
 		private void StartServiceButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				using (ServiceController sc = new ServiceController("SecureVaultService"))
+				using ServiceController sc = new("SecureVaultService");
+				if (sc.Status is ServiceControllerStatus.Stopped or ServiceControllerStatus.StopPending)
 				{
-					if (sc.Status == ServiceControllerStatus.Stopped || sc.Status == ServiceControllerStatus.StopPending)
-					{
-						sc.Start();
-						sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
-						((ApiDashViewModel)DataContext).UpdateServiceStatus();
-					}
+					sc.Start();
+					sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+					((ApiDashViewModel)DataContext).UpdateServiceStatus();
 				}
 			}
 			catch (Exception ex)
@@ -97,14 +93,12 @@ namespace FireBrowserWinUi3.Pages
 		{
 			try
 			{
-				using (ServiceController sc = new ServiceController("SecureVaultService"))
+				using ServiceController sc = new("SecureVaultService");
+				if (sc.Status is ServiceControllerStatus.Running or ServiceControllerStatus.StartPending)
 				{
-					if (sc.Status == ServiceControllerStatus.Running || sc.Status == ServiceControllerStatus.StartPending)
-					{
-						sc.Stop();
-						sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
-						((ApiDashViewModel)DataContext).UpdateServiceStatus();
-					}
+					sc.Stop();
+					sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
+					((ApiDashViewModel)DataContext).UpdateServiceStatus();
 				}
 			}
 			catch

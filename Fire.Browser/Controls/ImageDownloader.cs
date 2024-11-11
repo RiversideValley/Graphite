@@ -16,7 +16,7 @@ public class ImageDownloader
 	{
 		try
 		{
-			RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
+			RenderTargetBitmap renderTargetBitmap = new();
 			await renderTargetBitmap.RenderAsync(gridToSave);
 
 			StorageFolder customFolder = await StorageFolder.GetFolderFromPathAsync(customFolderPath);

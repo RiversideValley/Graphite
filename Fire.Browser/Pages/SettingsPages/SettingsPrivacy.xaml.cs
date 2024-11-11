@@ -8,12 +8,12 @@ namespace FireBrowserWinUi3.Pages.SettingsPages;
 
 public sealed partial class SettingsPrivacy : Page
 {
-	SettingsService SettingsService { get; set; }
+	private SettingsService SettingsService { get; set; }
 
 	public SettingsPrivacy()
 	{
 		SettingsService = App.GetService<SettingsService>();
-		this.InitializeComponent();
+		InitializeComponent();
 		Stack();
 	}
 
@@ -54,8 +54,8 @@ public sealed partial class SettingsPrivacy : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
-			var settingName = toggleSwitch.Name;
+			bool autoSettingValue = toggleSwitch.IsOn;
+			string settingName = toggleSwitch.Name;
 			ToggleSetting(settingName, autoSettingValue);
 		}
 	}

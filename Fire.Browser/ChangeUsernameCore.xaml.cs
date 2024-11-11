@@ -17,13 +17,13 @@ public sealed partial class ChangeUsernameCore : Window
 
 	public ChangeUsernameCore()
 	{
-		this.AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(500, 500, 850, 500));
+		AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(500, 500, 850, 500));
 		Fire.Core.Helpers.Windowing.Center(this);
-		this.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-		this.AppWindow.MoveInZOrderAtTop();
-		this.AppWindow.ShowOnceWithRequestedStartupState();
+		AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+		AppWindow.MoveInZOrderAtTop();
+		AppWindow.ShowOnceWithRequestedStartupState();
 
-		this.InitializeComponent();
+		InitializeComponent();
 
 		title();
 		ChangeUsername();
@@ -33,7 +33,7 @@ public sealed partial class ChangeUsernameCore : Window
 
 	public void title()
 	{
-		var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+		nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
 		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 
@@ -48,7 +48,7 @@ public sealed partial class ChangeUsernameCore : Window
 		{
 			titleBar = appWindow.TitleBar;
 			titleBar.ExtendsContentIntoTitleBar = true;
-			var btnColor = Colors.Transparent;
+			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.InactiveBackgroundColor = btnColor;
@@ -72,7 +72,7 @@ public sealed partial class ChangeUsernameCore : Window
 
 			// Deserialize the JSON content
 			string jsonContent = File.ReadAllText(jsonFilePath);
-			var changeUsernameData = JsonSerializer.Deserialize<ChangeUsernameData>(jsonContent);
+			ChangeUsernameData changeUsernameData = JsonSerializer.Deserialize<ChangeUsernameData>(jsonContent);
 
 			// Update the UI with old and new usernames
 			Username.Text = $"{changeUsernameData.OldUsername} -> {changeUsernameData.NewUsername}";
@@ -94,7 +94,7 @@ public sealed partial class ChangeUsernameCore : Window
 			// authenicate jus in cause reequired by appservice ?? => delete if set somewhere else 
 			if (Directory.Exists(newUserFolderPath))
 			{
-				Authenticate(changeUsernameData.NewUsername);
+				_ = Authenticate(changeUsernameData.NewUsername);
 			}
 			// Remove the JSON file
 			File.Delete(jsonFilePath);
@@ -126,7 +126,7 @@ public sealed partial class ChangeUsernameCore : Window
 		await Task.Delay(500);
 
 		// no need to restart application run with. 
-		Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 	}
 
 	private void ManaulRestart_Click(object sender, RoutedEventArgs e)
@@ -135,6 +135,6 @@ public sealed partial class ChangeUsernameCore : Window
 		string tempFolderPath = Path.GetTempPath();
 		string jsonFilePath = Path.Combine(tempFolderPath, "changeusername.json");
 		File.Delete(jsonFilePath);
-		Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 	}
 }

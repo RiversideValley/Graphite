@@ -9,7 +9,7 @@ public sealed partial class FireBrowserTabViewContainer : TabView
 {
 	public FireBrowserTabViewContainer()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 		ViewModel = new FireBrowserTabViewViewModel()
 		{
 			Style = (Style)Application.Current.Resources["DefaultTabViewStyle"]

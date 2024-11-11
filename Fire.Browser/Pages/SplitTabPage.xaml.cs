@@ -12,9 +12,9 @@ namespace FireBrowserWinUi3.Pages
 	{
 		public SplitTabPage()
 		{
-			this.InitializeComponent();
-			LeftFrame.Navigate(typeof(NewTab));
-			RightFrame.Navigate(typeof(NewTab));
+			InitializeComponent();
+			_ = LeftFrame.Navigate(typeof(NewTab));
+			_ = RightFrame.Navigate(typeof(NewTab));
 		}
 		public void CloseWebViews()
 		{

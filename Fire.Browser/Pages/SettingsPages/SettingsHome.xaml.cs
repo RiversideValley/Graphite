@@ -34,10 +34,10 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 		{
 			SettingsService = App.GetService<SettingsService>();
 			Messenger = App.GetService<IMessenger>();
-			this.InitializeComponent();
+			InitializeComponent();
 			Instance = this;
 			LoadUserDataAndSettings();
-			LoadUsernames();
+			_ = LoadUsernames();
 			_addonManager = new AddonManager();
 			_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 			IsPremium = false;
@@ -48,10 +48,10 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 
 		private string GetVersionDescription()
 		{
-			var appName = "AppDisplayName".GetLocalized();
-			var package = Package.Current;
-			var packageId = package.Id;
-			var version = packageId.Version;
+			string appName = "AppDisplayName".GetLocalized();
+			Package package = Package.Current;
+			PackageId packageId = package.Id;
+			PackageVersion version = packageId.Version;
 
 			return $"{appName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
 		}
@@ -75,8 +75,10 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 			return Task.CompletedTask;
 		}
 
-		private Fire.Browser.Core.User GetUser() =>
-			AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
+		private Fire.Browser.Core.User GetUser()
+		{
+			return AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
+		}
 
 		private void LoadUserDataAndSettings()
 		{
@@ -92,7 +94,7 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 
 		public static async void OpenNewWindow(Uri uri)
 		{
-			await Windows.System.Launcher.LaunchUriAsync(uri);
+			_ = await Windows.System.Launcher.LaunchUriAsync(uri);
 		}
 
 		private async void Switch_Click(object sender, RoutedEventArgs e)
@@ -114,13 +116,13 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 					UserDataManager.DeleteUser(clickedUserName);
 					UserListView.ItemsSource = null;
 					await LoadUsernames();
-					Messenger?.Send(new Message_Settings_Actions($"User: {clickedUserName} has been removed from FireBrowser", EnumMessageStatus.Removed));
+					_ = (Messenger?.Send(new Message_Settings_Actions($"User: {clickedUserName} has been removed from FireBrowser", EnumMessageStatus.Removed)));
 				}
 			}
 			catch (Exception ex)
 			{
 				ExceptionLogger.LogException(ex);
-				Messenger?.Send(new Message_Settings_Actions("You may not remove a User that has an Active Session!", EnumMessageStatus.XorError));
+				_ = (Messenger?.Send(new Message_Settings_Actions("You may not remove a User that has an Active Session!", EnumMessageStatus.XorError)));
 			}
 		}
 
@@ -128,7 +130,7 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 		{
 			try
 			{
-				ProcessStartInfo startInfo = new ProcessStartInfo
+				ProcessStartInfo startInfo = new()
 				{
 					FileName = "winget",
 					Arguments = "upgrade --name \"FireBrowserWinUi\"",
@@ -137,21 +139,17 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 					CreateNoWindow = true
 				};
 
-				using (Process process = Process.Start(startInfo))
-				{
-					using (StreamReader reader = process.StandardOutput)
-					{
-						string result = reader.ReadToEnd();
-						string msg = Regex.Replace(result, @"[^a-zA-Z0-9\s]+", "");
-						string msg2 = Regex.Replace(msg, @"[\r*\-\\]", "");
-						Messenger?.Send(new Message_Settings_Actions($"Application update status\n\n{msg2.Trim()} !", EnumMessageStatus.Informational));
-					}
-				}
+				using Process process = Process.Start(startInfo);
+				using StreamReader reader = process.StandardOutput;
+				string result = reader.ReadToEnd();
+				string msg = Regex.Replace(result, @"[^a-zA-Z0-9\s]+", "");
+				string msg2 = Regex.Replace(msg, @"[\r*\-\\]", "");
+				_ = (Messenger?.Send(new Message_Settings_Actions($"Application update status\n\n{msg2.Trim()} !", EnumMessageStatus.Informational)));
 			}
 			catch (Exception ex)
 			{
 				ExceptionLogger.LogException(ex);
-				Messenger?.Send(new Message_Settings_Actions("Application update failed !", EnumMessageStatus.XorError));
+				_ = (Messenger?.Send(new Message_Settings_Actions("Application update failed !", EnumMessageStatus.XorError)));
 			}
 		}
 
@@ -169,36 +167,36 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 
 		private async void Reset_Click(object sender, RoutedEventArgs e)
 		{
-			SureReset dlg = new SureReset();
-			dlg.XamlRoot = this.XamlRoot;
-			await dlg.ShowAsync();
+			SureReset dlg = new();
+			dlg.XamlRoot = XamlRoot;
+			_ = await dlg.ShowAsync();
 		}
 
 		private async void BackUpNow_Click(object sender, RoutedEventArgs e)
 		{
-			BackUpDialog dlg = new BackUpDialog();
-			dlg.XamlRoot = this.XamlRoot;
-			await dlg.ShowAsync();
+			BackUpDialog dlg = new();
+			dlg.XamlRoot = XamlRoot;
+			_ = await dlg.ShowAsync();
 		}
 
 		private async void RestoreNow_Click(object sender, RoutedEventArgs e)
 		{
-			RestoreBackupDialog dlg = new RestoreBackupDialog();
-			dlg.XamlRoot = this.XamlRoot;
-			await dlg.ShowAsync();
+			RestoreBackupDialog dlg = new();
+			dlg.XamlRoot = XamlRoot;
+			_ = await dlg.ShowAsync();
 		}
 
 		private void LogOutBtn_Click(object sender, RoutedEventArgs e)
 		{
 			AuthService.Logout();
-			Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+			_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 		}
 
 		private async void ImportBookmarksItem_Click(object sender, RoutedEventArgs e)
 		{
-			var dialog = new Fire.Data.Favorites.ImportBookMarks();
-			dialog.XamlRoot = this.XamlRoot;
-			await dialog.ShowAsync();
+			Fire.Data.Favorites.ImportBookMarks dialog = new();
+			dialog.XamlRoot = XamlRoot;
+			_ = await dialog.ShowAsync();
 		}
 
 		private async void Prm_Click(object sender, RoutedEventArgs e)
@@ -210,18 +208,18 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 
 			try
 			{
-				ContentDialog processingDialog = new ContentDialog
+				ContentDialog processingDialog = new()
 				{
 					Title = "Processing Purchase",
 					Content = "Please complete the purchase in the Store window. This dialog will close automatically once the purchase is complete.",
 					CloseButtonText = "Cancel",
-					XamlRoot = this.XamlRoot
+					XamlRoot = XamlRoot
 				};
 
-				var dialogTask = processingDialog.ShowAsync();
-				var purchaseTask = _addonManager.PurchaseAddonAsync();
+				Windows.Foundation.IAsyncOperation<ContentDialogResult> dialogTask = processingDialog.ShowAsync();
+				Task<bool> purchaseTask = _addonManager.PurchaseAddonAsync();
 
-				var completedTask = await Task.WhenAny(dialogTask.AsTask(), purchaseTask);
+				Task completedTask = await Task.WhenAny(dialogTask.AsTask(), purchaseTask);
 
 				if (completedTask == dialogTask.AsTask())
 				{
@@ -234,37 +232,37 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 				if (await purchaseTask)
 				{
 					IsPremium = true;
-					ContentDialog successDialog = new ContentDialog
+					ContentDialog successDialog = new()
 					{
 						Title = "Premium Activated",
 						Content = "Thank you for upgrading to Premium!",
 						CloseButtonText = "OK",
-						XamlRoot = this.XamlRoot
+						XamlRoot = XamlRoot
 					};
-					await successDialog.ShowAsync();
+					_ = await successDialog.ShowAsync();
 				}
 				else
 				{
-					ContentDialog failureDialog = new ContentDialog
+					ContentDialog failureDialog = new()
 					{
 						Title = "Purchase Incomplete",
 						Content = "The premium upgrade was not completed. Please try again later.",
 						CloseButtonText = "OK",
-						XamlRoot = this.XamlRoot
+						XamlRoot = XamlRoot
 					};
-					await failureDialog.ShowAsync();
+					_ = await failureDialog.ShowAsync();
 				}
 			}
 			catch (Exception ex)
 			{
-				ContentDialog errorDialog = new ContentDialog
+				ContentDialog errorDialog = new()
 				{
 					Title = "Purchase Error",
 					Content = $"An error occurred: {ex.Message}",
 					CloseButtonText = "OK",
-					XamlRoot = this.XamlRoot
+					XamlRoot = XamlRoot
 				};
-				await errorDialog.ShowAsync();
+				_ = await errorDialog.ShowAsync();
 			}
 			finally
 			{

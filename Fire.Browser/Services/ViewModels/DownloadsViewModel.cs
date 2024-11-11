@@ -28,7 +28,10 @@ public class DownloadsViewModel : ObservableObject, IDownloadsViewModel
 
 	public async Task GetDownloadItems()
 	{
-		if (DataCore == null) return;
+		if (DataCore == null)
+		{
+			return;
+		}
 
 		await DataCore.UpdateAsync();
 		ItemsListView = DataCore.DownloadItemControls;

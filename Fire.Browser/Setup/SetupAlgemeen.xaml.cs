@@ -15,7 +15,7 @@ namespace FireBrowserWinUi3
 	{
 		public SetupAlgemeen()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 
 		private void SearchengineSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -24,77 +24,31 @@ namespace FireBrowserWinUi3
 			try
 			{
 				string selection = e.AddedItems[0].ToString();
-				string url;
-
-				switch (selection)
+				string url = selection switch
 				{
-					case "Ask":
-						url = "https://www.ask.com/web?q=";
-						break;
-					case "Baidu":
-						url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=";
-						break;
-					case "Bing":
-						url = "https://www.bing.com?q=";
-						break;
-					case "DuckDuckGo":
-						url = "https://www.duckduckgo.com?q=";
-						break;
-					case "Ecosia":
-						url = "https://www.ecosia.org/search?q=";
-						break;
-					case "Google":
-						url = "https://www.google.com/search?q=";
-						break;
-					case "Startpage":
-						url = "https://www.startpage.com/search?q=";
-						break;
-					case "Qwant":
-						url = "https://www.qwant.com/?q=";
-						break;
-					case "Qwant Lite":
-						url = "https://lite.qwant.com/?q=";
-						break;
-					case "Yahoo!":
-						url = "https://search.yahoo.com/search?p=";
-						break;
-					case "Presearch":
-						url = "https://presearch.com/search?q=";
-						break;
-					case "Swisscows":
-						url = "https://swisscows.com/web?query=";
-						break;
-					case "Dogpile":
-						url = "https://www.dogpile.com/serp?q=";
-						break;
-					case "Webcrawler":
-						url = "https://www.webcrawler.com/serp?q=";
-						break;
-					case "You":
-						url = "https://you.com/search?q=";
-						break;
-					case "Excite":
-						url = "https://results.excite.com/serp?q=";
-						break;
-					case "Lycos":
-						url = "https://search20.lycos.com/web/?q=";
-						break;
-					case "Metacrawler":
-						url = "https://www.metacrawler.com/serp?q=";
-						break;
-					case "Mojeek":
-						url = "https://www.mojeek.com/search?q=";
-						break;
-					case "BraveSearch":
-						url = "https://search.brave.com/search?q=";
-						break;
+					"Ask" => "https://www.ask.com/web?q=",
+					"Baidu" => "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=",
+					"Bing" => "https://www.bing.com?q=",
+					"DuckDuckGo" => "https://www.duckduckgo.com?q=",
+					"Ecosia" => "https://www.ecosia.org/search?q=",
+					"Google" => "https://www.google.com/search?q=",
+					"Startpage" => "https://www.startpage.com/search?q=",
+					"Qwant" => "https://www.qwant.com/?q=",
+					"Qwant Lite" => "https://lite.qwant.com/?q=",
+					"Yahoo!" => "https://search.yahoo.com/search?p=",
+					"Presearch" => "https://presearch.com/search?q=",
+					"Swisscows" => "https://swisscows.com/web?query=",
+					"Dogpile" => "https://www.dogpile.com/serp?q=",
+					"Webcrawler" => "https://www.webcrawler.com/serp?q=",
+					"You" => "https://you.com/search?q=",
+					"Excite" => "https://results.excite.com/serp?q=",
+					"Lycos" => "https://search20.lycos.com/web/?q=",
+					"Metacrawler" => "https://www.metacrawler.com/serp?q=",
+					"Mojeek" => "https://www.mojeek.com/search?q=",
+					"BraveSearch" => "https://search.brave.com/search?q=",
 					// Add other cases for different search engines.
-					default:
-						// Handle the case when selection doesn't match any of the predefined options.
-						url = "https://www.google.com/search?q=";
-						break;
-				}
-
+					_ => "https://www.google.com/search?q=",// Handle the case when selection doesn't match any of the predefined options.
+				};
 				if (!string.IsNullOrEmpty(url))
 				{
 					AppService.AppSettings.EngineFriendlyName = selection;
@@ -152,32 +106,64 @@ namespace FireBrowserWinUi3
 			}
 		}
 
-		private void Dwbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("Downloads", (sender as ToggleSwitch).IsOn);
+		private void Dwbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("Downloads", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Frbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("FavoritesL", (sender as ToggleSwitch).IsOn);
+		private void Frbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("FavoritesL", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void FlAd_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("Favorites", (sender as ToggleSwitch).IsOn);
+		private void FlAd_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("Favorites", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Hsbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("Historybtn", (sender as ToggleSwitch).IsOn);
+		private void Hsbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("Historybtn", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Qrbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("QrCode", (sender as ToggleSwitch).IsOn);
+		private void Qrbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("QrCode", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Tlbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("ToolIcon", (sender as ToggleSwitch).IsOn);
+		private void Tlbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("ToolIcon", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Drbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("DarkIcon", (sender as ToggleSwitch).IsOn);
+		private void Drbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("DarkIcon", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Trbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("Translate", (sender as ToggleSwitch).IsOn);
+		private void Trbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("Translate", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Read_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("ReadButton", (sender as ToggleSwitch).IsOn);
+		private void Read_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("ReadButton", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void Adbl_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("AdblockBtn", (sender as ToggleSwitch).IsOn);
+		private void Adbl_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("AdblockBtn", (sender as ToggleSwitch).IsOn);
+		}
 
-		private void OpenNew_Toggled(object sender, RoutedEventArgs e) => ToggleSetting("OpenTabHandel", (sender as ToggleSwitch).IsOn);
-
+		private void OpenNew_Toggled(object sender, RoutedEventArgs e)
+		{
+			ToggleSetting("OpenTabHandel", (sender as ToggleSwitch).IsOn);
+		}
 
 		private void SetupAlgemeenBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Frame.Navigate(typeof(SetupPrivacy));
+			_ = Frame.Navigate(typeof(SetupPrivacy));
 		}
 	}
 }

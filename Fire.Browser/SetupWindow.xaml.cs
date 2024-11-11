@@ -14,13 +14,13 @@ namespace FireBrowserWinUi3
 	/// </summary>
 	public sealed partial class SetupWindow : Window
 	{
-		private AppWindow appWindow;
-		private AppWindowTitleBar titleBar;
+		private readonly AppWindow appWindow;
+		private readonly AppWindowTitleBar titleBar;
 		public SetupWindow()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 
-			var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+			nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
 			WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 
@@ -38,7 +38,7 @@ namespace FireBrowserWinUi3
 			{
 				titleBar = appWindow.TitleBar;
 				titleBar.ExtendsContentIntoTitleBar = true;
-				var btnColor = Colors.Transparent;
+				Windows.UI.Color btnColor = Colors.Transparent;
 				titleBar.BackgroundColor = btnColor;
 				titleBar.ButtonBackgroundColor = btnColor;
 				titleBar.InactiveBackgroundColor = btnColor;
@@ -50,7 +50,7 @@ namespace FireBrowserWinUi3
 
 		private void setup_Loaded(object sender, RoutedEventArgs e)
 		{
-			setup.Navigate(typeof(SetupInit));
+			_ = setup.Navigate(typeof(SetupInit));
 		}
 
 		private void AppBarButton_Click(object sender, RoutedEventArgs e)

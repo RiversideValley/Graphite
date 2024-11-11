@@ -90,14 +90,14 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 		{
 			if (sender is ToggleSwitch toggleSwitch)
 			{
-				var settingName = toggleSwitch.Tag as string;
+				string settingName = toggleSwitch.Tag as string;
 				await ToggleSettingAsync(settingName, toggleSwitch.IsOn);
 			}
 		}
 
 		private async Task ToggleSettingAsync(string settingName, bool value)
 		{
-			var property = SettingsService.CoreSettings.GetType().GetProperty(settingName);
+			System.Reflection.PropertyInfo property = SettingsService.CoreSettings.GetType().GetProperty(settingName);
 			if (property != null)
 			{
 				property.SetValue(SettingsService.CoreSettings, value);
@@ -110,19 +110,29 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 			setter(toggleSwitch.IsOn);
 		}
 
-		private void TrendingHome_Toggled(object sender, RoutedEventArgs e) =>
+		private void TrendingHome_Toggled(object sender, RoutedEventArgs e)
+		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsTrendingVisible = value);
+		}
 
-		private void FavoritesHome_Toggled(object sender, RoutedEventArgs e) =>
+		private void FavoritesHome_Toggled(object sender, RoutedEventArgs e)
+		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsFavoritesVisible = value);
+		}
 
-		private void HistoryHome_Toggled(object sender, RoutedEventArgs e) =>
+		private void HistoryHome_Toggled(object sender, RoutedEventArgs e)
+		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsHistoryVisible = value);
+		}
 
-		private void SearchHome_Toggled(object sender, RoutedEventArgs e) =>
+		private void SearchHome_Toggled(object sender, RoutedEventArgs e)
+		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsSearchVisible = value);
+		}
 
-		private Task SaveSettingsAsync() =>
-			SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
+		private Task SaveSettingsAsync()
+		{
+			return SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
+		}
 	}
 }

@@ -8,7 +8,7 @@ public sealed partial class SetupPrivacy : Page
 {
 	public SetupPrivacy()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 	}
 
 	private Fire.Browser.Core.User GetUser()
@@ -28,7 +28,7 @@ public sealed partial class SetupPrivacy : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.DisableJavaScript = autoSettingValue; ;
 
 		}
@@ -39,7 +39,7 @@ public sealed partial class SetupPrivacy : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.DisableGenAutoFill = autoSettingValue; ; ;
 
 		}
@@ -50,7 +50,7 @@ public sealed partial class SetupPrivacy : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.DisableWebMess = autoSettingValue;
 
 		}
@@ -61,7 +61,7 @@ public sealed partial class SetupPrivacy : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.DisablePassSave = autoSettingValue;
 
 		}
@@ -69,6 +69,6 @@ public sealed partial class SetupPrivacy : Page
 
 	private void Button_Click(object sender, RoutedEventArgs e)
 	{
-		Frame.Navigate(typeof(SetupAccess));
+		_ = Frame.Navigate(typeof(SetupAccess));
 	}
 }

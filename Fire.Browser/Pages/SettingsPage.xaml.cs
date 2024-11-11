@@ -11,10 +11,10 @@ public sealed partial class SettingsPage : Page
 {
 	public SettingsPage()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 	}
 
-	private readonly List<(string Tag, Type Page)> _pages = new List<(string Tag, Type Page)>
+	private readonly List<(string Tag, Type Page)> _pages = new()
 	{
 		("SettingsHome", typeof(Pages.SettingsPages.SettingsHome)),
 		("Privacy",  typeof(Pages.SettingsPages.SettingsPrivacy)),
@@ -35,10 +35,10 @@ public sealed partial class SettingsPage : Page
 	{
 		ContentFrame.Navigated += On_Navigated;
 
-		var window = (Application.Current as App)?.m_window as MainWindow;
-		var urlBoxText = window?.UrlBox.Text ?? string.Empty;
+		MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+		string urlBoxText = window?.UrlBox.Text ?? string.Empty;
 
-		var navigateTo = urlBoxText switch
+		(string, object) navigateTo = urlBoxText switch
 		{
 			string s when s.Contains("firebrowser://SettingsHome") => ("SettingsHome", NavView.MenuItems[0]),
 			string s when s.Contains("firebrowser://Privacy") => ("Privacy", NavView.MenuItems[2]),
@@ -51,7 +51,7 @@ public sealed partial class SettingsPage : Page
 			_ => (null, null), // default case
 		};
 
-		var (selectedTag, selectedItem) = navigateTo;
+		(string selectedTag, object selectedItem) = navigateTo;
 
 		if (selectedTag != null && selectedItem != null)
 		{
@@ -87,17 +87,17 @@ public sealed partial class SettingsPage : Page
 		}
 		else
 		{
-			var item = _pages.FirstOrDefault(p => p.Tag.Equals(navItemTag));
+			(string Tag, Type Page) item = _pages.FirstOrDefault(p => p.Tag.Equals(navItemTag));
 			_page = item.Page;
 		}
 		// Get the page type before navigation so you can prevent duplicate
 		// entries in the backstack.
-		var preNavPageType = ContentFrame.CurrentSourcePageType;
+		Type preNavPageType = ContentFrame.CurrentSourcePageType;
 
 		// Only navigate if the selected page isn't currently loaded.
-		if (!(_page is null) && !Type.Equals(preNavPageType, _page))
+		if (_page is not null && !Type.Equals(preNavPageType, _page))
 		{
-			ContentFrame.Navigate(_page, passer, transitionInfo);
+			_ = ContentFrame.Navigate(_page, passer, transitionInfo);
 		}
 	}
 
@@ -107,7 +107,7 @@ public sealed partial class SettingsPage : Page
 
 		if (ContentFrame.SourcePageType != null)
 		{
-			var item = _pages.FirstOrDefault(p => p.Page == e.SourcePageType);
+			(string Tag, Type Page) item = _pages.FirstOrDefault(p => p.Page == e.SourcePageType);
 
 
 			NavView.Header =
@@ -124,7 +124,7 @@ public sealed partial class SettingsPage : Page
 		}
 		else if (args.InvokedItemContainer != null)
 		{
-			var navItemTag = args.InvokedItemContainer.Tag.ToString();
+			string navItemTag = args.InvokedItemContainer.Tag.ToString();
 			NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
 		}
 	}
@@ -137,9 +137,9 @@ public sealed partial class SettingsPage : Page
 		}
 		else if (args.SelectedItemContainer != null)
 		{
-			var navItemTag = args.SelectedItemContainer.Tag.ToString();
+			string navItemTag = args.SelectedItemContainer.Tag.ToString();
 			NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
-			var window = (Application.Current as App)?.m_window as MainWindow;
+			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			window.UrlBox.Text = "firebrowser://" + navItemTag.ToString();
 		}
 	}

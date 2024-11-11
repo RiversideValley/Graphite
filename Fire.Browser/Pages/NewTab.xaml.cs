@@ -37,14 +37,14 @@ public sealed partial class NewTab : Page
 {
 
 
-	public List<TrendingItem> trendings = new List<TrendingItem>();
+	public List<TrendingItem> trendings = new();
 	public HomeViewModel ViewModel { get; set; }
 	private HistoryActions HistoryActions { get; } = new HistoryActions(AuthService.CurrentUser.Username);
-	Fire.Browser.Core.Settings userSettings { get; set; }
-	SettingsService SettingsService { get; }
+	private Fire.Browser.Core.Settings userSettings { get; set; }
+	private SettingsService SettingsService { get; }
 
-	Passer param;
-	private bool isAuto = default;
+	private Passer param;
+	private readonly bool isAuto = default;
 
 	public NewTab()
 	{
@@ -56,9 +56,12 @@ public sealed partial class NewTab : Page
 		ViewModel.SettingsService.Initialize();
 		userSettings = ViewModel.SettingsService.CoreSettings;
 
-		this.InitializeComponent();
+		InitializeComponent();
 
-		if (userSettings.IsTrendingVisible) _ = UpdateTrending().ConfigureAwait(false);
+		if (userSettings.IsTrendingVisible)
+		{
+			_ = UpdateTrending().ConfigureAwait(false);
+		}
 	}
 	public class TrendingItem
 	{
@@ -78,16 +81,16 @@ public sealed partial class NewTab : Page
 	}
 	private async Task UpdateTrending()
 	{
-		var bing = new BingSearchApi();
-		var topics = bing.TrendingListTask("calico cats").GetAwaiter().GetResult();
+		BingSearchApi bing = new();
+		string topics = bing.TrendingListTask("calico cats").GetAwaiter().GetResult();
 		// fixed treding errors. 
 		if (topics is not null)
 		{
-			var list = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JArray>(topics).ToList();
+			List<Newtonsoft.Json.Linq.JToken> list = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JArray>(topics).ToList();
 
 			trendings.Clear(); ;
 
-			foreach (var item in list)
+			foreach (Newtonsoft.Json.Linq.JToken item in list)
 			{
 
 				trendings.Add(new TrendingItem(item["webSearchUrl"].ToString(), item["name"].ToString(), item["image"]["url"].ToString(), item["query"]["text"].ToString()));
@@ -102,27 +105,30 @@ public sealed partial class NewTab : Page
 
 	private async void NewTabSearchBox_QuerySubmittedAsync(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 	{
-		if (string.IsNullOrEmpty(args.QueryText)) return;
+		if (string.IsNullOrEmpty(args.QueryText))
+		{
+			return;
+		}
 
 		if (isAuto && Application.Current is App app && app.m_window is MainWindow window)
 		{
-			window.DispatcherQueue.TryEnqueue(() =>
+			_ = window.DispatcherQueue.TryEnqueue(() =>
 			{
 				window.FocusUrlBox(args.QueryText);
 			});
 
 			await Task.Delay(200);
 
-			sender.DispatcherQueue.TryEnqueue(() =>
+			_ = sender.DispatcherQueue.TryEnqueue(() =>
 			{
-				sender.Focus(FocusState.Programmatic);
+				_ = sender.Focus(FocusState.Programmatic);
 			});
 
 			await Task.Delay(200);
 
-			sender.DispatcherQueue.TryEnqueue(() =>
+			_ = sender.DispatcherQueue.TryEnqueue(() =>
 			{
-				sender.Text = String.Empty;
+				sender.Text = string.Empty;
 			});
 
 			await Task.Delay(200);
@@ -135,18 +141,20 @@ public sealed partial class NewTab : Page
 		if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
 		{
 
-			if (!(string.IsNullOrEmpty(sender.Text)))
+			if (!string.IsNullOrEmpty(sender.Text))
 			{
-				var suggestions = await SearchControls(sender.Text);
+				List<HistoryItem> suggestions = await SearchControls(sender.Text);
 
 				if (suggestions.Count > 0)
+				{
 					sender.ItemsSource = suggestions;
+				}
 				else
 				{
-					var l = new List<HistoryItem>();
-					var h = new HistoryItem();
+					List<HistoryItem> l = new();
+					HistoryItem h = new();
 					h.Title = string.Format("{0} Searching...\r\nTopic:\t {1}", SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().ProviderName.ToUpperInvariant(), sender.Text);
-					var bip = SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().Image;
+					BitmapImage bip = SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().Image;
 					h.ImageSource = bip;
 					l.Add(h);
 					sender.ItemsSource = l;
@@ -155,10 +163,10 @@ public sealed partial class NewTab : Page
 			}
 			else
 			{
-				var l = new List<HistoryItem>();
-				var h = new HistoryItem();
+				List<HistoryItem> l = new();
+				HistoryItem h = new();
 				h.Title = "Please type to search!";
-				var bip = SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().Image;
+				BitmapImage bip = SearchProviders.ProvidersList.Where((x) => x.ProviderName == userSettings.EngineFriendlyName).FirstOrDefault().Image;
 				h.ImageSource = bip;
 				l.Add(h);
 				sender.ItemsSource = l;
@@ -174,21 +182,24 @@ public sealed partial class NewTab : Page
 
 	private async Task<List<HistoryItem>> SearchBingApi(string text)
 	{
-		SdkBingWebSearch sdkBingWebSearch = new SdkBingWebSearch();
+		SdkBingWebSearch sdkBingWebSearch = new();
 
-		var result = await sdkBingWebSearch.WebSearchResultTypesLookup(text);
+		SearchResponse result = await sdkBingWebSearch.WebSearchResultTypesLookup(text);
 
-		if (result is null) return new List<HistoryItem>();
+		if (result is null)
+		{
+			return new List<HistoryItem>();
+		}
 
-		var items = new List<HistoryItem>();
+		List<HistoryItem> items = new();
 
 		foreach (WebPage webPage in result.WebPages?.Value)
 		{
-			var setBitmap = new BitmapImage();
+			BitmapImage setBitmap = new();
 
 			try
 			{
-				var convertUrl = new Uri(webPage.Url);
+				Uri convertUrl = new(webPage.Url);
 				setBitmap.UriSource = new Uri(string.Format("https://www.google.com/s2/favicons?domain_url={0}", convertUrl, convertUrl.Host));
 
 			}
@@ -220,10 +231,10 @@ public sealed partial class NewTab : Page
 
 	private Task<List<HistoryItem>> SearchControls(string query)
 	{
-		var suggestions = new List<HistoryItem>();
+		List<HistoryItem> suggestions = new();
 
 
-		foreach (var item in ViewModel.HistoryItems)
+		foreach (HistoryItem item in ViewModel.HistoryItems)
 		{
 			if (!string.IsNullOrEmpty(item.Title) && item.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
 			{
@@ -231,9 +242,9 @@ public sealed partial class NewTab : Page
 			}
 
 		}
-		foreach (var item in ViewModel.FavoriteItems!)
+		foreach (FavItem item in ViewModel.FavoriteItems!)
 		{
-			var converter = new HistoryItem();
+			HistoryItem converter = new();
 			converter.Url = item.Url;
 			converter.Title = item.Title;
 			converter.ImageSource = new BitmapImage(new(item.IconUrlPath!));
@@ -275,9 +286,12 @@ public sealed partial class NewTab : Page
 
 		SearchengineSelection.SelectedItem = userSettings.EngineFriendlyName;
 		NewTabSearchBox.Text = string.Empty;
-		NewTabSearchBox.Focus(FocusState.Programmatic);
+		_ = NewTabSearchBox.Focus(FocusState.Programmatic);
 
-		if (userSettings.IsTrendingVisible) await UpdateTrending();
+		if (userSettings.IsTrendingVisible)
+		{
+			await UpdateTrending();
+		}
 
 		HomeSync();
 	}
@@ -328,14 +342,14 @@ public sealed partial class NewTab : Page
 
 	private void SetVisibilityBasedOnLightMode(bool isLightMode)
 	{
-		var visibility = isLightMode ? Visibility.Collapsed : Visibility.Visible;
+		Visibility visibility = isLightMode ? Visibility.Collapsed : Visibility.Visible;
 
 		NtpGrid.Visibility = Edit.Visibility = SetTab.Visibility = BigGrid.Visibility = visibility;
 	}
 
 	private void GridSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		var selection = (sender as GridView)?.SelectedItem as GridViewItem;
+		GridViewItem selection = (sender as GridView)?.SelectedItem as GridViewItem;
 
 		if (selection != null && selection.Tag is string tag)
 		{
@@ -351,7 +365,7 @@ public sealed partial class NewTab : Page
 	}
 	private async void SetAndSaveBackgroundSettings((int, Settings.NewTabBackground, bool, Visibility) settings)
 	{
-		var (background, backgroundType, isNewColorEnabled, downloadVisibility) = settings;
+		(int background, Settings.NewTabBackground backgroundType, bool isNewColorEnabled, Visibility downloadVisibility) = settings;
 		userSettings.Background = background;
 		ViewModel.BackgroundType = backgroundType;
 		NewColor.IsEnabled = isNewColorEnabled;
@@ -374,14 +388,14 @@ public sealed partial class NewTab : Page
 			case Settings.NewTabBackground.Costum:
 				string colorString = userSettings.ColorBackground?.ToString() ?? "#000000";
 
-				var color = colorString == "#000000" ?
+				Color color = colorString == "#000000" ?
 				 Colors.Transparent :
 				 (Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), colorString);
 				return new SolidColorBrush(color);
 
 
 			case Settings.NewTabBackground.Featured:
-				var handler = new SocketsHttpHandler
+				SocketsHttpHandler handler = new()
 				{
 					EnableMultipleHttp2Connections = true, // Optional but recommended
 					SslOptions = new SslClientAuthenticationOptions
@@ -390,7 +404,7 @@ public sealed partial class NewTab : Page
 					}
 				};
 
-				var client = new HttpClient(handler);
+				HttpClient client = new(handler);
 
 				// Static field to cache the ImageBrush so it's fetched only once
 				ImageBrush cachedImageBrush = null;
@@ -403,18 +417,18 @@ public sealed partial class NewTab : Page
 
 				try
 				{
-					var request = client.GetStringAsync(new Uri("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1")).Result;
+					string request = client.GetStringAsync(new Uri("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1")).Result;
 
 					try
 					{
 						// Deserialize JSON response into ImageRoot object
-						var images = System.Text.Json.JsonSerializer.Deserialize<ImageRoot>(request);
+						ImageRoot images = System.Text.Json.JsonSerializer.Deserialize<ImageRoot>(request);
 
 						// Construct the image URL using data from the API
-						Uri imageUrl = new Uri("https://bing.com" + images.images[0].url);
+						Uri imageUrl = new("https://bing.com" + images.images[0].url);
 
 						// Create BitmapImage from the URL
-						BitmapImage btpImg = new BitmapImage(imageUrl);
+						BitmapImage btpImg = new(imageUrl);
 
 						// Create and return an ImageBrush for WPF
 						cachedImageBrush = new ImageBrush()
@@ -470,7 +484,7 @@ public sealed partial class NewTab : Page
 	{
 		try
 		{
-			var user = AuthService.CurrentUser;
+			Fire.Browser.Core.User user = AuthService.CurrentUser;
 			string username = user.Username;
 			string databasePath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Database");
 			string imagesFolderPath = Path.Combine(databasePath, "CacheImages");
@@ -478,7 +492,7 @@ public sealed partial class NewTab : Page
 
 			if (!Directory.Exists(imagesFolderPath))
 			{
-				Directory.CreateDirectory(imagesFolderPath);
+				_ = Directory.CreateDirectory(imagesFolderPath);
 			}
 
 			if (!File.Exists(storedDbPath))
@@ -491,7 +505,7 @@ public sealed partial class NewTab : Page
 			string imageName = $"{gd}.png";
 			string savedImagePath = await new ImageDownloader().SaveGridAsImageAsync(GridImage, imageName, imagesFolderPath);
 
-			var newImageData = new StoredImages
+			StoredImages newImageData = new()
 			{
 				Name = imageName,
 				Location = imagesFolderPath,
@@ -521,7 +535,7 @@ public sealed partial class NewTab : Page
 		try
 		{
 			ViewModel.NtpTimeEnabled = userSettings.NtpDateTime;
-			ViewModel.Intialize();
+			_ = ViewModel.Intialize();
 		}
 		catch (Exception ex)
 		{
@@ -529,28 +543,63 @@ public sealed partial class NewTab : Page
 		}
 	}
 
-	private void Type_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.Auto = Type.IsOn);
-	private void Mode_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.LightMode = Mode.IsOn);
+	private void Type_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.Auto = Type.IsOn);
+	}
+
+	private void Mode_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.LightMode = Mode.IsOn);
+	}
+
 	private void NewColor_TextChanged(ColorPicker sender, ColorChangedEventArgs args)
 	{
-		var newColor = userSettings.ColorBackground = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NewColorPicker.Color).ToString();
+		string newColor = userSettings.ColorBackground = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NewColorPicker.Color).ToString();
 		UpdateUserSettings(userSettings => userSettings.ColorBackground = newColor);
 		// raise a change to backgroundtype so that the x:Bind on GridMain will show new backgroundColor {x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}
 		ViewModel.RaisePropertyChanges(nameof(ViewModel.BackgroundType));
 	}
-	private void DateTimeToggle_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.NtpDateTime = DateTimeToggle.IsOn);
-	private void FavoritesToggle_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsFavoritesToggled = FavoritesTimeToggle.IsOn);
-	private void HistoryToggle_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsHistoryToggled = HistoryToggle.IsOn);
-	private void SearchVisible_Toggled(Object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsSearchVisible = SearchVisible.IsOn);
-	private void FavsVisible_Toggled(Object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsFavoritesVisible = FavsVisible.IsOn);
-	private void HistoryVisible_Toggled(Object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsHistoryVisible = HistoryVisible.IsOn);
+	private void DateTimeToggle_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.NtpDateTime = DateTimeToggle.IsOn);
+	}
+
+	private void FavoritesToggle_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsFavoritesToggled = FavoritesTimeToggle.IsOn);
+	}
+
+	private void HistoryToggle_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsHistoryToggled = HistoryToggle.IsOn);
+	}
+
+	private void SearchVisible_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsSearchVisible = SearchVisible.IsOn);
+	}
+
+	private void FavsVisible_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsFavoritesVisible = FavsVisible.IsOn);
+	}
+
+	private void HistoryVisible_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsHistoryVisible = HistoryVisible.IsOn);
+	}
+
 	private void NtpColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
 	{
-		var newColor = userSettings.NtpTextColor = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NtpColorPicker.Color).ToString();
+		string newColor = userSettings.NtpTextColor = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NtpColorPicker.Color).ToString();
 		UpdateUserSettings(userSettings => userSettings.NtpTextColor = newColor);
 		ViewModel.BrushNtp = new SolidColorBrush(NtpColorPicker.Color);
 	}
-	private void Download_Click(object sender, RoutedEventArgs e) => DownloadImage().ConfigureAwait(false);
+	private void Download_Click(object sender, RoutedEventArgs e)
+	{
+		_ = DownloadImage().ConfigureAwait(false);
+	}
 
 	private void NewTabSearchBox_PreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 	{
@@ -565,14 +614,19 @@ public sealed partial class NewTab : Page
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			if (e.AddedItems.Count > 0)
+			{
 				window.NavigateToUrl((e.AddedItems.FirstOrDefault() as HistoryItem).Url);
+			}
 		}
 	}
 	private async void SearchengineSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		try
 		{
-			if (e.AddedItems.Count == 0) return;
+			if (e.AddedItems.Count == 0)
+			{
+				return;
+			}
 
 			if (e.AddedItems[0] is SearchProviders selection)
 			{
@@ -585,7 +639,7 @@ public sealed partial class NewTab : Page
 				//SearchengineSelection.SelectedItem = selection.ProviderName; 
 
 			}
-			NewTabSearchBox.Focus(FocusState.Programmatic);
+			_ = NewTabSearchBox.Focus(FocusState.Programmatic);
 		}
 		catch (Exception ex)
 		{
@@ -600,38 +654,47 @@ public sealed partial class NewTab : Page
 		{
 			if (e.AddedItems.Count > 0)
 			{
-				ViewModel.TrendingItem = (e.AddedItems.FirstOrDefault() as TrendingItem);
+				ViewModel.TrendingItem = e.AddedItems.FirstOrDefault() as TrendingItem;
 				window.NavigateToUrl(ViewModel.TrendingItem.webSearchUrl);
 
 			}
 		}
 	}
-	private void TrendingVisible_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsTrendingVisible = TrendingVisible.IsOn);
-	private void FloatingBox_Toggled(object sender, RoutedEventArgs e) => UpdateUserSettings(userSettings => userSettings.IsLogoVisible = FloatingBox.IsOn);
+	private void TrendingVisible_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsTrendingVisible = TrendingVisible.IsOn);
+	}
 
-
-
+	private void FloatingBox_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsLogoVisible = FloatingBox.IsOn);
+	}
 
 	private void ScrollToSelectedSuggestion(HistoryItem selectedItem)
 	{
 		// Use Dispatcher to ensure the UI thread is available
-		DispatcherQueue.TryEnqueue(() =>
+		_ = DispatcherQueue.TryEnqueue(() =>
 		{
-			var container = NewTabSearchBox.ContainerFromItem(selectedItem) as ListBoxItem;
+			ListBoxItem container = NewTabSearchBox.ContainerFromItem(selectedItem) as ListBoxItem;
 			container?.StartBringIntoView();
 		});
 	}
 
 	private void FavoritesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (!(sender is ListView listView) || listView.ItemsSource == null) return;
+		if (sender is not ListView listView || listView.ItemsSource == null)
+		{
+			return;
+		}
 
 		if (listView.SelectedItem is FavItem item)
 		{
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 				if (e.AddedItems.Count > 0)
+				{
 					window.NavigateToUrl(item.Url);
+				}
 			}
 		}
 	}

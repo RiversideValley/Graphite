@@ -15,7 +15,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 		public bool CancelledByUser { get; set; }
 		public RestoreBackupDialog()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 
 		private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
@@ -25,10 +25,10 @@ namespace FireBrowserWinUi3.Pages.Patch
 
 		private async void LoadBackupFiles()
 		{
-			var documentsFolder = await StorageFolder.GetFolderFromPathAsync(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-			var backupFiles = await documentsFolder.GetFilesAsync();
+			StorageFolder documentsFolder = await StorageFolder.GetFolderFromPathAsync(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+			System.Collections.Generic.IReadOnlyList<StorageFile> backupFiles = await documentsFolder.GetFilesAsync();
 
-			var fireBackupFiles = backupFiles
+			System.Collections.Generic.List<BackupFileInfo> fireBackupFiles = backupFiles
 				.Where(file => file.FileType.Equals(".firebackup", StringComparison.OrdinalIgnoreCase))
 				.OrderByDescending(file => file.DateCreated)
 				.Select(file => new BackupFileInfo(file.Name, file.Path))
@@ -43,7 +43,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 			// close whatever window is open ie: setup, usercentral --> need to give control back to windowscontroller....
 
 
-			this.Hide();
+			Hide();
 
 			if (CancelledByUser) { return; }
 
@@ -57,16 +57,16 @@ namespace FireBrowserWinUi3.Pages.Patch
 
 				if (hWnd != IntPtr.Zero)
 				{
-					var dlg = new ContentDialog();
+					ContentDialog dlg = new();
 					dlg.PrimaryButtonText = "Restart";
 					dlg.SecondaryButtonText = "Cancel";
 					dlg.Content = new TextBlock().Text = "You need to restart the application in order to restore your backup.\n\nIf you choose (not) to restart your FireBrowser then the RESTORE will happen automically the next time your start the application";
 					dlg.PrimaryButtonClick += (s, e) =>
 					{
-						Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+						_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 					};
-					dlg.XamlRoot = this.XamlRoot;
-					await dlg.ShowAsync(ContentDialogPlacement.Popup);
+					dlg.XamlRoot = XamlRoot;
+					_ = await dlg.ShowAsync(ContentDialogPlacement.Popup);
 
 				}
 

@@ -57,8 +57,8 @@ namespace FireBrowserWinUi3.Services
 			if (sender is Button button)
 			{
 				// Example: Revert background color on pointer exit
-				var storyboard = new Storyboard();
-				var colorAnimation = new ColorAnimation();
+				Storyboard storyboard = new();
+				ColorAnimation colorAnimation = new();
 				colorAnimation.To = Microsoft.UI.Colors.Transparent; // Change this to the original color
 				colorAnimation.Duration = TimeSpan.FromMilliseconds(200);
 				storyboard.Children.Add(colorAnimation);
@@ -73,8 +73,8 @@ namespace FireBrowserWinUi3.Services
 			if (sender is Button button)
 			{
 				// Example: Change background color on pointer enter
-				var storyboard = new Storyboard();
-				var colorAnimation = new ColorAnimation();
+				Storyboard storyboard = new();
+				ColorAnimation colorAnimation = new();
 				colorAnimation.To = Microsoft.UI.Colors.LightGray;
 				colorAnimation.Duration = TimeSpan.FromMilliseconds(200);
 				storyboard.Children.Add(colorAnimation);
@@ -108,8 +108,8 @@ namespace FireBrowserWinUi3.Services
 			if (sender is Button button)
 			{
 				// Example: Revert opacity on pointer release
-				var storyboard = new Storyboard();
-				var opacityAnimation = new DoubleAnimation();
+				Storyboard storyboard = new();
+				DoubleAnimation opacityAnimation = new();
 				opacityAnimation.To = 1.0; // Return to original opacity
 				opacityAnimation.Duration = TimeSpan.FromMilliseconds(200);
 				storyboard.Children.Add(opacityAnimation);
@@ -124,8 +124,8 @@ namespace FireBrowserWinUi3.Services
 			if (sender is Button button)
 			{
 				// Example: Change opacity on pointer press
-				var storyboard = new Storyboard();
-				var opacityAnimation = new DoubleAnimation();
+				Storyboard storyboard = new();
+				DoubleAnimation opacityAnimation = new();
 				opacityAnimation.To = 0.5; // Example opacity value
 				opacityAnimation.Duration = TimeSpan.FromMilliseconds(200);
 				storyboard.Children.Add(opacityAnimation);

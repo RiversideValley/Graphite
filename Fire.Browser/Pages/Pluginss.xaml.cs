@@ -13,19 +13,19 @@ namespace FireBrowserWinUi3.Pages
 	/// </summary>
 	public sealed partial class Pluginss : Page
 	{
-		private PluginManager manager = null;
+		private readonly PluginManager manager = null;
 		public ObservableCollection<PluginEntry> MenuItems { get; set; } = new ObservableCollection<PluginEntry>();
 
 
 		public string userFolderPath = System.IO.Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Modules");
 		public Pluginss()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 
 			manager = new PluginManager(userFolderPath);
-			foreach (var ele in manager.CurrentPlugins)
+			foreach (IPluginBase ele in manager.CurrentPlugins)
 			{
-				PluginEntry ent = new PluginEntry(ele);
+				PluginEntry ent = new(ele);
 				MenuItems.Add(ent);
 			}
 

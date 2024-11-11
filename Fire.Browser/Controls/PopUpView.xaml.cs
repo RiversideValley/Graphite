@@ -14,12 +14,12 @@ public sealed partial class PopUpView : UserControl
 	private Point clickPosition;
 	private double originalWidth;
 	private double originalHeight;
-	private DispatcherTimer dragTimer;
+	private readonly DispatcherTimer dragTimer;
 
 	public PopUpView()
 	{
-		this.InitializeComponent();
-		this.SizeChanged += PopUpView_SizeChanged;
+		InitializeComponent();
+		SizeChanged += PopUpView_SizeChanged;
 
 		// Initialize the timer
 		dragTimer = new DispatcherTimer();
@@ -42,15 +42,15 @@ public sealed partial class PopUpView : UserControl
 
 	public void Show()
 	{
-		this.Visibility = Visibility.Visible;
+		Visibility = Visibility.Visible;
 	}
 
 	private void CloseButton_Click(object sender, RoutedEventArgs e)
 	{
-		this.Visibility = Visibility.Collapsed;
-		if (this.Parent is Panel parentPanel)
+		Visibility = Visibility.Collapsed;
+		if (Parent is Panel parentPanel)
 		{
-			parentPanel.Children.Remove(this);
+			_ = parentPanel.Children.Remove(this);
 			dragTimer.Stop();
 			webView.CoreWebView2.Stop();
 			webView.Close();
@@ -60,10 +60,10 @@ public sealed partial class PopUpView : UserControl
 	private void PopOut_Click(object sender, RoutedEventArgs e)
 	{
 		// Create a new window
-		var newWindow = new Microsoft.UI.Xaml.Window();
+		Window newWindow = new();
 
 		// Create an instance of the user control
-		var popUpView = new FireBrowserWinUi3.Controls.PopUpView();
+		PopUpView popUpView = new();
 
 		// Set the content of the new window to the PopUpView
 		newWindow.Content = popUpView;
@@ -75,8 +75,8 @@ public sealed partial class PopUpView : UserControl
 
 	private void DragTimer_Tick(object sender, object e)
 	{
-		var mainWindow = (Application.Current as App)?.m_window as MainWindow;
-		var transform = this.TransformToVisual(mainWindow.Content);
+		MainWindow mainWindow = (Application.Current as App)?.m_window as MainWindow;
+		Microsoft.UI.Xaml.Media.GeneralTransform transform = TransformToVisual(mainWindow.Content);
 		Point relativeCoords = transform.TransformPoint(new Point(0, 0));
 
 		double newLeft = relativeCoords.X + clickPosition.X;
@@ -102,7 +102,7 @@ public sealed partial class PopUpView : UserControl
 	{
 		isDragging = true;
 		clickPosition = e.GetCurrentPoint(this).Position;
-		this.CapturePointer(e.Pointer);
+		_ = CapturePointer(e.Pointer);
 
 		// Start the timer
 		dragTimer.Start();
@@ -111,7 +111,7 @@ public sealed partial class PopUpView : UserControl
 	private void Header_PointerReleased(object sender, PointerRoutedEventArgs e)
 	{
 		isDragging = false;
-		this.ReleasePointerCaptures();
+		ReleasePointerCaptures();
 
 		// Stop the timer
 		dragTimer.Stop();

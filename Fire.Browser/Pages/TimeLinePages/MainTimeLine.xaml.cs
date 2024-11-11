@@ -16,14 +16,17 @@ public sealed partial class MainTimeLine : Page
 		{ "downloads", typeof(TimeLinePages.DownloadsTimeLine) }
 	};
 
-	public MainTimeLine() => InitializeComponent();
+	public MainTimeLine()
+	{
+		InitializeComponent();
+	}
 
 	private void NavigationView_Loaded(object sender, RoutedEventArgs e)
 	{
 		ContentFrame.Navigated += On_Navigated;
 
-		var window = (Application.Current as App)?.m_window as MainWindow;
-		var urlBoxText = window.UrlBox.Text;
+		MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+		string urlBoxText = window.UrlBox.Text;
 
 		string navigateTo = urlBoxText switch
 		{
@@ -40,27 +43,29 @@ public sealed partial class MainTimeLine : Page
 
 	private void NavigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
 	{
-		var navItemTag = args.IsSettingsInvoked ? "history" : args.InvokedItemContainer?.Tag.ToString();
+		string navItemTag = args.IsSettingsInvoked ? "history" : args.InvokedItemContainer?.Tag.ToString();
 		if (navItemTag != null)
+		{
 			NavigationView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
+		}
 	}
 
 	private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
 	{
-		var navItemTag = args.IsSettingsSelected ? "history" : args.SelectedItemContainer?.Tag.ToString();
+		string navItemTag = args.IsSettingsSelected ? "history" : args.SelectedItemContainer?.Tag.ToString();
 		if (navItemTag != null)
 		{
 			NavigationView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
-			var window = (Application.Current as App)?.m_window as MainWindow;
+			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			window.UrlBox.Text = $"firebrowser://{navItemTag}";
 		}
 	}
 
 	private void NavigationView_Navigate(string navItemTag, Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfo)
 	{
-		if (_pages.TryGetValue(navItemTag, out var page) && page != ContentFrame.CurrentSourcePageType)
+		if (_pages.TryGetValue(navItemTag, out Type page) && page != ContentFrame.CurrentSourcePageType)
 		{
-			ContentFrame.Navigate(page, transitionInfo);
+			_ = ContentFrame.Navigate(page, transitionInfo);
 		}
 	}
 
@@ -72,7 +77,9 @@ public sealed partial class MainTimeLine : Page
 	private bool TryGoBack()
 	{
 		if (!ContentFrame.CanGoBack || (NavigationView.IsPaneOpen && (NavigationView.DisplayMode is NavigationViewDisplayMode.Compact or NavigationViewDisplayMode.Minimal)))
+		{
 			return false;
+		}
 
 		ContentFrame.GoBack();
 		return true;

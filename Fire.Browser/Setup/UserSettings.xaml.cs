@@ -30,30 +30,33 @@ namespace FireBrowserWinUi3.Setup
 				int currentSelectedIndex = NavView.MenuItems.IndexOf(selectedItem);
 				Type pageType = GetPageType(selectedItem.Tag as string);
 
-				var slideEffect = currentSelectedIndex > previousSelectedIndex
+				SlideNavigationTransitionEffect slideEffect = currentSelectedIndex > previousSelectedIndex
 					? SlideNavigationTransitionEffect.FromRight
 					: SlideNavigationTransitionEffect.FromLeft;
 
-				ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo { Effect = slideEffect });
+				_ = ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo { Effect = slideEffect });
 
 				previousSelectedIndex = currentSelectedIndex;
 			}
 		}
 
-		private static Type GetPageType(string tag) => tag switch
+		private static Type GetPageType(string tag)
 		{
-			"SetupUi" => typeof(SetupUi),
-			"SetupAlgemeen" => typeof(SetupAlgemeen),
-			"SetupPrivacy" => typeof(SetupPrivacy),
-			"SetupAccess" => typeof(SetupAccess),
-			"SetupWebView" => typeof(SetupWebView),
-			"SetupFinish" => typeof(SetupFinish),
-			_ => throw new ArgumentException($"Unknown tag: {tag}", nameof(tag))
-		};
+			return tag switch
+			{
+				"SetupUi" => typeof(SetupUi),
+				"SetupAlgemeen" => typeof(SetupAlgemeen),
+				"SetupPrivacy" => typeof(SetupPrivacy),
+				"SetupAccess" => typeof(SetupAccess),
+				"SetupWebView" => typeof(SetupWebView),
+				"SetupFinish" => typeof(SetupFinish),
+				_ => throw new ArgumentException($"Unknown tag: {tag}", nameof(tag))
+			};
+		}
 
 		public void NavigateToPage(string pageName)
 		{
-			var item = NavView.MenuItems.OfType<NavigationViewItem>()
+			NavigationViewItem item = NavView.MenuItems.OfType<NavigationViewItem>()
 							 .FirstOrDefault(item => item.Tag.ToString() == pageName);
 			if (item != null)
 			{

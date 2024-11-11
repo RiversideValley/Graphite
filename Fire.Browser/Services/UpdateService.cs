@@ -36,19 +36,19 @@ public class UpdateService
 		try
 		{
 			// Download the JSON file from the server asynchronously
-			using HttpClient client = new HttpClient();
+			using HttpClient client = new();
 			string jsonContent = await client.GetStringAsync(jsonUrl);
 			Debug.WriteLine("JSON content downloaded successfully.");
 
 			// Parse the JSON data
-			var serverData = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent);
+			Dictionary<string, string> serverData = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent);
 			Debug.WriteLine("JSON content parsed successfully.");
 
 			// Get local DLL files in the application folder
 			string[] dllFiles = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
 
 			// List to store files that need to be patched
-			var filesToPatch = await CompareVersionsAsync(serverData, dllFiles);
+			List<string> filesToPatch = await CompareVersionsAsync(serverData, dllFiles);
 
 			// Write the names of DLLs to be patched into the patch.core file if there are updates
 			if (filesToPatch.Any())
@@ -78,7 +78,7 @@ public class UpdateService
 
 		await Task.Run(() =>
 		{
-			Parallel.ForEach(serverVersions, (serverVersion) =>
+			_ = Parallel.ForEach(serverVersions, (serverVersion) =>
 			{
 				string dllFileName = serverVersion.Key + ".dll";
 				if (localFileNames.Contains(dllFileName, StringComparer.OrdinalIgnoreCase))
@@ -88,8 +88,8 @@ public class UpdateService
 					if (localDllPath != null)
 					{
 						// Get version of the local DLL file
-						var versionInfo = FileVersionInfo.GetVersionInfo(localDllPath);
-						Version localVersion = new Version(versionInfo.FileVersion);
+						FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(localDllPath);
+						Version localVersion = new(versionInfo.FileVersion);
 
 						// Compare with server version
 						if (Version.TryParse(serverVersion.Value, out Version serverParsedVersion) && serverParsedVersion > localVersion)

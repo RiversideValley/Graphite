@@ -12,14 +12,14 @@ namespace FireBrowserWinUi3.Pages.Patch
 		private const int MaxBackupCountPremium = 50;
 		public bool IsBackupAllowed { get; set; } = true;
 		public bool IsPremiumUser { get; set; } = false;
-		private string premiumLicensePath;
+		private readonly string premiumLicensePath;
 		private bool IsCloudBackup { get; set; } = false;
 
-		private Fire.Core.Licensing.AddonManager _addonManager;
+		private readonly Fire.Core.Licensing.AddonManager _addonManager;
 
 		public BackUpDialog()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			premiumLicensePath = Path.Combine(AppContext.BaseDirectory, "premium.license");
 			IsPremiumUser = CheckPremiumStatus();
 			CheckBackupLimit();
@@ -28,14 +28,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 
 		private bool CheckPremiumStatus()
 		{
-			if (File.Exists(premiumLicensePath))
-			{
-				IsPremiumUser = true;
-			}
-			else
-			{
-				IsPremiumUser = false;
-			}
+			IsPremiumUser = File.Exists(premiumLicensePath);
 
 			return IsPremiumUser;
 		}
@@ -47,7 +40,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 
 			if (Directory.Exists(backupDirectory))
 			{
-				var backupFiles = Directory.GetFiles(backupDirectory, "*.firebackup");
+				string[] backupFiles = Directory.GetFiles(backupDirectory, "*.firebackup");
 				int maxBackupCount = IsPremiumUser ? MaxBackupCountPremium : MaxBackupCountStandard;
 
 				if (backupFiles.Length >= maxBackupCount)
@@ -66,7 +59,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 			}
 		}
 
-		private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+		private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
 			if (!IsBackupAllowed)
 			{
@@ -86,9 +79,9 @@ namespace FireBrowserWinUi3.Pages.Patch
 
 
 
-				Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 
 			}

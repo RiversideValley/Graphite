@@ -8,12 +8,13 @@ using System;
 namespace FireBrowserWinUi3.Pages.SettingsPages;
 public sealed partial class SettingsWebView : Page
 {
-	SettingsService SettingsService { get; set; }
-	WebView2 Web = new WebView2();
+	private SettingsService SettingsService { get; set; }
+
+	private readonly WebView2 Web = new();
 	public SettingsWebView()
 	{
 		SettingsService = App.GetService<SettingsService>();
-		this.InitializeComponent();
+		InitializeComponent();
 		loadinit();
 	}
 
@@ -34,26 +35,14 @@ public sealed partial class SettingsWebView : Page
 		int trackPreventionSetting = SettingsService.CoreSettings.TrackPrevention;
 
 		// Map the numeric value to the corresponding text value
-		string selectedText;
-		switch (trackPreventionSetting)
+		string selectedText = trackPreventionSetting switch
 		{
-			case 0:
-				selectedText = "None";
-				break;
-			case 1:
-				selectedText = "Basic";
-				break;
-			case 2:
-				selectedText = "Balanced";
-				break;
-			case 3:
-				selectedText = "Strict";
-				break;
-			default:
-				// You may want to handle unexpected values here
-				selectedText = "Balanced";
-				break;
-		}
+			0 => "None",
+			1 => "Basic",
+			2 => "Balanced",
+			3 => "Strict",
+			_ => "Balanced",// You may want to handle unexpected values here
+		};
 
 		// Assuming PreventionLevel.ItemsSource contains the text values ("None", "Basic", "Balanced", "Strict")
 		PreventionLevel.SelectedItem = selectedText;
@@ -81,9 +70,9 @@ public sealed partial class SettingsWebView : Page
 			System.DateTime startTime = DateTime.Now.AddHours(-1);
 			// Offset the current time by one hour to clear the browsing data from the
 			// last hour.
-			CoreWebView2BrowsingDataKinds dataKinds = (CoreWebView2BrowsingDataKinds)
-									 (CoreWebView2BrowsingDataKinds.DiskCache |
-									  CoreWebView2BrowsingDataKinds.CacheStorage);
+			CoreWebView2BrowsingDataKinds dataKinds =
+									 CoreWebView2BrowsingDataKinds.DiskCache |
+									  CoreWebView2BrowsingDataKinds.CacheStorage;
 			await profile.ClearBrowsingDataAsync(dataKinds, startTime, endTime);
 		}
 	}
@@ -101,7 +90,7 @@ public sealed partial class SettingsWebView : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			SettingsService.CoreSettings.StatusBar = autoSettingValue;
 
@@ -113,7 +102,7 @@ public sealed partial class SettingsWebView : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			SettingsService.CoreSettings.BrowserKeys = autoSettingValue;
 
@@ -125,7 +114,7 @@ public sealed partial class SettingsWebView : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			SettingsService.CoreSettings.BrowserScripts = autoSettingValue;
 
@@ -180,7 +169,7 @@ public sealed partial class SettingsWebView : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			SettingsService.CoreSettings.ResourceSave = autoSettingValue;
 
@@ -192,7 +181,7 @@ public sealed partial class SettingsWebView : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			SettingsService.CoreSettings.AdblockBtn = autoSettingValue;
 
@@ -205,7 +194,7 @@ public sealed partial class SettingsWebView : Page
 	{
 		if (sender is ToggleSwitch toggleSwitch)
 		{
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			SettingsService.CoreSettings.PipMode = autoSettingValue;
 

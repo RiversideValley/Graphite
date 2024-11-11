@@ -7,7 +7,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 	{
 		public SureReset()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 
 		private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -16,14 +16,14 @@ namespace FireBrowserWinUi3.Pages.Patch
 			// Write some content to the file (or leave it empty)
 			File.WriteAllText(resetFilePath, "True");
 			// Restart the app
-			Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+			_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 		}
 
 
 
 		private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
-			this.Hide();
+			Hide();
 		}
 	}
 }

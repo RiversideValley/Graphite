@@ -7,13 +7,13 @@ using Microsoft.UI.Xaml.Markup;
 namespace FireBrowserWinUi3.Pages.SettingsPages;
 public sealed partial class SettingsDesign : Page
 {
-	SettingsService SettingsService { get; set; }
+	private SettingsService SettingsService { get; set; }
 
 	public SettingsDesign()
 	{
 		SettingsService = App.GetService<SettingsService>();
 
-		this.InitializeComponent();
+		InitializeComponent();
 		Init();
 		Check();
 	}
@@ -40,7 +40,7 @@ public sealed partial class SettingsDesign : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 
 			// Set the 'Auto' setting
 			SettingsService.CoreSettings.Auto = autoSettingValue;

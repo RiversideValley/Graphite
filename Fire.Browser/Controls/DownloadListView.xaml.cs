@@ -11,7 +11,7 @@ namespace FireBrowserWinUi3.Controls
 		public DownloadListView()
 		{
 			ServiceDownloads = App.GetService<DownloadService>();
-			this.InitializeComponent();
+			InitializeComponent();
 
 		}
 	}

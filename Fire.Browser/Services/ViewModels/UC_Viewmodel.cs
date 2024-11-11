@@ -26,7 +26,7 @@ namespace FireBrowserWinUi3
 		public UserExtend User { get; set; }
 		public Window ParentWindow { get; set; }
 		public UIElement ParentGrid { get; set; }
-		public bool IsCoreFolder { get { return _IsCoreFolder(); } }
+		public bool IsCoreFolder => _IsCoreFolder();
 
 		[ObservableProperty]
 		[NotifyPropertyChangedRecipients]
@@ -36,7 +36,7 @@ namespace FireBrowserWinUi3
 		//public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
 		public Visibility IsMsLoginVisibility { get { return IsMsLogin ? Visibility.Visible : Visibility.Collapsed; ; } }
 
-		private Func<bool> _IsCoreFolder = () =>
+		private readonly Func<bool> _IsCoreFolder = () =>
 		{
 			// Your condition here
 			string documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -44,11 +44,8 @@ namespace FireBrowserWinUi3
 
 			if (Directory.Exists(backupDirectory))
 			{
-				var backupFiles = Directory.GetFiles(backupDirectory, "*.firebackup");
-				if (backupFiles.Length > 0)
-					return true;
-				else
-					return false;
+				string[] backupFiles = Directory.GetFiles(backupDirectory, "*.firebackup");
+				return backupFiles.Length > 0;
 			}
 			return false;
 		};
@@ -73,12 +70,9 @@ namespace FireBrowserWinUi3
 		private async Task LoginToMicrosoft()
 		{
 
-			var answer = await AppService.MsalService?.SignInAsync();
+			Microsoft.Identity.Client.AuthenticationResult answer = await AppService.MsalService?.SignInAsync();
 			RaisePropertyChanges(nameof(IsMsLogin));
-			if (answer is null)
-				IsMsLogin = false;
-			else
-				IsMsLogin = answer.AccessToken is not null;
+			IsMsLogin = answer is not null && answer.AccessToken is not null;
 
 			if (IsMsLogin)
 			{
@@ -87,24 +81,22 @@ namespace FireBrowserWinUi3
 				{
 
 
-					using (var stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync())
+					using Stream stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
+					if (stream == null)
 					{
-						if (stream == null)
-						{
-							MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
-							RaisePropertyChanges(nameof(MsProfilePicture));
-							return;
-						}
-
-						var memoryStream = new MemoryStream();
-						await stream.CopyToAsync(memoryStream);
-						memoryStream.Position = 0;
-
-						var bitmapImage = new BitmapImage();
-						await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
-						MsProfilePicture = bitmapImage;
+						MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
 						RaisePropertyChanges(nameof(MsProfilePicture));
+						return;
 					}
+
+					MemoryStream memoryStream = new();
+					await stream.CopyToAsync(memoryStream);
+					memoryStream.Position = 0;
+
+					BitmapImage bitmapImage = new();
+					await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
+					MsProfilePicture = bitmapImage;
+					RaisePropertyChanges(nameof(MsProfilePicture));
 				}
 				else
 				{
@@ -128,13 +120,13 @@ namespace FireBrowserWinUi3
 		private async Task AdminCenter()
 		{
 
-			var win = new UpLoadBackup();
+			UpLoadBackup win = new();
 			win.AppWindow.SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.CompactOverlay);
-			var desktop = await Windowing.SizeWindow();
+			Windows.Graphics.SizeInt32? desktop = await Windowing.SizeWindow();
 			win.AppWindow.MoveAndResize(new(ParentWindow.AppWindow.Position.X, 0, desktop.Value.Width / 2, desktop.Value.Height / 2));
 			win.ExtendsContentIntoTitleBar = true;
-			Windowing.ShowWindow(WindowNative.GetWindowHandle(win), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
-			Windowing.AnimateWindow(WindowNative.GetWindowHandle(win), 2000, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_ACTIVATE);
+			_ = Windowing.ShowWindow(WindowNative.GetWindowHandle(win), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
+			_ = Windowing.AnimateWindow(WindowNative.GetWindowHandle(win), 2000, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_ACTIVATE);
 			win.AppWindow?.ShowOnceWithRequestedStartupState();
 
 		}
@@ -142,20 +134,20 @@ namespace FireBrowserWinUi3
 		[RelayCommand]
 		private void OpenWindowsWeather()
 		{
-			var options = new Windows.System.LauncherOptions();
+			Windows.System.LauncherOptions options = new();
 			options.DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.UseMinimum;
 
 			// Launch the URI
-			Windows.System.Launcher.LaunchUriAsync(new("msnweather://forecast"), options).GetAwaiter().GetResult();
+			_ = Windows.System.Launcher.LaunchUriAsync(new("msnweather://forecast"), options).GetAwaiter().GetResult();
 		}
 
 		[RelayCommand]
 		private async Task BackUpCore()
 		{
 
-			BackUpDialog dlg = new BackUpDialog();
+			BackUpDialog dlg = new();
 			dlg.XamlRoot = ParentGrid?.XamlRoot;
-			await dlg.ShowAsync();
+			_ = await dlg.ShowAsync();
 
 		}
 
@@ -163,11 +155,14 @@ namespace FireBrowserWinUi3
 		private async Task RestoreCore()
 		{
 			//usercentral is big enough now. 
-			RestoreBackupDialog dlg = new RestoreBackupDialog();
+			RestoreBackupDialog dlg = new();
 			dlg.XamlRoot = ParentGrid?.XamlRoot;
-			await dlg.ShowAsync();
+			_ = await dlg.ShowAsync();
 		}
 
-		public void RaisePropertyChanges([CallerMemberName] string propertyName = null) => OnPropertyChanged(propertyName);
+		public void RaisePropertyChanges([CallerMemberName] string propertyName = null)
+		{
+			OnPropertyChanged(propertyName);
+		}
 	}
 }

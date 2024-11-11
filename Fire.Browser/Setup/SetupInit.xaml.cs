@@ -27,16 +27,20 @@ public sealed partial class SetupInit : Page
 
 	public string IntroMessageProperty => IntroMessage;
 
-	private void Setup_Click(object sender, RoutedEventArgs e) =>
-		Frame.Navigate(typeof(SetupUser));
+	private void Setup_Click(object sender, RoutedEventArgs e)
+	{
+		_ = Frame.Navigate(typeof(SetupUser));
+	}
 
-	private async void RestoreNow_Click(object sender, RoutedEventArgs e) =>
+	private async void RestoreNow_Click(object sender, RoutedEventArgs e)
+	{
 		await ShowRestoreBackupDialogAsync();
+	}
 
 	private async Task ShowRestoreBackupDialogAsync()
 	{
-		var dlg = new RestoreBackupDialog { XamlRoot = XamlRoot };
-		await dlg.ShowAsync();
+		RestoreBackupDialog dlg = new() { XamlRoot = XamlRoot };
+		_ = await dlg.ShowAsync();
 
 	}
 }

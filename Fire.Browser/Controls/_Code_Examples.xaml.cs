@@ -12,7 +12,7 @@ namespace FireBrowserWinUi3.Controls
 	{
 		public _Code_Examples()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 		//public static async Task<AuthenticationResult> GraphUserInformationAsync()
 		//{

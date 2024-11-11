@@ -71,7 +71,7 @@ public static class AppService
 				ActiveWindow = new RestoreBackUp();
 				ActiveWindow.Closed += (s, e) =>
 				{
-					WindowsController(cancellationToken).ConfigureAwait(false);
+					_ = WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 				ActiveWindow.Activate();
 				return;
@@ -92,7 +92,7 @@ public static class AppService
 				ActiveWindow.Closed += (s, e) =>
 				{
 					AuthService.IsUserNameChanging = false;
-					WindowsController(cancellationToken).ConfigureAwait(false);
+					_ = WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 				ActiveWindow.Activate();
 				return;
@@ -104,7 +104,7 @@ public static class AppService
 				ActiveWindow = new CreateBackup();
 				ActiveWindow.Closed += (s, e) =>
 				{
-					WindowsController(cancellationToken).ConfigureAwait(false);
+					_ = WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 				ActiveWindow.Activate();
 				return;
@@ -117,7 +117,7 @@ public static class AppService
 				ActiveWindow.Closed += (s, e) =>
 				{
 					AuthService.IsUserNameChanging = false;
-					WindowsController(cancellationToken).ConfigureAwait(false);
+					_ = WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 				ActiveWindow.Activate();
 				return;
@@ -138,7 +138,7 @@ public static class AppService
 		catch (Exception e)
 		{
 			await CloseCancelToken(cancellationToken);
-			await Task.FromException<CancellationToken>(e);
+			_ = await Task.FromException<CancellationToken>(e);
 			throw;
 		}
 
@@ -147,8 +147,8 @@ public static class AppService
 
 	public static Task CloseCancelToken(CancellationToken cancellationToken)
 	{
-		var cancel = new CancellationTokenSource();
-		cancellationToken = cancel.Token;
+		CancellationTokenSource cancel = new();
+		_ = cancel.Token;
 		cancel.Cancel();
 		return Task.CompletedTask;
 	}
@@ -156,7 +156,7 @@ public static class AppService
 	{
 		try
 		{
-			var evt = AppInstance.GetActivatedEventArgs();
+			IActivatedEventArgs evt = AppInstance.GetActivatedEventArgs();
 			if (evt is ProtocolActivatedEventArgs protocolArgs && protocolArgs.Kind == ActivationKind.Protocol)
 			{
 				string url = protocolArgs.Uri.ToString();
@@ -221,7 +221,10 @@ public static class AppService
 
 	public static void ConfigureWindowAppearance()
 	{
-		if (ActiveWindow is null) return;
+		if (ActiveWindow is null)
+		{
+			return;
+		}
 
 		IntPtr hWnd = WindowNative.GetWindowHandle(ActiveWindow);
 		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
@@ -234,8 +237,8 @@ public static class AppService
 			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 			// need this for inquires down line for window placement. 
 			appWindow.Title = "UserCentral";
-			var titleBar = appWindow.TitleBar;
-			var btnColor = Colors.Transparent;
+			AppWindowTitleBar titleBar = appWindow.TitleBar;
+			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
 			titleBar.ForegroundColor = Colors.LimeGreen;
 			titleBar.ButtonBackgroundColor = btnColor;
@@ -248,7 +251,7 @@ public static class AppService
 	private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
 	{
 
-		var userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
+		string userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
 		if (!Directory.Exists(userExist))
 		{
 			UserFolderManager.CreateUserFolders(new User
@@ -268,7 +271,7 @@ public static class AppService
 		App.Current.m_window = new MainWindow();
 		Windowing.Center(App.Current.m_window);
 		IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
-		Windowing.AnimateWindow(hWnd, 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
+		_ = Windowing.AnimateWindow(hWnd, 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
 		App.Current.m_window.Activate();
 
 		App.Current.m_window.AppWindow.MoveInZOrderAtTop();
@@ -286,12 +289,12 @@ public static class AppService
 			if (AuthService.IsUserAuthenticated)
 			{
 				IMessenger messenger = App.GetService<IMessenger>();
-				messenger?.Send(new Message_Settings_Actions($"Welcome {AuthService.CurrentUser.Username} to our FireBrowser", EnumMessageStatus.Login));
+				_ = (messenger?.Send(new Message_Settings_Actions($"Welcome {AuthService.CurrentUser.Username} to our FireBrowser", EnumMessageStatus.Login)));
 			}
 		}
 
-		var cancel = new CancellationTokenSource();
-		CancellationToken = cancellationToken = cancel.Token;
+		CancellationTokenSource cancel = new();
+		CancellationToken = _ = cancel.Token;
 		cancel.Cancel();
 	}
 
@@ -299,7 +302,7 @@ public static class AppService
 	{
 		try
 		{
-			var users = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
+			List<User> users = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
 			return users?.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
 		}
 		catch (Exception ex)
@@ -321,9 +324,12 @@ public static class AppService
         Need function after injection, before use logins, and when use authorized */
 		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
 
-		if (userName is null) return;
+		if (userName is null)
+		{
+			return;
+		}
 
-		AuthService.Authenticate(username);
+		_ = AuthService.Authenticate(username);
 
 		if (File.Exists(updateSql))
 		{
@@ -331,9 +337,9 @@ public static class AppService
 			{
 				if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
 				{
-					SettingsActions settingsActions = new SettingsActions(AuthService.CurrentUser.Username);
-					var sqlIN = File.ReadAllText(updateSql);
-					await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
+					SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
+					string sqlIN = File.ReadAllText(updateSql);
+					_ = await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
 					File.Delete(updateSql);
 				}
 
@@ -349,13 +355,13 @@ public static class AppService
 		if (AuthService.IsUserAuthenticated)
 		{
 
-			DatabaseServices dbServer = new DatabaseServices();
+			DatabaseServices dbServer = new();
 
 			try
 			{
 
-				await dbServer.DatabaseCreationValidation();
-				await dbServer.InsertUserSettings();
+				_ = await dbServer.DatabaseCreationValidation();
+				_ = await dbServer.InsertUserSettings();
 			}
 			catch (Exception ex)
 			{
@@ -374,8 +380,8 @@ public static class AppService
 			{
 				if (AuthService.NewCreatedUser is not null)
 				{
-					var settingsActions = new SettingsActions(AuthService.NewCreatedUser?.Username);
-					var settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
+					SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
+					string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
 
 					if (!File.Exists(settingsPath))
 					{
@@ -384,12 +390,12 @@ public static class AppService
 
 					if (File.Exists(settingsPath))
 					{
-						await settingsActions.SettingsContext.Database.CanConnectAsync();
+						_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
 					}
 
 					if (await settingsActions.GetSettingsAsync() is null)
 					{
-						await settingsActions.UpdateSettingsAsync(AppSettings);
+						_ = await settingsActions.UpdateSettingsAsync(AppSettings);
 					}
 
 				}
@@ -423,8 +429,8 @@ public static class AppService
 			appWindow.MoveInZOrderAtTop();
 			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 			appWindow.Title = "Settings for: " + AuthService.NewCreatedUser?.Username;
-			var titleBar = appWindow.TitleBar;
-			var btnColor = Colors.Transparent;
+			AppWindowTitleBar titleBar = appWindow.TitleBar;
+			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
 			titleBar.ForegroundColor = btnColor;
 			titleBar.ButtonBackgroundColor = btnColor;

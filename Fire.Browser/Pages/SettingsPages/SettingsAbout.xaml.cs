@@ -10,16 +10,24 @@ public sealed partial class SettingsAbout : Page
 {
 	private Passer? param;
 
-	protected override void OnNavigatedTo(NavigationEventArgs e) =>
+	protected override void OnNavigatedTo(NavigationEventArgs e)
+	{
 		param = e.Parameter as Passer;
+	}
 
-	public SettingsAbout() => InitializeComponent();
+	public SettingsAbout()
+	{
+		InitializeComponent();
+	}
 
 	private void AboutCardClicked(object sender, RoutedEventArgs e)
 	{
-		if (sender is not SettingsCard card) return;
+		if (sender is not SettingsCard card)
+		{
+			return;
+		}
 
-		var url = card.Tag switch
+		string url = card.Tag switch
 		{
 			"Discord" => "https://discord.gg/kYStRKBHwy",
 			"GitHub" => "https://github.com/FirebrowserDevs/FireBrowserWinUi3",
@@ -27,7 +35,7 @@ public sealed partial class SettingsAbout : Page
 			_ => "https://example.com"
 		};
 
-		var window = (Application.Current as App)?.m_window as MainWindow;
+		MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 		window.NavigateToUrl(url);
 	}
 }

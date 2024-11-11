@@ -25,21 +25,29 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 			EnqFav.IsOn = SettingsService.CoreSettings.Eqfav;
 		}
 
-		private async void EnqSets_Toggled(object sender, RoutedEventArgs e) =>
+		private async void EnqSets_Toggled(object sender, RoutedEventArgs e)
+		{
 			await UpdateSetting(nameof(SettingsService.CoreSettings.Eqsets), ((ToggleSwitch)sender).IsOn);
+		}
 
-		private async void Enq2fa_Toggled(object sender, RoutedEventArgs e) =>
+		private async void Enq2fa_Toggled(object sender, RoutedEventArgs e)
+		{
 			await UpdateSetting(nameof(SettingsService.CoreSettings.Eq2fa), ((ToggleSwitch)sender).IsOn);
+		}
 
-		private async void EnqHis_Toggled(object sender, RoutedEventArgs e) =>
+		private async void EnqHis_Toggled(object sender, RoutedEventArgs e)
+		{
 			await UpdateSetting(nameof(SettingsService.CoreSettings.EqHis), ((ToggleSwitch)sender).IsOn);
+		}
 
-		private async void EnqFav_Toggled(object sender, RoutedEventArgs e) =>
+		private async void EnqFav_Toggled(object sender, RoutedEventArgs e)
+		{
 			await UpdateSetting(nameof(SettingsService.CoreSettings.Eqfav), ((ToggleSwitch)sender).IsOn);
+		}
 
 		private async Task UpdateSetting(string propertyName, bool value)
 		{
-			var property = SettingsService.CoreSettings.GetType().GetProperty(propertyName);
+			System.Reflection.PropertyInfo property = SettingsService.CoreSettings.GetType().GetProperty(propertyName);
 			if (property != null)
 			{
 				property.SetValue(SettingsService.CoreSettings, value);

@@ -33,7 +33,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 	[RelayCommand]
 	public async Task RemoveDownloadControl(string fileName)
 	{
-		await DeleteAsync(fileName);
+		_ = await DeleteAsync(fileName);
 	}
 
 	[RelayCommand]
@@ -41,7 +41,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 	{
 		try
 		{
-			Process.Start("explorer.exe", "/select, " + fileName);
+			_ = Process.Start("explorer.exe", "/select, " + fileName);
 		}
 		catch (Exception ex)
 		{
@@ -50,7 +50,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 	}
 	private async Task<ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem>> GetDownloadItems()
 	{
-		ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem> uiControl = new ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem>();
+		ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem> uiControl = new();
 
 		try
 		{
@@ -92,7 +92,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 		try
 		{
 			File.Delete(FilePath);
-			DownloadActions downloadActions = new DownloadActions(AuthorizedUser.Username);
+			DownloadActions downloadActions = new(AuthorizedUser.Username);
 			await downloadActions.DeleteDownloadItem(FilePath);
 			DownloadItemControls = await GetDownloadItems();
 			OnPropertyChanged(nameof(DownloadItemControls));
@@ -120,7 +120,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 	{
 		try
 		{
-			DownloadActions downloadActions = new DownloadActions(AuthService.CurrentUser.Username);
+			DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
 			await downloadActions.InsertDownloadItem(Guid.NewGuid().ToString(), current_path, end_time, start_time);
 			await UpdateAsync();
 		}

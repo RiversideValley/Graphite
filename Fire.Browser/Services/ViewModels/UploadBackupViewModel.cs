@@ -31,15 +31,15 @@ namespace FireBrowserWinUi3.Services.ViewModels
 		public Visibility IsFileNewSas => FileNewSas is null ? Visibility.Collapsed : Visibility.Visible;
 		public UploadBackupViewModel()
 		{
-			var user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult();
+			Microsoft.Identity.Client.IAccount user = AppService.MsalService.GetUserAccountAsync().GetAwaiter().GetResult();
 
 			if (user is not null)
 			{
 				SelectedUser = new EmailUser { Name = user.Username, Email = user.Username };
-				var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
+				string connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
 				AzBackup = new AzBackupService(connString, "storelean", "firebackups", AuthService.CurrentUser ?? new() { Id = Guid.NewGuid(), Username = "Admin", IsFirstLaunch = false });
 
-				var list = AzBackup.GetUploadFileByUser(user.Username);
+				System.Collections.Generic.List<UserEntity> list = AzBackup.GetUploadFileByUser(user.Username);
 				FilesUpload = [.. list];
 			}
 		}
@@ -54,14 +54,17 @@ namespace FireBrowserWinUi3.Services.ViewModels
 		{
 			if (FileSelected is null)
 			{
-				UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file from the list", 3000, "Backups");
+				_ = (UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file from the list", 3000, "Backups"));
 				return;
 			}
 
-			var result = await AzBackup.DownloadBackupFile(FileSelected.BlobName);
-			if (result is null) return;
+			AzBackupService.ResponseAZFILE result = await AzBackup.DownloadBackupFile(FileSelected.BlobName);
+			if (result is null)
+			{
+				return;
+			}
 
-			var note = new Notification
+			Notification note = new()
 			{
 				Title = "Backup Manager \n",
 				Message = $"Your backup file has been downloaded:\n{FileSelected.Timestamp.Value.ToLocalTime()} Restore Point !",
@@ -69,7 +72,7 @@ namespace FireBrowserWinUi3.Services.ViewModels
 				IsIconVisible = true,
 				Duration = TimeSpan.FromSeconds(3)
 			};
-			UpLoadBackup.Instance?.NotificationQueue.Show(note);
+			_ = (UpLoadBackup.Instance?.NotificationQueue.Show(note));
 
 		}
 
@@ -77,9 +80,9 @@ namespace FireBrowserWinUi3.Services.ViewModels
 		private async Task BackUpCore()
 		{
 
-			BackUpDialog dlg = new BackUpDialog();
+			BackUpDialog dlg = new();
 			dlg.XamlRoot = UpLoadBackup.Instance?.GridMainUploadBackup.XamlRoot;
-			await dlg.ShowAsync();
+			_ = await dlg.ShowAsync();
 
 		}
 		//public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
@@ -140,26 +143,26 @@ namespace FireBrowserWinUi3.Services.ViewModels
 
 			if (FileSelected is null)
 			{
-				UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file!", 3000, "Backups");
+				_ = (UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file!", 3000, "Backups"));
 				return;
 			}
 
 			// get ref to file on Azure Blob Storage
 
-			var connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
-			var storageAccount = CloudStorageAccount.Parse(connString);
-			var blobClient = storageAccount.CreateCloudBlobClient();
-			var container = blobClient.GetContainerReference("firebackups");
-			var blob = container.GetBlockBlobReference(FileSelected.BlobName);
+			string connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
+			CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connString);
+			CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+			CloudBlobContainer container = blobClient.GetContainerReference("firebackups");
+			CloudBlockBlob blob = container.GetBlockBlobReference(FileSelected.BlobName);
 
-			var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
+			string sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
 			{
 				Permissions = SharedAccessBlobPermissions.Read,
 				SharedAccessExpiryTime = DateTime.UtcNow.AddHours(1) // Token valid for 1 hour
 			});
 
-			var sasUrl = blob.Uri.AbsoluteUri + sasToken;
-			sasUrl.Append('/');
+			string sasUrl = blob.Uri.AbsoluteUri + sasToken;
+			_ = sasUrl.Append('/');
 			// Logic to send email
 			FileNewSas = FileSelected;
 			FileNewSas.BlobUrl = sasUrl;

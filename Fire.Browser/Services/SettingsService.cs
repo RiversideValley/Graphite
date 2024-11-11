@@ -48,7 +48,10 @@ public class SettingsService : ISettingsService
 		try
 		{
 
-			if (!AuthService.IsUserAuthenticated) return;
+			if (!AuthService.IsUserAuthenticated)
+			{
+				return;
+			}
 
 			AppService.AppSettings = settings;
 			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
@@ -56,14 +59,14 @@ public class SettingsService : ISettingsService
 				await Actions?.SettingsContext.Database.MigrateAsync();
 			}
 
-			await Actions?.UpdateSettingsAsync(settings);
+			_ = await Actions?.UpdateSettingsAsync(settings);
 			// get new from database. 
 			CoreSettings = await Actions?.GetSettingsAsync();
 
-			var obj = new object();
+			object obj = new();
 			lock (obj)
 			{
-				Messenger?.Send(new Message_Settings_Actions(EnumMessageStatus.Settings));
+				_ = (Messenger?.Send(new Message_Settings_Actions(EnumMessageStatus.Settings)));
 			}
 		}
 		catch (Exception ex)

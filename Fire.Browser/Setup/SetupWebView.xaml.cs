@@ -13,7 +13,7 @@ public sealed partial class SetupWebView : Page
 {
 	public SetupWebView()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 	}
 
 	private Fire.Browser.Core.User GetUser()
@@ -33,7 +33,7 @@ public sealed partial class SetupWebView : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.StatusBar = autoSettingValue;
 
 		}
@@ -44,7 +44,7 @@ public sealed partial class SetupWebView : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.BrowserKeys = autoSettingValue; ;
 		}
 	}
@@ -55,7 +55,7 @@ public sealed partial class SetupWebView : Page
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
-			var autoSettingValue = toggleSwitch.IsOn;
+			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.BrowserScripts = autoSettingValue;
 		}
 	}
@@ -73,8 +73,8 @@ public sealed partial class SetupWebView : Page
 
 		try
 		{
-			var settingsActions = new SettingsActions(AuthService.NewCreatedUser?.Username);
-			var settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
+			SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
+			string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
 
 			if (!File.Exists(settingsPath))
 			{
@@ -84,7 +84,9 @@ public sealed partial class SetupWebView : Page
 			if (File.Exists(settingsPath))
 			{
 				if (await settingsActions.SettingsContext.Database.CanConnectAsync())
-					await settingsActions.UpdateSettingsAsync(AppService.AppSettings);
+				{
+					_ = await settingsActions.UpdateSettingsAsync(AppService.AppSettings);
+				}
 			}
 
 		}
@@ -106,6 +108,6 @@ public sealed partial class SetupWebView : Page
 
 		CreateNewSettings();
 
-		Frame.Navigate(typeof(SetupFinish));
+		_ = Frame.Navigate(typeof(SetupFinish));
 	}
 }

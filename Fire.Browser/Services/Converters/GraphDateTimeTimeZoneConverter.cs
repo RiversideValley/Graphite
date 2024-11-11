@@ -16,7 +16,7 @@ namespace FireBrowserWinUi3.Services.Converters
 		{
 			if (value is DateTimeTimeZone date)
 			{
-				var parsedDateAs = DateTimeOffset.Parse(date.DateTime);
+				DateTimeOffset parsedDateAs = DateTimeOffset.Parse(date.DateTime);
 				// Return the local date time string
 				return $"{parsedDateAs.LocalDateTime.ToShortDateString()} {parsedDateAs.LocalDateTime.ToShortTimeString()}";
 			}

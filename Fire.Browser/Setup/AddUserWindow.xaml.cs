@@ -21,10 +21,10 @@ namespace FireBrowserWinUi3
 	{
 		public AddUserWindow()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			ConfigureWindowAppearance(this);
-			this.Activated += (s, e) => { Userbox.Focus(FocusState.Programmatic); };
-			this.Closed += async (s, e) =>
+			Activated += (s, e) => { _ = Userbox.Focus(FocusState.Programmatic); };
+			Closed += async (s, e) =>
 			{
 
 				await Task.Delay(420);
@@ -33,11 +33,11 @@ namespace FireBrowserWinUi3
 				if (ucHwnd != IntPtr.Zero)
 				{
 					Windowing.Center(ucHwnd);
-					Windowing.UpdateWindow(ucHwnd);
+					_ = Windowing.UpdateWindow(ucHwnd);
 				}
 				else
 				{
-					Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+					_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 				}
 			};
 		}
@@ -51,7 +51,7 @@ namespace FireBrowserWinUi3
 			{
 				// Set the maximum size to 430 width and 612 height
 				appWindow.SetPresenter(AppWindowPresenterKind.Default);
-				var presenter = appWindow.Presenter as OverlappedPresenter;
+				OverlappedPresenter presenter = appWindow.Presenter as OverlappedPresenter;
 				if (presenter != null)
 				{
 					presenter.IsResizable = true;
@@ -65,8 +65,8 @@ namespace FireBrowserWinUi3
 				appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 				appWindow.Title = "Create New User";
 				appWindow.SetIcon("LogoSetup.ico");
-				var titleBar = appWindow.TitleBar;
-				var btnColor = Colors.Transparent;
+				AppWindowTitleBar titleBar = appWindow.TitleBar;
+				Windows.UI.Color btnColor = Colors.Transparent;
 				titleBar.BackgroundColor = btnColor;
 				titleBar.ForegroundColor = btnColor;
 				titleBar.ButtonBackgroundColor = btnColor;
@@ -75,17 +75,17 @@ namespace FireBrowserWinUi3
 			}
 		}
 
-		string iImage = "";
+		private string iImage = "";
 		public async Task CopyImageAsync(string iImage, string destinationFolderPath)
 		{
-			ImageHelper imgLoader = new ImageHelper();
+			ImageHelper imgLoader = new();
 			imgLoader.ImageName = iImage;
-			imgLoader.LoadImage($"{iImage}");
+			_ = imgLoader.LoadImage($"{iImage}");
 
 			StorageFolder destinationFolder = await StorageFolder.GetFolderFromPathAsync(destinationFolderPath);
 
 			StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Core/Assets/{iImage}"));
-			StorageFile destinationFile = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
+			_ = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
 
 			Console.WriteLine("Image copied successfully!");
 		}
@@ -97,8 +97,8 @@ namespace FireBrowserWinUi3
 				string userImageName = ProfileImage.SelectedItem.ToString() + ".png";
 
 				iImage = userImageName;
-				ImageHelper imgLoader = new ImageHelper();
-				var userProfilePicture = imgLoader.LoadImage(userImageName);
+				ImageHelper imgLoader = new();
+				Microsoft.UI.Xaml.Media.Imaging.BitmapImage userProfilePicture = imgLoader.LoadImage(userImageName);
 				Pimg.ProfilePicture = userProfilePicture;
 			}
 		}
@@ -112,9 +112,12 @@ namespace FireBrowserWinUi3
 		{
 			string enteredUsername = Userbox.Text;
 
-			if (string.IsNullOrWhiteSpace(enteredUsername)) return;
+			if (string.IsNullOrWhiteSpace(enteredUsername))
+			{
+				return;
+			}
 
-			User newUser = new User
+			User newUser = new()
 			{
 				Id = Guid.NewGuid(),
 				Username = enteredUsername,
@@ -122,7 +125,7 @@ namespace FireBrowserWinUi3
 				UserSettings = null
 			};
 
-			List<Fire.Browser.Core.User> users = new List<Fire.Browser.Core.User>();
+			List<Fire.Browser.Core.User> users = new();
 			users.Add(newUser);
 
 			AuthService.AddUser(newUser);
@@ -136,7 +139,10 @@ namespace FireBrowserWinUi3
 			AuthService.NewCreatedUser = newUser;
 
 			if (SettingsHome.Instance is not null)
-				SettingsHome.Instance?.LoadUsernames();
+			{
+				_ = (SettingsHome.Instance?.LoadUsernames());
+			}
+
 			if (UserCentral.Instance is not null)
 			{
 				await UserCentral.Instance?.LoadDataGlobally();

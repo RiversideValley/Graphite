@@ -17,8 +17,8 @@ using Path = System.IO.Path;
 namespace FireBrowserWinUi3;
 public partial class App : Application
 {
-	string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");
-	public new static App Current => (App)Application.Current;
+	private readonly string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");
+	public static new App Current => (App)Application.Current;
 	private string AzureStorage { get; } = "DefaultEndpointsProtocol=https;AccountName=strorelearn;AccountKey=0pt8CYqrqXUluQE3/60q8wobkmYznb9ovHIzztGVOzNxlSa+U8NlY74uwfggd5DfTmGORBLtXpeKEvDYh2ynfQ==;EndpointSuffix=core.windows.net";
 
 	#region DependencyInjection
@@ -27,33 +27,30 @@ public partial class App : Application
 
 	public static T GetService<T>() where T : class
 	{
-		if (App.Current is not App app || App.Current.Services is null)
+		if (App.Current is not App || App.Current.Services is null)
 		{
 			throw new NullReferenceException("Application or Services are not properly initialized.");
 		}
 
-		if (App.Current.Services.GetService(typeof(T)) is not T service)
-		{
-			throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-		}
-
-		return service;
+		return App.Current.Services.GetService(typeof(T)) is not T service
+			? throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.")
+			: service;
 	}
 	public IServiceProvider ConfigureServices()
 	{
-		var services = new ServiceCollection();
+		ServiceCollection services = new();
 
-		services.AddSingleton<WeakReferenceMessenger>();
-		services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider =>
+		_ = services.AddSingleton<WeakReferenceMessenger>();
+		_ = services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider =>
 			provider.GetRequiredService<WeakReferenceMessenger>());
-		services.AddSingleton<DownloadService>();
-		services.AddSingleton<MsalAuthService>();
-		services.AddSingleton<GraphService>();
-		services.AddTransient<DownloadsViewModel>();
-		services.AddTransient<HomeViewModel>();
-		services.AddTransient<SettingsService>();
-		services.AddTransient<MainWindowViewModel>();
-		services.AddTransient<UploadBackupViewModel>();
+		_ = services.AddSingleton<DownloadService>();
+		_ = services.AddSingleton<MsalAuthService>();
+		_ = services.AddSingleton<GraphService>();
+		_ = services.AddTransient<DownloadsViewModel>();
+		_ = services.AddTransient<HomeViewModel>();
+		_ = services.AddTransient<SettingsService>();
+		_ = services.AddTransient<MainWindowViewModel>();
+		_ = services.AddTransient<UploadBackupViewModel>();
 
 		return services.BuildServiceProvider();
 	}
@@ -62,8 +59,8 @@ public partial class App : Application
 
 	public App()
 	{
-		this.InitializeComponent();
-		this.UnhandledException += Current_UnhandledException;
+		InitializeComponent();
+		UnhandledException += Current_UnhandledException;
 		_ = Fire.Browser.Navigation.TLD.LoadKnownDomainsAsync().ConfigureAwait(false);
 
 		Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
@@ -77,14 +74,16 @@ public partial class App : Application
 	private void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
 		if (!AppService.IsAppGoingToClose)
+		{
 			Fire.Core.Exceptions.ExceptionLogger.LogException(e.Exception);
+		}
 	}
 
 	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
 	{
 		try
 		{
-			var users = JsonSerializer.Deserialize<List<Fire.Browser.Core.User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
+			List<Fire.Browser.Core.User> users = JsonSerializer.Deserialize<List<Fire.Browser.Core.User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
 
 			return users?.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
 		}
@@ -130,10 +129,13 @@ public partial class App : Application
 			}
 
 			if (AppService.IsAppGoingToClose == true)
+			{
 				base.Exit();
+			}
 			else
+			{
 				base.OnLaunched(args);
-
+			}
 		}
 		catch (Exception ex)
 		{

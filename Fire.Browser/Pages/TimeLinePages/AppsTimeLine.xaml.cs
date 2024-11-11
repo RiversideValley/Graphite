@@ -6,6 +6,6 @@ public sealed partial class AppsTimeLine : Page
 {
 	public AppsTimeLine()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 	}
 }

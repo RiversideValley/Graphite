@@ -58,13 +58,13 @@ public class ProcessStarter
 	// Method to start a process
 	public static bool StartProcess(string filePath, string arguments = "", string workingDirectory = null)
 	{
-		var startupInfo = new STARTUPINFO();
-		var processInfo = new PROCESS_INFORMATION();
+		STARTUPINFO startupInfo = new();
+		_ = new PROCESS_INFORMATION();
 		startupInfo.cb = Marshal.SizeOf(startupInfo);
 
 		// Construct command line
 		string commandLine = $"{filePath} {arguments}".Trim();
-
+		PROCESS_INFORMATION processInfo;
 		// Attempt to create the process
 		bool result = CreateProcess(
 			null,                  // Application name
@@ -84,8 +84,8 @@ public class ProcessStarter
 		}
 
 		// Close handles to the process and thread
-		CloseHandle(processInfo.hProcess);
-		CloseHandle(processInfo.hThread);
+		_ = CloseHandle(processInfo.hProcess);
+		_ = CloseHandle(processInfo.hThread);
 
 		return true;
 	}

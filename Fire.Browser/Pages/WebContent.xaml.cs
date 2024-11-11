@@ -30,27 +30,33 @@ namespace FireBrowserWinUi3.Pages;
 
 public sealed partial class WebContent : Page
 {
-	Passer param;
+	private Passer param;
 	public static bool IsIncognitoModeEnabled { get; set; } = false;
 	public BitmapImage PictureWebElement { get; set; }
 	public WebView2 WebView { get; set; }
-	SettingsService SettingsService { get; set; }
+	private SettingsService SettingsService { get; set; }
 
 	public WebContent()
 	{
 		SettingsService = App.GetService<SettingsService>();
-		this.InitializeComponent();
-		WebView = this.WebViewElement;
+		InitializeComponent();
+		WebView = WebViewElement;
 		Init();
 	}
 
 	private void Init()
 	{
-		var currentUser = AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
+		User currentUser = AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
 
-		if (currentUser == null) return;
+		if (currentUser == null)
+		{
+			return;
+		}
 
-		if (!AuthService.Authenticate(currentUser.Username)) return;
+		if (!AuthService.Authenticate(currentUser.Username))
+		{
+			return;
+		}
 
 		string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
 		Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
@@ -62,14 +68,14 @@ public sealed partial class WebContent : Page
 		if (!IsIncognitoModeEnabled)
 		{
 			await Task.Delay(500);
-			var username = AuthService.CurrentUser;
-			var source = WebViewElement.CoreWebView2.Source.ToString();
-			var title = WebViewElement.CoreWebView2.DocumentTitle.ToString();
+			User username = AuthService.CurrentUser;
+			string source = WebViewElement.CoreWebView2.Source.ToString();
+			string title = WebViewElement.CoreWebView2.DocumentTitle.ToString();
 
-			var dbContext = new HistoryActions(username.Username);
+			HistoryActions dbContext = new(username.Username);
 			await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
 
-			var isSecure = source.Contains("https") ? "\uE72E" : (source.Contains("http") ? "\uE785" : "");
+			string isSecure = source.Contains("https") ? "\uE72E" : (source.Contains("http") ? "\uE785" : "");
 			param.ViewModel.SecurityIcon = isSecure;
 			param.ViewModel.SecurityIcontext = isSecure == "\uE72E" ? "Https Secured Website" : (isSecure == "\uE785" ? "Http UnSecured Website" : "");
 		}
@@ -77,8 +83,8 @@ public sealed partial class WebContent : Page
 
 	private void LoadSettings()
 	{
-		var webViewSettings = WebViewElement.CoreWebView2.Settings;
-		var coreSettings = SettingsService.CoreSettings;
+		CoreWebView2Settings webViewSettings = WebViewElement.CoreWebView2.Settings;
+		Settings coreSettings = SettingsService.CoreSettings;
 
 		webViewSettings.IsScriptEnabled = !coreSettings.DisableJavaScript;
 		webViewSettings.IsPasswordAutosaveEnabled = !coreSettings.DisablePassSave;
@@ -93,7 +99,7 @@ public sealed partial class WebContent : Page
 
 	private void SetTrackingPreventionLevel(int level)
 	{
-		var levelMappings = new Dictionary<int, CoreWebView2TrackingPreventionLevel>
+		Dictionary<int, CoreWebView2TrackingPreventionLevel> levelMappings = new()
 		{
 		  { 0, CoreWebView2TrackingPreventionLevel.None },
 		  { 1, CoreWebView2TrackingPreventionLevel.Basic },
@@ -101,7 +107,7 @@ public sealed partial class WebContent : Page
 		  { 3, CoreWebView2TrackingPreventionLevel.Strict }
 		};
 
-		if (!levelMappings.TryGetValue(level, out var preventionLevel))
+		if (!levelMappings.TryGetValue(level, out CoreWebView2TrackingPreventionLevel preventionLevel))
 		{
 			preventionLevel = CoreWebView2TrackingPreventionLevel.Balanced; // default value
 		}
@@ -115,7 +121,7 @@ public sealed partial class WebContent : Page
 
 	private void ShareUi(string url, string title)
 	{
-		var hWnd = WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow);
+		nint hWnd = WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow);
 		ShareUIHelper.ShowShareUIURL(url, title, hWnd);
 	}
 
@@ -129,7 +135,10 @@ public sealed partial class WebContent : Page
 
 		LoadSettings();
 
-		if (param?.Param != null) WebViewElement.CoreWebView2.Navigate(param.Param.ToString());
+		if (param?.Param != null)
+		{
+			WebViewElement.CoreWebView2.Navigate(param.Param.ToString());
+		}
 
 		WebView2 s = WebViewElement;
 
@@ -137,13 +146,13 @@ public sealed partial class WebContent : Page
 
 		if (!string.IsNullOrEmpty(userAgent) && userAgent.Contains("Edg/"))
 		{
-			s.CoreWebView2.Settings.UserAgent = userAgent.Substring(0, userAgent.IndexOf("Edg/"));
+			s.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
 		}
 
 		// Event handlers...
 		s.CoreWebView2.ContainsFullScreenElementChanged += (sender, args) =>
 		{
-			var window = (Application.Current as App)?.m_window as MainWindow;
+			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			window.GoFullScreenWeb(s.CoreWebView2.ContainsFullScreenElement);
 		};
 
@@ -154,10 +163,10 @@ public sealed partial class WebContent : Page
 		s.CoreWebView2.ContextMenuRequested += CoreWebView2_ContextMenuRequested;
 		s.CoreWebView2.ScriptDialogOpening += async (sender, args) =>
 		{
-			args.GetDeferral();
-			var window = (Application.Current as App)?.m_window as MainWindow;
-			UIScript ui = new UIScript($"{sender.DocumentTitle} says", args.Message, window.Content.XamlRoot);
-			var result = await ui.ShowAsync();
+			_ = args.GetDeferral();
+			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+			UIScript ui = new($"{sender.DocumentTitle} says", args.Message, window.Content.XamlRoot);
+			ContentDialogResult result = await ui.ShowAsync();
 
 			if (result == ContentDialogResult.Primary)
 			{
@@ -178,10 +187,10 @@ public sealed partial class WebContent : Page
 			{
 				if (!IsIncognitoModeEnabled)
 				{
-					var bitmapImage = new BitmapImage();
-					var stream = await sender.GetFaviconAsync(0);
+					BitmapImage bitmapImage = new();
+					IRandomAccessStream stream = await sender.GetFaviconAsync(0);
 
-					var iconSource = new ImageIconSource { ImageSource = bitmapImage };
+					ImageIconSource iconSource = new() { ImageSource = bitmapImage };
 					await bitmapImage.SetSourceAsync(stream ?? await sender.GetFaviconAsync(CoreWebView2FaviconImageFormat.Jpeg));
 					param.Tab.IconSource = iconSource;
 				}
@@ -226,7 +235,10 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.HistoryChanged += async (sender, args) =>
 		{
-			if ((TabViewItem)param.TabView.SelectedItem == param.Tab) await AfterComplete();
+			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
+			{
+				await AfterComplete();
+			}
 		};
 
 		s.CoreWebView2.NavigationCompleted += async (sender, args) =>
@@ -235,44 +247,42 @@ public sealed partial class WebContent : Page
 			ProgressLoading.Visibility = Visibility.Collapsed;
 
 			//optimize with background task, and use dispatcher to be thread safe 
-			await Task.Factory.StartNew(async () =>
+			_ = await Task.Factory.StartNew(async () =>
 			{
 
 				await Task.Delay(2400);
 
 				try
 				{
-					DispatcherQueue?.TryEnqueue(async () =>
+					_ = (DispatcherQueue?.TryEnqueue(async () =>
 					{
 
 						// Delay for stability
 
-						using (MemoryStream memoryStream = new MemoryStream())
+						using MemoryStream memoryStream = new();
+						try
 						{
-							try
+							await s.CoreWebView2?.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Jpeg, memoryStream.AsRandomAccessStream());
+							_ = memoryStream.Seek(0, SeekOrigin.Begin);
+
+							BitmapImage bitmap = new() { DecodePixelHeight = 512, DecodePixelWidth = 640 };
+							bitmap.SetSource(memoryStream.AsRandomAccessStream());
+							_ = memoryStream.Seek(0, SeekOrigin.Begin);
+
+							PictureWebElement = bitmap;
+
+							MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
+							if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
 							{
-								await s.CoreWebView2?.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Jpeg, memoryStream.AsRandomAccessStream());
-								memoryStream.Seek(0, SeekOrigin.Begin);
-
-								BitmapImage bitmap = new BitmapImage { DecodePixelHeight = 512, DecodePixelWidth = 640 };
-								bitmap.SetSource(memoryStream.AsRandomAccessStream());
-								memoryStream.Seek(0, SeekOrigin.Begin);
-
-								PictureWebElement = bitmap;
-
-								var currentWindow = (Application.Current as App)?.m_window as MainWindow;
-								if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
-								{
-									tab.BitViewWebContent = web.PictureWebElement;
-								}
-							}
-							catch (Exception ex)
-							{
-								ExceptionLogger.LogException(ex);
-								Console.Write($"Error capturing preview of website:\n{ex.Message}");
+								tab.BitViewWebContent = web.PictureWebElement;
 							}
 						}
-					});
+						catch (Exception ex)
+						{
+							ExceptionLogger.LogException(ex);
+							Console.Write($"Error capturing preview of website:\n{ex.Message}");
+						}
+					}));
 				}
 				catch (Exception)
 				{
@@ -289,12 +299,15 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.SourceChanged += (sender, args) =>
 		{
-			if ((TabViewItem)param.TabView.SelectedItem == param.Tab) param.ViewModel.CurrentAddress = sender.Source;
+			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
+			{
+				param.ViewModel.CurrentAddress = sender.Source;
+			}
 		};
 
 		s.CoreWebView2.NewWindowRequested += (sender, args) =>
 		{
-			var window = (Application.Current as App)?.m_window as MainWindow;
+			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			param?.TabView.TabItems.Add(window.CreateNewTab(typeof(WebContent), args.Uri));
 			args.Handled = true;
 		};
@@ -316,8 +329,11 @@ public sealed partial class WebContent : Page
 			{
 				if (args.Request.Headers.Count() > 0)
 				{
-					var cookie = args.Request.Headers.Where(x => x.Key == "X-Microsoft-Account-Single-Sign-On-Cookies").FirstOrDefault();
-					if (cookie.Value != null) AppService.IsAppUserAuthenicated = true;
+					KeyValuePair<string, string> cookie = args.Request.Headers.Where(x => x.Key == "X-Microsoft-Account-Single-Sign-On-Cookies").FirstOrDefault();
+					if (cookie.Value != null)
+					{
+						AppService.IsAppUserAuthenicated = true;
+					}
 				}
 			}
 
@@ -327,7 +343,7 @@ public sealed partial class WebContent : Page
 
 			if (IsLoginRequest(e.Request))
 			{
-				var response = e.Response;
+				CoreWebView2WebResourceResponseView response = e.Response;
 				if (response.StatusCode == 200 && IsLoginSuccessful(response))
 				{
 					AppService.IsAppUserAuthenicated = true;
@@ -361,7 +377,9 @@ public sealed partial class WebContent : Page
 							if (token is JArray array)
 							{
 								if (array.Count > 0)
+								{
 									AppService.IsAppUserAuthenicated = true;
+								}
 							}
 
 						});
@@ -389,9 +407,11 @@ public sealed partial class WebContent : Page
 	{
 		if (response.Headers.Count() > 0)
 		{
-			var c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
-			if (c_Set.Value is not null) return true;
-
+			KeyValuePair<string, string> c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
+			if (c_Set.Value is not null)
+			{
+				return true;
+			}
 		}
 
 		return false;
@@ -408,7 +428,7 @@ public sealed partial class WebContent : Page
 
 	private void CoreWebView2_DownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
 	{
-		var mainWindow = (Application.Current as App)?.m_window as MainWindow;
+		MainWindow mainWindow = (Application.Current as App)?.m_window as MainWindow;
 
 		mainWindow.DownloadFlyout.DownloadItemsListView.Items.Insert(0, new DownloadItem(args.DownloadOperation));
 		mainWindow.DownloadFlyout.ShowAt(mainWindow.DownBtn);
@@ -416,14 +436,14 @@ public sealed partial class WebContent : Page
 		args.Handled = true;
 	}
 
-	string SelectionText;
+	private string SelectionText;
 	private void CoreWebView2_ContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
 	{
-		var flyout1 = (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
+		_ = (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
 		OpenLinks.Visibility = Visibility.Collapsed;
-		var flyout = FlyoutBase.GetAttachedFlyout(WebViewElement);
+		FlyoutBase flyout = FlyoutBase.GetAttachedFlyout(WebViewElement);
 
-		var options = new FlyoutShowOptions()
+		FlyoutShowOptions options = new()
 		{
 			Position = args.Location,
 			ShowMode = FlyoutShowMode.Standard
@@ -439,7 +459,7 @@ public sealed partial class WebContent : Page
 			OpenLinks.Visibility = Visibility.Visible;
 		}
 
-		flyout = flyout ?? (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
+		flyout ??= (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
 		flyout.ShowAt(WebViewElement, options);
 		args.Handled = true;
 	}
@@ -447,16 +467,18 @@ public sealed partial class WebContent : Page
 	private async void ContextMenuItem_Click(object sender, RoutedEventArgs e)
 	{
 		if (sender is not AppBarButton { Tag: not null } button)
+		{
 			return;
+		}
 
-		var webview = WebViewElement.CoreWebView2;
+		CoreWebView2 webview = WebViewElement.CoreWebView2;
 
 		switch (button.Tag)
 		{
 			case "MenuBack" when WebViewElement.CanGoBack: webview.GoBack(); break;
 			case "Forward" when WebViewElement.CanGoForward: webview.GoForward(); break;
 			case "Source": webview.OpenDevToolsWindow(); break;
-			case "Select": await webview.ExecuteScriptAsync("document.execCommand('selectAll', false, null);"); break;
+			case "Select": _ = await webview.ExecuteScriptAsync("document.execCommand('selectAll', false, null);"); break;
 			case "Copy": ClipBoard.WriteStringToClipboard(SelectionText); break;
 			case "Taskmgr": webview.OpenTaskManagerWindow(); break;
 			case "Save": HandleSaveAsync(); break;
@@ -469,22 +491,21 @@ public sealed partial class WebContent : Page
 
 	private async void HandleSaveAsync()
 	{
-		string websitetitle = WebViewElement.CoreWebView2.DocumentTitle;
-		using (IRandomAccessStream fileStream = await WebViewElement.CoreWebView2.PrintToPdfStreamAsync(null))
-		{
-			using (var reader = new DataReader(fileStream.GetInputStreamAt(0)))
-			{
-				GC.Collect();
-			}
-		}
+		_ = WebViewElement.CoreWebView2.DocumentTitle;
+		using IRandomAccessStream fileStream = await WebViewElement.CoreWebView2.PrintToPdfStreamAsync(null);
+		using DataReader reader = new(fileStream.GetInputStreamAt(0));
+		GC.Collect();
 	}
 
 	// Declare the SpeechSynthesizer once, outside the method
-	private SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+	private readonly SpeechSynthesizer synthesizer = new();
 
 	private async void ConvertTextToSpeech(string text)
 	{
-		if (string.IsNullOrWhiteSpace(text)) return;
+		if (string.IsNullOrWhiteSpace(text))
+		{
+			return;
+		}
 
 		// Get the selected language and gender from the settings
 		string lang = SettingsService.CoreSettings.Lang;
@@ -499,13 +520,13 @@ public sealed partial class WebContent : Page
 		};
 
 		// Create the SSML string
-		var ssml = $"<speak version='1.0' xml:lang='{lang}'><voice name='{voiceName}'>{text}</voice></speak>";
+		string ssml = $"<speak version='1.0' xml:lang='{lang}'><voice name='{voiceName}'>{text}</voice></speak>";
 
 		// Synthesize speech to stream
-		var synthesisStream = await synthesizer.SynthesizeSsmlToStreamAsync(ssml);
+		SpeechSynthesisStream synthesisStream = await synthesizer.SynthesizeSsmlToStreamAsync(ssml);
 
 		// Create and play the media player
-		var mediaPlayer = new MediaPlayer
+		MediaPlayer mediaPlayer = new()
 		{
 			Source = MediaSource.CreateFromStream(synthesisStream, synthesisStream.ContentType)
 		};
@@ -515,13 +536,16 @@ public sealed partial class WebContent : Page
 		mediaPlayer.Play();
 	}
 
-	public static async void OpenNewWindow(Uri uri) => await Windows.System.Launcher.LaunchUriAsync(uri);
+	public static async void OpenNewWindow(Uri uri)
+	{
+		_ = await Windows.System.Launcher.LaunchUriAsync(uri);
+	}
 
 	private void ContextClicked_Click(object sender, RoutedEventArgs e)
 	{
 		if (sender is MenuFlyoutItem button && button.Tag != null)
 		{
-			var mainWindow = (Application.Current as App)?.m_window as MainWindow;
+			MainWindow mainWindow = (Application.Current as App)?.m_window as MainWindow;
 
 			switch ((sender as MenuFlyoutItem).Tag)
 			{
@@ -534,15 +558,19 @@ public sealed partial class WebContent : Page
 				case "OpenInTab":
 					if (IsIncognitoModeEnabled)
 					{
-						var newTab = mainWindow?.CreateNewIncog(typeof(WebContent), new Uri(SelectionText));
+						FireBrowserTabViewItem newTab = mainWindow?.CreateNewIncog(typeof(WebContent), new Uri(SelectionText));
 						mainWindow?.Tabs.TabItems.Add(newTab);
 					}
 					else
 					{
-						var newTab = mainWindow?.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
+						FireBrowserTabViewItem newTab = mainWindow?.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
 						mainWindow?.Tabs.TabItems.Add(newTab);
 					}
-					if (SettingsService.CoreSettings.OpenTabHandel) select();
+					if (SettingsService.CoreSettings.OpenTabHandel)
+					{
+						select();
+					}
+
 					break;
 				case "OpenInWindow":
 					OpenNewWindow(new Uri(SelectionText));
@@ -557,15 +585,18 @@ public sealed partial class WebContent : Page
 
 	private void OpenPopUpView(Uri uri)
 	{
-		PopUpView popUpView = new PopUpView();
+		PopUpView popUpView = new();
 		popUpView.SetSource(uri);
-		Canvas cv = new Canvas();
+		Canvas cv = new();
 		cv.Children.Add(popUpView);
 		Main.Children.Add(cv);
 		popUpView.Show();
 	}
 
-	public void select() => ((Application.Current as App)?.m_window as MainWindow)?.SelectNewTab();
+	public void select()
+	{
+		((Application.Current as App)?.m_window as MainWindow)?.SelectNewTab();
+	}
 
 	private bool isOffline = false;
 	private async void CheckNetworkStatus()

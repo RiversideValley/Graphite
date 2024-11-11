@@ -17,13 +17,13 @@ public record class Message_Settings_Actions(string _payload, EnumMessageStatus 
 	{
 
 		Payload = payload;
-		Status = this._status;
+		Status = _status;
 	}
 
 	public Message_Settings_Actions(EnumMessageStatus _status) : this(null, _status)
 	{
 
-		Payload = this._payload;
+		Payload = _payload;
 		Status = _status;
 	}
 

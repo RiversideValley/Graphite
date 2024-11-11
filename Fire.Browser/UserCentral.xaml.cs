@@ -32,7 +32,7 @@ namespace FireBrowserWinUi3
 				await LoadDataGlobally();
 			};
 			// Get the AppWindow for this window
-			Windowing.DialogWindow(this).ConfigureAwait(false);
+			_ = Windowing.DialogWindow(this).ConfigureAwait(false);
 
 
 		}
@@ -54,7 +54,7 @@ namespace FireBrowserWinUi3
 				if (File.Exists(usrCoreFilePath))
 				{
 					string jsonContent = await File.ReadAllTextAsync(usrCoreFilePath);
-					var users = JsonSerializer.Deserialize<List<User>>(jsonContent);
+					List<User> users = JsonSerializer.Deserialize<List<User>>(jsonContent);
 
 					return users?.FindAll(user => !user.Username.Contains("Private"))?.ConvertAll(user => new UserExtend(user));
 				}
@@ -74,9 +74,11 @@ namespace FireBrowserWinUi3
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.User));
 
 				if (AuthService.users.Count == 0)
+				{
 					AuthService.users = AuthService.LoadUsersFromJson();
+				}
 
-				AuthService.Authenticate(selectedUser.FireUser.Username);
+				_ = AuthService.Authenticate(selectedUser.FireUser.Username);
 				// close active window if not Usercentral, and then assign it as usercentral and close to give -> windowscontroller notification of close usercentral 
 				AppService.ActiveWindow?.Close();
 				AppService.ActiveWindow = this;
@@ -86,7 +88,7 @@ namespace FireBrowserWinUi3
 
 		private async void AppBarButton_Click(object sender, RoutedEventArgs e)
 		{
-			var usr = new AddUserWindow();
+			AddUserWindow usr = new();
 			usr.Closed += (s, e) =>
 			{
 				AppService.ActiveWindow = this;
@@ -94,24 +96,21 @@ namespace FireBrowserWinUi3
 			IntPtr hWnd = WindowNative.GetWindowHandle(this);
 			if (hWnd != IntPtr.Zero)
 			{
-				Windowing.SetWindowPos(hWnd, Windowing.HWND_BOTTOM, 0, 0, 0, 0, Windowing.SWP_NOSIZE);
+				_ = Windowing.SetWindowPos(hWnd, Windowing.HWND_BOTTOM, 0, 0, 0, 0, Windowing.SWP_NOSIZE);
 			}
 			await Windowing.DialogWindow(usr);
 			Windowing.Center(usr);
-			Windowing.ShowWindow(WindowNative.GetWindowHandle(usr), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
+			_ = Windowing.ShowWindow(WindowNative.GetWindowHandle(usr), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
 
 
 		}
 
 		private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
 		{
-			if (this.AppWindow != null)
+			if (AppWindow != null)
 			{
-				var presenter = this.AppWindow.Presenter as OverlappedPresenter;
-				if (presenter != null)
-				{
-					presenter.Minimize();
-				}
+				OverlappedPresenter presenter = AppWindow.Presenter as OverlappedPresenter;
+				presenter?.Minimize();
 			}
 		}
 
