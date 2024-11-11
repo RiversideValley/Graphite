@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
 using Fire.Browser.Core;
 using Fire.Core.CoreUi;
@@ -368,12 +369,78 @@ public sealed partial class WebContent : Page
 
 		};
 
+		s.CoreWebView2.PermissionRequested += async (sender, args) =>
+		{
+			args.Handled = true;
+			var deferral = args.GetDeferral();
 
+			try
+			{
+				await DispatcherQueue.EnqueueAsync(async () =>
+				{
+					string url = WebViewElement.CoreWebView2.Source;
+					var storedPermission = PermissionManager.GetStoredPermission(AuthService.CurrentUser.Username, url, args.PermissionKind);
+
+					if (storedPermission.HasValue)
+					{
+						args.State = storedPermission.Value;
+						return;
+					}
+
+					string permissionKind = args.PermissionKind.ToString();
+					string formattedPermission = FormatPermissionKind(permissionKind);
+
+					var result = await ShowPermissionDialogAsync(formattedPermission);
+
+					CoreWebView2PermissionState permissionState = result switch
+					{
+						ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
+						ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
+						_ => CoreWebView2PermissionState.Default
+					};
+
+					bool? allowed = permissionState == CoreWebView2PermissionState.Allow ? true :
+									permissionState == CoreWebView2PermissionState.Deny ? false :
+									(bool?)null;
+
+					PermissionManager.StorePermission(AuthService.CurrentUser.Username, url, args.PermissionKind, allowed);
+					await PermissionManager.SavePermissionsAsync(AuthService.CurrentUser.Username);
+
+					args.State = permissionState;
+				});
+			}
+			finally
+			{
+				deferral.Complete();
+			}
+		};
 		//s.CoreWebView2.WebResourceRequested += async (sender, args) =>
 		//{
 
 		//};
 
+	}
+
+	private string FormatPermissionKind(string permissionKind)
+	{
+		return string.Join(" ", System.Text.RegularExpressions.Regex.Split(permissionKind, @"(?<!^)(?=[A-Z])"));
+	}
+
+	private async Task<ContentDialogResult> ShowPermissionDialogAsync(string permission)
+	{
+		var rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
+		var dialog = new ContentDialog
+		{
+			Title = $"Allow {rootUrl} to access {permission}?",
+			PrimaryButtonText = "Allow",
+			SecondaryButtonText = "Deny",
+			CloseButtonText = "Cancel",
+			DefaultButton = ContentDialogButton.Primary,
+			Content = "Managed in firebrowser://privacy",
+			XamlRoot = this.XamlRoot
+		};
+
+		return await dialog.ShowAsync();
 	}
 
 	private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
@@ -554,6 +621,7 @@ public sealed partial class WebContent : Page
 		}
 		Ctx.Hide();
 	}
+
 
 	private void OpenPopUpView(Uri uri)
 	{

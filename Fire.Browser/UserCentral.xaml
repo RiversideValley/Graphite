@@ -74,6 +74,7 @@
                         Label="Cloud Backups"
                         Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}" />
                     <AppBarButton
+                        x:Name="SignIn"
                         Width="Auto"
                         VerticalAlignment="Center"
                         Command="{x:Bind ViewModel.LoginToMicrosoftCommand}"

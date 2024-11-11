@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Behaviors;
 using Fire.Browser.Core;
 using Fire.Browser.Core.Helper;
+using Fire.Core.CoreUi;
 using Fire.Core.Exceptions;
 using Fire.Core.Helpers;
 using Fire.Core.Models;
@@ -855,7 +856,7 @@ public sealed partial class MainWindow : Window
 
 	#endregion
 
-
+	
 	private async Task MainWinSaveResources()
 	{
 		if (SettingsService?.CoreSettings?.ResourceSave == false)
