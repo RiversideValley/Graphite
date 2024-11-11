@@ -4,6 +4,7 @@ using Fire.Core.Helpers;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
+using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
