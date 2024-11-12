@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace FireBrowserWinUi3.Controls;
 public sealed partial class DownloadFlyout : Flyout
@@ -32,6 +33,24 @@ public sealed partial class DownloadFlyout : Flyout
 	{
 		try
 		{
+			if (AuthService.CurrentUser is not Fire.Browser.Core.User)
+				return; 
+
+			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
+			{
+				
+				try
+				{
+					var db = new DatabaseServices();
+					_ = await db.DatabaseCreationValidation();
+					_ = await db.InsertUserSettings();
+				}
+				catch (Exception)
+				{
+					throw;
+				}
+			}
+
 			DownloadItemsListView.Items.Clear();
 			DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
 			List<Fire.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();

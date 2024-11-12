@@ -2,6 +2,7 @@
 using Fire.Core.Exceptions;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -78,7 +79,13 @@ namespace Fire.Core.Helpers
 				var responseContentString = httpResponseMessage.Content.ReadAsStringAsync().Result;
 				JObject responseObjects = JObject.Parse(responseContentString);
 
-				return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(responseObjects.SelectToken("value").ToList()));
+				if (responseObjects.SelectToken("value") != null)
+				{
+					return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(responseObjects.SelectToken("value").ToList()));
+				}
+				else {
+					return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(new List<string>()));
+				}
 			}
 			catch (Exception e)
 			{

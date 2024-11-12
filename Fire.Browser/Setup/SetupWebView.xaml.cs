@@ -85,7 +85,7 @@ public sealed partial class SetupWebView : Page
 			{
 				if (await settingsActions.SettingsContext.Database.CanConnectAsync())
 				{
-					_ = await settingsActions.UpdateSettingsAsync(AppService.AppSettings);
+					_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
 				}
 			}
 

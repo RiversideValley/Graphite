@@ -165,12 +165,14 @@ public static class AppService
 				if (url.StartsWith("http") || url.StartsWith("https"))
 				{
 					AppArguments.UrlArgument = url;
-					CheckNormal();
+					ValidateCreatePrivateUser();
+					CheckNormal("Private");
 				}
 				else if (url.StartsWith("firebrowserwinui://"))
 				{
 					AppArguments.FireBrowserArgument = url;
-					CheckNormal();
+					ValidateCreatePrivateUser();
+					CheckNormal("Private");
 				}
 				else if (url.StartsWith("firebrowseruser://"))
 				{
@@ -186,12 +188,14 @@ public static class AppService
 				else if (url.StartsWith("firebrowserincog://"))
 				{
 					AppArguments.FireBrowserIncog = url;
-					CheckNormal();
+					ValidateCreatePrivateUser(); 
+					CheckNormal("Private");
 				}
 				else if (url.Contains(".pdf"))
 				{
 					AppArguments.FireBrowserPdf = url;
-					CheckNormal();
+					ValidateCreatePrivateUser();
+					CheckNormal("Private");
 				}
 				await ShowMainWindow(cancellationToken);
 			}
@@ -476,6 +480,24 @@ public static class AppService
 
 	}
 
+	private static void ValidateCreatePrivateUser()
+	{
+		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
+
+		if (Directory.Exists(userFolderPath)) return; 
+
+		User newUser = new()
+		{
+			Id = Guid.NewGuid(),
+			Username = "Private",
+			IsFirstLaunch = true,
+			UserSettings = null
+		};
+
+		AuthService.AddUser(newUser);
+		UserFolderManager.CreateUserFolders(newUser);
+		
+	}
 	static void HideDirectory(string directoryPath)
 	{
 		if (Directory.Exists(directoryPath))

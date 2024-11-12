@@ -41,9 +41,26 @@ namespace FireBrowserWinUi3
 		private async Task CreateUserAndNavigate()
 		{
 			await CreateUserOnStartup();
+			await InPrivateUser(); 
 			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
+		private  async Task InPrivateUser()
+		{
+			User newUser = new()
+			{
+				Id = Guid.NewGuid(),
+				Username = "Private",
+				IsFirstLaunch = true,
+				UserSettings = null
+			};
+
+			AuthService.AddUser(newUser);
+			UserFolderManager.CreateUserFolders(newUser);
+			AuthService.CurrentUser.Username = newUser.Username;
+			_ = AuthService.Authenticate(newUser.Username);
+			await CopyImageToUserDirectory(newUser);
+		}
 		private async Task CreateUserOnStartup()
 		{
 			Fire.Browser.Core.User newUser = new()
@@ -57,15 +74,15 @@ namespace FireBrowserWinUi3
 			AuthService.AddUser(newUser);
 			_ = AuthService.Authenticate(newUser.Username);
 
-			await CopyImageToUserDirectory();
+			await CopyImageToUserDirectory(newUser);
 		}
 
-		private async Task CopyImageToUserDirectory()
+		private async Task CopyImageToUserDirectory(Fire.Browser.Core.User user)
 		{
 			try
 			{
 				StorageFolder destinationFolder = await StorageFolder.GetFolderFromPathAsync(
-					Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username));
+					Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username));
 				StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Fire.Browser.Assets/Assets/{selectedImageName}"));
 				_ = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
 			}
