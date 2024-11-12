@@ -49,7 +49,7 @@ public sealed partial class MainWindow : Window
 {
 
 	private AppWindow appWindow;
-	public DownloadFlyout DownloadFlyout { get; set; } = new DownloadFlyout();
+	public DownloadFlyout DownloadFlyout { get; set; }
 	public ProfileCommander Commander { get; set; }
 	public DownloadService ServiceDownloads { get; set; }
 	public SettingsService SettingsService { get; set; }
@@ -77,7 +77,13 @@ public sealed partial class MainWindow : Window
 		LoadUserDataAndSettings(); // Load data and settings for the new user
 		_ = LoadUserSettings();
 		Init();
+		DownloadFlyout = new DownloadFlyout();
 
+		Closed += (s, e) =>
+		{
+			if (AuthService.CurrentUser.Username != "__Admin__" && AuthService.CurrentUser.Username != "Private")
+				AppService.Admin_Delete_Account();
+		};
 		SizeChanged += async (s, e) =>
 		{
 			SemaphoreSlim semaphoreSlim = new(3);
@@ -187,8 +193,11 @@ public sealed partial class MainWindow : Window
 					quickConfigurationDialog.PrimaryButtonClick += async (_, _) =>
 					{
 						quickConfigurationDialog.Hide();
+
 						await Task.Delay(250);
+
 						Application.Current.Exit();
+
 					};
 					_ = await quickConfigurationDialog.ShowAsync();
 				}
@@ -286,8 +295,11 @@ public sealed partial class MainWindow : Window
 
 		AuthService.GetAllUsernames()
 			.Where(u => u != currentUsername && !u.Contains("Private"))
+			.Where(u => u != currentUsername && !u.Contains("__Admin__"))
 			.ToList()
 			.ForEach(UserListView.Items.Add);
+
+
 	}
 
 	public void SmallUpdates()

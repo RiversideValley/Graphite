@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Fire.Browser.Core;
 using Fire.Core.Exceptions;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.ViewModels;
@@ -95,9 +96,6 @@ public partial class App : Application
 
 		return null;
 	}
-
-
-
 
 	protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
 	{

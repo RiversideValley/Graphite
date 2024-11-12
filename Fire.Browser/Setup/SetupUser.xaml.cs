@@ -51,7 +51,8 @@ namespace FireBrowserWinUi3
 				Username = UserName.Text,
 			};
 
-			List<Fire.Browser.Core.User> users = new() { newUser }; UserFolderManager.CreateUserFolders(newUser);
+			List<Fire.Browser.Core.User> users = new() { newUser };
+			UserFolderManager.CreateUserFolders(newUser);
 			UserDataManager.SaveUsers(users);
 			AuthService.AddUser(newUser);
 			_ = AuthService.Authenticate(newUser.Username);

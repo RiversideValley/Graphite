@@ -326,7 +326,8 @@ public static class AppService
 		// no user return 
 		if (userName is null)
 		{
-			return;
+			Admin_Create_Account();
+			userName = "__Admin__";
 		}
 
 		string coreFolderPath = UserDataManager.CoreFolderPath;
@@ -453,5 +454,54 @@ public static class AppService
 
 		Windowing.Center(winIncoming);
 		appWindow.ShowOnceWithRequestedStartupState();
+	}
+
+	public static void Admin_Create_Account()
+	{
+
+		Fire.Browser.Core.User newUser = new()
+		{
+			Username = "__Admin__",
+		};
+
+		List<Fire.Browser.Core.User> users = new() { newUser };
+		UserFolderManager.CreateUserFolders(newUser);
+		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, newUser.Username);
+		if (Directory.Exists(userFolderPath))
+			HideDirectory(userFolderPath);
+
+		UserDataManager.SaveUsers(users);
+		AuthService.AddUser(newUser);
+		_ = AuthService.Authenticate(newUser.Username);
+
+	}
+
+	static void HideDirectory(string directoryPath)
+	{
+		if (Directory.Exists(directoryPath))
+		{
+			var attributes = File.GetAttributes(directoryPath);
+			if ((attributes & FileAttributes.Hidden) == 0)
+			{
+				attributes |= FileAttributes.Hidden;
+				File.SetAttributes(directoryPath, attributes);
+			}
+		}
+		else
+		{
+			throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
+		}
+	}
+
+	public static void Admin_Delete_Account()
+	{
+		try
+		{
+			UserDataManager.DeleteUser("__Admin__");
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+		}
 	}
 }

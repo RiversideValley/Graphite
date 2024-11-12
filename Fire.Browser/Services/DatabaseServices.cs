@@ -30,7 +30,7 @@ public class DatabaseServices : IDatabaseService
 			{
 				if (await settingsActions.GetSettingsAsync() is null)
 				{
-					_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
+					_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings ?? new Settings(true).Self);
 				}
 			}
 		}
