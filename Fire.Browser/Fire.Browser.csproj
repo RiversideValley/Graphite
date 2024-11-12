@@ -11,7 +11,7 @@
     <RuntimeIdentifiers>win-x64;</RuntimeIdentifiers>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <ApplicationIcon>Logo.ico</ApplicationIcon>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
@@ -175,7 +175,7 @@
     <None Remove="Styles\Thickness.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Logo.ico">
+    <Content Include="logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
