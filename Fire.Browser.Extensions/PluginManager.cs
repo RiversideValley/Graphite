@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Fire.Browser.Services.Extensions;
+namespace Fire.Browser.Extensions;
 public class PluginManager
 {
 	public HashSet<String> DirectoryPaths = new HashSet<string>();
