@@ -385,6 +385,35 @@ public sealed partial class WebContent : Page
 
 						});
 
+			await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeysSession() {
+                                                        const keys = [];
+                                                        for (let i = 0; i < sessionStorage.length; i++) {
+                                                            const key = sessionStorage.key(i);
+                                                            if (key.includes(""msal.account"")) {
+                                                                keys.push({ key: key, value: JSON.parse(sessionStorage.getItem(key)), keyValue: JSON.parse(sessionStorage.getItem(JSON.parse(sessionStorage.getItem(key)))) });
+                                                            }
+                                                            if (key.includes(""msalToken"")) {
+                                                                keys.push({ key: key, value: key, keyValue: sessionStorage.getItem(key) });
+                                                            }
+                                                        }
+                                                        return keys;
+                                                    } return findMsalAccountKeysSession();})();"
+				).AsTask().ContinueWith(keys =>
+				{
+
+					// Critical section here
+					JToken token = JToken.Parse(keys.Result);
+
+					if (token is JArray array)
+					{
+						if (array.Count > 0)
+						{
+							AppService.IsAppUserAuthenicated = true;
+						}
+					}
+
+				});
+
 		};
 
 		s.CoreWebView2.PermissionRequested += async (sender, args) =>
