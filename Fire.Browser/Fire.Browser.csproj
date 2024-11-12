@@ -191,6 +191,7 @@
     <ProjectReference Include="..\Fire.Data.Favorites\Fire.Data.Favorites.csproj" />
     <ProjectReference Include="..\Fire.Core.Licensing\Fire.Core.Licensing.csproj" />
     <ProjectReference Include="..\Fire.Data.Migration\Fire.Data.Migration.csproj" />
+    <ProjectReference Include="..\Fire.Browser.Extensions\Fire.Browser.Extensions.csproj" />
     <ProjectReference Include="..\Fire.Browser.Core\Fire.Browser.Core.csproj" />
     <ProjectReference Include="..\Fire.Browser.Navigation\Fire.Browser.Navigation.csproj" />
     <ProjectReference Include="..\Fire.Browser.Services.BarcodeHost\Fire.Browser.Services.BarcodeHost.csproj" />
