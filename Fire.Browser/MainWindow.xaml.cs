@@ -77,7 +77,20 @@ public sealed partial class MainWindow : Window
 		LoadUserDataAndSettings(); // Load data and settings for the new user
 		_ = LoadUserSettings();
 		Init();
-		DownloadFlyout = new DownloadFlyout();
+
+		try
+		{
+			if (AuthService.CurrentUser is Fire.Browser.Core.User user) {
+				if (user?.Username != "Private")
+					DownloadFlyout = new DownloadFlyout();
+			}
+			
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+		}
+			
 
 		Closed += (s, e) =>
 		{
@@ -257,8 +270,6 @@ public sealed partial class MainWindow : Window
 			WebContent.IsIncognitoModeEnabled = true;
 			Profile.IsEnabled = false;
 			AddFav.IsEnabled = false;
-			UserDataManager.DeleteUser("Private");
-			InPrivateUser();
 			incog = true;
 			return;
 		}
