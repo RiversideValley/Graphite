@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -105,7 +106,7 @@ public partial class App : Application
 		App.Current.Services = App.Current.ConfigureServices();
 
 
-		AppService.CancellationToken = CancellationToken.None;
+		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 
 		try
 		{
@@ -125,7 +126,7 @@ public partial class App : Application
 
 			while (!AppService.CancellationToken.IsCancellationRequested)
 			{
-				await Task.Delay(1500);
+				await Task.Delay(2400);
 			}
 
 			if (AppService.IsAppGoingToClose == true)
@@ -139,7 +140,7 @@ public partial class App : Application
 		}
 		catch (Exception ex)
 		{
-			await AppService.CloseCancelToken(AppService.CancellationToken);
+			await AppService.CloseCancelToken(ref InstanceCreationToken);
 			ExceptionLogger.LogException(ex);
 		}
 

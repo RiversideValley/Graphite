@@ -50,6 +50,17 @@ public partial class MainWindowViewModel : ObservableRecipient
 	}
 
 	[RelayCommand]
+	public void CloseMoreFlyout()
+	{
+
+		_ = MainView.DispatcherQueue.TryEnqueue(() =>
+		{
+			MainView?.MoreFlyout.Hide();
+		});
+
+
+	}
+	[RelayCommand]
 	public Task GetActiveWebView()
 	{
 		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;

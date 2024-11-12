@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ public static class AppService
 			if (IsAppGoingToClose)
 			{
 				//throw new ApplicationException("Exiting Application by user");
-				await CloseCancelToken(cancellationToken);
+				await CloseCancelToken(ref cancellationToken);
 				return;
 			}
 
@@ -137,7 +138,7 @@ public static class AppService
 		}
 		catch (Exception e)
 		{
-			await CloseCancelToken(cancellationToken);
+			await CloseCancelToken(ref cancellationToken);
 			_ = await Task.FromException<CancellationToken>(e);
 			throw;
 		}
@@ -145,11 +146,12 @@ public static class AppService
 		await Task.FromCanceled(cancellationToken);
 	}
 
-	public static Task CloseCancelToken(CancellationToken cancellationToken)
+	public static Task CloseCancelToken(ref CancellationToken cancellationToken)
 	{
+		// need to assign reference token in order to cancel !
 		CancellationTokenSource cancel = new();
-		_ = cancel.Token;
 		cancel.Cancel();
+		CancellationToken = cancellationToken = cancel.Token;
 		return Task.CompletedTask;
 	}
 	private static async Task HandleProtocolActivation(CancellationToken cancellationToken)
@@ -178,6 +180,7 @@ public static class AppService
 					{
 						CheckNormal(username);
 						await WindowsController(cancellationToken).ConfigureAwait(false);
+						return;
 					}
 				}
 				else if (url.StartsWith("firebrowserincog://"))
@@ -190,6 +193,7 @@ public static class AppService
 					AppArguments.FireBrowserPdf = url;
 					CheckNormal();
 				}
+				await ShowMainWindow(cancellationToken);
 			}
 			else
 			{
@@ -267,7 +271,12 @@ public static class AppService
 		CheckNormal(AuthService.CurrentUser.Username);
 
 		ActiveWindow?.Close();
+		await ShowMainWindow(cancellationToken);
 
+	}
+
+	private static async Task ShowMainWindow(CancellationToken cancellationToken)
+	{
 		App.Current.m_window = new MainWindow();
 		Windowing.Center(App.Current.m_window);
 		IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
@@ -293,9 +302,8 @@ public static class AppService
 			}
 		}
 
-		CancellationTokenSource cancel = new();
-		CancellationToken = _ = cancel.Token;
-		cancel.Cancel();
+		await CloseCancelToken(ref cancellationToken);
+
 	}
 
 	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
@@ -315,6 +323,12 @@ public static class AppService
 
 	private static async void CheckNormal(string userName = null)
 	{
+		// no user return 
+		if (userName is null)
+		{
+			return;
+		}
+
 		string coreFolderPath = UserDataManager.CoreFolderPath;
 		string username = GetUsernameFromCoreFolderPath(coreFolderPath, userName);
 		/* store in the datacore project sql file. Going to need to put on cloud, and 
@@ -324,10 +338,7 @@ public static class AppService
         Need function after injection, before use logins, and when use authorized */
 		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
 
-		if (userName is null)
-		{
-			return;
-		}
+
 
 		_ = AuthService.Authenticate(username);
 
@@ -362,6 +373,8 @@ public static class AppService
 
 				_ = await dbServer.DatabaseCreationValidation();
 				_ = await dbServer.InsertUserSettings();
+				// if we get to here than all is validated and open Browser. 
+
 			}
 			catch (Exception ex)
 			{

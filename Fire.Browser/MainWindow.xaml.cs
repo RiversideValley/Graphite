@@ -1047,6 +1047,8 @@ public sealed partial class MainWindow : Window
 				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 				break;
 		}
+
+		ViewModelMain?.CloseMoreFlyout();
 	}
 
 	#region database
