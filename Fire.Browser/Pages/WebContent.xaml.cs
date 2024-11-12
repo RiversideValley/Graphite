@@ -236,22 +236,12 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.HistoryChanged += async (sender, args) =>
 		{
-			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
-			{
-				await AfterComplete();
-			}
-		};
-
-		s.CoreWebView2.NavigationCompleted += async (sender, args) =>
-		{
-			ProgressLoading.IsIndeterminate = false;
-			ProgressLoading.Visibility = Visibility.Collapsed;
-
 			//optimize with background task, and use dispatcher to be thread safe 
+			//youtube doesn't report navigation when view different videos. 
 			_ = await Task.Factory.StartNew(async () =>
 			{
 
-				await Task.Delay(2400);
+				await Task.Delay(1800);
 
 				try
 				{
@@ -295,6 +285,16 @@ public sealed partial class WebContent : Page
 
 			});
 
+			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
+			{
+				await AfterComplete();
+			}
+		};
+
+		s.CoreWebView2.NavigationCompleted += async (sender, args) =>
+		{
+			ProgressLoading.IsIndeterminate = false;
+			ProgressLoading.Visibility = Visibility.Collapsed;
 
 		};
 

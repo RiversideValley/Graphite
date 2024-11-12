@@ -834,30 +834,50 @@
                     Style="{StaticResource QuietButtonStyle}"
                     Tag="AddFavoriteFlyout"
                     Visibility="Visible">
-                    <Button.Flyout>
-                        <Flyout>
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="MinWidth" Value="300" />
-                                    <Setter Property="MaxWidth" Value="325" />
-                                    <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
-                                    <Setter Property="Padding" Value="16" />
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
-                            <StackPanel Spacing="16">
-                                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Add favorite" />
-                                <TextBox x:Name="FavoriteTitle" PlaceholderText="Title Website" />
-                                <TextBox x:Name="FavoriteUrl" PlaceholderText="Url Site" />
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    Click="ToolbarButtonClick"
-                                    Content="Add Favorite"
-                                    Tag="AddFavorite" />
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=AddFav}">
+                            <core:ChangePropertyAction
+                                PropertyName="IsOpen"
+                                TargetObject="{Binding ElementName=AddFavTip}"
+                                Value="True" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                 </Button>
-
+                <TeachingTip
+                    x:Name="AddFavTip"
+                    Title="Adding Favorites"
+                    IsLightDismissEnabled="True"
+                    IsOpen="False"
+                    PlacementMargin="10,10,0,0"
+                    PreferredPlacement="BottomLeft"
+                    Target="{Binding ElementName=AddFav}">
+                    <TeachingTip.Content>
+                        <StackPanel Padding="{ThemeResource TeachingTipContentMargin}" Spacing="16">
+                            <TextBox x:Name="FavoriteTitle" PlaceholderText="Title Website" />
+                            <TextBlock
+                                x:Name="FavoriteUrl"
+                                Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                                MaxLines="4"
+                                TextWrapping="Wrap"
+                                ToolTipService.ToolTip="{Binding Path=Text, RelativeSource={RelativeSource Mode=Self}}" />
+                            <Button
+                                x:Name="btnSaveFav"
+                                HorizontalAlignment="Center"
+                                Click="ToolbarButtonClick"
+                                Content="Add Favorite"
+                                Tag="AddFavorite">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=btnSaveFav}">
+                                        <core:ChangePropertyAction
+                                            PropertyName="IsOpen"
+                                            TargetObject="{Binding ElementName=AddFavTip}"
+                                            Value="False" />
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </Button>
+                        </StackPanel>
+                    </TeachingTip.Content>
+                </TeachingTip>
                 <Button
                     x:Name="FavoritesButton"
                     Click="ToolbarButtonClick"

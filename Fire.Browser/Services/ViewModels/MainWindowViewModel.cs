@@ -5,6 +5,8 @@ using CommunityToolkit.WinUI.Behaviors;
 using Fire.Browser.Core;
 using Fire.Core.Exceptions;
 using Fire.Core.Helpers;
+using FireBrowserWinUi3.Controls;
+using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Messages;
 using Microsoft.UI.Xaml;
@@ -40,11 +42,24 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[ObservableProperty]
 	private BitmapImage profileImage;
 
+	[ObservableProperty]
+	private BitmapImage webViewContentPicture;
 	public MainWindowViewModel(IMessenger messenger) : base(messenger)
 	{
 		Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 	}
 
+	[RelayCommand]
+	public Task GetActiveWebView()
+	{
+		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
+		if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
+		{
+			WebViewContentPicture = web.PictureWebElement;
+		}
+		OnPropertyChanged(nameof(WebViewContentPicture));
+		return Task.CompletedTask;
+	}
 	private async Task ValidateMicrosoft()
 	{
 		IsMsLogin = true; // AppService.MsalService.IsSignedIn;

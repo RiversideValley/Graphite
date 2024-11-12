@@ -871,6 +871,9 @@ public sealed partial class MainWindow : Window
 				FavoriteUrl.Text = TabWebView.CoreWebView2.Source;
 				break;
 			case "AddFavorite":
+
+				if (string.IsNullOrEmpty(FavoriteTitle.Text) || string.IsNullOrEmpty(FavoriteUrl.Text)) break;
+
 				FavManager fv = new();
 				fv.SaveFav(FavoriteTitle.Text.ToString(), FavoriteUrl.Text.ToString());
 				AddFav.Flyout?.Hide();
@@ -906,7 +909,7 @@ public sealed partial class MainWindow : Window
 
 	#endregion
 
-	
+
 	private async Task MainWinSaveResources()
 	{
 		if (SettingsService?.CoreSettings?.ResourceSave == false)
