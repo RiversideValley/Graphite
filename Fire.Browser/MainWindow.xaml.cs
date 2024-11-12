@@ -618,119 +618,85 @@ public sealed partial class MainWindow : Window
 	}
 	private async void UrlBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 	{
-		// reload the settings due to changes from outside view. 
+		// Reload the settings due to changes from outside view. 
 		SettingsService.Initialize();
+
 		try
 		{
-			if (Fire.Core.Helpers.UrlValidater.GetValidateUrl(UrlBox.Text.ToLowerInvariant()) is Uri browserTo)
+			string input = UrlBox.Text.Trim();
+
+			if (input.StartsWith("firebrowser://", StringComparison.OrdinalIgnoreCase))
 			{
-				switch (UrlBox.Text.ToLowerInvariant())
-				{
-					case "firebrowser://newtab":
-						Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
-						SelectNewTab();
-						break;
-					case "firebrowser://settings":
-						Tabs.TabItems.Add(CreateNewTab(typeof(SettingsPage)));
-						SelectNewTab();
-						break;
-					case "firebrowser://modules":
-						Tabs.TabItems.Add(CreateNewTab(typeof(Pluginss)));
-						SelectNewTab();
-						break;
-					//case "firebrowser://vault":
-					//   Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
-					//   SelectNewTab();
-					//   break;
-					// case "firebrowser://api-route":
-					//  Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
-					//  SelectNewTab();
-					//  break;
-					default:
-						// default behavior
-						if (await Fire.Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
-						{
-							NavigateToUrl(browserTo.AbsoluteUri);
-						}
-						else
-						{
-							string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
-							string query = searchurl + UrlEncoder.Default.Encode(UrlBox.Text.ToLowerInvariant());
-							NavigateToUrl(query);
-
-						}
-						break;
-				}
-
+				HandleFireBrowserUrl(input);
 			}
 			else
 			{
-				string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
-				string query = searchurl + UrlEncoder.Default.Encode(UrlBox.Text.ToLowerInvariant());
-
-				NavigateToUrl(query);
-
+				await HandleNormalUrlOrSearch(input);
 			}
-
-			//string input = UrlBox.Text.ToString();
-			//string inputtype = UrlHelper.GetInputType(input);
-
-			//try
-			//{
-			//    if (input.Contains("firebrowser://"))
-			//    {
-			//        switch (input)
-			//        {
-			//            case "firebrowser://newtab":
-			//                Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
-			//                SelectNewTab();
-			//                break;
-			//            case "firebrowser://settings":
-			//                Tabs.TabItems.Add(CreateNewTab(typeof(SettingsPage)));
-			//                SelectNewTab();
-			//                break;
-			//            case "firebrowser://modules":
-			//                Tabs.TabItems.Add(CreateNewTab(typeof(Pluginss)));
-			//                SelectNewTab();
-			//                break;
-			//            //case "firebrowser://vault":
-			//            //   Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
-			//            //   SelectNewTab();
-			//            //   break;
-			//            // case "firebrowser://api-route":
-			//            //  Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
-			//            //  SelectNewTab();
-			//            //  break;
-			//            default:
-			//                // default behavior
-			//                break;
-			//        }
-			//    }
-			//    else if (inputtype is "url" or "urlNOProtocol")
-			//    {
-			//        string url = default;
-
-			//        if (input.Contains("ms-appx:") || input.Contains("ms-appx-web:"))
-			//            url = input.Trim();
-			//        else
-			//        {
-			//            url = inputtype == "url" ? input.Trim() : "https://" + input.Trim();
-			//        }
-			//        NavigateToUrl(url);
-			//    }
-			//    else
-			//    {
-			//        //Settings userSettings = UserFolderManager.LoadUserSettings(AuthService.CurrentUser);
-			//        string searchurl = SearchUrl ?? $"{SettingsService.CoreSettings.SearchUrl}";
-			//        string query = searchurl + input;
-			//        query = UrlEncoder.Default.Encode(query);
-			//        NavigateToUrl(query);
-			//    }
 		}
 		catch (Exception ex)
 		{
 			ExceptionLogger.LogException(ex);
 		}
+	}
+
+	private void HandleFireBrowserUrl(string url)
+	{
+		switch (url.ToLowerInvariant())
+		{
+			case "firebrowser://newtab":
+				Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
+				SelectNewTab();
+				break;
+			case "firebrowser://settings":
+				Tabs.TabItems.Add(CreateNewTab(typeof(SettingsPage)));
+				SelectNewTab();
+				break;
+			case "firebrowser://modules":
+				Tabs.TabItems.Add(CreateNewTab(typeof(Pluginss)));
+				SelectNewTab();
+				break;
+			// Uncomment these cases if needed in the future
+			// case "firebrowser://vault":
+			//     Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
+			//     SelectNewTab();
+			//     break;
+			// case "firebrowser://api-route":
+			//     Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
+			//     SelectNewTab();
+			//     break;
+			default:
+				break;
+		}
+	}
+
+	private async Task HandleNormalUrlOrSearch(string input)
+	{
+		Uri browserTo = Fire.Core.Helpers.UrlValidater.GetValidateUrl(input);
+
+		if (browserTo != null)
+		{
+			if (await Fire.Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
+			{
+				NavigateToUrl(browserTo.AbsoluteUri);
+			}
+			else
+			{
+				PerformSearch(input);
+			}
+		}
+		else
+		{
+			PerformSearch(input);
+		}
+	}
+
+	private void PerformSearch(string query)
+	{
+		string searchUrl = SearchUrl ?? SettingsService.CoreSettings.SearchUrl;
+		string encodedQuery = UrlEncoder.Default.Encode(query);
+		string fullSearchUrl = $"{searchUrl}{encodedQuery}";
+		NavigateToUrl(fullSearchUrl);
 	}
 
 	#region cangochecks
