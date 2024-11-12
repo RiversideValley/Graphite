@@ -29,7 +29,7 @@ public class Shortcut
 			string directoryPath = Path.GetDirectoryName(assemblyPath);
 
 			// Construct the path to the Logo.ico file within the DLL's directory
-			string iconPath = Path.Combine(directoryPath, "Logo.ico");
+			string iconPath = Path.Combine(directoryPath, "logo.ico");
 
 			// Set the icon for the shortcut to the path of the ICO file
 			shortcut.IconLocation = iconPath;
