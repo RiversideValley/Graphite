@@ -83,7 +83,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 			}
 			catch (Exception)
 			{
-
+				;
 			}
 		}
 
