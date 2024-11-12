@@ -63,7 +63,6 @@ public partial class App : Application
 	{
 		InitializeComponent();
 		UnhandledException += Current_UnhandledException;
-		_ = Fire.Browser.Navigation.TLD.LoadKnownDomainsAsync().ConfigureAwait(false);
 
 		Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
 
