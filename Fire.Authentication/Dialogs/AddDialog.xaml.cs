@@ -1,4 +1,5 @@
 using Fire.Authentication.Private;
+using Fire.Authentication.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
@@ -15,7 +16,7 @@ namespace Fire.Authentication.Dialogs
 	{
 		public AddDialog()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
@@ -46,7 +47,7 @@ namespace Fire.Authentication.Dialogs
 				Totp totp = new(Base32Encoding.ToBytes(secretBox.Text));
 				string code = totp.ComputeTotp();
 
-				var package = new DataPackage();
+				DataPackage package = new();
 				package.SetText(code);
 				Clipboard.SetContent(package);
 			}

@@ -18,7 +18,7 @@ namespace Fire.Authentication.Controls
 	{
 		public Two2FAFlyout()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			list.ItemsSource = null;
 			list.ItemsSource = TwoFactorsAuthentification.Items;
 		}
@@ -26,8 +26,8 @@ namespace Fire.Authentication.Controls
 		private async void Button_Click(object sender, RoutedEventArgs e)
 		{
 			AddDialog addDialog = new();
-			addDialog.XamlRoot = this.XamlRoot;
-			await addDialog.ShowAsync();
+			addDialog.XamlRoot = XamlRoot;
+			_ = await addDialog.ShowAsync();
 		}
 
 		private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
@@ -35,7 +35,7 @@ namespace Fire.Authentication.Controls
 			ListViewItem item = sender as ListViewItem;
 			TwoFactAuth twoFactAuth = item.DataContext as TwoFactAuth;
 
-			var package = new DataPackage();
+			DataPackage package = new();
 			package.SetText(twoFactAuth.Code);
 			Clipboard.SetContent(package);
 		}

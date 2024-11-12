@@ -1316,7 +1316,7 @@ public sealed partial class MainWindow : Window
 
 			if (authResult == UserConsentVerificationResult.Verified)
 			{
-				Fire.Authentication.TwoFactorsAuthentification.ShowFlyout(Secure);
+				Fire.Authentication.ViewModels.TwoFactorsAuthentification.ShowFlyout(Secure);
 			}
 			else
 			{

@@ -30,8 +30,10 @@ namespace Fire.Authentication.ViewModels
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "") =>
+		private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
 
 		public TwoFactAuth(TwoFactorAuthItem data)
 		{
