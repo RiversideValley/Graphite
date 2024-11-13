@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
@@ -9,9 +8,11 @@
   xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"
   xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
-  IgnorableNamespaces="uap rescap uap3 uap4 desktop4 iot2 iot">
+  IgnorableNamespaces="... uap rescap uap3 uap4 desktop4 iot2 iot com desktop">
 
   <Identity
     Name="57443TechFireX.FireBrowserWinUi"
@@ -49,6 +50,20 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
 		<Extensions>
+				<!--Specify which CLSID to activate when app notification clicked-->
+			<desktop:Extension Category="windows.toastNotificationActivation">
+				<desktop:ToastNotificationActivation ToastActivatorCLSID="787233D4-4D29-47D2-B29A-AD3E99C44FE7" />
+			</desktop:Extension>
+
+			<!--Register COM CLSID LocalServer32 registry key-->
+			<com:Extension Category="windows.comServer">
+				<com:ComServer>
+					<com:ExeServer Executable="Fire.Browser.exe" Arguments="----AppNotificationActivated:" DisplayName="App notification activator">
+						<com:Class Id="787233D4-4D29-47D2-B29A-AD3E99C44FE7" DisplayName="App notification activator"/>
+					</com:ExeServer>
+				</com:ComServer>
+			</com:Extension>
+
 			<uap5:Extension Category="windows.startupTask">
 				<uap5:StartupTask
 				  TaskId="FireBrowserWinUiStartUp"
