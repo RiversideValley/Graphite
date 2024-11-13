@@ -233,9 +233,6 @@ public partial class HomeViewModel : ObservableRecipient
 	}
 	public Task Intialize()
 	{
-		CancellationTokenSource source = new CancellationTokenSource();
-		CancellationTokenTimer = source.Token;
-
 		UpdateUIControls();
 		if (NtpTimeEnabled)
 		{
