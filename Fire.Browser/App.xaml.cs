@@ -101,7 +101,8 @@ public partial class App : Application
 
 
 		App.Current.Services = App.Current.ConfigureServices();
-
+		NotificationManager = new NotificationManager();
+		NotificationManager.Init();
 
 		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 
@@ -109,7 +110,8 @@ public partial class App : Application
 		{
 			AppService.MsalService = App.GetService<MsalAuthService>();
 			AppService.GraphService = App.GetService<GraphService>();
-
+			NotificationManager = new NotificationManager();
+			NotificationManager.Init();
 		}
 		catch (Exception e)
 		{
