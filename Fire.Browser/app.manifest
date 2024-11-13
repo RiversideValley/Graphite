@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1" https:=""//learn.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/toast-notifications?tabs=appsdk>
-<assemblyIdentity version="1.0.0.0" name="FireBrowserWinUi3.app" />
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+	<assemblyIdentity version="1.0.0.0" name="FireBrowserWinUi3.app" />
 
 	<!-- Compatibility section for declaring OS compatibility -->
 	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
@@ -14,23 +14,6 @@
 
 	<!-- DPI Awareness section with broader support -->
 	<application xmlns="urn:schemas-microsoft-com:asm.v3">
-		<Extensions>
-
-			<!--Specify which CLSID to activate when app notification clicked-->
-			<desktop:Extension Category="windows.toastNotificationActivation">
-				<desktop:ToastNotificationActivation ToastActivatorCLSID="replaced-with-your-guid-C173E6ADF0C3" />
-			</desktop:Extension>
-
-			<!--Register COM CLSID LocalServer32 registry key-->
-			<com:Extension Category="windows.comServer">
-				<com:ComServer>
-					<com:ExeServer Executable="YourProject.exe" Arguments="----AppNotificationActivated:" DisplayName="App notification activator">
-						<com:Class Id="replaced-with-your-guid-C173E6ADF0C3" DisplayName="App notification activator"/>
-					</com:ExeServer>
-				</com:ComServer>
-			</com:Extension>
-
-		</Extensions>
 		<windowsSettings>
 			<!-- Support for multiple DPI awareness levels -->
 			<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor, System</dpiAwareness>

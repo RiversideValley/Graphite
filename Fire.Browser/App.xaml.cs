@@ -6,8 +6,6 @@ using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppLifecycle;
-using Microsoft.Windows.AppNotifications;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,9 +21,6 @@ public partial class App : Application
 {
 	private readonly string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");
 	public static new App Current => (App)Application.Current;
-	
-	public NotificationManager NotificationManager { get; set; }
-
 	private string AzureStorage { get; } = "DefaultEndpointsProtocol=https;AccountName=strorelearn;AccountKey=0pt8CYqrqXUluQE3/60q8wobkmYznb9ovHIzztGVOzNxlSa+U8NlY74uwfggd5DfTmGORBLtXpeKEvDYh2ynfQ==;EndpointSuffix=core.windows.net";
 
 	#region DependencyInjection
@@ -66,8 +61,6 @@ public partial class App : Application
 
 	public App()
 	{
-		
-		AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		InitializeComponent();
 		UnhandledException += Current_UnhandledException;
 
@@ -78,21 +71,7 @@ public partial class App : Application
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 	}
-	public static string GetFullPathToExe()
-	{
-		var path = AppDomain.CurrentDomain.BaseDirectory;
-		var pos = path.LastIndexOf("\\");
-		return path.Substring(0, pos);
-	}
 
-	public static string GetFullPathToAsset(string assetName)
-	{
-		return GetFullPathToExe() + "\\Assets\\" + assetName;
-	}
-	void OnProcessExit(object sender, EventArgs e)
-	{
-		NotificationManager.Unregister();
-	}
 	private void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
 		if (!AppService.IsAppGoingToClose)
@@ -122,8 +101,7 @@ public partial class App : Application
 
 
 		App.Current.Services = App.Current.ConfigureServices();
-		NotificationManager = new NotificationManager();
-		NotificationManager.Init();
+
 
 		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 
@@ -163,22 +141,6 @@ public partial class App : Application
 			ExceptionLogger.LogException(ex);
 		}
 
-		var currentInstance = AppInstance.GetCurrent();
-		if (currentInstance.IsCurrent)
-		{
-			// AppInstance.GetActivatedEventArgs will report the correct ActivationKind,
-			// even in WinUI's OnLaunched.
-			AppActivationArguments activationArgs = currentInstance.GetActivatedEventArgs();
-			if (activationArgs != null)
-			{
-				ExtendedActivationKind extendedKind = activationArgs.Kind;
-				if (extendedKind == ExtendedActivationKind.AppNotification)
-				{
-					var notificationActivatedEventArgs = (AppNotificationActivatedEventArgs)activationArgs.Data;
-					NotificationManager.ProcessLaunchActivationArgs(notificationActivatedEventArgs);
-				}
-			}
-		}
 	}
 
 	public Window m_window;
