@@ -26,7 +26,7 @@ namespace FireBrowserWinUi3.Services
 			// When adding new a scenario, be sure to add its notification handler here.
 			c_notificationHandlers = new Dictionary<int, Action<AppNotificationActivatedEventArgs>>
 			{
-				{ (int)EnumMessageStatus.Informational, ToastWithAvatar.NotificationReceived },
+				{ (int)EnumMessageStatus.Informational, ToastRating.NotificationReceived },
 				{ (int)EnumMessageStatus.Login, ToastWithTextBox.NotificationReceived }
 			};
 		}

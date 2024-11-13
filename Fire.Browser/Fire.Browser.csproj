@@ -198,9 +198,6 @@
     <ProjectReference Include="..\Fire.Browser.Services\Fire.Browser.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Assets\5starrating.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="Assets\chrome_logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -221,6 +218,9 @@
     </Content>
     <Content Update="Assets\fincog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\fireglobe.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Icons\About.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

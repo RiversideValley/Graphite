@@ -15,7 +15,7 @@ using static FireBrowserWinUi3.Services.Notifications.NotificationMessage;
 
 namespace FireBrowserWinUi3.Services.Notifications;
 
-class ToastWithAvatar
+class ToastRating
 {
 
 	public const string Title = "Fire Browser Notifications";
@@ -25,12 +25,12 @@ class ToastWithAvatar
 		var appNotification = new AppNotificationBuilder()
 			.AddArgument("action", "ToastClick")
 			.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "UserStatus")
-			.SetAppLogoOverride(new System.Uri("file://" + App.GetFullPathToAsset("favicon.png")), AppNotificationImageCrop.Circle)
+			.SetAppLogoOverride(new System.Uri("file://" + App.GetFullPathToAsset("fireglobe.png")), AppNotificationImageCrop.Circle)
 			.AddText(Title)
 			.AddText($"Welcome to your Fire Browser '{AuthService.CurrentUser.Username ?? "?"}'")
-			.AddButton(new AppNotificationButton("Please Rate our Application")
+			.AddButton(new AppNotificationButton("Please Rate Our Application")
 				.AddArgument("action", "OpenApp")
-				.SetButtonStyle(AppNotificationButtonStyle.Success)
+				.SetButtonStyle(AppNotificationButtonStyle.Default)
 				.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "UserStatus"))
 			.BuildNotification();
 
