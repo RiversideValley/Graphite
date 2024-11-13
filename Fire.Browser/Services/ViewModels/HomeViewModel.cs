@@ -7,6 +7,7 @@ using Fire.Core.Models;
 using Fire.Data.Favorites;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Pages;
+using FireBrowserWinUi3.Pages.Models;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
 using Microsoft.UI;
@@ -14,10 +15,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using static FireBrowserWinUi3.Pages.NewTab;
 
@@ -74,6 +78,10 @@ public partial class HomeViewModel : ObservableRecipient
 	private SearchProviders _SearchProvider;
 	public SettingsService SettingsService { get; set; }
 	private DispatcherTimer timer { get; set; }
+	
+	public CancellationToken CancellationTokenTimer { get; set; }	
+	public ObservableCollection<TrendingItem> TrendingItems { get; set; }
+	
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
 	private void LoadUISettings()
@@ -142,11 +150,15 @@ public partial class HomeViewModel : ObservableRecipient
 
 		// - Use CoreSettings to save file access -> to Settings.json every 4 seconds handle in one place usings delegate...
 		await SettingsService?.SaveChangesToSettings(Fire.Browser.Core.AuthService.CurrentUser, SettingsService.CoreSettings);
+
+		//if (IstrendingEnabled)
+		//	UpdateTrending().ConfigureAwait(false).GetAwaiter().GetResult();
 	}
 	public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
 	{
 		OnPropertyChanged(propertyName);
 	}
+
 
 	public ObservableCollection<FavItem> LoadFavorites()
 	{
@@ -221,6 +233,9 @@ public partial class HomeViewModel : ObservableRecipient
 	}
 	public Task Intialize()
 	{
+		CancellationTokenSource source = new CancellationTokenSource();
+		CancellationTokenTimer = source.Token;
+
 		UpdateUIControls();
 		if (NtpTimeEnabled)
 		{
@@ -248,6 +263,76 @@ public partial class HomeViewModel : ObservableRecipient
 		timer.Start();
 	}
 
+	partial void OnIsTrendingVisibleChanged(Visibility value)
+	{
+
+		switch (value)
+		{
+			case Visibility.Visible:
+				CancellationTokenSource tVis = new CancellationTokenSource();
+				CancellationTokenTimer = tVis.Token;
+				UpdateTrending(); 
+				break;
+			case Visibility.Collapsed:
+				CancellationTokenSource tClose = new CancellationTokenSource();
+				tClose.Cancel(); 
+				CancellationTokenTimer = tClose.Token;
+				break;
+			default:
+				break;
+		}
+		
+
+
+	}
+
+	public Task UpdateTrending()
+	{
+		
+		var timer = new DispatcherTimer(); 
+		timer.Interval = TimeSpan.FromMinutes(4);
+		timer.Tick += (s, e) =>
+		{
+			if (!SettingsService.CoreSettings.IsTrendingVisible) {
+				
+				CancellationTokenSource source = new CancellationTokenSource();
+				source.Cancel(); 
+				CancellationTokenTimer = source.Token;
+			}
+			GetTrending();
+			RaisePropertyChanges(nameof(TrendingItems));
+		};
+		
+		timer.Start();
+		// initial load.
+		GetTrending(); 
+
+		async void GetTrending() {
+
+			if (CancellationTokenTimer.IsCancellationRequested) {
+				timer.Stop();
+				return;
+			}
+			
+
+			BingSearchApi bing = new();
+			string topics = await bing.TrendingListTask("calico cats");
+			// fixed treding errors. 
+			if (topics is not null)
+			{
+				List<Newtonsoft.Json.Linq.JToken> list = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JArray>(topics).ToList();
+				TrendingItems = new();
+
+				foreach (Newtonsoft.Json.Linq.JToken item in list)
+				{
+
+					TrendingItems.Add(new TrendingItem(item["webSearchUrl"].ToString(), item["name"].ToString(), item["image"]["url"].ToString(), item["query"]["text"].ToString()));
+				}
+			}
+		}
+		
+		return Task.CompletedTask; 
+	}
 	public Settings.NewTabBackground BackgroundType
 	{
 		get => _backgroundType;
