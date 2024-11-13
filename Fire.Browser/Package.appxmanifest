@@ -11,7 +11,7 @@
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
   xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"
   xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
-  IgnorableNamespaces="uap rescap uap3 uap4 desktop4 iot2 iot">
+  IgnorableNamespaces="... uap rescap uap3 uap4 desktop4 iot2 iot com desktop">
 
   <Identity
     Name="57443TechFireX.FireBrowserWinUi"
