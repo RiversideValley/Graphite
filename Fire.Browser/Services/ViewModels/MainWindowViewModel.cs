@@ -15,15 +15,18 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Services.Store;
 using WinRT.Interop;
 
 namespace FireBrowserWinUi3.Services.ViewModels;
 
 public partial class MainWindowViewModel : ObservableRecipient
 {
+	
 	internal MainWindow MainView { get; set; }
 
 	[ObservableProperty]
@@ -213,6 +216,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 				break;
 		}
 	}
+	
 
 	private void ShowErrorNotification(string payload)
 	{
