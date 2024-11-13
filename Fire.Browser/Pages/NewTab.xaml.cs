@@ -6,6 +6,7 @@ using Fire.Data.Core.Actions;
 using Fire.Data.Favorites;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Controls;
+using FireBrowserWinUi3.Pages.Models;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Models;
 using FireBrowserWinUi3.ViewModels;
@@ -24,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI;
@@ -35,9 +37,6 @@ namespace FireBrowserWinUi3.Pages;
 
 public sealed partial class NewTab : Page
 {
-
-
-	public List<TrendingItem> trendings = new();
 	public HomeViewModel ViewModel { get; set; }
 	private HistoryActions HistoryActions { get; } = new HistoryActions(AuthService.CurrentUser.Username);
 	private Fire.Browser.Core.Settings userSettings { get; set; }
@@ -55,54 +54,13 @@ public sealed partial class NewTab : Page
 		// assign to ViewModel, and or new instance.  
 		ViewModel.SettingsService.Initialize();
 		userSettings = ViewModel.SettingsService.CoreSettings;
-
+		
 		InitializeComponent();
 
-		if (userSettings.IsTrendingVisible)
-		{
-			_ = UpdateTrending().ConfigureAwait(false);
-		}
+	
 	}
-	public class TrendingItem
-	{
-		public string webSearchUrl { get; set; }
-		public string name { get; set; }
-		public string url { get; set; }
-		public string text { get; set; }
-		public TrendingItem() { }
-		public TrendingItem(string _webSearchUrl, string _name, string _url, string _text)
-		{
-			webSearchUrl = _webSearchUrl;
-			name = _name;
-			url = _url;
-			text = _text;
-		}
-
-	}
-	private async Task UpdateTrending()
-	{
-		BingSearchApi bing = new();
-		string topics = bing.TrendingListTask("calico cats").GetAwaiter().GetResult();
-		// fixed treding errors. 
-		if (topics is not null)
-		{
-			List<Newtonsoft.Json.Linq.JToken> list = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JArray>(topics).ToList();
-
-			trendings.Clear(); ;
-
-			foreach (Newtonsoft.Json.Linq.JToken item in list)
-			{
-
-				trendings.Add(new TrendingItem(item["webSearchUrl"].ToString(), item["name"].ToString(), item["image"]["url"].ToString(), item["query"]["text"].ToString()));
-			}
-		}
-
-		await Task.Delay(1000);
-
-
-	}
-	public record TrendingListItem(string webSearchUrl, string name, string url, string text);
-
+	
+	
 	private async void NewTabSearchBox_QuerySubmittedAsync(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 	{
 		if (string.IsNullOrEmpty(args.QueryText))
@@ -288,10 +246,7 @@ public sealed partial class NewTab : Page
 		NewTabSearchBox.Text = string.Empty;
 		_ = NewTabSearchBox.Focus(FocusState.Programmatic);
 
-		if (userSettings.IsTrendingVisible)
-		{
-			await UpdateTrending();
-		}
+		
 
 		HomeSync();
 	}
@@ -372,12 +327,25 @@ public sealed partial class NewTab : Page
 		Download.Visibility = downloadVisibility;
 		await ViewModel.SettingsService?.SaveChangesToSettings(AuthService.CurrentUser, userSettings);
 	}
-	protected override void OnNavigatedTo(NavigationEventArgs e)
+	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
+		if (userSettings.IsTrendingVisible)
+		{
+			await ViewModel.UpdateTrending();
+		}
+
 		base.OnNavigatedTo(e);
 		param = e.Parameter as Passer;
 	}
 
+	protected override void OnNavigatedFrom(NavigationEventArgs e)
+	{
+		CancellationTokenSource source = new CancellationTokenSource();
+		source.Cancel();
+		ViewModel.CancellationTokenTimer = source.Token;
+
+		base.OnNavigatedFrom(e);	
+	}
 	public static Brush GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, Fire.Browser.Core.Settings userSettings)
 	{
 		switch (backgroundType)
@@ -468,17 +436,7 @@ public sealed partial class NewTab : Page
 		return new SolidColorBrush();
 	}
 
-	private class ImageRoot
-	{
-		public Image[] images { get; set; }
-	}
-	private class Image
-	{
-		public string url { get; set; }
-		public string copyright { get; set; }
-		public string copyrightlink { get; set; }
-		public string title { get; set; }
-	}
+	
 
 	private async Task DownloadImage()
 	{

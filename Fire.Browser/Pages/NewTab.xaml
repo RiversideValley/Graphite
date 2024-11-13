@@ -285,7 +285,7 @@
                 Grid.Row="1"
                 Width="150"
                 Padding="-10,0,0,0"
-                ItemsSource="{x:Bind trendings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{x:Bind ViewModel.TrendingItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectionChanged="TrendingSelectionChanged">
                 <ListView.ItemTemplate>
                     <DataTemplate>
