@@ -122,8 +122,7 @@ public partial class App : Application
 
 
 		App.Current.Services = App.Current.ConfigureServices();
-		NotificationManager = new NotificationManager();
-		NotificationManager.Init();
+	
 
 		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 

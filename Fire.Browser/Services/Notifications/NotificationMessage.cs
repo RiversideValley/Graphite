@@ -18,11 +18,12 @@
 
 			public ObservableCollection<string> PublicMessages => messages;
 
-			public NotificationMessage() { }
-			public NotificationMessage(NotificationManager manager, ref ObservableCollection<string> messagesPage)
+			public NotificationMessage() { 
+		
+			}
+			public NotificationMessage(ref ObservableCollection<string> messagesPage)
 			{
-
-				_notificationManager = manager;
+				_notificationManager = App.Current.NotificationManager;
 				messages = messagesPage;
 			}
 

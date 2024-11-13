@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Fire.Core.Exceptions;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.Notifications;
 using Microsoft.Extensions.Hosting;
@@ -19,17 +20,19 @@ namespace FireBrowserWinUi3.Services
 
 		private Dictionary<int, Action<AppNotificationActivatedEventArgs>> c_notificationHandlers;
 
-		public NotificationManager() { }
-		public NotificationManager(IMessenger messenger) : base(messenger)
-		{
+		public NotificationManager() {
 			m_isRegistered = false;
 
 			// When adding new a scenario, be sure to add its notification handler here.
 			c_notificationHandlers = new Dictionary<int, Action<AppNotificationActivatedEventArgs>>
 			{
-				{ (int)EnumMessageStatus.Added, ToastWithAvatar.NotificationReceived },
+				{ (int)EnumMessageStatus.Informational, ToastWithAvatar.NotificationReceived },
 				{ (int)EnumMessageStatus.Login, ToastWithTextBox.NotificationReceived }
 			};
+		}
+		public NotificationManager(IMessenger messenger) : base(messenger)
+		{
+			
 		}
 
 		~NotificationManager()
@@ -67,34 +70,29 @@ namespace FireBrowserWinUi3.Services
 
 		public bool DispatchNotification(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-			//var scenarioId = notificationActivatedEventArgs.Arguments[Common.scenarioTag];
-			//if (scenarioId.Length != 0)
-			//{
-			//	try
-			//	{
-			//		c_notificationHandlers[int.Parse(scenarioId)](notificationActivatedEventArgs);
-			//		return true;
-			//	}
-			//	catch
-			//	{
-			//		return false; // Couldn't find a NotificationHandler for scenarioId.
-			//	}
-			//}
-			//else
-			//{
-			//	return false; // No scenario specified in the notification
-			//}
-			return false;
+			{
+				try
+				{
+					c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
+					return true;
+				}
+				catch(Exception ex)
+				{
+					ExceptionLogger.LogException(ex);	
+					return false; // Couldn't find a NotificationHandler for scenarioId.
+				}
+			}
+		
 		}
 
 		void OnNotificationInvoked(object sender, AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-			//NotifyUser.NotificationReceived();
+			
 
-			//if (!DispatchNotification(notificationActivatedEventArgs))
-			//{
-			//	NotifyUser.UnrecognizedToastOriginator();
-			//}
+			if (!DispatchNotification(notificationActivatedEventArgs))
+			{
+				Console.WriteLine("Unregisterd author of notifications"); 
+			}
 		}
 	}
 }

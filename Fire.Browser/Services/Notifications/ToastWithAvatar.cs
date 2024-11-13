@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
+using System.Collections.ObjectModel;
 using WinRT.Interop;
 using static FireBrowserWinUi3.Services.Notifications.NotificationMessage;
 
@@ -16,18 +17,18 @@ class ToastWithAvatar
 {
 
 	public const string Title = "Fire Browser Notifications";
-
+	public static ObservableCollection<string> NotificationMessages = new ObservableCollection<string>();
 	public static bool SendToast()
 	{
 		var appNotification = new AppNotificationBuilder()
 			.AddArgument("action", "ToastClick")
-			.AddArgument(EnumMessageStatus.Added.ToString(), "Bookmarks")
+			.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "Bookmarks")
 			.SetAppLogoOverride(new System.Uri("file://" + App.GetFullPathToAsset("favicon.png")), AppNotificationImageCrop.Circle)
 			.AddText(Title)
-			.AddText($"Welcome to your Fire Browser{AuthService.CurrentUser.Username ?? "?"}")
+			.AddText($"Welcome to your Fire Browser '{AuthService.CurrentUser.Username ?? "?"}'")
 			.AddButton(new AppNotificationButton("Open App")
 				.AddArgument("action", "OpenApp")
-				.AddArgument(EnumMessageStatus.Added.ToString(), "Bookmarks"))
+				.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "Bookmarks"))
 			.BuildNotification();
 
 		AppNotificationManager.Default.Show(appNotification);
@@ -37,7 +38,7 @@ class ToastWithAvatar
 
 	public static void NotificationReceived(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 	{
-		var noteMsg = new NotificationMessage();
+		var noteMsg = new NotificationMessage(ref NotificationMessages);
 		var notification = new FireNotification();
 		notification.Originator = Title;
 		notification.Action = notificationActivatedEventArgs.Arguments["action"];
