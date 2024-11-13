@@ -1,10 +1,12 @@
-﻿using Fire.Core.Helpers;
+﻿using Fire.Browser.Core;
+using Fire.Core.Helpers;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
+using System.Collections.ObjectModel;
 using WinRT.Interop;
 using static FireBrowserWinUi3.Services.Notifications.NotificationMessage;
 
@@ -16,19 +18,19 @@ class ToastWithTextBox
 
 	public const string Title = "Fire Browser Notifications";
 	const string textboxReplyId = "textboxReply";
-
+	public static ObservableCollection<string> NotificationMessages = new ObservableCollection<string>();
 	public static bool SendToast()
 	{
 		var appNotification = new AppNotificationBuilder()
 			.AddArgument("action", "ToastClick")
-			.AddArgument(EnumMessageStatus.Added.ToString(), "Bookmarks")
+			.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "UserStatus")
 			.SetAppLogoOverride(new System.Uri("file://" + App.GetFullPathToAsset("favicon.png")), AppNotificationImageCrop.Circle)
 			.AddText(Title)
-			.AddText("This is an example message using XML")
+			.AddText($"How is your day going '{AuthService.CurrentUser.Username ?? "?"}'")
 			.AddTextBox(textboxReplyId, "Type a reply", "Reply box")
 			.AddButton(new AppNotificationButton("Reply")
 				.AddArgument("action", "Reply")
-				.AddArgument(EnumMessageStatus.Added.ToString(), "Bookmarks")
+				.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "UserStatus")
 				.SetInputId(textboxReplyId))
 			.BuildNotification();
 
@@ -43,7 +45,7 @@ class ToastWithTextBox
 		// the background (sending the payload back to your App Server) without ever showing the App's UI.
 		// This is not something that can easily be demonstrated in a sample such as this one, as we need to show the UI to demonstrate how
 		// the payload is routed internally
-		var noteMsg = new NotificationMessage();
+		var noteMsg = new NotificationMessage(ref NotificationMessages);
 		var notification = new FireNotification();
 
 		notification.Originator = Title;

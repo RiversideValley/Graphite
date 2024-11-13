@@ -22,13 +22,13 @@ class ToastWithAvatar
 	{
 		var appNotification = new AppNotificationBuilder()
 			.AddArgument("action", "ToastClick")
-			.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "Bookmarks")
+			.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "UserStatus")
 			.SetAppLogoOverride(new System.Uri("file://" + App.GetFullPathToAsset("favicon.png")), AppNotificationImageCrop.Circle)
 			.AddText(Title)
 			.AddText($"Welcome to your Fire Browser '{AuthService.CurrentUser.Username ?? "?"}'")
 			.AddButton(new AppNotificationButton("Open App")
 				.AddArgument("action", "OpenApp")
-				.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "Bookmarks"))
+				.AddArgument(((int)(EnumMessageStatus.Informational)).ToString(), "UserStatus"))
 			.BuildNotification();
 
 		AppNotificationManager.Default.Show(appNotification);

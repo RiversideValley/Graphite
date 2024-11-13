@@ -924,9 +924,9 @@
             Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
             BorderBrush="{ThemeResource AppBarBorderThemeBrush}"
             BorderThickness="1.5"
-            Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
+             Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
             <interactivity:Interaction.Behaviors>
-                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
+                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public"  />
             </interactivity:Interaction.Behaviors>
         </InfoBar>
     </Grid>

@@ -70,7 +70,7 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
 
 		Commander = new ProfileCommander(ViewModelMain);
-
+		
 		InitializeComponent();
 
 		ArgsPassed();
@@ -1385,4 +1385,6 @@ public sealed partial class MainWindow : Window
 	{
 		UrlBox.Text = args.SelectedItem.ToString();
 	}
+
+	
 }
