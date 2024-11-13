@@ -9,7 +9,6 @@ using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3.Services.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -231,7 +230,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	private void ShowLoginNotification()
 	{
-		ToastWithAvatar.SendToast(); 
 		ShowNotification("FireBrowserWinUi3", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
 	}
 
