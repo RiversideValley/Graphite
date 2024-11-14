@@ -1037,7 +1037,7 @@ public sealed partial class MainWindow : Window
 				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "Ratings":
-				ToastRating.SendToast(); 
+				_ = ToastRating.SendToast(); 
 				break;
 		}
 
