@@ -53,7 +53,7 @@
                 Spacing="16">
                 <TextBlock
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="Welcome to FireBrowser WinUi"
+                    Text="Welcome to Riverside Graphite"
                     TextWrapping="Wrap" />
                 <TextBlock
                     Style="{StaticResource BodyTextBlockStyle}"

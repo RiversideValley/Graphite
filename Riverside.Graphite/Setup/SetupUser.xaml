@@ -79,7 +79,7 @@
                         FontSize="24"
                         FontWeight="Bold"
                         Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="FireBrowser User Setup"
+                        Text="Graphite User Setup"
                         TextWrapping="Wrap" />
 
                     <Button
