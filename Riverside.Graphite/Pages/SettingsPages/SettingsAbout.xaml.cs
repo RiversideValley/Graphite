@@ -29,7 +29,7 @@ public sealed partial class SettingsAbout : Page
 
 		string url = card.Tag switch
 		{
-			"Discord" => "https://discord.gg/kYStRKBHwy",
+			"Discord" => "https://discord.gg/windows-apps-hub-714581497222398064",
 			"GitHub" => "https://github.com/FirebrowserDevs/Riverside.Graphite",
 			"License" => "https://github.com/FirebrowserDevs/Riverside.Graphite/blob/main/License.lic",
 			_ => "https://example.com"
