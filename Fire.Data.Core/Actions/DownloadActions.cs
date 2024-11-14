@@ -1,4 +1,4 @@
-﻿using Fire.Core.Exceptions;
+﻿using Riverside.Graphite.Runtime.Exceptions;
 using Fire.Data.Core.Actions.Contracts;
 using Fire.Data.Core.Models;
 using Microsoft.EntityFrameworkCore;

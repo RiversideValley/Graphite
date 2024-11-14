@@ -10,7 +10,7 @@
     xmlns:firebrowserfavorites="using:Fire.Data.Favorites"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:person="using:Fire.Core.Helpers"
+    xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>

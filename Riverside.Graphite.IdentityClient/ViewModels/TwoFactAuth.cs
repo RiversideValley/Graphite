@@ -1,5 +1,5 @@
 ﻿using Riverside.Graphite.IdentityClient.Private;
-using Fire.Core.Models;
+using Riverside.Graphite.Runtime.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

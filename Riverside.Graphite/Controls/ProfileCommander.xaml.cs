@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
-using Fire.Core.CoreUi;
+using Riverside.Graphite.Runtime.CoreUi;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.ViewModels;

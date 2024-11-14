@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Fire.Core.Exceptions;
-using Fire.Core.Helpers;
-using Fire.Core.Models;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Models;
 using Fire.Data.Favorites;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Pages;

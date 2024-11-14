@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
-using Fire.Core.Licensing;
-using Fire.Core.Models;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Licensing;
+using Riverside.Graphite.Runtime.Models;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.Messages;

@@ -1,7 +1,7 @@
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
-using Fire.Core.Helpers;
-using Fire.Core.ImagesBing;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.ImagesBing;
 using Fire.Data.Core.Actions;
 using Fire.Data.Favorites;
 using FireBrowserDatabase;
@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI;
 using static FireBrowserWinUi3.MainWindow;
-using Settings = Fire.Core.Models.Settings;
+using Settings = Riverside.Graphite.Runtime.Models.Settings;
 
 namespace FireBrowserWinUi3.Pages;
 

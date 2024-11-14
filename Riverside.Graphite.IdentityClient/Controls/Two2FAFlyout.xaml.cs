@@ -42,7 +42,7 @@ namespace Riverside.Graphite.IdentityClient.Controls
 
 		private async void Repair_Click(object sender, RoutedEventArgs e)
 		{
-			await Fire.Core.Helpers.TwoFactorsAuthentification.Repair();
+			await Riverside.Graphite.Runtime.Helpers.TwoFactorsAuthentification.Repair();
 		}
 	}
 }

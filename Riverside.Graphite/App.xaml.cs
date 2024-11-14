@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using FireBrowserWinUi3.Services;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
@@ -97,7 +97,7 @@ public partial class App : Application
 	{
 		if (!AppService.IsAppGoingToClose)
 		{
-			Fire.Core.Exceptions.ExceptionLogger.LogException(e.Exception);
+			Riverside.Graphite.Runtime.Exceptions.ExceptionLogger.LogException(e.Exception);
 		}
 	}
 

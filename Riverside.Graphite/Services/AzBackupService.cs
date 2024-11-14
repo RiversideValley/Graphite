@@ -1,7 +1,7 @@
 ﻿using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using FireBrowserWinUi3.Pages.Patch;
 using FireBrowserWinUi3.Services.Models;
 using Microsoft.Identity.Client;

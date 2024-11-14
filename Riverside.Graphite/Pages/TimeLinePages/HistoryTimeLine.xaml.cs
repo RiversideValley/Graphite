@@ -1,5 +1,5 @@
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using Fire.Data.Core.Actions;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

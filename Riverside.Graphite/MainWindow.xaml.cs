@@ -1,11 +1,11 @@
 using CommunityToolkit.WinUI.Behaviors;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
-using Fire.Core.CoreUi;
-using Fire.Core.Exceptions;
-using Fire.Core.Helpers;
-using Fire.Core.Models;
-using Fire.Core.ShareHelper;
+using Riverside.Graphite.Runtime.CoreUi;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Runtime.ShareHelper;
 using Fire.Data.Core.Actions;
 using Fire.Data.Favorites;
 using FireBrowserDatabase;
@@ -42,7 +42,7 @@ using Windows.System;
 using WinRT.Interop;
 using Settings = Riverside.Graphite.Core.Settings;
 using User = Riverside.Graphite.Core.User;
-using Windowing = Fire.Core.Helpers.Windowing;
+using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
 
 namespace FireBrowserWinUi3;
 
@@ -147,7 +147,7 @@ public sealed partial class MainWindow : Window
 	}
 	public async void Init()
 	{
-		await Fire.Core.Models.Data.Init();
+		await Riverside.Graphite.Runtime.Models.Data.Init();
 		_ = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
 		//string workerProjectName = "FireAuthService";
 		//string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
@@ -199,7 +199,7 @@ public sealed partial class MainWindow : Window
 						return;
 					}
 
-					Fire.Core.CoreUi.ConfirmAppClose quickConfigurationDialog = new()
+					Riverside.Graphite.Runtime.CoreUi.ConfirmAppClose quickConfigurationDialog = new()
 					{
 						XamlRoot = mainWindow.Content.XamlRoot
 					};
@@ -684,11 +684,11 @@ public sealed partial class MainWindow : Window
 
 	private async Task HandleNormalUrlOrSearch(string input)
 	{
-		Uri browserTo = Fire.Core.Helpers.UrlValidater.GetValidateUrl(input);
+		Uri browserTo = Riverside.Graphite.Runtime.Helpers.UrlValidater.GetValidateUrl(input);
 
 		if (browserTo != null)
 		{
-			if (await Fire.Core.Helpers.UrlValidater.IsUrlReachable(browserTo))
+			if (await Riverside.Graphite.Runtime.Helpers.UrlValidater.IsUrlReachable(browserTo))
 			{
 				NavigateToUrl(browserTo.AbsoluteUri);
 			}
@@ -1309,7 +1309,7 @@ public sealed partial class MainWindow : Window
 			Console.WriteLine($"Error authenticating: {ex.Message}");
 		}
 	}
-	private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e) { Fire.Core.Helpers.FlyoutLoad.ShowFlyout(Secure); }
+	private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e) { Riverside.Graphite.Runtime.Helpers.FlyoutLoad.ShowFlyout(Secure); }
 	private async void SaveQrImage_Click(object sender, RoutedEventArgs e)
 	{
 		if (TabContent.Content is WebContent webContent)
@@ -1382,7 +1382,7 @@ public sealed partial class MainWindow : Window
 
 	private void Secure_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
 	{
-		Fire.Core.Helpers.FlyoutLoad.ShowFlyout(Secure);
+		Riverside.Graphite.Runtime.Helpers.FlyoutLoad.ShowFlyout(Secure);
 	}
 
 	private void UrlBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)

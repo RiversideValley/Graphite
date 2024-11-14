@@ -1,7 +1,7 @@
 ﻿using Riverside.Graphite.IdentityClient.Controls;
 using Riverside.Graphite.IdentityClient.Private;
-using Fire.Core.Models;
-using Fire.Core.Helpers;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Runtime.Helpers;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;

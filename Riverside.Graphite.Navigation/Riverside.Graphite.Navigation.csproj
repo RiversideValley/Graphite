@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fire.Core.Exceptions\Fire.Core.Exceptions.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Runtime.Exceptions\Riverside.Graphite.Runtime.Exceptions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.Notifications;
 using Microsoft.Extensions.Hosting;

@@ -1,6 +1,6 @@
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
-using Fire.Core.Helpers;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
 using FireBrowserWinUi3.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -47,7 +47,7 @@ namespace FireBrowserWinUi3.Controls
 			appWindow = AppWindow.GetFromWindowId(windowId);
 			appWindow.Title = "CreateBackup";
 			appWindow.MoveAndResize(new RectInt32(500, 500, 850, 500));
-			Fire.Core.Helpers.Windowing.Center(this);
+			Riverside.Graphite.Runtime.Helpers.Windowing.Center(this);
 			appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 			appWindow.MoveInZOrderAtTop();
 			appWindow.SetIcon("backup.ico");

@@ -1,4 +1,4 @@
-using Fire.Core.Licensing;
+using Riverside.Graphite.Runtime.Licensing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -15,7 +15,7 @@ namespace FireBrowserWinUi3.Pages.Patch
 		private readonly string premiumLicensePath;
 		private bool IsCloudBackup { get; set; } = false;
 
-		private readonly Fire.Core.Licensing.AddonManager _addonManager;
+		private readonly Riverside.Graphite.Runtime.Licensing.AddonManager _addonManager;
 
 		public BackUpDialog()
 		{

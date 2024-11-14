@@ -5,7 +5,7 @@
     xmlns:asset="using:Riverside.Graphite.Assets"
     xmlns:firebrowser="using:FireBrowserWinUi3.Controls"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"
-    xmlns:person="using:Fire.Core.Helpers">
+    xmlns:person="using:Riverside.Graphite.Runtime.Helpers">
 
     <ScrollViewer>
         <StackPanel Margin="10,10,10,10" Spacing="2">

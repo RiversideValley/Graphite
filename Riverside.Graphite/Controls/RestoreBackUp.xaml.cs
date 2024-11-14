@@ -1,5 +1,5 @@
 using Riverside.Graphite.Core;
-using Fire.Core.Helpers;
+using Riverside.Graphite.Runtime.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -80,7 +80,7 @@ public sealed partial class RestoreBackUp : Window
 		appWindow = AppWindow.GetFromWindowId(windowId);
 
 		appWindow.MoveAndResize(new RectInt32(500, 500, 850, 500));
-		Fire.Core.Helpers.Windowing.Center(this);
+		Riverside.Graphite.Runtime.Helpers.Windowing.Center(this);
 		appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 		appWindow.MoveInZOrderAtTop();
 		appWindow.SetIcon("backup.ico");

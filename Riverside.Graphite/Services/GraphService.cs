@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using FireBrowserWinUi3.Services.Contracts;
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml.Media.Imaging;

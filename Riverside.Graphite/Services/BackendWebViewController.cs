@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserWinUi3.Services.Messages;
-using Fire.Core.Helpers;
+using Riverside.Graphite.Runtime.Helpers;
 
 namespace FireBrowserWinUi3.Services
 {

@@ -22,10 +22,10 @@ public class UpdateService
 	"Riverside.Graphite.Core.dll",
 	"Riverside.Graphite.Extensions.dll",
 	"Fire.Data.Favorites.dll",
-	"Fire.Core.Exceptions.dll",
+	"Riverside.Graphite.Runtime.Exceptions.dll",
 	"Fire.Data.Core.dll",
 	"Fire.Data.dll",
-	"Fire.Core.dll",
+	"Riverside.Graphite.Runtime.dll",
 	"Riverside.Graphite.IdentityClient.dll",
 	"Riverside.Graphite.IdentityClient.Private.dll",
 	"Riverside.Graphite.Assets.dll"

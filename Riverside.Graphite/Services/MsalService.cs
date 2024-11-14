@@ -1,7 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using Fire.Core.Exceptions;
-using Fire.Core.Helpers;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
 using FireBrowserWinUi3.Services.Contracts;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;

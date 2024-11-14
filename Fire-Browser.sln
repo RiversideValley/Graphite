@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite", "Riverside.Graphite\Riverside.Graphite.csproj", "{F5926CAB-5CFA-47B4-8E89-B12DA34F84FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Core", "Fire.Core\Fire.Core.csproj", "{2F04ADA6-8698-42A8-99BF-C97B7421B385}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Runtime", "Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj", "{2F04ADA6-8698-42A8-99BF-C97B7421B385}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Data.Core", "Fire.Data.Core\Fire.Data.Core.csproj", "{9C08C064-6D9A-4517-986A-C80C5BC04404}"
 EndProject
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Adblock"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Data", "Fire.Data\Fire.Data.csproj", "{7FD0A084-848C-4B3C-98B6-CDFDF1E22B30}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Core.Exceptions", "Fire.Core.Exceptions\Fire.Core.Exceptions.csproj", "{7532C153-E921-493F-9F98-1F0192F03C7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Runtime.Exceptions", "Riverside.Graphite.Runtime.Exceptions\Riverside.Graphite.Runtime.Exceptions.csproj", "{7532C153-E921-493F-9F98-1F0192F03C7D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Data.Favorites", "Fire.Data.Favorites\Fire.Data.Favorites.csproj", "{B43EA28D-6957-4930-84E6-321FEE852E11}"
 EndProject
@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Data.Migration", "Fire.Data.Migration\Fire.Data.Migration.csproj", "{50A8BEB2-BC84-4CD0-B3D2-D0E2CA22DF6D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fire.Core.Licensing", "Fire.Core.Licensing\Fire.Core.Licensing.csproj", "{30E6BB01-E04B-4EE3-8A80-679AEF1D5D62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Runtime.Licensing", "Riverside.Graphite.Runtime.Licensing\Riverside.Graphite.Runtime.Licensing.csproj", "{30E6BB01-E04B-4EE3-8A80-679AEF1D5D62}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riverside.Graphite.IdentityClient.Kernel", "Riverside.Graphite.IdentityClient.Kernel\Riverside.Graphite.IdentityClient.Kernel.csproj", "{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}"
 EndProject

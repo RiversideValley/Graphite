@@ -1,6 +1,6 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
-using Fire.Core.Helpers;
+using Riverside.Graphite.Runtime.Helpers;
 using FireBrowserWinUi3.Pages.SettingsPages;
 using FireBrowserWinUi3.Services;
 using Microsoft.UI;

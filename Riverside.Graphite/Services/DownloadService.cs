@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Riverside.Graphite.Core;
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using Fire.Data.Core.Actions;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Events;

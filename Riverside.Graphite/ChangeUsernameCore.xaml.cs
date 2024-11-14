@@ -18,7 +18,7 @@ public sealed partial class ChangeUsernameCore : Window
 	public ChangeUsernameCore()
 	{
 		AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(500, 500, 850, 500));
-		Fire.Core.Helpers.Windowing.Center(this);
+		Riverside.Graphite.Runtime.Helpers.Windowing.Center(this);
 		AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 		AppWindow.MoveInZOrderAtTop();
 		AppWindow.ShowOnceWithRequestedStartupState();

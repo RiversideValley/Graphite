@@ -1,4 +1,4 @@
-using Fire.Core.Exceptions;
+using Riverside.Graphite.Runtime.Exceptions;
 using System;
 using System.Diagnostics;
 using System.IO;
