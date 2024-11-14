@@ -25,6 +25,7 @@ namespace FireBrowserWinUi3.Services.Notifications
 		{
 			_= InitializeStoreContext().GetAwaiter();
 		}
+
 		public NotificationMessenger(ref ObservableCollection<string> messagesPage) : this()
 		{
 			_notificationManager = App.Current.NotificationManager;
