@@ -25,25 +25,27 @@ public abstract class Otp
 
 	protected internal long CalculateOtp(byte[] data, OtpHashMode mode)
 	{
-		var hmacComputedHash = _secretKey.ComputeHmac(mode, data);
+		byte[] hmacComputedHash = _secretKey.ComputeHmac(mode, data);
 
-		int offset = hmacComputedHash[hmacComputedHash.Length - 1] & 0x0F;
-		return (hmacComputedHash[offset] & 0x7f) << 24
-			| (hmacComputedHash[offset + 1] & 0xff) << 16
-			| (hmacComputedHash[offset + 2] & 0xff) << 8
-			| (hmacComputedHash[offset + 3] & 0xff) % 1000000;
+		int offset = hmacComputedHash[^1] & 0x0F;
+		return ((hmacComputedHash[offset] & 0x7f) << 24)
+			| ((hmacComputedHash[offset + 1] & 0xff) << 16)
+			| ((hmacComputedHash[offset + 2] & 0xff) << 8)
+			| ((hmacComputedHash[offset + 3] & 0xff) % 1000000);
 	}
 
-	protected internal static string Digits(long input, int digitCount) =>
-		(input % (long)Math.Pow(10, digitCount)).ToString().PadLeft(digitCount, '0');
+	protected internal static string Digits(long input, int digitCount)
+	{
+		return (input % (long)Math.Pow(10, digitCount)).ToString().PadLeft(digitCount, '0');
+	}
 
 	protected bool Verify(long initialStep, string valueToVerify, out long matchedStep, VerificationWindow window)
 	{
 		window ??= new VerificationWindow();
 
-		foreach (var frame in window.ValidationCandidates(initialStep))
+		foreach (long frame in window.ValidationCandidates(initialStep))
 		{
-			var comparisonValue = Compute(frame, _hashMode);
+			string comparisonValue = Compute(frame, _hashMode);
 			if (ValuesEqual(comparisonValue, valueToVerify))
 			{
 				matchedStep = frame;
@@ -58,11 +60,15 @@ public abstract class Otp
 	private bool ValuesEqual(string a, string b)
 	{
 		if (a.Length != b.Length)
+		{
 			return false;
+		}
 
-		var result = 0;
-		for (var i = 0; i < a.Length; i++)
+		int result = 0;
+		for (int i = 0; i < a.Length; i++)
+		{
 			result |= a[i] ^ b[i];
+		}
 
 		return result == 0;
 	}

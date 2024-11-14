@@ -16,12 +16,15 @@ public class InMemoryKey : IKeyProvider
 		}
 	}
 
-	internal byte[] GetCopyOfKey() => (byte[])_keyData.Clone();
+	internal byte[] GetCopyOfKey()
+	{
+		return (byte[])_keyData.Clone();
+	}
 
 	public byte[] ComputeHmac(OtpHashMode mode, byte[] data)
 	{
-		using var hmac = CreateHmacHash(mode);
-		var key = GetCopyOfKey();
+		using HMAC hmac = CreateHmacHash(mode);
+		byte[] key = GetCopyOfKey();
 		try
 		{
 			hmac.Key = key;
@@ -33,11 +36,13 @@ public class InMemoryKey : IKeyProvider
 		}
 	}
 
-	private static HMAC CreateHmacHash(OtpHashMode otpHashMode) =>
-		otpHashMode switch
+	private static HMAC CreateHmacHash(OtpHashMode otpHashMode)
+	{
+		return otpHashMode switch
 		{
 			OtpHashMode.Sha256 => new HMACSHA256(),
 			OtpHashMode.Sha512 => new HMACSHA512(),
 			_ => new HMACSHA1() // OtpHashMode.Sha1 or default
 		};
+	}
 }
