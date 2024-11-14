@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dllimg="using:Riverside.Graphite.Assets"
     xmlns:firebrowser="using:FireBrowserWinUi3.Controls"
-    xmlns:firebrowserfavorites="using:Fire.Data.Favorites"
+    xmlns:firebrowserfavorites="using:Riverside.Graphite.Data.Favorites"
     xmlns:history="using:FireBrowserDatabase"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"

@@ -1,6 +1,6 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
-using Fire.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Actions;
 using FireBrowserWinUi3.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -53,7 +53,7 @@ public sealed partial class DownloadFlyout : Flyout
 
 			DownloadItemsListView.Items.Clear();
 			DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
-			List<Fire.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
+			List<Riverside.Graphite.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
 
 			if (items.Count > 0)
 			{

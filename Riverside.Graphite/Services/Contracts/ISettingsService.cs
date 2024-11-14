@@ -1,4 +1,4 @@
-﻿using Fire.Data.Core.Actions;
+﻿using Riverside.Graphite.Data.Core.Actions;
 using System.Threading.Tasks;
 
 namespace FireBrowserWinUi3.Services.Contracts;

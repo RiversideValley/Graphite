@@ -1,6 +1,6 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers;
-using Fire.Data.Favorites;
+using Riverside.Graphite.Data.Favorites;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

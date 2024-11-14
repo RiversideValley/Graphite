@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Models;
-using Fire.Data.Favorites;
+using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
 using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Pages.Models;

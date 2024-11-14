@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
-using Fire.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Actions;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Events;
 using System;
@@ -55,7 +55,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 		try
 		{
 			DownloadActions downloadActions = new(AuthorizedUser.Username);
-			List<Fire.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
+			List<Riverside.Graphite.Data.Core.Models.DownloadItem> items = await downloadActions.GetAllDownloadItems();
 
 			if (items.Count > 0)
 			{

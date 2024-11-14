@@ -194,7 +194,7 @@ namespace FireBrowserWinUi3.Pages.SettingsPages
 
 		private async void ImportBookmarksItem_Click(object sender, RoutedEventArgs e)
 		{
-			Fire.Data.Favorites.ImportBookMarks dialog = new();
+			Riverside.Graphite.Data.Favorites.ImportBookMarks dialog = new();
 			dialog.XamlRoot = XamlRoot;
 			_ = await dialog.ShowAsync();
 		}

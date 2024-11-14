@@ -185,12 +185,12 @@
     <ProjectReference Include="..\Riverside.Graphite.IdentityClient.Private\Riverside.Graphite.IdentityClient.Private.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.IdentityClient\Riverside.Graphite.IdentityClient.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
-    <ProjectReference Include="..\Fire.Data\Fire.Data.csproj" />
-    <ProjectReference Include="..\Fire.Data.Core\Fire.Data.Core.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Data\Riverside.Graphite.Data.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Data.Core\Riverside.Graphite.Data.Core.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Runtime.Exceptions\Riverside.Graphite.Runtime.Exceptions.csproj" />
-    <ProjectReference Include="..\Fire.Data.Favorites\Fire.Data.Favorites.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Data.Favorites\Riverside.Graphite.Data.Favorites.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Runtime.Licensing\Riverside.Graphite.Runtime.Licensing.csproj" />
-    <ProjectReference Include="..\Fire.Data.Migration\Fire.Data.Migration.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Data.Migration\Riverside.Graphite.Data.Migration.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Extensions\Riverside.Graphite.Extensions.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Navigation\Riverside.Graphite.Navigation.csproj" />

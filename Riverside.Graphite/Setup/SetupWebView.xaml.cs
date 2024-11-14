@@ -1,6 +1,6 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
-using Fire.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Actions;
 using FireBrowserWinUi3.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;

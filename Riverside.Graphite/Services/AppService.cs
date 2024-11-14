@@ -2,7 +2,7 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
-using Fire.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Actions;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Services.Contracts;
 using FireBrowserWinUi3.Services.Messages;

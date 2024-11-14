@@ -5,7 +5,7 @@ using Riverside.Graphite.Runtime.CoreUi;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.ShareHelper;
-using Fire.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Actions;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Services;
 using Microsoft.UI.Xaml;
