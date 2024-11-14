@@ -1,4 +1,4 @@
-using Fire.Browser.Core;
+using Riverside.Graphite.Core;
 using Fire.Data.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.IO;

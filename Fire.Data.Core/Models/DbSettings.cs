@@ -1,10 +1,10 @@
-﻿using Fire.Browser.Core;
+﻿using Riverside.Graphite.Core;
 
 namespace Fire.Data.Core.Models;
-public class DbSettings : Fire.Browser.Core.Settings
+public class DbSettings : Riverside.Graphite.Core.Settings
 {
 
-	public Fire.Browser.Core.Settings Settings { get; set; }
+	public Riverside.Graphite.Core.Settings Settings { get; set; }
 	public DbSettings() : base(AuthService.CurrentUser?.UserSettings)
 	{
 		Settings = AuthService.CurrentUser?.UserSettings ?? new Settings();

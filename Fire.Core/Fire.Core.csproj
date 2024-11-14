@@ -54,11 +54,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fire.Browser.Assets\Fire.Browser.Assets.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Assets\Riverside.Graphite.Assets.csproj" />
     <ProjectReference Include="..\Fire.Data\Fire.Data.csproj" />
     <ProjectReference Include="..\Fire.Core.Exceptions\Fire.Core.Exceptions.csproj" />
     <ProjectReference Include="..\Fire.Data.Favorites\Fire.Data.Favorites.csproj" />
-    <ProjectReference Include="..\Fire.Browser.Core\Fire.Browser.Core.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

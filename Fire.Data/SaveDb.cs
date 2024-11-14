@@ -1,4 +1,4 @@
-﻿using Fire.Browser.Core;
+﻿using Riverside.Graphite.Core;
 using Microsoft.Data.Sqlite;
 using System;
 using System.IO;

@@ -46,8 +46,8 @@
     <ProjectReference Include="..\Fire.Core\Fire.Core.csproj" />
     <ProjectReference Include="..\Fire.Data\Fire.Data.csproj" />
     <ProjectReference Include="..\Fire.Core.Exceptions\Fire.Core.Exceptions.csproj" />
-    <ProjectReference Include="..\Fire.Browser.Core\Fire.Browser.Core.csproj" />
-    <ProjectReference Include="..\Fire.Browser.Navigation\Fire.Browser.Navigation.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Navigation\Riverside.Graphite.Navigation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

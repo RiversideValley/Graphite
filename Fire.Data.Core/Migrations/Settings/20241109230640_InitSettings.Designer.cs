@@ -19,7 +19,7 @@ namespace Fire.Data.Core.Migrations.Settings
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
-            modelBuilder.Entity("Fire.Browser.Core.Settings", b =>
+            modelBuilder.Entity("Riverside.Graphite.Core.Settings", b =>
                 {
                     b.Property<string>("PackageName")
                         .HasColumnType("TEXT");

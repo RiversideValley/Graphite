@@ -1,4 +1,4 @@
-﻿using Fire.Browser.Core.Helper;
+﻿using Riverside.Graphite.Core.Helper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

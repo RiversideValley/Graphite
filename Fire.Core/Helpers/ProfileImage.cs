@@ -1,4 +1,4 @@
-﻿using Fire.Browser.Core;
+﻿using Riverside.Graphite.Core;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;

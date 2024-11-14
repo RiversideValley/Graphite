@@ -1,4 +1,4 @@
-﻿using Fire.Browser.Core;
+﻿using Riverside.Graphite.Core;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;

@@ -1,4 +1,4 @@
-﻿using Fire.Browser.Core;
+﻿using Riverside.Graphite.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
@@ -31,6 +31,6 @@ public class SettingsContext : DbContext
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);
-		//modelBuilder.Entity<Settings>().HasData(new Fire.Browser.Core.Settings(true).Self);
+		//modelBuilder.Entity<Settings>().HasData(new Riverside.Graphite.Core.Settings(true).Self);
 	}
 }

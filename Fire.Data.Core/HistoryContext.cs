@@ -1,7 +1,7 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-using Fire.Browser.Core;
+using Riverside.Graphite.Core;
 using Fire.Data.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
