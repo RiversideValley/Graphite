@@ -1040,6 +1040,9 @@ public sealed partial class MainWindow : Window
 			case "Ratings":
 				_ = ToastRatings.SendToast(); 
 				break;
+			case "Updated":
+				_ = ToastUpdate.SendToast();	
+				break;
 		}
 
 		ViewModelMain?.CloseMoreFlyout();

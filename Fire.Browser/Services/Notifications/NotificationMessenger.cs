@@ -1,6 +1,8 @@
 ﻿using FireBrowserWinUi3.Pages;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.AppNotifications;
 using Microsoft.Xaml.Interactivity;
 using System;
 using System.Collections.Generic;
@@ -41,7 +43,7 @@ namespace FireBrowserWinUi3.Services.Notifications
 
 		}
 
-		private async Task InstallUpdatesAsync()
+		public async Task InstallUpdatesAsync(FireNotification notification)
 		{
 
 			await InitializeStoreContext();
@@ -56,16 +58,39 @@ namespace FireBrowserWinUi3.Services.Notifications
 
 				if (updateResult.OverallState == StorePackageUpdateState.Completed)
 				{
-					Console.WriteLine("Updates installed successfully.");
+					// Inform the user that the update was successful
+					var toastContentBuilder = new AppNotificationBuilder()
+						.AddText("Update Complete!")
+						.AddText("The app has been updated successfully.");
+
+					var toast = toastContentBuilder.BuildNotification();
+					AppNotificationManager.Default.Show(toast);
 				}
 				else
 				{
-					Console.WriteLine("Some updates failed to install.");
+					// Inform the user that the update failed
+					var toastContentBuilder = new AppNotificationBuilder()
+						.AddText("Update Failed")
+						.AddText("The app could not be updated. Please try again later.");
+
+					var toast = toastContentBuilder.BuildNotification();
+					AppNotificationManager.Default.Show(toast);
 				}
 			}
+			else
+			{
+				// Inform the user that no updates are available
+				var toastContentBuilder = new AppNotificationBuilder()
+					.AddText("No Updates Available")
+					.AddText("You already have the latest version of the app.");
+
+				var toast = toastContentBuilder.BuildNotification();
+				AppNotificationManager.Default.Show(toast);
+			}
+
+			NotificationReceived(notification);
 		}
-
-
+		
 
 		public async Task PromptUserToRateApp(FireNotification notification)
 		{

@@ -29,7 +29,8 @@ namespace FireBrowserWinUi3.Services
 			c_notificationHandlers = new Dictionary<int, Action<AppNotificationActivatedEventArgs>>
 			{
 				{ (int)EnumMessageStatus.Informational, ToastRatings.NotificationReceived },
-				{ (int)EnumMessageStatus.Login, ToastWithTextBox.NotificationReceived }
+				{ (int)EnumMessageStatus.Login, ToastWithTextBox.NotificationReceived },
+				{ (int)EnumMessageStatus.Updated, ToastUpdate.NotificationReceived },
 			};
 		}
 
@@ -71,7 +72,17 @@ namespace FireBrowserWinUi3.Services
 			{
 				try
 				{
-					c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
+					IDictionary<string, string> arguments = notificationActivatedEventArgs.Arguments;
+
+					if (arguments.ContainsKey("action") && arguments["action"] == "UpdateApp")
+					{
+						c_notificationHandlers[((int)(EnumMessageStatus.Updated))](notificationActivatedEventArgs);
+					}
+					else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp") 
+					{
+						c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
+					}
+
 					return true;
 				}
 				catch (Exception ex)
