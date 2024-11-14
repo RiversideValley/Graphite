@@ -72,7 +72,7 @@ namespace Riverside.Graphite.IdentityClient.ViewModels
 			twoFactAuth.Start();
 
 			Items.Add(twoFactAuth);
-			Items.Add(item);
+			Riverside.Graphite.Runtime.Helpers.TwoFactorsAuthentification.Items.Add(item);
 		}
 	}
 }
