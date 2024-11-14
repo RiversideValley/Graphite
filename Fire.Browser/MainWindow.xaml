@@ -302,6 +302,21 @@
                             Background="Transparent"
                             BorderBrush="Transparent"
                             Click="TabMenuClick"
+                            Tag="Ratings">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xE8e1;" />
+                                <TextBlock Margin="10,0,0,0" Text="Rate Us" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="TabMenuClick"
                             Tag="DevTools">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon

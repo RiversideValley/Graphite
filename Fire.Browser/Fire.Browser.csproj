@@ -219,6 +219,9 @@
     <Content Update="Assets\fincog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\fireglobe.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\Icons\About.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>

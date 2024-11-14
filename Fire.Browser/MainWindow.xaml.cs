@@ -12,6 +12,7 @@ using FireBrowserDatabase;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Services;
+using FireBrowserWinUi3.Services.Notifications;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
 using FireBrowserWinUi3QrCore;
@@ -70,7 +71,7 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
 
 		Commander = new ProfileCommander(ViewModelMain);
-
+		
 		InitializeComponent();
 
 		ArgsPassed();
@@ -1035,6 +1036,9 @@ public sealed partial class MainWindow : Window
 				UrlBox.Text = "firebrowser://favorites";
 				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
 				break;
+			case "Ratings":
+				_ = ToastRating.SendToast(); 
+				break;
 		}
 
 		ViewModelMain?.CloseMoreFlyout();
@@ -1385,4 +1389,6 @@ public sealed partial class MainWindow : Window
 	{
 		UrlBox.Text = args.SelectedItem.ToString();
 	}
+
+	
 }
