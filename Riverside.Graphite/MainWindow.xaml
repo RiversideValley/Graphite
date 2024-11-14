@@ -731,25 +731,41 @@
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72B;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Back" />
+                    Tag="Back" >
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="B" />
+                    </Button.KeyboardAccelerators>
+                </Button>
                 <Button
                     x:Name="ForwBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72A;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Forward" />
+                    Tag="Forward" >
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="F" />
+                    </Button.KeyboardAccelerators>
+                </Button>
                 <Button
                     x:Name="ReloadBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72C;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Refresh" />
+                    Tag="Refresh" >
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="R" />
+                    </Button.KeyboardAccelerators>
+                </Button>
                 <Button
                     x:Name="HomeBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE80F;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Home" />
+                    Tag="Home" >
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="H" />
+                    </Button.KeyboardAccelerators>
+                </Button>
                 <Button
                     Command="{x:Bind ViewModelMain.LoginToMicrosoftCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
