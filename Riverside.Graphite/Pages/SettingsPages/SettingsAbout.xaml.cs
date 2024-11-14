@@ -30,8 +30,8 @@ public sealed partial class SettingsAbout : Page
 		string url = card.Tag switch
 		{
 			"Discord" => "https://discord.gg/windows-apps-hub-714581497222398064",
-			"GitHub" => "https://github.com/FirebrowserDevs/Riverside.Graphite",
-			"License" => "https://github.com/FirebrowserDevs/Riverside.Graphite/blob/main/License.lic",
+			"GitHub" => "https://github.com/RiversideValley/Graphite",
+			"License" => "https://github.com/RiversideValley/Graphite?tab=GPL-3.0-1-ov-file",
 			_ => "https://example.com"
 		};
 
