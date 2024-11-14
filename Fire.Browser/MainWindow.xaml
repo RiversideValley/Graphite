@@ -302,6 +302,21 @@
                             Background="Transparent"
                             BorderBrush="Transparent"
                             Click="TabMenuClick"
+                            Tag="Ratings">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xE8e1;" />
+                                <TextBlock Margin="10,0,0,0" Text="Rate Us" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="TabMenuClick"
                             Tag="DevTools">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
@@ -924,9 +939,9 @@
             Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
             BorderBrush="{ThemeResource AppBarBorderThemeBrush}"
             BorderThickness="1.5"
-             Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
+            Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
             <interactivity:Interaction.Behaviors>
-                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public"  />
+                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
             </interactivity:Interaction.Behaviors>
         </InfoBar>
     </Grid>

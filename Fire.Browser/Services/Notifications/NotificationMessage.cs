@@ -28,7 +28,6 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 			{
 				_notificationManager = App.Current.NotificationManager;
 				messages = messagesPage;
-				_ = InitializeStoreContext().GetAwaiter();
 			}
 
 
@@ -56,6 +55,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 		public async Task PromptUserToRateApp(FireNotification notification)
 		{
+			await InitializeStoreContext();
+
 			if (_storeContext is null) return; 
 
 			WinRT.Interop.InitializeWithWindow.Initialize(_storeContext, WinRT.Interop.WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow));

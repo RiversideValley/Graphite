@@ -12,6 +12,7 @@ using FireBrowserDatabase;
 using FireBrowserWinUi3.Controls;
 using FireBrowserWinUi3.Pages;
 using FireBrowserWinUi3.Services;
+using FireBrowserWinUi3.Services.Notifications;
 using FireBrowserWinUi3.Services.ViewModels;
 using FireBrowserWinUi3.ViewModels;
 using FireBrowserWinUi3QrCore;
@@ -1034,6 +1035,9 @@ public sealed partial class MainWindow : Window
 			case "Favorites":
 				UrlBox.Text = "firebrowser://favorites";
 				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				break;
+			case "Ratings":
+				ToastRating.SendToast(); 
 				break;
 		}
 
