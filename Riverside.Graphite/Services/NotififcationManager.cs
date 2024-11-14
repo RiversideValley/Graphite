@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Runtime.Exceptions;
 using FireBrowserWinUi3.Services.Messages;
 using FireBrowserWinUi3.Services.Notifications;
+using FireBrowserWinUi3.Services.Notifications.Toasts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Windows.AppNotifications;
 using System;
@@ -14,25 +15,23 @@ using static Azure.Core.HttpHeader;
 
 namespace FireBrowserWinUi3.Services
 {
-	public partial class NotificationManager : ObservableRecipient
+	public sealed class NotificationManager : ObservableRecipient
 	{
 		private bool m_isRegistered;
 
 		private Dictionary<int, Action<AppNotificationActivatedEventArgs>> c_notificationHandlers;
 
-		public NotificationManager() {
+		public NotificationManager() 
+		{
 			m_isRegistered = false;
 
 			// When adding new a scenario, be sure to add its notification handler here.
 			c_notificationHandlers = new Dictionary<int, Action<AppNotificationActivatedEventArgs>>
 			{
-				{ (int)EnumMessageStatus.Informational, ToastRating.NotificationReceived },
-				{ (int)EnumMessageStatus.Login, ToastWithTextBox.NotificationReceived }
+				{ (int)EnumMessageStatus.Informational, ToastRatings.NotificationReceived },
+				{ (int)EnumMessageStatus.Login, ToastWithTextBox.NotificationReceived },
+				{ (int)EnumMessageStatus.Updated, ToastUpdate.NotificationReceived },
 			};
-		}
-		public NotificationManager(IMessenger messenger) : base(messenger)
-		{
-			
 		}
 
 		~NotificationManager()
@@ -73,25 +72,35 @@ namespace FireBrowserWinUi3.Services
 			{
 				try
 				{
-					c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
+					IDictionary<string, string> arguments = notificationActivatedEventArgs.Arguments;
+
+					if (arguments.ContainsKey("action") && arguments["action"] == "UpdateApp")
+					{
+						c_notificationHandlers[((int)(EnumMessageStatus.Updated))](notificationActivatedEventArgs);
+					}
+					else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp") 
+					{
+						c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
+					}
+
 					return true;
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
-					ExceptionLogger.LogException(ex);	
+					ExceptionLogger.LogException(ex);
 					return false; // Couldn't find a NotificationHandler for scenarioId.
 				}
 			}
-		
+
 		}
 
 		void OnNotificationInvoked(object sender, AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-			
+
 
 			if (!DispatchNotification(notificationActivatedEventArgs))
 			{
-				Console.WriteLine("Unregisterd author of notifications"); 
+				Console.WriteLine("Unregisterd author of notifications");
 			}
 		}
 	}

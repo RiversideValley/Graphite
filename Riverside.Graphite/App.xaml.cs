@@ -123,7 +123,6 @@ public partial class App : Application
 
 		App.Current.Services = App.Current.ConfigureServices();
 	
-
 		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 
 		try

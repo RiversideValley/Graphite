@@ -1,9 +1,6 @@
-<<<<<<<< HEAD:Riverside.Graphite/Services/Notifications/ToastWithTextBox.cs
-﻿using Riverside.Graphite.Core;
+using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers;
-========
-﻿using Fire.Core.Helpers;
->>>>>>>> insider:Riverside.Graphite/Services/Notifications/Toasts/ToastWithTextBox.cs
+using Riverside.Graphite.Runtime.Helpers;
 using FireBrowserWinUi3.Services.Messages;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;

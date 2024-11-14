@@ -302,6 +302,18 @@
                             Background="Transparent"
                             BorderBrush="Transparent"
                             Click="TabMenuClick"
+                            Tag="Updated">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE777;" />
+                                <TextBlock Margin="10,0,0,0" Text="Update" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="TabMenuClick"
                             Tag="Ratings">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon

@@ -15,6 +15,7 @@ namespace FireBrowserWinUi3.Services.Notifications.Toasts;
 
 public sealed class ToastRatings
 {
+
 	public const string Title = "Fire Browser Notifications";
 
 	public static ObservableCollection<FireNotification> NotificationMessages = new();
