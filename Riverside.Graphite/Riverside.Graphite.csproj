@@ -182,8 +182,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Riverside.Graphite.Adblock\Riverside.Graphite.Adblock.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Assets\Riverside.Graphite.Assets.csproj" />
-    <ProjectReference Include="..\Fire.Authentication.Private\Fire.Authentication.Private.csproj" />
-    <ProjectReference Include="..\Fire.Authentication\Fire.Authentication.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.IdentityClient.Private\Riverside.Graphite.IdentityClient.Private.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.IdentityClient\Riverside.Graphite.IdentityClient.csproj" />
     <ProjectReference Include="..\Fire.Core\Fire.Core.csproj" />
     <ProjectReference Include="..\Fire.Data\Fire.Data.csproj" />
     <ProjectReference Include="..\Fire.Data.Core\Fire.Data.Core.csproj" />

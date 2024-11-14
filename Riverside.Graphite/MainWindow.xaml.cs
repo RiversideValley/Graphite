@@ -1297,7 +1297,7 @@ public sealed partial class MainWindow : Window
 
 			if (authResult == UserConsentVerificationResult.Verified)
 			{
-				Fire.Authentication.ViewModels.TwoFactorsAuthentification.ShowFlyout(Secure);
+				Riverside.Graphite.IdentityClient.ViewModels.TwoFactorsAuthentification.ShowFlyout(Secure);
 			}
 			else
 			{

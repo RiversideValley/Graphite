@@ -1,12 +1,13 @@
-﻿using Fire.Authentication.Controls;
-using Fire.Authentication.Private;
+﻿using Riverside.Graphite.IdentityClient.Controls;
+using Riverside.Graphite.IdentityClient.Private;
 using Fire.Core.Models;
+using Fire.Core.Helpers;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Fire.Authentication.ViewModels
+namespace Riverside.Graphite.IdentityClient.ViewModels
 {
 	public static class TwoFactorsAuthentification
 	{
@@ -29,7 +30,7 @@ namespace Fire.Authentication.ViewModels
 
 		private static void InitializeData()
 		{
-			ObservableCollection<TwoFactorAuthItem> items = Task.Run(Core.Helpers.TwoFactorsAuthentification.Load).Result;
+			ObservableCollection<TwoFactorAuthItem> items = Task.Run(TwoFactorsAuthentification.Load).Result;
 
 			foreach (TwoFactorAuthItem item in items)
 			{
@@ -71,7 +72,7 @@ namespace Fire.Authentication.ViewModels
 			twoFactAuth.Start();
 
 			Items.Add(twoFactAuth);
-			Core.Helpers.TwoFactorsAuthentification.Items.Add(item);
+			Items.Add(item);
 		}
 	}
 }

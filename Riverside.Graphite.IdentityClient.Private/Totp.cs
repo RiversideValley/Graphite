@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Fire.Authentication.Private;
+namespace Riverside.Graphite.IdentityClient.Private;
 
 public class Totp : Otp
 {

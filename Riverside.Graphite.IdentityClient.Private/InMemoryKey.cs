@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Fire.Authentication.Private;
+namespace Riverside.Graphite.IdentityClient.Private;
 
 public class InMemoryKey : IKeyProvider
 {

@@ -1,11 +1,11 @@
-﻿using Fire.Authentication.Private;
+﻿using Riverside.Graphite.IdentityClient.Private;
 using Fire.Core.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Fire.Authentication.ViewModels
+namespace Riverside.Graphite.IdentityClient.ViewModels
 {
 	public class TwoFactAuth : INotifyPropertyChanged
 	{

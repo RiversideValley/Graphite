@@ -1,4 +1,4 @@
-﻿namespace Fire.Authentication.Private;
+﻿namespace Riverside.Graphite.IdentityClient.Private;
 public enum OtpHashMode
 {
 	/// <summary>

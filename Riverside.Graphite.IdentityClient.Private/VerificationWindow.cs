@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Fire.Authentication.Private;
+namespace Riverside.Graphite.IdentityClient.Private;
 
 #pragma warning disable CS8618
 public class VerificationWindow

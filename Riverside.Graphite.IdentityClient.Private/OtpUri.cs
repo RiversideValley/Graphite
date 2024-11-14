@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Fire.Authentication.Private;
+namespace Riverside.Graphite.IdentityClient.Private;
 
 public class OtpUri
 {

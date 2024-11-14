@@ -26,8 +26,8 @@ public class UpdateService
 	"Fire.Data.Core.dll",
 	"Fire.Data.dll",
 	"Fire.Core.dll",
-	"Fire.Authentication.dll",
-	"Fire.Authentication.Private.dll",
+	"Riverside.Graphite.IdentityClient.dll",
+	"Riverside.Graphite.IdentityClient.Private.dll",
 	"Riverside.Graphite.Assets.dll"
 };
 
