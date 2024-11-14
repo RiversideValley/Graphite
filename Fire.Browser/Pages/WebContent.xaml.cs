@@ -501,16 +501,24 @@ public sealed partial class WebContent : Page
 
 	private bool IsLoginSuccessful(CoreWebView2WebResourceResponseView response)
 	{
-		if (response.Headers.Count() > 0)
+		try
 		{
-			KeyValuePair<string, string> c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
-			if (c_Set.Value is not null)
+			if (response.Headers.Count() > 0)
 			{
-				return true;
+				KeyValuePair<string, string> c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
+				if (c_Set.Value is not null)
+				{
+					return true;
+				}
 			}
 		}
+		catch (Exception)
+		{
 
-		return false;
+			return false;
+		}
+		
+		return false; 
 	}
 
 	private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
