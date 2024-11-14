@@ -30,7 +30,7 @@ namespace Riverside.Graphite.IdentityClient.ViewModels
 
 		private static void InitializeData()
 		{
-			ObservableCollection<TwoFactorAuthItem> items = Task.Run(TwoFactorsAuthentification.Load).Result;
+			ObservableCollection<TwoFactorAuthItem> items = Task.Run(Riverside.Graphite.Runtime.Helpers.TwoFactorsAuthentification.Load).Result;
 
 			foreach (TwoFactorAuthItem item in items)
 			{
