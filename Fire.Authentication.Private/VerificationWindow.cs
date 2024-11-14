@@ -2,7 +2,6 @@
 
 namespace Fire.Authentication.Private;
 
-#pragma warning disable CS8618
 public class VerificationWindow
 {
 	private readonly int _previous;
@@ -21,9 +20,9 @@ public class VerificationWindow
 	public IEnumerable<long> ValidationCandidates(long initialFrame)
 	{
 		yield return initialFrame;
-		for (var i = 1; i <= _previous; i++)
+		for (int i = 1; i <= _previous; i++)
 		{
-			var val = initialFrame - i;
+			long val = initialFrame - i;
 			if (val < 0)
 			{
 				break;
@@ -31,7 +30,7 @@ public class VerificationWindow
 			yield return val;
 		}
 
-		for (var i = 1; i <= _future; i++)
+		for (int i = 1; i <= _future; i++)
 		{
 			yield return initialFrame + i;
 		}
@@ -41,5 +40,5 @@ public class VerificationWindow
 	/// The verification window that accommodates network delay that is recommended in the RFC
 	/// </summary>
 	public static readonly VerificationWindow RfcSpecifiedNetworkDelay =
-		new VerificationWindow(previous: 1, future: 1);
+		new(previous: 1, future: 1);
 }

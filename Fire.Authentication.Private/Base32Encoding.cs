@@ -91,34 +91,20 @@ namespace Fire.Authentication.Private
 		{
 			int value = c;
 
-			if ((value >= 'A' && value <= 'Z'))
+			if (value is >= 'A' and <= 'Z')
 			{
 				return value - 'A';
 			}
-			if ((value >= '2' && value <= '7'))
-			{
-				return value - ('2' - 26);
-			}
-			if ((value >= 'a' && value <= 'z'))
-			{
-				return value - 'a';
-			}
-
-			throw new ArgumentException("Character is not a Base32 character.", nameof(c));
+			return value is >= '2' and <= '7'
+				? value - ('2' - 26)
+				: value is >= 'a' and <= 'z' ? value - 'a' : throw new ArgumentException("Character is not a Base32 character.", nameof(c));
 		}
 
 		private static char ValueToChar(byte b)
 		{
-			if (b < 26)
-			{
-				return (char)(b + 'A');
-			}
-			if (b < 32)
-			{
-				return (char)(b + ('2' - 26));
-			}
-
-			throw new ArgumentException("Byte is not a Base32 value.", nameof(b));
+			return b < 26
+				? (char)(b + 'A')
+				: b < 32 ? (char)(b + ('2' - 26)) : throw new ArgumentException("Byte is not a Base32 value.", nameof(b));
 		}
 	}
 }

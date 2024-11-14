@@ -8,7 +8,7 @@ public static class KeyGeneration
 	public static byte[] GenerateRandomKey(int length)
 	{
 		byte[] key = new byte[length];
-		using var rnd = RandomNumberGenerator.Create();
+		using RandomNumberGenerator rnd = RandomNumberGenerator.Create();
 		rnd.GetBytes(key);
 		return key;
 	}
@@ -20,15 +20,13 @@ public static class KeyGeneration
 
 	public static byte[] DeriveKeyFromMaster(IKeyProvider masterKey, byte[] identifier, OtpHashMode mode = OtpHashMode.Sha1)
 	{
-		if (masterKey == null)
-		{
-			throw new ArgumentNullException(nameof(masterKey));
-		}
-		return masterKey.ComputeHmac(mode, identifier);
+		return masterKey == null ? throw new ArgumentNullException(nameof(masterKey)) : masterKey.ComputeHmac(mode, identifier);
 	}
 
-	public static byte[] DeriveKeyFromMaster(IKeyProvider masterKey, int serialNumber, OtpHashMode mode = OtpHashMode.Sha1) =>
-		DeriveKeyFromMaster(masterKey, KeyUtilities.GetBigEndianBytes(serialNumber), mode);
+	public static byte[] DeriveKeyFromMaster(IKeyProvider masterKey, int serialNumber, OtpHashMode mode = OtpHashMode.Sha1)
+	{
+		return DeriveKeyFromMaster(masterKey, KeyUtilities.GetBigEndianBytes(serialNumber), mode);
+	}
 
 	private static int LengthForMode(OtpHashMode mode)
 	{
