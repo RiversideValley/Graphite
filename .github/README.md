@@ -37,7 +37,7 @@ This will create a local copy of the repository.
 
 #### 3. Build the project
 
-To build Fire Browser for development, open the `Fire-Browser.sln` item in Visual Studio. Right-click on the `Fire.Browser` packaging project in solution explorer and select ‘Set as Startup item’.
+To build Fire Browser for development, open the `Fire-Browser.sln` item in Visual Studio. Right-click on the `Riverside.Graphite` packaging project in solution explorer and select ‘Set as Startup item’.
 
 ### 🛜 Usage
 
