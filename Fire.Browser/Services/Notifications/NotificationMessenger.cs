@@ -51,7 +51,7 @@ namespace FireBrowserWinUi3.Services.Notifications
 			if (_storeContext is null) return;
 
 			IReadOnlyList<StorePackageUpdate> updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
-
+			
 			if (updates.Count > 0)
 			{
 				StorePackageUpdateResult updateResult = await _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
