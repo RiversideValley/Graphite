@@ -14,22 +14,16 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace FireBrowserWinUi3.Services.Notifications
 {
-	public partial class NotificationMessenger
+	public sealed class NotificationMessenger
 	{
-		private readonly NotificationManager _notificationManager;
 		private ObservableCollection<FireNotification> messages;
 		private StoreContext _storeContext;
 		public ObservableCollection<FireNotification> PublicMessages => messages;
 
-		private NotificationMessenger()
+		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage) 
 		{
-			_= InitializeStoreContext().GetAwaiter();
-		}
-
-		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage) : this()
-		{
-			_notificationManager = App.Current.NotificationManager;
 			messages = messagesPage;
+			_ = InitializeStoreContext();
 			
 		}
 		private async Task InitializeStoreContext()
@@ -105,7 +99,7 @@ namespace FireBrowserWinUi3.Services.Notifications
 				{
 					// User canceled the rating request
 					window.DispatcherQueue.TryEnqueue(() =>
-							window.NotificationQueue.Show("Operatioin was cancelled", 2000, "Fire Browser"));
+							window.NotificationQueue.Show("Operation was cancelled", 2000, "Fire Browser"));
 
 				}
 			}

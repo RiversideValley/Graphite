@@ -27,7 +27,7 @@ public sealed class ToastRatings
 			.SetAppLogoOverride(new Uri("file://" + App.GetFullPathToAsset("fireglobe.png")), AppNotificationImageCrop.Circle)
 			.AddText(Title)
 			.AddText($"Welcome to your Fire Browser{AuthService.CurrentUser.Username ?? "?"}")
-			.AddButton(new AppNotificationButton("Open App")
+			.AddButton(new AppNotificationButton("Rate Us")
 				.AddArgument("action", "OpenApp")
 				.SetButtonStyle(AppNotificationButtonStyle.Default)
 				.AddArgument(((int)EnumMessageStatus.Informational).ToString(), "UserStatus"))

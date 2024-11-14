@@ -15,7 +15,7 @@ using static Azure.Core.HttpHeader;
 
 namespace FireBrowserWinUi3.Services
 {
-	public partial class NotificationManager : ObservableRecipient
+	public sealed class NotificationManager : ObservableRecipient
 	{
 		private bool m_isRegistered;
 
