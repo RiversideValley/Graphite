@@ -90,8 +90,29 @@ namespace FireBrowserWinUi3.Services.Notifications
 
 			NotificationReceived(notification);
 		}
-		
 
+		public async Task<List<StoreProduct>> GetAssociatedStoreProductsAsync()
+		{
+			List<string> productKinds = new List<string> { "Durable", "Consumable", "UnmanagedConsumable", "Subscription" };
+
+			StoreProductQueryResult result = await _storeContext.GetAssociatedStoreProductsAsync(productKinds);
+
+			if (result.ExtendedError != null)
+			{
+				// Handle error
+				throw new Exception(result.ExtendedError.Message);
+			}
+
+			List<StoreProduct> products = new List<StoreProduct>();
+
+			foreach (var product in result.Products.Values)
+			{
+				products.Add(product);
+				Console.WriteLine($"Product ID: {product.StoreId}, Title: {product.Title}, Price: {product.Price.FormattedPrice}");
+			}
+
+			return products;
+		}
 		public async Task PromptUserToRateApp(FireNotification notification)
 		{
 			await InitializeStoreContext();
@@ -100,6 +121,7 @@ namespace FireBrowserWinUi3.Services.Notifications
 
 			WinRT.Interop.InitializeWithWindow.Initialize(_storeContext, WinRT.Interop.WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow));
 			StoreRateAndReviewResult result = await _storeContext.RequestRateAndReviewAppAsync();
+			
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 
