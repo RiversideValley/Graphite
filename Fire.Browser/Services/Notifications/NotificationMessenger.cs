@@ -17,16 +17,16 @@ namespace FireBrowserWinUi3.Services.Notifications
 	public partial class NotificationMessenger
 	{
 		private readonly NotificationManager _notificationManager;
-		private ObservableCollection<string> messages;
+		private ObservableCollection<FireNotification> messages;
 		private StoreContext _storeContext;
-		public ObservableCollection<string> PublicMessages => messages;
+		public ObservableCollection<FireNotification> PublicMessages => messages;
 
 		private NotificationMessenger()
 		{
 			_= InitializeStoreContext().GetAwaiter();
 		}
 
-		public NotificationMessenger(ref ObservableCollection<string> messagesPage) : this()
+		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage) : this()
 		{
 			_notificationManager = App.Current.NotificationManager;
 			messages = messagesPage;
@@ -133,13 +133,13 @@ namespace FireBrowserWinUi3.Services.Notifications
 			{
 				if (window.DispatcherQueue.HasThreadAccess)
 				{
-					messages.Insert(0, text);
+					messages.Insert(0, notification);
 				}
 				else
 				{
 					_ = window.DispatcherQueue.TryEnqueue(() =>
 					{
-						messages.Insert(0, text);
+						messages.Insert(0, notification);
 					});
 				}
 

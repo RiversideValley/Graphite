@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using WinRT.Interop;
 using static FireBrowserWinUi3.Services.Notifications.NotificationMessenger;
 
@@ -14,6 +16,8 @@ public sealed class ToastRatings
 {
 
 	public const string Title = "Fire Browser Notifications";
+
+	public static ObservableCollection<FireNotification> NotificationMessages = new();
 
 	public static bool SendToast()
 	{
@@ -34,13 +38,13 @@ public sealed class ToastRatings
 		return appNotification.Id != 0; // return true (indicating success) if the toast was sent (if it has an Id)
 	}
 
-	public static void NotificationReceived(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
+	public static async void NotificationReceived(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 	{
 		var noteMsg = new NotificationMessenger(ref NotificationMessages);
 		var notification = new FireNotification();
 		notification.Originator = Title;
 		notification.Action = notificationActivatedEventArgs.Arguments["action"];
-		noteMsg.NotificationReceived(notification);
+		await noteMsg.PromptUserToRateApp(notification);
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			nint hWnd = WindowNative.GetWindowHandle(window);

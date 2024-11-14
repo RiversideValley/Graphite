@@ -4,17 +4,20 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
+using System.Collections.ObjectModel;
 using WinRT.Interop;
 using static FireBrowserWinUi3.Services.Notifications.NotificationMessenger;
 
 
 
 namespace FireBrowserWinUi3.Services.Notifications.Toasts;
-class ToastWithTextBox
+public class ToastWithTextBox
 {
 
 	public const string Title = "Fire Browser Notifications";
 	const string textboxReplyId = "textboxReply";
+
+	public static ObservableCollection<FireNotification> NotificationMessages = new(); 
 
 	public static bool SendToast()
 	{
