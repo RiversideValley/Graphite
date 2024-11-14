@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Pages.TimeLinePages;
+namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class HistoryTimeLine : Page
 {
 	private readonly User _user = AuthService.CurrentUser;

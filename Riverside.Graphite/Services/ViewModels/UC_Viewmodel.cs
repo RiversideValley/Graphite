@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Pages.Patch;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Models;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3
+namespace Riverside.Graphite
 {
 	public partial class UC_Viewmodel : ObservableRecipient
 	{

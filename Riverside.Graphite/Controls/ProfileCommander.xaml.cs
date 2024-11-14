@@ -2,9 +2,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Runtime.CoreUi;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3.Services.ViewModels;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
@@ -13,7 +13,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 public sealed partial class ProfileCommander : Flyout
 {
 	private SettingsService SettingsService { get; set; }

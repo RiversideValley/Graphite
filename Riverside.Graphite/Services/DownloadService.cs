@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Data.Core.Actions;
-using FireBrowserWinUi3.Services.Contracts;
-using FireBrowserWinUi3.Services.Events;
+using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,13 +12,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services;
+namespace Riverside.Graphite.Services;
 public partial class DownloadService : ObservableObject, IServiceDownloads
 {
 
 	[ObservableProperty]
 	private User _authorizedUser;
-	public ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem> DownloadItemControls { get; set; }
+	public ObservableCollection<Riverside.Graphite.Controls.DownloadItem> DownloadItemControls { get; set; }
 	public event EventHandler<DownloadItemStatusEventArgs> Handler_DownItemsChange;
 	public DownloadService()
 	{
@@ -48,9 +48,9 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 			ExceptionLogger.LogException(ex);
 		}
 	}
-	private async Task<ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem>> GetDownloadItems()
+	private async Task<ObservableCollection<Riverside.Graphite.Controls.DownloadItem>> GetDownloadItems()
 	{
-		ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem> uiControl = new();
+		ObservableCollection<Riverside.Graphite.Controls.DownloadItem> uiControl = new();
 
 		try
 		{
@@ -61,7 +61,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 			{
 				items.ForEach(t =>
 				{
-					FireBrowserWinUi3.Controls.DownloadItem downloadItem = new(t.current_path);
+					Riverside.Graphite.Controls.DownloadItem downloadItem = new(t.current_path);
 					downloadItem.ServiceDownloads = this;
 					uiControl.Insert(0, downloadItem);
 				});

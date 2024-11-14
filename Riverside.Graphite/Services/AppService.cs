@@ -3,10 +3,10 @@ using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Data.Core.Actions;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Services.Contracts;
-using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3.Setup;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -25,7 +25,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Graphics;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3.Services;
+namespace Riverside.Graphite.Services;
 
 public static class AppService
 {

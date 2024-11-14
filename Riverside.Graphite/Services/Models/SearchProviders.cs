@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FireBrowserWinUi3.Services.Models
+namespace Riverside.Graphite.Services.Models
 {
 	public class SearchProviders
 	{

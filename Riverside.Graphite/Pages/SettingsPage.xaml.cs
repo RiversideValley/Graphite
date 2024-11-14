@@ -4,9 +4,9 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static FireBrowserWinUi3.MainWindow;
+using static Riverside.Graphite.MainWindow;
 
-namespace FireBrowserWinUi3.Pages;
+namespace Riverside.Graphite.Pages;
 public sealed partial class SettingsPage : Page
 {
 	public SettingsPage()

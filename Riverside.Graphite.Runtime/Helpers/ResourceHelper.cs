@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Markup;
 using Microsoft.Windows.ApplicationModel.Resources;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 
 [MarkupExtensionReturnType(ReturnType = typeof(string))]
 public sealed class ResourceString : MarkupExtension

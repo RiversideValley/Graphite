@@ -8,7 +8,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 
 public class ImageDownloader
 {

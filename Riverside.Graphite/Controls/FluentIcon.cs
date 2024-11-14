@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 public sealed partial class FluentIcon : CommunityToolkit.WinUI.FontIconExtension
 {
 	private static readonly Dictionary<string, FontFamily> FontFamilyCache = new();

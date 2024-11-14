@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Notifications.Interfaces
+namespace Riverside.Graphite.Services.Notifications.Interfaces
 {
 	public interface IToast
 	{

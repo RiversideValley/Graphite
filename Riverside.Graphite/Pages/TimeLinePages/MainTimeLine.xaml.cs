@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FireBrowserWinUi3.Pages.TimeLinePages;
+namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class MainTimeLine : Page
 {
 	private readonly Dictionary<string, Type> _pages = new()

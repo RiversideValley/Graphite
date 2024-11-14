@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 
-namespace FireBrowserWinUi3.Pages.Patch
+namespace Riverside.Graphite.Pages.Patch
 {
 	public sealed partial class BackUpDialog : ContentDialog
 	{

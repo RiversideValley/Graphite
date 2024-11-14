@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Behaviors;
 using Riverside.Graphite.Core;
-using FireBrowserWinUi3.Pages.Patch;
-using FireBrowserWinUi3.Services.Models;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Services.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.WindowsAzure.Storage;
@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.ViewModels
+namespace Riverside.Graphite.Services.ViewModels
 {
 	public partial class UploadBackupViewModel : ObservableRecipient
 	{

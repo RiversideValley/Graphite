@@ -42,7 +42,7 @@
 		  EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
 			  DisplayName="FireBrowserWinUi"
-			  Description="FireBrowserWinUi3"
+			  Description="Riverside.Graphite"
 			  BackgroundColor="transparent"
 			  Square150x150Logo="Assets\Square150x150Logo.png"
 			  Square44x44Logo="Assets\Square44x44Logo.png">
@@ -87,7 +87,7 @@
 				</uap:Extension>
 				<uap:Extension Category="windows.protocol">
 					<uap:Protocol Name="firebrowserwinui">
-						<uap:DisplayName>FireBrowserWinUi3 Launch</uap:DisplayName>
+						<uap:DisplayName>Riverside.Graphite Launch</uap:DisplayName>
 					</uap:Protocol>
 				</uap:Extension>
 				<uap:Extension Category="windows.protocol">

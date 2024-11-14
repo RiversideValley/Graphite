@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Contracts
+namespace Riverside.Graphite.Services.Contracts
 {
 	public interface IGraphService
 	{

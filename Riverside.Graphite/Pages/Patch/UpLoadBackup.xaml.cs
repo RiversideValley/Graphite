@@ -1,5 +1,5 @@
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Services.ViewModels;
+using Riverside.Graphite.Services.ViewModels;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ using WinRT.Interop;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FireBrowserWinUi3.Pages.Patch
+namespace Riverside.Graphite.Pages.Patch
 {
 	/// <summary>
 	/// An empty window that can be used on its own or navigated to within a Frame.

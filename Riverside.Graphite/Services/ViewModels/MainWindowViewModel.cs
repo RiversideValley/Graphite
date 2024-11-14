@@ -5,12 +5,12 @@ using CommunityToolkit.WinUI.Behaviors;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Pages;
-using FireBrowserWinUi3.Pages.Patch;
-using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3.Services.Notifications;
-using FireBrowserWinUi3.Services.Notifications.Toasts;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.Notifications;
+using Riverside.Graphite.Services.Notifications.Toasts;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -21,7 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3.Services.ViewModels;
+namespace Riverside.Graphite.Services.ViewModels;
 
 public partial class MainWindowViewModel : ObservableRecipient
 {
@@ -217,23 +217,23 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	private void ShowErrorNotification(string payload)
 	{
-		ShowNotification("FireBrowserWinUi3 Error", payload, InfoBarSeverity.Error, TimeSpan.FromSeconds(5));
+		ShowNotification("Riverside.Graphite Error", payload, InfoBarSeverity.Error, TimeSpan.FromSeconds(5));
 	}
 
 	private void ShowNotifyNotification(string payload)
 	{
-		ShowNotification("FireBrowserWinUi3 Information", payload, InfoBarSeverity.Informational, TimeSpan.FromSeconds(5));
+		ShowNotification("Riverside.Graphite Information", payload, InfoBarSeverity.Informational, TimeSpan.FromSeconds(5));
 	}
 
 	private void ShowRemovedNotification()
 	{
-		ShowNotification("FireBrowserWinUi3", "User has been removed from FireBrowser!", InfoBarSeverity.Warning, TimeSpan.FromSeconds(3));
+		ShowNotification("Riverside.Graphite", "User has been removed from FireBrowser!", InfoBarSeverity.Warning, TimeSpan.FromSeconds(3));
 	}
 
 	private void ShowLoginNotification()
 	{
 		ToastRatings.SendToast(); 
-		ShowNotification("FireBrowserWinUi3", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
+		ShowNotification("Riverside.Graphite", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
 	}
 
 	private void ShowNotification(string title, string message, InfoBarSeverity severity, TimeSpan duration)

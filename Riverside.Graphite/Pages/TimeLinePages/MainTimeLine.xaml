@@ -1,8 +1,8 @@
 <Page
-    x:Class="FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine"
+    x:Class="Riverside.Graphite.Pages.TimeLinePages.MainTimeLine"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:icon="using:FireBrowserWinUi3.Controls"
+    xmlns:icon="using:Riverside.Graphite.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <NavigationView

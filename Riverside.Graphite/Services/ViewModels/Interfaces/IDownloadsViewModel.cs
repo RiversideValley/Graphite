@@ -1,9 +1,9 @@
-﻿using FireBrowserWinUi3.Controls;
+﻿using Riverside.Graphite.Controls;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.ViewModels.Interfaces;
+namespace Riverside.Graphite.Services.ViewModels.Interfaces;
 
 public interface IDownloadsViewModel
 {

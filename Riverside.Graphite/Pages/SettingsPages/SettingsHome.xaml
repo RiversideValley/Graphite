@@ -1,9 +1,9 @@
 <Page
-    x:Class="FireBrowserWinUi3.Pages.SettingsPages.SettingsHome"
+    x:Class="Riverside.Graphite.Pages.SettingsPages.SettingsHome"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asset="using:Riverside.Graphite.Assets"
-    xmlns:firebrowser="using:FireBrowserWinUi3.Controls"
+    xmlns:firebrowser="using:Riverside.Graphite.Controls"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers">
 

@@ -1,5 +1,5 @@
 <Page
-    x:Class="FireBrowserWinUi3.Pages.SettingsPages.SettingsWebView"
+    x:Class="Riverside.Graphite.Pages.SettingsPages.SettingsWebView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls">

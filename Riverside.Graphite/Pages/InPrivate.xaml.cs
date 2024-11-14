@@ -1,8 +1,8 @@
 using Riverside.Graphite.Core;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml.Controls;
 
-namespace FireBrowserWinUi3.Pages;
+namespace Riverside.Graphite.Pages;
 public sealed partial class InPrivate : Page
 {
 	private readonly Settings userSettings = new Settings(true).Self; // new UserFolderManager.TempLoadPrivate("Private");

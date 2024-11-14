@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace FireBrowserWinUi3.Services.Converters
+namespace Riverside.Graphite.Services.Converters
 {
 	public class BooleanVisibilityConverter : IValueConverter
 	{

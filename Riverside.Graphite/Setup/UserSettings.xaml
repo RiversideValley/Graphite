@@ -1,8 +1,8 @@
 <Window
-    x:Class="FireBrowserWinUi3.Setup.UserSettings"
+    x:Class="Riverside.Graphite.Setup.UserSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FireBrowserWinUi3.Setup">
+    xmlns:local="using:Riverside.Graphite.Setup">
 
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt" />

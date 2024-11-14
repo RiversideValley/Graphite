@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Contracts;
+namespace Riverside.Graphite.Services.Contracts;
 
 public interface IServiceDownloads
 {
-	ObservableCollection<FireBrowserWinUi3.Controls.DownloadItem> DownloadItemControls { get; }
+	ObservableCollection<Riverside.Graphite.Controls.DownloadItem> DownloadItemControls { get; }
 	Task SaveAsync(string fileName);
 	Task<bool> DeleteAsync(string filePath);
 	Task UpdateAsync();

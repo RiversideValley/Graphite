@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System.IO;
 
-namespace FireBrowserWinUi3.Pages.Patch
+namespace Riverside.Graphite.Pages.Patch
 {
 	public sealed partial class SureReset : ContentDialog
 	{

@@ -9,14 +9,14 @@ using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Pages;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Notifications;
-using FireBrowserWinUi3.Services.Notifications.Toasts;
-using FireBrowserWinUi3.Services.ViewModels;
-using FireBrowserWinUi3.ViewModels;
-using FireBrowserWinUi3QrCore;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Notifications;
+using Riverside.Graphite.Services.Notifications.Toasts;
+using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.ViewModels;
+using Riverside.GraphiteQrCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -45,7 +45,7 @@ using Settings = Riverside.Graphite.Core.Settings;
 using User = Riverside.Graphite.Core.User;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
 
-namespace FireBrowserWinUi3;
+namespace Riverside.Graphite;
 
 public sealed partial class MainWindow : Window
 {
@@ -1021,11 +1021,11 @@ public sealed partial class MainWindow : Window
 				break;
 			case "Downloads":
 				UrlBox.Text = "firebrowser://downloads";
-				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "History":
 				UrlBox.Text = "firebrowser://history";
-				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "InPrivate":
 				OpenNewWindow(new Uri("firebrowserincog://"));
@@ -1035,7 +1035,7 @@ public sealed partial class MainWindow : Window
 				break;
 			case "Favorites":
 				UrlBox.Text = "firebrowser://favorites";
-				_ = TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "Ratings":
 				_ = ToastRatings.SendToast(); 
@@ -1115,7 +1115,7 @@ public sealed partial class MainWindow : Window
 			Margin = new Thickness(0, 37, 0, 0)
 		};
 
-		_ = page != null ? frame.Navigate(page, passer) : frame.Navigate(typeof(FireBrowserWinUi3.Pages.InPrivate), passer);
+		_ = page != null ? frame.Navigate(page, passer) : frame.Navigate(typeof(Riverside.Graphite.Pages.InPrivate), passer);
 
 		newItem.Content = frame;
 		return newItem;
@@ -1284,8 +1284,8 @@ public sealed partial class MainWindow : Window
 		{ Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom };
 		DownloadFlyout.ShowAt(DownBtn, options);
 	}
-	private void OpenHistoryMenuItem_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://history") + TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine)); }
-	private void OpenFavoritesMenu_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://favorites") + TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine)); }
+	private void OpenHistoryMenuItem_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://history") + TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine)); }
+	private void OpenFavoritesMenu_Click(object sender, RoutedEventArgs e) { _ = (UrlBox.Text = "firebrowser://favorites") + TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine)); }
 	private void MainUser_Click(object sender, RoutedEventArgs e)
 	{
 		UserFrame.Visibility = UserFrame?.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;

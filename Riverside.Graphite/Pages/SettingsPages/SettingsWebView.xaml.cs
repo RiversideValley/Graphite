@@ -1,11 +1,11 @@
 using Riverside.Graphite.Core;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System;
 
-namespace FireBrowserWinUi3.Pages.SettingsPages;
+namespace Riverside.Graphite.Pages.SettingsPages;
 public sealed partial class SettingsWebView : Page
 {
 	private SettingsService SettingsService { get; set; }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
-using static FireBrowserWinUi3QrCore.QRCodeGenerator;
+using static Riverside.GraphiteQrCore.QRCodeGenerator;
 
-namespace FireBrowserWinUi3QrCore;
+namespace Riverside.GraphiteQrCore;
 public sealed class PngByteQRCode : AbstractQRCode, IDisposable
 {
 	/// <summary>

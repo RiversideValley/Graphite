@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 
-namespace FireBrowserWinUi3.ViewModels;
+namespace Riverside.Graphite.ViewModels;
 
 public partial class ToolbarViewModel : ObservableObject
 {

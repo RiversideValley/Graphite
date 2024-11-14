@@ -1,5 +1,5 @@
 <Window
-    x:Class="FireBrowserWinUi3.AddUserWindow"
+    x:Class="Riverside.Graphite.AddUserWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Helper="using:Riverside.Graphite.Core.Helper"

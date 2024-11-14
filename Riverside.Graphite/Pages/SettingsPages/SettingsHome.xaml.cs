@@ -4,9 +4,9 @@ using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Licensing;
 using Riverside.Graphite.Runtime.Models;
-using FireBrowserWinUi3.Pages.Patch;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Messages;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Messages;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 
-namespace FireBrowserWinUi3.Pages.SettingsPages
+namespace Riverside.Graphite.Pages.SettingsPages
 {
 	public sealed partial class SettingsHome : Page
 	{

@@ -1,5 +1,5 @@
 <Page
-    x:Class="FireBrowserWinUi3.Pages.TimeLinePages.DownloadsTimeLine"
+    x:Class="Riverside.Graphite.Pages.TimeLinePages.DownloadsTimeLine"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

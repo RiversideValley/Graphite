@@ -1,5 +1,5 @@
 <Page
-    x:Class="FireBrowserWinUi3.SetupInit"
+    x:Class="Riverside.Graphite.SetupInit"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asset="using:Riverside.Graphite.Assets"
@@ -19,7 +19,7 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Style="{StaticResource SubtitleTextBlockStyle}">
-                <Run Text="FireBrowserWinUi3 - Setup" />
+                <Run Text="Riverside.Graphite - Setup" />
                 <Run
                     CharacterSpacing="100"
                     FontWeight="Light"

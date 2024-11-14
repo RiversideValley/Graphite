@@ -1,7 +1,7 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -15,7 +15,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3.Controls
+namespace Riverside.Graphite.Controls
 {
 	public sealed partial class CreateBackup : Window
 	{

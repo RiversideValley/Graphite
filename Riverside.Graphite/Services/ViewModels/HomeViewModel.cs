@@ -6,10 +6,10 @@ using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
-using FireBrowserWinUi3.Pages;
-using FireBrowserWinUi3.Pages.Models;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Models;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Pages.Models;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -23,10 +23,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using static FireBrowserWinUi3.Pages.NewTab;
+using static Riverside.Graphite.Pages.NewTab;
 
 
-namespace FireBrowserWinUi3.ViewModels;
+namespace Riverside.Graphite.ViewModels;
 public partial class HomeViewModel : ObservableRecipient
 {
 	private Settings.NewTabBackground _backgroundType;
@@ -215,15 +215,15 @@ public partial class HomeViewModel : ObservableRecipient
 							break;
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";
-							_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 							break;
 						case "History":
 							window.UrlBox.Text = "firebrowser://history";
-							_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 							break;
 						case "Favorites":
 							window.UrlBox.Text = "firebrowser://favorites";
-							_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 							break;
 					}
 				}

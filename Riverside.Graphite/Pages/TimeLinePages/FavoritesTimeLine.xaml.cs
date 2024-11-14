@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.System;
 
-namespace FireBrowserWinUi3.Pages.TimeLinePages;
+namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class FavoritesTimeLine : Page
 {
 	public FavoritesTimeLine()

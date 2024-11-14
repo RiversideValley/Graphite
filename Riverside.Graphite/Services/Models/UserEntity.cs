@@ -2,7 +2,7 @@
 using Azure.Data.Tables;
 using System;
 
-namespace FireBrowserWinUi3.Services.Models
+namespace Riverside.Graphite.Services.Models
 {
 	public class UserEntity : ITableEntity
 	{

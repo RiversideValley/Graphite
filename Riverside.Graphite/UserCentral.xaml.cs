@@ -1,7 +1,7 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Models;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3
+namespace Riverside.Graphite
 {
 
 	public sealed partial class UserCentral : Window

@@ -1,12 +1,12 @@
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3;
+namespace Riverside.Graphite;
 
 public sealed partial class SetupFinish : Page
 {

@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using static Riverside.Graphite.Core.AuthService;
 
-namespace FireBrowserWinUi3;
+namespace Riverside.Graphite;
 
 public sealed partial class ChangeUsernameCore : Window
 {

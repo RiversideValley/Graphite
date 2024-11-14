@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3.Services.Messages;
+﻿namespace Riverside.Graphite.Services.Messages;
 public enum EnumMessageStatus
 {
 	Added,

@@ -1,11 +1,11 @@
-using FireBrowserWinUi3.Pages;
-using FireBrowserWinUi3.ViewModels;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.ComponentModel;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 public sealed partial class FireBrowserTabViewItem : TabViewItem
 {
 	public FireBrowserTabViewItem()
@@ -40,7 +40,7 @@ public sealed partial class FireBrowserTabViewItem : TabViewItem
 	{
 		MainWindow win = (Application.Current as App).m_window as MainWindow;
 
-		if ((sender as FireBrowserWinUi3.Controls.FireBrowserTabViewItem).IsSelected)
+		if ((sender as Riverside.Graphite.Controls.FireBrowserTabViewItem).IsSelected)
 		{
 			if (win?.TabViewContainer.SelectedItem is FireBrowserTabViewItem)
 			{

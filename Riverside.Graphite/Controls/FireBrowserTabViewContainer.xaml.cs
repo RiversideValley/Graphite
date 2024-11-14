@@ -3,7 +3,7 @@ using Riverside.Graphite.Runtime.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 
 public sealed partial class FireBrowserTabViewContainer : TabView
 {

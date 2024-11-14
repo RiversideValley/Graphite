@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using Riverside.Graphite.Runtime.Exceptions;
-using FireBrowserWinUi3.Services.Contracts;
+using Riverside.Graphite.Services.Contracts;
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Windows.System.Profile;
 
 
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
     public class GraphService : IGraphService
     {

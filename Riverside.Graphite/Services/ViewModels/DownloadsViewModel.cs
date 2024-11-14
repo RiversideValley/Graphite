@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Services.ViewModels.Interfaces;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Services.ViewModels.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.ViewModels;
+namespace Riverside.Graphite.Services.ViewModels;
 
 public class DownloadsViewModel : ObservableObject, IDownloadsViewModel
 {
@@ -19,7 +19,7 @@ public class DownloadsViewModel : ObservableObject, IDownloadsViewModel
 		DataCore.Handler_DownItemsChange += DataCore_Handler_DownItemsChange;
 	}
 
-	private async void DataCore_Handler_DownItemsChange(object sender, FireBrowserWinUi3.Services.Events.DownloadItemStatusEventArgs e)
+	private async void DataCore_Handler_DownItemsChange(object sender, Riverside.Graphite.Services.Events.DownloadItemStatusEventArgs e)
 	{
 		ItemsListView = DataCore.DownloadItemControls;
 		OnPropertyChanged(nameof(ItemsListView));

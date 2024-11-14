@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Services.Contracts;
+using Riverside.Graphite.Services.Contracts;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Broker;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WinRT.Interop;
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
 	// Copyright (c) Microsoft Corporation.
 	// Licensed under the MIT License.

@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.ServiceProcess;
 
-namespace FireBrowserWinUi3.Pages
+namespace Riverside.Graphite.Pages
 {
 	public sealed partial class ApiDash : Page
 	{

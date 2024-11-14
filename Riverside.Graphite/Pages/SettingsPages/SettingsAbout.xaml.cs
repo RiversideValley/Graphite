@@ -2,9 +2,9 @@ using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using static FireBrowserWinUi3.MainWindow;
+using static Riverside.Graphite.MainWindow;
 
-namespace FireBrowserWinUi3.Pages.SettingsPages;
+namespace Riverside.Graphite.Pages.SettingsPages;
 
 public sealed partial class SettingsAbout : Page
 {
@@ -30,8 +30,8 @@ public sealed partial class SettingsAbout : Page
 		string url = card.Tag switch
 		{
 			"Discord" => "https://discord.gg/kYStRKBHwy",
-			"GitHub" => "https://github.com/FirebrowserDevs/FireBrowserWinUi3",
-			"License" => "https://github.com/FirebrowserDevs/FireBrowserWinUi3/blob/main/License.lic",
+			"GitHub" => "https://github.com/FirebrowserDevs/Riverside.Graphite",
+			"License" => "https://github.com/FirebrowserDevs/Riverside.Graphite/blob/main/License.lic",
 			_ => "https://example.com"
 		};
 

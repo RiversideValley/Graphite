@@ -1,4 +1,4 @@
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using Windows.Storage;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3.Pages.Patch
+namespace Riverside.Graphite.Pages.Patch
 {
 	public sealed partial class RestoreBackupDialog : ContentDialog
 	{

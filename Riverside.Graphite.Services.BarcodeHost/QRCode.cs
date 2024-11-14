@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using static FireBrowserWinUi3QrCore.QRCodeGenerator;
+using static Riverside.GraphiteQrCore.QRCodeGenerator;
 
-namespace FireBrowserWinUi3QrCore;
+namespace Riverside.GraphiteQrCore;
 
 #if NET6_0_WINDOWS
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]

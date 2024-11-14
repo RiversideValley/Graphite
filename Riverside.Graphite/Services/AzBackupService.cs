@@ -2,8 +2,8 @@
 using Azure.Storage.Blobs;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
-using FireBrowserWinUi3.Pages.Patch;
-using FireBrowserWinUi3.Services.Models;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Services.Models;
 using Microsoft.Identity.Client;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -21,7 +21,7 @@ using Windows.Storage.Streams;
 
 
 
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
 	internal class AzBackupService
 	{

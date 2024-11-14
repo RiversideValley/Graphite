@@ -1,14 +1,14 @@
 ﻿using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Data.Core.Actions;
-using FireBrowserWinUi3.Services.Contracts;
+using Riverside.Graphite.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services;
+namespace Riverside.Graphite.Services;
 public class DatabaseServices : IDatabaseService
 {
 	public async Task<Task> InsertUserSettings()

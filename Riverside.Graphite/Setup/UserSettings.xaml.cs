@@ -1,12 +1,12 @@
 using Riverside.Graphite.Core;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Linq;
 
-namespace FireBrowserWinUi3.Setup
+namespace Riverside.Graphite.Setup
 {
 	public sealed partial class UserSettings : Window
 	{

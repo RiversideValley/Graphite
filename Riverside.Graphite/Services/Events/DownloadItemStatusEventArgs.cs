@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 
-namespace FireBrowserWinUi3.Services.Events;
+namespace Riverside.Graphite.Services.Events;
 public class DownloadItemStatusEventArgs : EventArgs
 {
 	public enum EnumStatus

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FireBrowserWinUi3QrCore.Exceptions;
+namespace Riverside.GraphiteQrCore.Exceptions;
 public class DataTooLongException : Exception
 {
 	public DataTooLongException(string eccLevel, string encodingMode, int maxSizeByte) : base(

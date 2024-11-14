@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace FireBrowserWinUi3QrCore;
+namespace Riverside.GraphiteQrCore;
 
-using FireBrowserWinUi3QrCore.FrameworkMethods;
+using Riverside.GraphiteQrCore.FrameworkMethods;
 using System;
 using System.Collections;
 using System.IO;

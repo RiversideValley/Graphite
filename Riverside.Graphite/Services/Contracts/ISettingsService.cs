@@ -1,7 +1,7 @@
 ﻿using Riverside.Graphite.Data.Core.Actions;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Contracts;
+namespace Riverside.Graphite.Services.Contracts;
 
 public interface ISettingsService
 {

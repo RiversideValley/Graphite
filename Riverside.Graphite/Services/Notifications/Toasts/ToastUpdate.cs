@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fire.Browser.Core;
-using Fire.Core.Helpers;
-using FireBrowserWinUi3.Services.Messages;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Messages;
 using System.Collections.ObjectModel;
 using WinRT.Interop;
 using Microsoft.UI.Xaml;
 
-namespace FireBrowserWinUi3.Services.Notifications.Toasts
+namespace Riverside.Graphite.Services.Notifications.Toasts
 {
 	public class ToastUpdate
 	{

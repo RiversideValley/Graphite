@@ -6,8 +6,8 @@ using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Data.Core.Actions;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -25,9 +25,9 @@ using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
 using WinRT.Interop;
-using static FireBrowserWinUi3.MainWindow;
+using static Riverside.Graphite.MainWindow;
 
-namespace FireBrowserWinUi3.Pages;
+namespace Riverside.Graphite.Pages;
 
 public sealed partial class WebContent : Page
 {

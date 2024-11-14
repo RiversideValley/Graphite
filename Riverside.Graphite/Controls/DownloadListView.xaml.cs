@@ -1,8 +1,8 @@
-﻿using FireBrowserWinUi3.Services;
+﻿using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml.Controls;
 
 
-namespace FireBrowserWinUi3.Controls
+namespace Riverside.Graphite.Controls
 {
 
 	public sealed partial class DownloadListView : ListView

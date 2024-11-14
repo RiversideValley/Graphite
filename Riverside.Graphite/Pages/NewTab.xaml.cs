@@ -5,11 +5,11 @@ using Riverside.Graphite.Runtime.ImagesBing;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
-using FireBrowserWinUi3.Controls;
-using FireBrowserWinUi3.Pages.Models;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.Models;
-using FireBrowserWinUi3.ViewModels;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Pages.Models;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
+using Riverside.Graphite.ViewModels;
 using Microsoft.Bing.WebSearch.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -29,10 +29,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI;
-using static FireBrowserWinUi3.MainWindow;
+using static Riverside.Graphite.MainWindow;
 using Settings = Riverside.Graphite.Runtime.Models.Settings;
 
-namespace FireBrowserWinUi3.Pages;
+namespace Riverside.Graphite.Pages;
 
 
 public sealed partial class NewTab : Page

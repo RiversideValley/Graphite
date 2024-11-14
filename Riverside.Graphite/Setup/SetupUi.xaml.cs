@@ -1,9 +1,9 @@
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace FireBrowserWinUi3;
+namespace Riverside.Graphite;
 public sealed partial class SetupUi : Page
 {
 	public SetupUi()

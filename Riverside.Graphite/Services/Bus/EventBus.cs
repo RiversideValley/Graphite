@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Bus
+namespace Riverside.Graphite.Services.Bus
 {
 	public class EventBus
 	{

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static FireBrowserWinUi3QrCore.QRCodeGenerator;
+using static Riverside.GraphiteQrCore.QRCodeGenerator;
 
-namespace FireBrowserWinUi3QrCore;
+namespace Riverside.GraphiteQrCore;
 public class BitmapByteQRCode : AbstractQRCode, IDisposable
 {
 	/// <summary>

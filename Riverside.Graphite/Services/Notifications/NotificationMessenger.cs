@@ -1,4 +1,4 @@
-﻿using FireBrowserWinUi3.Pages;
+﻿using Riverside.Graphite.Pages;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications.Builder;
@@ -14,7 +14,7 @@ using Windows.Services.Store;
 using WinRT.Interop;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace FireBrowserWinUi3.Services.Notifications
+namespace Riverside.Graphite.Services.Notifications
 {
 	public sealed class NotificationMessenger
 	{

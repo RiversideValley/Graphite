@@ -1,8 +1,8 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Pages.SettingsPages;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Pages.SettingsPages;
+using Riverside.Graphite.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -15,7 +15,7 @@ using Windows.Graphics;
 using Windows.Storage;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3
+namespace Riverside.Graphite
 {
 	public sealed partial class AddUserWindow : Window
 	{

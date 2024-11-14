@@ -1,14 +1,14 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Data.Core.Actions;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 public sealed partial class DownloadFlyout : Flyout
 {
 	public DownloadService DownloadService { get; set; }
@@ -87,6 +87,6 @@ public sealed partial class DownloadFlyout : Flyout
 	{
 		MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 		window.UrlBox.Text = "firebrowser://downloads";
-		_ = window.TabContent.Navigate(typeof(FireBrowserWinUi3.Pages.TimeLinePages.MainTimeLine));
+		_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 	}
 }

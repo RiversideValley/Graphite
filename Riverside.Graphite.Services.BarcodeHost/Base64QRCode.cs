@@ -2,10 +2,10 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using static FireBrowserWinUi3QrCore.Base64QRCode;
-using static FireBrowserWinUi3QrCore.QRCodeGenerator;
+using static Riverside.GraphiteQrCore.Base64QRCode;
+using static Riverside.GraphiteQrCore.QRCodeGenerator;
 
-namespace FireBrowserWinUi3QrCore;
+namespace Riverside.GraphiteQrCore;
 
 public class Base64QRCode : AbstractQRCode, IDisposable
 {

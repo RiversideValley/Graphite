@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 public sealed partial class RestoreBackUp : Window
 {
 

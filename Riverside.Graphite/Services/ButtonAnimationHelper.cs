@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
 	public static class ButtonAnimationHelper
 	{

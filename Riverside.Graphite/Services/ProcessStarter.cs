@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace FireBrowserWinUi3.Services;
+namespace Riverside.Graphite.Services;
 
 public class ProcessStarter
 {

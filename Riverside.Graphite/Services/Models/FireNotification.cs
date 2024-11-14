@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3.Services.Notifications
+﻿namespace Riverside.Graphite.Services.Notifications
 {
 	public struct FireNotification
 		{

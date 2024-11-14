@@ -1,12 +1,12 @@
-﻿using FireBrowserWinUi3QrCore.Extensions;
+﻿using Riverside.GraphiteQrCore.Extensions;
 using System;
 using System.Collections;
 using System.Drawing;
 using System.Text;
-using static FireBrowserWinUi3QrCore.QRCodeGenerator;
-using static FireBrowserWinUi3QrCore.SvgQRCode;
+using static Riverside.GraphiteQrCore.QRCodeGenerator;
+using static Riverside.GraphiteQrCore.SvgQRCode;
 
-namespace FireBrowserWinUi3QrCore;
+namespace Riverside.GraphiteQrCore;
 
 #if NET6_0_WINDOWS
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]

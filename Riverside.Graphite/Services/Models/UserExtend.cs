@@ -1,7 +1,7 @@
 ﻿using Riverside.Graphite.Core;
 using System.IO;
 
-namespace FireBrowserWinUi3.Services.Models
+namespace Riverside.Graphite.Services.Models
 {
 	public class UserExtend : User
 	{

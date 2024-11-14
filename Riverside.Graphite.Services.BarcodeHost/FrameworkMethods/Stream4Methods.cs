@@ -1,4 +1,4 @@
-﻿namespace FireBrowserWinUi3QrCore.FrameworkMethods;
+﻿namespace Riverside.GraphiteQrCore.FrameworkMethods;
 class Stream4Methods
 {
 	public static void CopyTo(System.IO.Stream input, System.IO.Stream output)

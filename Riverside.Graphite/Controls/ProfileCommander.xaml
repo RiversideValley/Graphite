@@ -1,5 +1,5 @@
 <Flyout
-    x:Class="FireBrowserWinUi3.Controls.ProfileCommander"
+    x:Class="Riverside.Graphite.Controls.ProfileCommander"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers">

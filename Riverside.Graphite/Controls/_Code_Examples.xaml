@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Page
-    x:Class="FireBrowserWinUi3.Controls._Code_Examples"
+    x:Class="Riverside.Graphite.Controls._Code_Examples"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:behaviors="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:FireBrowserWinUi3.Controls"
+    xmlns:local="using:Riverside.Graphite.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">

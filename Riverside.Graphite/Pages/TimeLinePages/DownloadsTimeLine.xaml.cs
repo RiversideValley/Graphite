@@ -1,7 +1,7 @@
-using FireBrowserWinUi3.Services.ViewModels;
+using Riverside.Graphite.Services.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
-namespace FireBrowserWinUi3.Pages.TimeLinePages;
+namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class DownloadsTimeLine : Page
 {
 	public DownloadsViewModel ViewModel { get; set; }

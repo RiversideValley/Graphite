@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Notifications
+namespace Riverside.Graphite.Services.Notifications
 {
 	using System;
 

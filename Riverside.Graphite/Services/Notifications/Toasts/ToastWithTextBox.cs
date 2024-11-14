@@ -1,18 +1,18 @@
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers;
-using FireBrowserWinUi3.Services.Messages;
+using Riverside.Graphite.Services.Messages;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
 using System.Collections.ObjectModel;
 using WinRT.Interop;
-using static FireBrowserWinUi3.Services.Notifications.NotificationMessenger;
+using static Riverside.Graphite.Services.Notifications.NotificationMessenger;
 
 
 
-namespace FireBrowserWinUi3.Services.Notifications.Toasts;
+namespace Riverside.Graphite.Services.Notifications.Toasts;
 public class ToastWithTextBox
 {
 

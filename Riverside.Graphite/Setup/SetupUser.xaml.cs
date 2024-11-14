@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace FireBrowserWinUi3
+namespace Riverside.Graphite
 {
 	public sealed partial class SetupUser : Page
 	{

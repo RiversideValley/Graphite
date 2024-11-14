@@ -1,7 +1,7 @@
 ﻿using Microsoft.Identity.Client;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
 	public static class AuthenticationServcie
 	{

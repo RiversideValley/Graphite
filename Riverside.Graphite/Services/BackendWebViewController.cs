@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FireBrowserWinUi3.Services.Contracts;
+using Riverside.Graphite.Services.Contracts;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
 using System;
@@ -9,10 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using CommunityToolkit.Mvvm.Messaging;
-using FireBrowserWinUi3.Services.Messages;
+using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Runtime.Helpers;
 
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
 	public class BackendWebViewController : ObservableRecipient
 	{

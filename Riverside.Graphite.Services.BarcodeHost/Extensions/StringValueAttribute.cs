@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FireBrowserWinUi3QrCore.Extensions;
+namespace Riverside.GraphiteQrCore.Extensions;
 public class StringValueAttribute : Attribute
 {
 	#region Properties

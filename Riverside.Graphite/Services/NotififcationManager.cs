@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Runtime.Exceptions;
-using FireBrowserWinUi3.Services.Messages;
-using FireBrowserWinUi3.Services.Notifications;
-using FireBrowserWinUi3.Services.Notifications.Toasts;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.Notifications;
+using Riverside.Graphite.Services.Notifications.Toasts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Windows.AppNotifications;
 using System;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Azure.Core.HttpHeader;
 
-namespace FireBrowserWinUi3.Services
+namespace Riverside.Graphite.Services
 {
 	public sealed class NotificationManager : ObservableRecipient
 	{

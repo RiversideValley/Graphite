@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FireBrowserWinUi3QrCore.FrameworkMethods;
+namespace Riverside.GraphiteQrCore.FrameworkMethods;
 internal static class String40Methods
 {
 	/// <returns>

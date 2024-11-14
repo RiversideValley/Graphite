@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using Windows.Foundation;
 
-namespace FireBrowserWinUi3.Controls;
+namespace Riverside.Graphite.Controls;
 
 public sealed partial class PopUpView : UserControl
 {

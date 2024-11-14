@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Exceptions;
-using FireBrowserWinUi3.Services;
-using FireBrowserWinUi3.Services.ViewModels;
-using FireBrowserWinUi3.ViewModels;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -18,7 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Path = System.IO.Path;
 
-namespace FireBrowserWinUi3;
+namespace Riverside.Graphite;
 public partial class App : Application
 {
 	private readonly string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");

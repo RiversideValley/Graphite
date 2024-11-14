@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services;
+namespace Riverside.Graphite.Services;
 public class UpdateService
 {
 	// URL of the JSON file containing the server versions
@@ -16,8 +16,8 @@ public class UpdateService
 	// Local DLL file names
 	private readonly string[] localFileNames = {
 	"Riverside.Graphite.Adblock.dll",
-	"FireBrowserWinUi3Setup.dll",
-	"FireBrowserWinUi3QrCore.dll",
+	"Riverside.GraphiteSetup.dll",
+	"Riverside.GraphiteQrCore.dll",
 	"Riverside.Graphite.Navigation.dll",
 	"Riverside.Graphite.Core.dll",
 	"Riverside.Graphite.Extensions.dll",

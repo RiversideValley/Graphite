@@ -1,5 +1,5 @@
 using Riverside.Graphite.Core;
-using FireBrowserWinUi3.Services;
+using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Media.SpeechSynthesis;
 
-namespace FireBrowserWinUi3.Pages.SettingsPages;
+namespace Riverside.Graphite.Pages.SettingsPages;
 
 public sealed partial class SettingsAccess : Page
 {

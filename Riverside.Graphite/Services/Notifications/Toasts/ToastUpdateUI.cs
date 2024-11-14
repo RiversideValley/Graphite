@@ -1,4 +1,4 @@
-﻿using FireBrowserWinUi3.Services.Notifications.Interfaces;
+﻿using Riverside.Graphite.Services.Notifications.Interfaces;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppNotifications;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Notifications.Toasts
+namespace Riverside.Graphite.Services.Notifications.Toasts
 {
 	public class ToastUpdateUI : IToast
 	{

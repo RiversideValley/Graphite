@@ -6,7 +6,7 @@ using Microsoft.Identity.Client;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace FireBrowserWinUi3.Services.Contracts
+namespace Riverside.Graphite.Services.Contracts
 {
 	/// <summary>
 	/// Service that provides authentication methods and access to 
