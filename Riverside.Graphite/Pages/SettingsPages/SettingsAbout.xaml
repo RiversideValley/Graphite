@@ -60,6 +60,7 @@
                 <labs:SettingsCard Header="FireCube" />
                 <labs:SettingsCard Header="JohnDizzle" />
                 <labs:SettingsCard Header="eligamii" />
+                <labs:SettingsCard Header="Lamparter" />
             </labs:SettingsExpander.Items>
         </labs:SettingsExpander>
         <labs:SettingsExpander x:Uid="SettingsAboutTranslators" Header="Translators">
