@@ -1,0 +1,60 @@
+<Window
+    x:Class="Riverside.Graphite.Controls.ResetCore"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asset="using:Riverside.Graphite.Assets"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="FireBrowserSetup - Resetting App..."
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt" />
+    </Window.SystemBackdrop>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RowDefinitions="Auto,*">
+        <Grid
+            x:Name="TitleBar"
+            Height="35"
+            Padding="8,0"
+            Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+            ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Height="24" Source="{asset:ImageLoader ImageName=Logo.png}" />
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                Style="{ThemeResource BodyStrongTextBlockStyle}">
+                Browser Reset<Run
+                    CharacterSpacing="2"
+                    FontWeight="Light"
+                    Text="BETA" />
+            </TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="1" Padding="20">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="16">
+                <ProgressRing
+                    Width="50"
+                    Height="50"
+                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                    IsActive="True" />
+                <TextBlock
+                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Removing Folders And Files" />
+                <TextBlock
+                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="Please wait while the application is being reset" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,83 @@
+<Page
+    x:Class="Riverside.Graphite.Pages.SettingsPages.SettingsPrivacy"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls">
+
+    <StackPanel Spacing="1">
+        <labs:SettingsCard
+            Margin="0,10,0,0"
+            Description="See your Privacy Level here"
+            Header="Privacy Level">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEA18;" />
+            </labs:SettingsCard.HeaderIcon>
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Description="This improves your privacy by blocking trackers but it can also break a lot of sites" Header="Disable JavaScript">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE943;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ToggleSwitch
+                x:Name="DisableJavaScriptToggle"
+                Tag="DisableJavaScriptToggle"
+                Toggled="ToggleSetting_Toggled" />
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Description="This will disable autofilling in browser ( Text fields will not be filled automatically )" Header="Disable Genaral AutoFill">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8DA;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ToggleSwitch
+                x:Name="DisableGenaralAutoFillToggle"
+                Tag="DisableGenaralAutoFillToggle"
+                Toggled="ToggleSetting_Toggled" />
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Description="This will disable Web Messages in the browser" Header="Disable Web Messages">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8BD;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ToggleSwitch
+                x:Name="DisablWebMessFillToggle"
+                Tag="DisablWebMessFillToggle"
+                Toggled="ToggleSetting_Toggled" />
+        </labs:SettingsCard>
+
+        <labs:SettingsCard Description="This will disable password autosave" Header="Disable automatic password saving">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xF427;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ToggleSwitch
+                x:Name="PasswordWebMessFillToggle"
+                Tag="PasswordWebMessFillToggle"
+                Toggled="ToggleSetting_Toggled" />
+        </labs:SettingsCard>
+
+        <labs:SettingsExpander
+            Description="See the app's permissions"
+            Header="App Permissions"
+            IsEnabled="True">
+            <labs:SettingsExpander.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEA18;" />
+            </labs:SettingsExpander.HeaderIcon>
+            <labs:SettingsExpander.Items>
+                <labs:SettingsCard Description="Microphone Access" Header="Microphone Access">
+                    <labs:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE720;" />
+                    </labs:SettingsCard.HeaderIcon>
+                    <ToggleSwitch />
+                </labs:SettingsCard>
+                <labs:SettingsCard Description="Camera Access" Header="Camera Access">
+                    <labs:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE722;" />
+                    </labs:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        x:Name="CamPermission"
+                        Tag="CamPermission_Toggled"
+                        Toggled="ToggleSetting_Toggled" />
+                </labs:SettingsCard>
+            </labs:SettingsExpander.Items>
+        </labs:SettingsExpander>
+    </StackPanel>
+</Page>

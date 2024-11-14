@@ -1,0 +1,57 @@
+<ContentDialog
+    x:Class="Riverside.Graphite.Runtime.CoreUi.ConfirmAppClose"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Riverside.Graphite.Runtime.CoreUi"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Confirm Close"
+    CornerRadius="10"
+    DefaultButton="Secondary"
+    PrimaryButtonText="Close App"
+    SecondaryButtonText="Cancel"
+    mc:Ignorable="d">
+
+    <ContentDialog.Background>
+        <AcrylicBrush
+            FallbackColor="{ThemeResource SystemChromeMediumLowColor}"
+            TintColor="{ThemeResource SystemAltHighColor}"
+            TintOpacity="0.9" />
+    </ContentDialog.Background>
+
+    <StackPanel
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Spacing="12">
+        <TextBlock
+            Style="{ThemeResource SubtitleTextBlockStyle}"
+            Text="Are you sure you want to close the app?"
+            TextWrapping="Wrap" />
+
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <SymbolIcon Foreground="{ThemeResource SystemFillColorCriticalBrush}" Symbol="Important" />
+            <TextBlock
+                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                Style="{ThemeResource BodyTextBlockStyle}"
+                Text="Any unsaved data will be lost."
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <CheckBox
+            x:Name="DoNotAskAgainCheckBox"
+            Margin="0,4,0,0"
+            Content="Don't ask me again" />
+    </StackPanel>
+
+    <ContentDialog.PrimaryButtonStyle>
+        <Style TargetType="Button">
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+    </ContentDialog.PrimaryButtonStyle>
+
+    <ContentDialog.SecondaryButtonStyle>
+        <Style TargetType="Button">
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+    </ContentDialog.SecondaryButtonStyle>
+</ContentDialog>

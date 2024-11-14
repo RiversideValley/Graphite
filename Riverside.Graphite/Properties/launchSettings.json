@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Riverside.Graphite (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Riverside.Graphite (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

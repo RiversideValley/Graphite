@@ -1,0 +1,66 @@
+<ContentDialog
+    x:Class="Riverside.Graphite.Pages.Patch.RestoreBackupDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Restore Backup"
+    CornerRadius="10"
+    DefaultButton="Secondary"
+    IsPrimaryButtonEnabled="False"
+    Loaded="ContentDialog_Loaded"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="Restore"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    SecondaryButtonText="Cancel">
+
+    <ContentDialog.Background>
+        <AcrylicBrush
+            FallbackColor="{ThemeResource SystemChromeMediumLowColor}"
+            TintColor="{ThemeResource SystemAltHighColor}"
+            TintOpacity="0.7" />
+    </ContentDialog.Background>
+
+    <StackPanel Padding="24" Spacing="16">
+        <InfoBar
+            Title="Caution"
+            IsClosable="False"
+            IsOpen="True"
+            Message="Restoring a backup will overwrite your current data."
+            Severity="Warning" />
+        <TextBlock
+            Style="{ThemeResource SubtitleTextBlockStyle}"
+            Text="Select a backup to restore:"
+            TextWrapping="Wrap" />
+        <ListBox
+            x:Name="BackupListBox"
+            Height="83"
+            SelectionChanged="BackupListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock
+            Style="{ThemeResource BodyTextBlockStyle}"
+            Text="Restoring a backup will replace your current browser data with the selected backup. This action cannot be undone."
+            TextWrapping="Wrap" />
+        <CheckBox
+            x:Name="ConfirmCheckBox"
+            Checked="ConfirmCheckBox_CheckedChanged"
+            Content="I understand that this will overwrite my current data"
+            Unchecked="ConfirmCheckBox_CheckedChanged" />
+    </StackPanel>
+
+    <ContentDialog.PrimaryButtonStyle>
+        <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="IsEnabled" Value="False" />
+        </Style>
+    </ContentDialog.PrimaryButtonStyle>
+
+    <ContentDialog.SecondaryButtonStyle>
+        <Style TargetType="Button">
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+    </ContentDialog.SecondaryButtonStyle>
+</ContentDialog>

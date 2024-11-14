@@ -1,0 +1,165 @@
+<Page
+    x:Class="Riverside.Graphite.Pages.SettingsPages.SettingsHome"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asset="using:Riverside.Graphite.Assets"
+    xmlns:firebrowser="using:Riverside.Graphite.Controls"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
+    xmlns:person="using:Riverside.Graphite.Runtime.Helpers">
+
+    <ScrollViewer>
+        <StackPanel Margin="10,10,10,10" Spacing="2">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <PersonPicture Width="64" ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}" />
+                    <!--  hide premuim icon until premium is available browser  -->
+                    <ImageIcon
+                        Width="32"
+                        Height="32"
+                        Source="{asset:ImageLoader ImageName=Prize.png}"
+                        ToolTipService.ToolTip="You Have Premium Browser License"
+                        Visibility="Collapsed" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            x:Name="User"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                            Text="FireBrowser User" />
+                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Browser account" />
+                    </StackPanel>
+                </StackPanel>
+                <Button
+                    x:Name="UserActionBtn"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE712;" />
+                        </StackPanel>
+                    </Button.Content>
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem
+                                x:Name="ImportBookmarksItem"
+                                Click="ImportBookmarksItem_Click"
+                                Text="Import Bookmarks">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Name="Prm"
+                                Click="Prm_Click"
+                                Text="Add Premium">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Name="LogOutItem"
+                                Click="LogOutBtn_Click"
+                                Text="Log Out">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <labs:SettingsCard Header="Check for internal component updates">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE777;" />
+                </labs:SettingsCard.HeaderIcon>
+                <Button
+                    x:Name="PatchBtn"
+                    Click="PatchBtn_Click"
+                    Content="Check For Updates" />
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Header="Reset App">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEBC4;" />
+                </labs:SettingsCard.HeaderIcon>
+                <Button
+                    x:Name="Reset"
+                    Click="Reset_Click"
+                    Content="Reset Browser - Settings" />
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Header="FireVault - FireBrowser">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xF540;" />
+                </labs:SettingsCard.HeaderIcon>
+                <Button
+                    x:Name="OpenVault"
+                    Content="Open Vault"
+                    IsEnabled="False" />
+            </labs:SettingsCard>
+
+            <labs:SettingsExpander Header="Profiles">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC25;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <ListView x:Name="UserListView">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid
+                                    Padding="8"
+                                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiary}"
+                                    ColumnDefinitions="Auto,*,Auto,Auto">
+                                    <PersonPicture Width="32" Height="32" />
+                                    <TextBlock
+                                        x:Name="userName"
+                                        Grid.Column="1"
+                                        Margin="12,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding}" />
+                                    <Button
+                                        x:Name="Switch"
+                                        Grid.Column="2"
+                                        Click="Switch_Click">
+                                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE748;" />
+                                    </Button>
+                                    <Button
+                                        x:Name="Delete"
+                                        Grid.Column="3"
+                                        Click="Delete_Click">
+                                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE74D;" />
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </labs:SettingsExpander.Items>
+                <Button
+                    x:Name="Add"
+                    Click="Add_Click"
+                    Content="Add"
+                    ToolTipService.ToolTip="Add User ( Temp Disabled Reworking Feature )" />
+            </labs:SettingsExpander>
+
+            <labs:SettingsExpander Header="BackUp - Data Or Restore">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7B8;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="BackUp - Data">
+                        <Button
+                            x:Name="BackUpNow"
+                            Click="BackUpNow_Click"
+                            Content="BackUp Now" />
+                    </labs:SettingsCard>
+                    <labs:SettingsCard Header="Restore - Data">
+                        <Button
+                            x:Name="RestoreNow"
+                            Click="RestoreNow_Click"
+                            Content="Restore Now" />
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+            <TextBlock x:Name="Version" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

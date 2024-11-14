@@ -1,0 +1,61 @@
+using Riverside.Graphite.Runtime.Helpers;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using System;
+
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
+
+namespace Riverside.Graphite
+{
+	/// <summary>
+	/// An empty window that can be used on its own or navigated to within a Frame.
+	/// </summary>
+	public sealed partial class SetupWindow : Window
+	{
+		private readonly AppWindow appWindow;
+		private readonly AppWindowTitleBar titleBar;
+		public SetupWindow()
+		{
+			InitializeComponent();
+
+			nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+			WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+
+			appWindow = AppWindow.GetFromWindowId(windowId);
+			appWindow.SetIcon("LogoSetup.ico");
+			Windowing.Center(this);
+
+
+			if (!AppWindowTitleBar.IsCustomizationSupported())
+			{
+				// Why? Because I don't care
+				throw new Exception("Unsupported OS version.");
+			}
+			else
+			{
+				titleBar = appWindow.TitleBar;
+				titleBar.ExtendsContentIntoTitleBar = true;
+				Windows.UI.Color btnColor = Colors.Transparent;
+				titleBar.BackgroundColor = btnColor;
+				titleBar.ButtonBackgroundColor = btnColor;
+				titleBar.InactiveBackgroundColor = btnColor;
+				titleBar.ButtonInactiveBackgroundColor = btnColor;
+
+			}
+
+		}
+
+		private void setup_Loaded(object sender, RoutedEventArgs e)
+		{
+			_ = setup.Navigate(typeof(SetupInit));
+		}
+
+		private void AppBarButton_Click(object sender, RoutedEventArgs e)
+		{
+			App.Current.Exit();
+		}
+	}
+}

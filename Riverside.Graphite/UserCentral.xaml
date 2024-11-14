@@ -1,0 +1,217 @@
+<Window
+    x:Class="Riverside.Graphite.UserCentral"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Media"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dllimg="using:Riverside.Graphite.Assets"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Riverside.Graphite.Services.Models"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt" />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid">
+        <Grid
+            x:Name="GridUserCentral"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+            CornerRadius="8">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid
+                Grid.Row="0"
+                Padding="6"
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource AccentFillColorSecondaryBrush}"
+                BorderThickness="0,0,0,1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <AppBarButton
+                        VerticalAlignment="Center"
+                        Click="AppBarButton_Click"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="OtherUser"
+                        Label="Add User" />
+                    <AppBarButton
+                        Width="Auto"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ViewModel.RestoreCoreCommand}"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Refresh"
+                        Label="Restore Backup" />
+                    <AppBarButton
+                        Width="Auto"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ViewModel.BackUpCoreCommand}"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Calendar"
+                        Label="Backup" />
+                    <AppBarButton
+                        Width="Auto"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ViewModel.AdminCenterCommand}"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Admin"
+                        Label="Cloud Backups"
+                        Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}" />
+                    <AppBarButton
+                        x:Name="SignIn"
+                        Width="Auto"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ViewModel.LoginToMicrosoftCommand}"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Account"
+                        Label="Sign In Microsoft" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Grid Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}">
+                        <Button>
+                            <Button.Flyout>
+                                <Flyout>
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.MsLogOutCommand}">LogOut</MenuFlyoutItem>
+                                </Flyout>
+                            </Button.Flyout>
+                            <Image
+                                Width="36"
+                                Height="36"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Source="{x:Bind ViewModel.MsProfilePicture, Mode=OneWay}" />
+                        </Button>
+
+                    </Grid>
+
+                    <AppBarButton
+                        x:Name="MinimizeBtn"
+                        Click="MinimizeBtn_Click"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Remove"
+                        Label="Minimize"
+                        ToolTipService.ToolTip="Minimize Application" />
+
+                    <AppBarButton
+                        x:Name="CloseBtn"
+                        Command="{x:Bind ViewModel.ExitWindowCommand, Mode=OneWay}"
+                        Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                        Icon="Cancel"
+                        Label="Close App"
+                        ToolTipService.ToolTip="Exit Application" />
+                </StackPanel>
+            </Grid>
+            <TextBlock
+                Grid.Row="1"
+                Margin="0,16"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="28"
+                FontWeight="SemiBold"
+                Foreground="{ThemeResource ApplicationHeaderForegroundThemeBrush}"
+                Text="Select a User" />
+
+
+            <ScrollViewer
+                x:Name="ScrollingUsers"
+                Grid.Row="2"
+                HorizontalScrollMode="Disabled"
+                VerticalScrollBarVisibility="Auto">
+
+
+                <ListView
+                    x:Name="UserListView"
+                    Padding="6"
+                    x:FieldModifier="Public"
+                    ItemsSource="{x:Bind ViewModel.Users, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{x:Bind ViewModel.User, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectionChanged="UserListView_SelectionChanged">
+                    <ListView.Background>
+                        <ImageBrush
+                            AlignmentX="Center"
+                            AlignmentY="Bottom"
+                            ImageSource="ms-appx:///Assets/globefire.jfif"
+                            Opacity="1" />
+                    </ListView.Background>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:UserExtend">
+                            <Grid Padding="8" ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <PersonPicture
+                                    Width="40"
+                                    Height="40"
+                                    ProfilePicture="{Binding PicturePath, Mode=OneTime}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    FontWeight="ExtraBold"
+                                    Text="{Binding FireUser.Username, Mode=OneTime}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+
+            <Grid
+                Grid.Row="3"
+                Padding="6"
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource AccentFillColorSecondaryBrush}"
+                BorderThickness="0,1,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Image
+                        Width="24"
+                        Height="24"
+                        Source="{dllimg:ImageLoader ImageName=LogoApp.png}" />
+                    <TextBlock
+                        x:Uid="AppName"
+                        VerticalAlignment="Center"
+                        Style="{ThemeResource NavigationViewItemHeaderTextStyle}" />
+                </StackPanel>
+
+                <Button
+                    x:Name="WeatherWinapp"
+                    Grid.Column="2"
+                    Padding="8"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Command="{x:Bind ViewModel.OpenWindowsWeatherCommand, Mode=OneWay}">
+                    <ImageIcon
+                        Width="24"
+                        Height="24"
+                        Source="ms-appx:///Assets/weatherpic.png" />
+                </Button>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
