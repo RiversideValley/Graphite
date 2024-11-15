@@ -1,4 +1,4 @@
-﻿namespace Riverside.Graphite.IdentityClient.Helpers;
+﻿namespace Riverside.Graphite.IdentityClient.Enums;
 public enum OtpType
 {
 	/// <summary>

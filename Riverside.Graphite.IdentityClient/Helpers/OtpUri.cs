@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Riverside.Graphite.IdentityClient.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 

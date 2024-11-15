@@ -1,4 +1,6 @@
-﻿namespace Riverside.Graphite.IdentityClient.Helpers;
+﻿using Riverside.Graphite.IdentityClient.Enums;
+
+namespace Riverside.Graphite.IdentityClient.Helpers;
 
 public interface IKeyProvider
 {

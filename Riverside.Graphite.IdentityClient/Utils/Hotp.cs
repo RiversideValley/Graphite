@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Riverside.Graphite.IdentityClient.Enums;
+using Riverside.Graphite.IdentityClient.Helpers;
+using System;
 
-namespace Riverside.Graphite.IdentityClient.Helpers;
+namespace Riverside.Graphite.IdentityClient.Utils;
 public class Hotp : Otp
 {
 	private readonly int _hotpSize;

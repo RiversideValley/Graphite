@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Riverside.Graphite.IdentityClient.Enums;
+using Riverside.Graphite.IdentityClient.Helpers;
+using System;
 using System.Security.Cryptography;
 
-namespace Riverside.Graphite.IdentityClient.Helpers;
+namespace Riverside.Graphite.IdentityClient.Utils;
 
 public class InMemoryKey : IKeyProvider
 {

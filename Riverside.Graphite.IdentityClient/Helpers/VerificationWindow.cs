@@ -2,7 +2,6 @@
 
 namespace Riverside.Graphite.IdentityClient.Helpers;
 
-#pragma warning disable CS8618
 public class VerificationWindow
 {
 	private readonly int _previous;
@@ -41,5 +40,5 @@ public class VerificationWindow
 	/// The verification window that accommodates network delay that is recommended in the RFC
 	/// </summary>
 	public static readonly VerificationWindow RfcSpecifiedNetworkDelay =
-		new VerificationWindow(previous: 1, future: 1);
+		new(previous: 1, future: 1);
 }
