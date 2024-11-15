@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Licensing;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Services;

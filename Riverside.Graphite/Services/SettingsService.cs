@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
 using System;

@@ -6,7 +6,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;

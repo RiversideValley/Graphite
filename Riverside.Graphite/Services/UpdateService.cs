@@ -22,7 +22,6 @@ public class UpdateService
 	"Riverside.Graphite.Core.dll",
 	"Riverside.Graphite.Extensions.dll",
 	"Riverside.Graphite.Data.Favorites.dll",
-	"Riverside.Graphite.Runtime.Exceptions.dll",
 	"Riverside.Graphite.Data.Core.dll",
 	"Riverside.Graphite.Data.dll",
 	"Riverside.Graphite.Runtime.dll",

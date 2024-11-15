@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Bing.WebSearch;
 using Microsoft.Bing.WebSearch.Models;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

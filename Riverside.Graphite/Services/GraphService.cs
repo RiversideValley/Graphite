@@ -3,7 +3,7 @@
 
 using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using System;
 using System.IO;

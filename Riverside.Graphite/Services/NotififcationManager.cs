@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.AppNotifications;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Notifications.Toasts;
 using System;

@@ -7,7 +7,7 @@ using Windows.ApplicationModel.Email;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace Riverside.Graphite.Runtime.Exceptions;
+namespace Riverside.Graphite.Runtime.Helpers.Logging;
 public static class ExceptionEmailer
 {
 	public static async Task LogException(Exception ex, XamlRoot root)

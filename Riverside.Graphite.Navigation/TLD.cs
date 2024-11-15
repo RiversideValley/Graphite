@@ -1,4 +1,4 @@
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;

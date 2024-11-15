@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
@@ -95,7 +95,7 @@ public partial class App : Application
 	{
 		if (!AppService.IsAppGoingToClose)
 		{
-			Riverside.Graphite.Runtime.Exceptions.ExceptionLogger.LogException(e.Exception);
+			ExceptionLogger.LogException(e.Exception);
 		}
 	}
 

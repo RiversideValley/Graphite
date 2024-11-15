@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Riverside.Graphite.Runtime.Exceptions;
+namespace Riverside.Graphite.Runtime.Helpers.Logging;
 public static class ExceptionLogger
 {
 	public static readonly string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "firebrowserwinui.flog");

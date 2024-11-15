@@ -2,8 +2,8 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Data.Core.Models;
-using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
