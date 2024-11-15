@@ -1,6 +1,6 @@
 ![Screenshot-NoBackgroundCrop,Margin,NoRoundedCorner](https://github.com/user-attachments/assets/ec2fa1dd-2990-48e0-a747-97b5cc87b9ac)
 
-Introducing **Fire Browser**, a beautiful, blazingly fast web browser built with Microsoft's powerful `WindowsAppSDK` and `WebView2`. It leverages Microsoft Entra for secure login and offers a suite of powerful features designed to enhance your browsing experience.
+Introducing **Graphite**, a beautiful, blazingly fast web browser built with Microsoft's powerful `WindowsAppSDK` and `WebView2`. It leverages Microsoft Entra for secure login and offers a suite of powerful features designed to enhance your browsing experience.
 
 ## 📋 Features
 
@@ -30,22 +30,22 @@ Introducing **Fire Browser**, a beautiful, blazingly fast web browser built with
 #### 2. Clone the repository
 
 ```ps
-git clone https://github.com/FirebrowserDevs/FireBrowserWinUi3
+git clone https://github.com/RiversideValley/Graphite
 ```
 
 This will create a local copy of the repository.
 
 #### 3. Build the project
 
-To build Fire Browser for development, open the `Fire-Browser.sln` item in Visual Studio. Right-click on the `Riverside.Graphite` packaging project in solution explorer and select ‘Set as Startup item’.
+To build Graphite for development, open the `Graphite.sln` item in Visual Studio. Right-click on the `Riverside.Graphite` packaging project in solution explorer and select ‘Set as Startup item’.
 
 ### 🛜 Usage
 
-After installation, launch Fire Browser and log in using your Microsoft credentials. Explore the various features and customize your browsing experience to suit your needs.
+After installation, launch Graphite and log in using your Microsoft credentials. Explore the various features and customize your browsing experience to suit your needs.
 
 ## 🙋 Contributing
 
-Want to contribute to this project? Let us know with an [issue](https://github.com/FirebrowserDevs/FireBrowserWinUi3/issues) that communicates your intent to create a [pull request](https://github.com/FirebrowserDevs/FireBrowserWinUi3/pulls).
+Want to contribute to this project? Let us know with an [issue](https://github.com/RiversideValley/Graphite/issues) that communicates your intent to create a [pull request](https://github.com/RiversideValley/Graphite/pulls).
 
 Looking for a place to start? Check out the [task board](https://github.com/orgs/FirebrowserDevs/projects/2), where you can sort tasks by size and priority.
 
@@ -55,7 +55,7 @@ This project is licensed under the `GNU/GPL 3.0` license. See the `LICENSE.md` f
 
 ## 😇 Acknowledgements
 
-Fire Browser is made with love by C# developers in the Netherlands. We thank all contributors and users for their support.
+Graphite is made with love by C# developers in the Netherlands. We thank all contributors and users for their support.
 
 ---
 
