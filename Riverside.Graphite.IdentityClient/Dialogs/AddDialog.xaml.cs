@@ -1,5 +1,5 @@
 using Riverside.Graphite.IdentityClient.Helpers;
-using Riverside.Graphite.IdentityClient.ViewModels;
+using Riverside.Graphite.IdentityClient.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.DataTransfer;
@@ -32,7 +32,7 @@ namespace Riverside.Graphite.IdentityClient.Dialogs
 
 			if (secretBox.Text.Length > 0) // 0 for testing purposes
 			{
-				TwoFactorsAuthentification.Add(nameBox.Text, secretBox.Text);
+				MultiFactorAuthentication.Add(nameBox.Text, secretBox.Text);
 			}
 
 			Hide();

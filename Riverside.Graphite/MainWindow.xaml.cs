@@ -1301,7 +1301,7 @@ public sealed partial class MainWindow : Window
 
 			if (authResult == UserConsentVerificationResult.Verified)
 			{
-				Riverside.Graphite.IdentityClient.ViewModels.TwoFactorsAuthentification.ShowFlyout(Secure);
+				Riverside.Graphite.IdentityClient.Models.MultiFactorAuthentication.ShowFlyout(Secure);
 			}
 			else
 			{

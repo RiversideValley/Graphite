@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Runtime.Helpers
 {
-	public static class TwoFactorsAuthentification
+	public static class TwoFactorAuthentication
 	{
 		public static ObservableCollection<TwoFactorAuthItem> Items { get; private set; } = new();
 

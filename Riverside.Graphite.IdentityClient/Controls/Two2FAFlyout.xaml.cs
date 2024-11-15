@@ -1,5 +1,5 @@
 using Riverside.Graphite.IdentityClient.Dialogs;
-using Riverside.Graphite.IdentityClient.ViewModels;
+using Riverside.Graphite.IdentityClient.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -20,7 +20,7 @@ namespace Riverside.Graphite.IdentityClient.Controls
 		{
 			InitializeComponent();
 			list.ItemsSource = null;
-			list.ItemsSource = TwoFactorsAuthentification.Items;
+			list.ItemsSource = MultiFactorAuthentication.Items;
 		}
 
 		private async void Button_Click(object sender, RoutedEventArgs e)
@@ -33,7 +33,7 @@ namespace Riverside.Graphite.IdentityClient.Controls
 		private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
 		{
 			ListViewItem item = sender as ListViewItem;
-			TwoFactAuth twoFactAuth = item.DataContext as TwoFactAuth;
+			TwoFactorAuthentication twoFactAuth = item.DataContext as TwoFactorAuthentication;
 
 			DataPackage package = new();
 			package.SetText(twoFactAuth.Code);
@@ -42,7 +42,7 @@ namespace Riverside.Graphite.IdentityClient.Controls
 
 		private async void Repair_Click(object sender, RoutedEventArgs e)
 		{
-			await Riverside.Graphite.Runtime.Helpers.TwoFactorsAuthentification.Repair();
+			await Riverside.Graphite.Runtime.Helpers.TwoFactorAuthentication.Repair();
 		}
 	}
 }

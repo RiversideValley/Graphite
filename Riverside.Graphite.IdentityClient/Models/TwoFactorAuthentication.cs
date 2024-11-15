@@ -6,9 +6,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Riverside.Graphite.IdentityClient.ViewModels
+namespace Riverside.Graphite.IdentityClient.Models
 {
-	public class TwoFactAuth : INotifyPropertyChanged
+	public class TwoFactorAuthentication : INotifyPropertyChanged
 	{
 		private string code = "000000";
 		private int progressValue = 100;
@@ -36,7 +36,7 @@ namespace Riverside.Graphite.IdentityClient.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		public TwoFactAuth(TwoFactorAuthItem data)
+		public TwoFactorAuthentication(TwoFactorAuthItem data)
 		{
 			Data = data;
 			Name = data.Name;

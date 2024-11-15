@@ -7,17 +7,17 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Riverside.Graphite.IdentityClient.ViewModels
+namespace Riverside.Graphite.IdentityClient.Models
 {
-	public static class TwoFactorsAuthentification
+	public static class MultiFactorAuthentication
 	{
 		private static readonly DispatcherTimer loginTimer = new() { Interval = TimeSpan.FromMinutes(5) };
 		private static bool userAuthenticated = false;
-		internal static ObservableCollection<TwoFactAuth> Items { get; } = new ObservableCollection<TwoFactAuth>();
+		internal static ObservableCollection<TwoFactorAuthentication> Items { get; } = new ObservableCollection<TwoFactorAuthentication>();
 
 		public static XamlRoot XamlRoot { get; set; }
 
-		static TwoFactorsAuthentification()
+		static MultiFactorAuthentication()
 		{
 			loginTimer.Tick += (_, _) => userAuthenticated = false;
 			InitializeData();
@@ -30,11 +30,11 @@ namespace Riverside.Graphite.IdentityClient.ViewModels
 
 		private static void InitializeData()
 		{
-			ObservableCollection<TwoFactorAuthItem> items = Task.Run(Riverside.Graphite.Runtime.Helpers.TwoFactorsAuthentification.Load).Result;
+			ObservableCollection<TwoFactorAuthItem> items = Task.Run(Riverside.Graphite.Runtime.Helpers.TwoFactorAuthentication.Load).Result;
 
 			foreach (TwoFactorAuthItem item in items)
 			{
-				TwoFactAuth twoFactAuth = new(item);
+				TwoFactorAuthentication twoFactAuth = new(item);
 				twoFactAuth.Start();
 				Items.Add(twoFactAuth);
 			}
@@ -68,11 +68,11 @@ namespace Riverside.Graphite.IdentityClient.ViewModels
 				Secret = Base32Encoding.ToBytes(secret)
 			};
 
-			TwoFactAuth twoFactAuth = new(item);
+			TwoFactorAuthentication twoFactAuth = new(item);
 			twoFactAuth.Start();
 
 			Items.Add(twoFactAuth);
-			Riverside.Graphite.Runtime.Helpers.TwoFactorsAuthentification.Items.Add(item);
+			Riverside.Graphite.Runtime.Helpers.TwoFactorAuthentication.Items.Add(item);
 		}
 	}
 }
