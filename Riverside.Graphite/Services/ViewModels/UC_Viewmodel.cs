@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Models;
-using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,5 +1,5 @@
-﻿using Riverside.Graphite.Runtime.CoreUi;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
+using Riverside.Graphite.Runtime.CoreUi;
 
 namespace Riverside.Graphite.Runtime.Helpers;
 

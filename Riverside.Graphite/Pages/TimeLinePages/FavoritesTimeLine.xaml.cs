@@ -1,10 +1,10 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Data.Favorites;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Runtime.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

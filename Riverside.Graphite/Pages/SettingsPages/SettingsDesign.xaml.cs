@@ -1,8 +1,8 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 
 namespace Riverside.Graphite.Pages.SettingsPages;
 public sealed partial class SettingsDesign : Page

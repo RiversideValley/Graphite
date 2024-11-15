@@ -1,21 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.Models;
-using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.Pages.Models;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Pages.Models;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +23,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using static Riverside.Graphite.Pages.NewTab;
 
 
 namespace Riverside.Graphite.ViewModels;
@@ -78,10 +77,10 @@ public partial class HomeViewModel : ObservableRecipient
 	private SearchProviders _SearchProvider;
 	public SettingsService SettingsService { get; set; }
 	private DispatcherTimer timer { get; set; }
-	
-	public CancellationToken CancellationTokenTimer { get; set; }	
+
+	public CancellationToken CancellationTokenTimer { get; set; }
 	public ObservableCollection<TrendingItem> TrendingItems { get; set; }
-	
+
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
 	private void LoadUISettings()
@@ -268,49 +267,52 @@ public partial class HomeViewModel : ObservableRecipient
 			case Visibility.Visible:
 				CancellationTokenSource tVis = new CancellationTokenSource();
 				CancellationTokenTimer = tVis.Token;
-				UpdateTrending(); 
+				UpdateTrending();
 				break;
 			case Visibility.Collapsed:
 				CancellationTokenSource tClose = new CancellationTokenSource();
-				tClose.Cancel(); 
+				tClose.Cancel();
 				CancellationTokenTimer = tClose.Token;
 				break;
 			default:
 				break;
 		}
-		
+
 
 
 	}
 
 	public Task UpdateTrending()
 	{
-		
-		var timer = new DispatcherTimer(); 
+
+		var timer = new DispatcherTimer();
 		timer.Interval = TimeSpan.FromMinutes(4);
 		timer.Tick += (s, e) =>
 		{
-			if (!SettingsService.CoreSettings.IsTrendingVisible) {
-				
+			if (!SettingsService.CoreSettings.IsTrendingVisible)
+			{
+
 				CancellationTokenSource source = new CancellationTokenSource();
-				source.Cancel(); 
+				source.Cancel();
 				CancellationTokenTimer = source.Token;
 			}
 			GetTrending();
 			RaisePropertyChanges(nameof(TrendingItems));
 		};
-		
+
 		timer.Start();
 		// initial load.
-		GetTrending(); 
+		GetTrending();
 
-		async void GetTrending() {
+		async void GetTrending()
+		{
 
-			if (CancellationTokenTimer.IsCancellationRequested) {
+			if (CancellationTokenTimer.IsCancellationRequested)
+			{
 				timer.Stop();
 				return;
 			}
-			
+
 
 			BingSearchApi bing = new();
 			string topics = await bing.TrendingListTask("calico cats");
@@ -327,8 +329,8 @@ public partial class HomeViewModel : ObservableRecipient
 				}
 			}
 		}
-		
-		return Task.CompletedTask; 
+
+		return Task.CompletedTask;
 	}
 	public Settings.NewTabBackground BackgroundType
 	{

@@ -1,10 +1,7 @@
-﻿using Riverside.Graphite.Services.Notifications.Interfaces;
-using Microsoft.UI.Dispatching;
+﻿using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppNotifications;
+using Riverside.Graphite.Services.Notifications.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Services.Notifications.Toasts

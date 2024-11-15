@@ -1,16 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.ViewModels;
-using Riverside.Graphite.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -122,7 +120,7 @@ public partial class App : Application
 
 
 		App.Current.Services = App.Current.ConfigureServices();
-	
+
 		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 
 		try

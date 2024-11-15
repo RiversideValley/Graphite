@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Riverside.Graphite.Runtime.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Runtime.Models;
 
 namespace Riverside.Graphite.Controls;
 

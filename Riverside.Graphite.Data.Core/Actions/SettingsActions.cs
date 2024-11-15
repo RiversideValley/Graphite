@@ -1,7 +1,7 @@
-﻿using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
-using Microsoft.EntityFrameworkCore;
+using Riverside.Graphite.Runtime.Exceptions;
 using System;
 using System.Threading.Tasks;
 

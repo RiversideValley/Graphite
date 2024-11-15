@@ -1,6 +1,6 @@
-﻿using System;
-using Riverside.Graphite.IdentityClient.Enums;
+﻿using Riverside.Graphite.IdentityClient.Enums;
 using Riverside.Graphite.IdentityClient.Utils;
+using System;
 
 namespace Riverside.Graphite.IdentityClient.Helpers;
 

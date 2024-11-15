@@ -1,13 +1,11 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Services.Messages;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Messages;
 using System;
 using System.Collections.ObjectModel;
 using WinRT.Interop;
-using static Riverside.Graphite.Services.Notifications.NotificationMessenger;
 
 namespace Riverside.Graphite.Services.Notifications.Toasts;
 public class ToastWithTextBox
@@ -16,7 +14,7 @@ public class ToastWithTextBox
 	public const string Title = "Riverside.Graphite Notifications";
 	const string textboxReplyId = "textboxReply";
 
-	public static ObservableCollection<FireNotification> NotificationMessages = new(); 
+	public static ObservableCollection<FireNotification> NotificationMessages = new();
 
 	public static bool SendToast()
 	{

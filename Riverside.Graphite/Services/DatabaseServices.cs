@@ -1,8 +1,8 @@
-﻿using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Services.Contracts;
-using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 using System;
 using System.IO;

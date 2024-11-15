@@ -1,7 +1,7 @@
-using Riverside.Graphite.Runtime.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Riverside.Graphite.Runtime.Helpers;
 using System;
 
 // To learn more about WinUI, the WinUI project structure,

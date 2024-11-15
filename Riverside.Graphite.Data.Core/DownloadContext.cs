@@ -1,6 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Models;
-using Microsoft.EntityFrameworkCore;
 using System.IO;
 
 namespace Riverside.Graphite.Data.Core;

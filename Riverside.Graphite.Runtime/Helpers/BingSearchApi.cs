@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Riverside.Graphite.Runtime.Exceptions;
 using Newtonsoft.Json.Linq;
+using Riverside.Graphite.Runtime.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -83,7 +83,8 @@ namespace Riverside.Graphite.Runtime.Helpers
 				{
 					return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(responseObjects.SelectToken("value").ToList()));
 				}
-				else {
+				else
+				{
 					return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(new List<string>()));
 				}
 			}

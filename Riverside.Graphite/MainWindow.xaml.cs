@@ -1,22 +1,5 @@
 using CommunityToolkit.WinUI.Behaviors;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Core.Helper;
-using Riverside.Graphite.Runtime.CoreUi;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.Models;
-using Riverside.Graphite.Runtime.ShareHelper;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Notifications;
-using Riverside.Graphite.Services.Notifications.Toasts;
-using Riverside.Graphite.Services.ViewModels;
-using Riverside.Graphite.ViewModels;
-using Riverside.GraphiteQrCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -25,6 +8,21 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Runtime.ShareHelper;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Notifications.Toasts;
+using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.ViewModels;
+using Riverside.GraphiteQrCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -72,7 +70,7 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
 
 		Commander = new ProfileCommander(ViewModelMain);
-		
+
 		InitializeComponent();
 
 		ArgsPassed();
@@ -82,17 +80,18 @@ public sealed partial class MainWindow : Window
 
 		try
 		{
-			if (AuthService.CurrentUser is Riverside.Graphite.Core.User user) {
+			if (AuthService.CurrentUser is Riverside.Graphite.Core.User user)
+			{
 				if (user?.Username != "Private")
 					DownloadFlyout = new DownloadFlyout();
 			}
-			
+
 		}
 		catch (Exception ex)
 		{
 			ExceptionLogger.LogException(ex);
 		}
-			
+
 
 		Closed += (s, e) =>
 		{
@@ -1038,10 +1037,10 @@ public sealed partial class MainWindow : Window
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "Ratings":
-				_ = ToastRatings.SendToast(); 
+				_ = ToastRatings.SendToast();
 				break;
 			case "Updated":
-				_ = ToastUpdate.SendToast();	
+				_ = ToastUpdate.SendToast();
 				break;
 		}
 
@@ -1394,5 +1393,5 @@ public sealed partial class MainWindow : Window
 		UrlBox.Text = args.SelectedItem.ToString();
 	}
 
-	
+
 }

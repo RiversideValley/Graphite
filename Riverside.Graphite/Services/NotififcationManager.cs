@@ -1,17 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Services.Notifications;
 using Riverside.Graphite.Services.Notifications.Toasts;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Windows.AppNotifications;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Azure.Core.HttpHeader;
 
 namespace Riverside.Graphite.Services
 {
@@ -21,7 +15,7 @@ namespace Riverside.Graphite.Services
 
 		private Dictionary<int, Action<AppNotificationActivatedEventArgs>> c_notificationHandlers;
 
-		public NotificationManager() 
+		public NotificationManager()
 		{
 			m_isRegistered = false;
 
@@ -78,7 +72,7 @@ namespace Riverside.Graphite.Services
 					{
 						c_notificationHandlers[((int)(EnumMessageStatus.Updated))](notificationActivatedEventArgs);
 					}
-					else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp") 
+					else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp")
 					{
 						c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
 					}

@@ -1,6 +1,6 @@
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Services;
 using System;
 
 // To learn more about WinUI, the WinUI project structure,

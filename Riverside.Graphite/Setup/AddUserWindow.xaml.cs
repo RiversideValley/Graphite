@@ -1,12 +1,12 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Core.Helper;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Pages.SettingsPages;
-using Riverside.Graphite.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Pages.SettingsPages;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,15 +1,12 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite;
-using Riverside.Graphite.Services.Messages;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Messages;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using WinRT.Interop;
-using static Riverside.Graphite.Services.Notifications.NotificationMessenger;
 
 namespace Riverside.Graphite.Services.Notifications.Toasts;
 

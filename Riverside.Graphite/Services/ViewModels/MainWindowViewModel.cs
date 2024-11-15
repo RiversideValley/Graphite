@@ -2,19 +2,18 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Services.Notifications;
-using Riverside.Graphite.Services.Notifications.Toasts;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.Notifications.Toasts;
 using System;
 using System.IO;
 using System.Threading;
@@ -232,7 +231,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	private void ShowLoginNotification()
 	{
-		ToastRatings.SendToast(); 
+		ToastRatings.SendToast();
 		ShowNotification("Riverside.Graphite", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
 	}
 

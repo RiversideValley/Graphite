@@ -1,13 +1,5 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.CoreUi;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.ShareHelper;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -15,6 +7,14 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json.Linq;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.CoreUi;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.ShareHelper;
+using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -517,8 +517,8 @@ public sealed partial class WebContent : Page
 
 			return false;
 		}
-		
-		return false; 
+
+		return false;
 	}
 
 	private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)

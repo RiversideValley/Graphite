@@ -1,5 +1,4 @@
-﻿using Riverside.Graphite.Extensions;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Data.Common;
 

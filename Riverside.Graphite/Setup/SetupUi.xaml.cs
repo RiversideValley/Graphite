@@ -1,6 +1,6 @@
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Services;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Riverside.Graphite;

@@ -1,5 +1,5 @@
-﻿using Riverside.Graphite.Services;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Services;
 
 
 namespace Riverside.Graphite.Controls

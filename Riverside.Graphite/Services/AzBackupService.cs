@@ -1,13 +1,13 @@
 ﻿using Azure.Data.Tables;
 using Azure.Storage.Blobs;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services.Models;
 using Microsoft.Identity.Client;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,5 +1,5 @@
-﻿using Riverside.Graphite.Core;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using Riverside.Graphite.Core;
 using System;
 using System.IO;
 

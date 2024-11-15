@@ -1,22 +1,17 @@
-﻿using Microsoft.Windows.AppNotifications.Builder;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Riverside.Graphite.Core;
+using Microsoft.Windows.AppNotifications.Builder;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services.Messages;
+using System;
 using System.Collections.ObjectModel;
 using WinRT.Interop;
-using Microsoft.UI.Xaml;
 
 namespace Riverside.Graphite.Services.Notifications.Toasts
 {
 	public class ToastUpdate
 	{
-	
+
 		public const string Title = "Fire Browser Notifications";
 
 		public static ObservableCollection<FireNotification> NotificationMessages = new();

@@ -1,6 +1,6 @@
-using Riverside.Graphite.Runtime.Licensing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Runtime.Licensing;
 using System;
 using System.IO;
 

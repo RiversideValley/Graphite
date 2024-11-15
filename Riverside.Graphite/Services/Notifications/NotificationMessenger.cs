@@ -1,18 +1,11 @@
-﻿using Riverside.Graphite.Pages;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppNotifications.Builder;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
-using Microsoft.Xaml.Interactivity;
+using Microsoft.Windows.AppNotifications.Builder;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Services.Store;
-using WinRT.Interop;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Riverside.Graphite.Services.Notifications
 {
@@ -22,11 +15,11 @@ namespace Riverside.Graphite.Services.Notifications
 		private StoreContext _storeContext;
 		public ObservableCollection<FireNotification> PublicMessages => messages;
 
-		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage) 
+		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage)
 		{
 			messages = messagesPage;
 			_ = InitializeStoreContext();
-			
+
 		}
 		private async Task InitializeStoreContext()
 		{
@@ -51,7 +44,7 @@ namespace Riverside.Graphite.Services.Notifications
 			if (_storeContext is null) return;
 
 			IReadOnlyList<StorePackageUpdate> updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
-			
+
 			if (updates.Count > 0)
 			{
 				StorePackageUpdateResult updateResult = await _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
@@ -121,7 +114,7 @@ namespace Riverside.Graphite.Services.Notifications
 
 			WinRT.Interop.InitializeWithWindow.Initialize(_storeContext, WinRT.Interop.WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow));
 			StoreRateAndReviewResult result = await _storeContext.RequestRateAndReviewAppAsync();
-			
+
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 

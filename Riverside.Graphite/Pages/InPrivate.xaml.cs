@@ -1,6 +1,6 @@
+using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Services;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Riverside.Graphite.Pages;
 public sealed partial class InPrivate : Page

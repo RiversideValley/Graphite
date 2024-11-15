@@ -1,6 +1,6 @@
-﻿using Riverside.Graphite.Core;
-using Microsoft.UI.Xaml.Markup;
+﻿using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;

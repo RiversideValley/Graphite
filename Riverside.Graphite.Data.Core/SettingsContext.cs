@@ -1,5 +1,5 @@
-﻿using Riverside.Graphite.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Riverside.Graphite.Core;
 using System;
 using System.IO;
 

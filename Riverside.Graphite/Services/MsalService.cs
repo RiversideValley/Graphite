@@ -1,14 +1,14 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Services.Contracts;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;

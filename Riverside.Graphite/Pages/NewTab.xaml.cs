@@ -1,15 +1,4 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.ImagesBing;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Favorites;
 using FireBrowserDatabase;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Pages.Models;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Models;
-using Riverside.Graphite.ViewModels;
 using Microsoft.Bing.WebSearch.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -18,7 +7,17 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
-using Newtonsoft.Json;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Pages.Models;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.ImagesBing;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
+using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,13 +53,13 @@ public sealed partial class NewTab : Page
 		// assign to ViewModel, and or new instance.  
 		ViewModel.SettingsService.Initialize();
 		userSettings = ViewModel.SettingsService.CoreSettings;
-		
+
 		InitializeComponent();
 
-	
+
 	}
-	
-	
+
+
 	private async void NewTabSearchBox_QuerySubmittedAsync(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 	{
 		if (string.IsNullOrEmpty(args.QueryText))
@@ -246,7 +245,7 @@ public sealed partial class NewTab : Page
 		NewTabSearchBox.Text = string.Empty;
 		_ = NewTabSearchBox.Focus(FocusState.Programmatic);
 
-		
+
 
 		HomeSync();
 	}
@@ -344,7 +343,7 @@ public sealed partial class NewTab : Page
 		source.Cancel();
 		ViewModel.CancellationTokenTimer = source.Token;
 
-		base.OnNavigatedFrom(e);	
+		base.OnNavigatedFrom(e);
 	}
 	public static Brush GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, Riverside.Graphite.Core.Settings userSettings)
 	{
@@ -436,7 +435,7 @@ public sealed partial class NewTab : Page
 		return new SolidColorBrush();
 	}
 
-	
+
 
 	private async Task DownloadImage()
 	{

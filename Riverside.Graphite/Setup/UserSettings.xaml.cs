@@ -1,8 +1,8 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 using System;
 using System.Linq;
 

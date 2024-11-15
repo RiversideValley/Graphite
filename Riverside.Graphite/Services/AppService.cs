@@ -1,22 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Services.Contracts;
-using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Setup;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -188,7 +187,7 @@ public static class AppService
 				else if (url.StartsWith("firebrowserincog://"))
 				{
 					AppArguments.FireBrowserIncog = url;
-					ValidateCreatePrivateUser(); 
+					ValidateCreatePrivateUser();
 					CheckNormal("Private");
 				}
 				else if (url.Contains(".pdf"))
@@ -484,7 +483,7 @@ public static class AppService
 	{
 		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
 
-		if (Directory.Exists(userFolderPath)) return; 
+		if (Directory.Exists(userFolderPath)) return;
 
 		User newUser = new()
 		{
@@ -496,7 +495,7 @@ public static class AppService
 
 		AuthService.AddUser(newUser);
 		UserFolderManager.CreateUserFolders(newUser);
-		
+
 	}
 	static void HideDirectory(string directoryPath)
 	{
