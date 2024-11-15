@@ -187,7 +187,6 @@
     <ProjectReference Include="..\Riverside.Graphite.Data\Riverside.Graphite.Data.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Core\Riverside.Graphite.Data.Core.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Favorites\Riverside.Graphite.Data.Favorites.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Runtime.Licensing\Riverside.Graphite.Runtime.Licensing.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Migration\Riverside.Graphite.Data.Migration.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Extensions\Riverside.Graphite.Extensions.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />

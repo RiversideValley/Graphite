@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.Services.Store;
 using Windows.System;
 
-namespace Riverside.Graphite.Runtime.Licensing
+namespace Riverside.Graphite.Utils
 {
 	public class AddonManager
 	{

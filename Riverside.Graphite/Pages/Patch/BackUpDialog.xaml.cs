@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Riverside.Graphite.Runtime.Licensing;
+using Riverside.Graphite.Utils;
 using System;
 using System.IO;
 
@@ -15,7 +15,7 @@ namespace Riverside.Graphite.Pages.Patch
 		private readonly string premiumLicensePath;
 		private bool IsCloudBackup { get; set; } = false;
 
-		private readonly Riverside.Graphite.Runtime.Licensing.AddonManager _addonManager;
+		private readonly AddonManager _addonManager;
 
 		public BackUpDialog()
 		{
