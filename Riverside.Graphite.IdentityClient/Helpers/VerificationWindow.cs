@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Riverside.Graphite.IdentityClient.Private;
+namespace Riverside.Graphite.IdentityClient.Helpers;
 
 #pragma warning disable CS8618
 public class VerificationWindow

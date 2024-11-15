@@ -1,4 +1,4 @@
-﻿namespace Riverside.Graphite.IdentityClient.Private;
+﻿namespace Riverside.Graphite.IdentityClient.Helpers;
 
 public interface IKeyProvider
 {

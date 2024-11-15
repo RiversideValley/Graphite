@@ -1,4 +1,4 @@
-﻿using Riverside.Graphite.IdentityClient.Private;
+﻿using Riverside.Graphite.IdentityClient.Helpers;
 using Riverside.Graphite.Runtime.Models;
 using System.Collections.Generic;
 using System.ComponentModel;

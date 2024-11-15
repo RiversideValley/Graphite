@@ -1,5 +1,5 @@
 ﻿using Riverside.Graphite.IdentityClient.Controls;
-using Riverside.Graphite.IdentityClient.Private;
+using Riverside.Graphite.IdentityClient.Helpers;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Runtime.Helpers;
 using Microsoft.UI.Xaml;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Riverside.Graphite.IdentityClient.Private;
+namespace Riverside.Graphite.IdentityClient.Helpers;
 
 public static class KeyGeneration
 {
