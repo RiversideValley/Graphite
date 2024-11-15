@@ -20,10 +20,7 @@ public static class KeyGeneration
 
 	public static byte[] DeriveKeyFromMaster(IKeyProvider masterKey, byte[] identifier, OtpHashMode mode = OtpHashMode.Sha1)
 	{
-		if (masterKey == null)
-		{
-			throw new ArgumentNullException(nameof(masterKey));
-		}
+		ArgumentNullException.ThrowIfNull(masterKey);
 		return masterKey.ComputeHmac(mode, identifier);
 	}
 
