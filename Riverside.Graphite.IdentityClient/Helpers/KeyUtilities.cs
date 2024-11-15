@@ -6,10 +6,7 @@ internal static class KeyUtilities
 {
 	internal static void Destroy(byte[] sensitiveData)
 	{
-		if (sensitiveData == null)
-		{
-			throw new ArgumentNullException(nameof(sensitiveData));
-		}
+		ArgumentNullException.ThrowIfNull(sensitiveData);
 
 		var rng = new Random();
 		rng.NextBytes(sensitiveData);

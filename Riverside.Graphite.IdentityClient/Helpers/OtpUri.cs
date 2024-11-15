@@ -28,8 +28,7 @@ public class OtpUri
 	{
 		_ = secret ?? throw new ArgumentNullException(nameof(secret));
 		_ = user ?? throw new ArgumentNullException(nameof(user));
-		if (digits < 0)
-			throw new ArgumentOutOfRangeException(nameof(digits));
+		ArgumentOutOfRangeException.ThrowIfNegative(digits);
 
 		Type = schema;
 		Secret = secret;
