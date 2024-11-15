@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Riverside.Graphite.IdentityClient.Private\Riverside.Graphite.IdentityClient.Private.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
   </ItemGroup>
 </Project>
