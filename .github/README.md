@@ -47,7 +47,7 @@ After installation, launch Graphite and log in using your Microsoft credentials.
 
 Want to contribute to this project? Let us know with an [issue](https://github.com/RiversideValley/Graphite/issues) that communicates your intent to create a [pull request](https://github.com/RiversideValley/Graphite/pulls).
 
-Looking for a place to start? Check out the [task board](https://github.com/orgs/FirebrowserDevs/projects/2), where you can sort tasks by size and priority.
+Looking for a place to start? Check out the [task board](https://github.com/orgs/RiversideValley/projects/8/views/2), where you can sort tasks by size and priority.
 
 ## ⚖️ License
 
