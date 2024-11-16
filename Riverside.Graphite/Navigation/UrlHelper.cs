@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 
 namespace Riverside.Graphite.Navigation;
+
 public class UrlHelper
 {
 	public static string GetInputType(string input) => IsURL(input) ? "url" : IsURLWithoutProtocol(input) ? "urlNOProtocol" : "searchquery";

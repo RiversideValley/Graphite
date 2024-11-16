@@ -34,10 +34,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="public_domains.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>
