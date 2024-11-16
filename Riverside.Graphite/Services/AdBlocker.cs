@@ -214,10 +214,21 @@ namespace Riverside.Graphite.Services
 
 		public async Task InjectAdBlockingScript()
 		{
-			if (_isEnabled && _scriptJS != null)
+			try
 			{
-				await _webView.CoreWebView2.ExecuteScriptAsync(_scriptJS);
+				await _webView.EnsureCoreWebView2Async();
+
+				if (_isEnabled && _scriptJS != null)
+				{
+					await _webView.CoreWebView2.ExecuteScriptAsync(_scriptJS);
+				}
 			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+			
 		}
 
 		protected virtual void Dispose(bool disposing)

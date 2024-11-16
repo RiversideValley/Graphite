@@ -139,13 +139,15 @@ public sealed partial class WebContent : Page
 	{
 		base.OnNavigatedTo(e);
 		param = e.Parameter as Passer;
+
+		await WebViewElement.EnsureCoreWebView2Async();
+
 		if (AdBlockerService is not null) {
 			AdBlockerService.Toggle();
 			await AdBlockerService.Initialize(WebViewElement);
 		}
 
-		await WebViewElement.EnsureCoreWebView2Async();
-
+		
 		LoadSettings();
 
 	
