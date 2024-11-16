@@ -90,7 +90,7 @@ public class Totp : Otp
 
 	private int RemainingSecondsForSpecificTime(DateTime timestamp)
 	{
-		return _step - (int)((timestamp.Ticks - UnicEpocTicks) / TicksToSeconds % _step);
+		return _step - (int)(((timestamp.Ticks - UnicEpocTicks) / TicksToSeconds) % _step);
 	}
 
 	public DateTime WindowStart()
