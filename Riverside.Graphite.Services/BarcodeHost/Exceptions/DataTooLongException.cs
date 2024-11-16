@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Riverside.GraphiteQrCore.Exceptions;
+namespace Riverside.Graphite.Services.BarcodeHost.Exceptions;
 public class DataTooLongException : Exception
 {
 	public DataTooLongException(string eccLevel, string encodingMode, int maxSizeByte) : base(

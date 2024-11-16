@@ -1,12 +1,12 @@
-using Riverside.GraphiteQrCore.Extensions;
+using Riverside.Graphite.Services.BarcodeHost.Extensions;
 using System;
 using System.Collections;
 using System.Drawing;
 using System.Text;
-using static Riverside.GraphiteQrCore.QRCodeGenerator;
-using static Riverside.GraphiteQrCore.SvgQRCode;
+using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
+using static Riverside.Graphite.Services.BarcodeHost.SvgQRCode;
 
-namespace Riverside.GraphiteQrCore;
+namespace Riverside.Graphite.Services.BarcodeHost;
 
 #if NET6_0_WINDOWS
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]

@@ -1,4 +1,4 @@
-using Riverside.GraphiteQrCore.FrameworkMethods;
+using Riverside.Graphite.Services.BarcodeHost.FrameworkMethods;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 #endif
 
-namespace Riverside.GraphiteQrCore;
+namespace Riverside.Graphite.Services.BarcodeHost;
 public static class PayloadGenerator
 {
 	public abstract class Payload
@@ -986,7 +986,7 @@ public static class PayloadGenerator
 
 			private Contact(string name, string zipCode, string city, string country, string streetOrAddressline1, string houseNumberOrAddressline2, AddressType addressType)
 			{
-				//Pattern extracted from https://qr-validation.iso-payments.ch as explained in https://github.com/codebude/Riverside.GraphiteQrCore/issues/97
+				//Pattern extracted from https://qr-validation.iso-payments.ch as explained in https://github.com/codebude/Riverside.Graphite.Services.BarcodeHost/issues/97
 				var charsetPattern = @"^([a-zA-Z0-9\.,;:'\ \+\-/\(\)?\*\[\]\{\}\\`´~ ]|[!""#%&<>÷=@_$£]|[àáâäçèéêëìíîïñòóôöùúûüýßÀÁÂÄÇÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÑ])*$";
 
 				this.adrType = addressType;

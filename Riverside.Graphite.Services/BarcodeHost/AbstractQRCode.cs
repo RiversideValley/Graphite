@@ -1,4 +1,4 @@
-﻿namespace Riverside.GraphiteQrCore;
+﻿namespace Riverside.Graphite.Services.BarcodeHost;
 public abstract class AbstractQRCode
 {
 	protected QRCodeData QrCodeData { get; set; }

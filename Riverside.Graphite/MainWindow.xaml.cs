@@ -22,7 +22,7 @@ using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Notifications.Toasts;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
-using Riverside.GraphiteQrCore;
+using Riverside.Graphite.Services.BarcodeHost;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

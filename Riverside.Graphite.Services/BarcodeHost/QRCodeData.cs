@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Riverside.GraphiteQrCore;
+namespace Riverside.Graphite.Services.BarcodeHost;
 
-using Riverside.GraphiteQrCore.FrameworkMethods;
+using Riverside.Graphite.Services.BarcodeHost.FrameworkMethods;
 using System;
 using System.Collections;
 using System.IO;

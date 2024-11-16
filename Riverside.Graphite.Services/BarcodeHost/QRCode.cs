@@ -1,9 +1,9 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using static Riverside.GraphiteQrCore.QRCodeGenerator;
+using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
 
-namespace Riverside.GraphiteQrCore;
+namespace Riverside.Graphite.Services.BarcodeHost;
 
 #if NET6_0_WINDOWS
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]

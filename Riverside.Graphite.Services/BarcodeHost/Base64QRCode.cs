@@ -2,10 +2,10 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using static Riverside.GraphiteQrCore.Base64QRCode;
-using static Riverside.GraphiteQrCore.QRCodeGenerator;
+using static Riverside.Graphite.Services.BarcodeHost.Base64QRCode;
+using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
 
-namespace Riverside.GraphiteQrCore;
+namespace Riverside.Graphite.Services.BarcodeHost;
 
 public class Base64QRCode : AbstractQRCode, IDisposable
 {

@@ -191,7 +191,6 @@
     <ProjectReference Include="..\Riverside.Graphite.Extensions\Riverside.Graphite.Extensions.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Navigation\Riverside.Graphite.Navigation.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Services.BarcodeHost\Riverside.Graphite.Services.BarcodeHost.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Services\Riverside.Graphite.Services.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Riverside.GraphiteQrCore.Extensions;
+namespace Riverside.Graphite.Services.BarcodeHost.Extensions;
 public class StringValueAttribute : Attribute
 {
 	#region Properties

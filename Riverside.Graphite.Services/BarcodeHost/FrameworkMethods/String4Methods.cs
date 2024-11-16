@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Riverside.GraphiteQrCore.FrameworkMethods;
+namespace Riverside.Graphite.Services.BarcodeHost.FrameworkMethods;
 internal static class String40Methods
 {
 	/// <returns>
