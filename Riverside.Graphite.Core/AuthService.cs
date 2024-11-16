@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,6 +101,5 @@ public class AuthService
 	{
 		public FileInfo FileInfo { get; set; }
 		public DirectoryInfo? DirectoryInfo { get; set; }
-
 	}
 }

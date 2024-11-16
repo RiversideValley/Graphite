@@ -1,4 +1,4 @@
-﻿using Riverside.Graphite.Core;
+using Riverside.Graphite.Core;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -14,5 +14,4 @@ public class DbUser
 
 	[JsonPropertyName("UserSettings")]
 	public Settings UserSettings { get; set; }
-
 }

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Core;
@@ -14,6 +14,4 @@ public static class UserFolderManager
 		Parallel.ForEach(SubFolderNames, folderName =>
 			Directory.CreateDirectory(Path.Combine(userFolderPath, folderName)));
 	}
-
-
 }

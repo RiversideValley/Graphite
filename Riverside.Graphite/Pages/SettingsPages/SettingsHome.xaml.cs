@@ -266,7 +266,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 			finally
 			{
-
 			}
 		}
 	}

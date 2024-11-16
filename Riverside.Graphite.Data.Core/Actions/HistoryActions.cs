@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Data.Core.Models;
@@ -30,7 +30,7 @@ public class HistoryActions : IHistoryActions
 				string dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 				HistoryContext.Urls.Where(x => x.url == url).ExecuteUpdate(y => y.SetProperty(z => z.visit_count, z => z.visit_count + 1)
 				.SetProperty(a => a.last_visit_time, dateTime)
-				.SetProperty(b => b.title, title)); ;
+				.SetProperty(b => b.title, title));
 			}
 			else
 			{
@@ -50,7 +50,6 @@ public class HistoryActions : IHistoryActions
 	{
 		try
 		{
-
 			await HistoryContext.Urls.Where(x => x.url == url).ExecuteDeleteAsync();
 			await HistoryContext.SaveChangesAsync();
 		}
@@ -63,7 +62,6 @@ public class HistoryActions : IHistoryActions
 
 	public async Task DeleteAllHistoryItems()
 	{
-
 		var tran = HistoryContext.Database.BeginTransaction();
 
 		try
@@ -79,15 +77,12 @@ public class HistoryActions : IHistoryActions
 			Console.WriteLine($"Error deleting history item: {ex.Message}");
 			tran.Rollback();
 		}
-
 	}
 
 	public async Task<ObservableCollection<FireBrowserDatabase.HistoryItem>> GetAllHistoryItems()
 	{
-
 		try
 		{
-
 			List<FireBrowserDatabase.HistoryItem> items = (from x in HistoryContext.Urls
 														   select new FireBrowserDatabase.HistoryItem
 														   {
@@ -102,7 +97,6 @@ public class HistoryActions : IHistoryActions
 														   }).OrderBy(x => x.LastVisitTime).Reverse().ToList();
 
 			return await Task.FromResult(items.ToObservableCollection<FireBrowserDatabase.HistoryItem>());
-
 		}
 		catch (Exception ex)
 		{

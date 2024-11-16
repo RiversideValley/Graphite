@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -10,7 +10,6 @@ using Windows.Storage;
 
 namespace Riverside.Graphite.Runtime.Helpers
 {
-
 	public class UrlValidater
 	{
 		public static async Task<bool> IsUrlReachable(Uri url)
@@ -46,7 +45,6 @@ namespace Riverside.Graphite.Runtime.Helpers
 		}
 		public static Uri? GetValidateUrl(string queryText)
 		{
-
 			Uri uriOut = null;
 			Regex regex = new Regex(@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog|firebrowser)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$", RegexOptions.IgnoreCase);
 

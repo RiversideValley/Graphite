@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FireBrowserDatabase;
@@ -180,7 +180,6 @@ public partial class HomeViewModel : ObservableRecipient
 	public HomeViewModel(IMessenger messenger)
 		: base(messenger)
 	{
-
 		FavoriteItems = new ObservableCollection<FavItem>();
 		FavoriteItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FavoriteItems));
 
@@ -197,15 +196,12 @@ public partial class HomeViewModel : ObservableRecipient
 	[RelayCommand]
 	private void ProtocolHandler(object sender)
 	{
-
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			_ = (window.DispatcherQueue?.TryEnqueue(() =>
 			{
-
 				if (sender is Button btn)
 				{
-
 					switch (btn.Tag.ToString())
 					{
 						case "Settings":
@@ -228,7 +224,6 @@ public partial class HomeViewModel : ObservableRecipient
 				}
 			}));
 		}
-
 	}
 	public Task Intialize()
 	{
@@ -261,7 +256,6 @@ public partial class HomeViewModel : ObservableRecipient
 
 	partial void OnIsTrendingVisibleChanged(Visibility value)
 	{
-
 		switch (value)
 		{
 			case Visibility.Visible:
@@ -277,21 +271,16 @@ public partial class HomeViewModel : ObservableRecipient
 			default:
 				break;
 		}
-
-
-
 	}
 
 	public Task UpdateTrending()
 	{
-
 		var timer = new DispatcherTimer();
 		timer.Interval = TimeSpan.FromMinutes(4);
 		timer.Tick += (s, e) =>
 		{
 			if (!SettingsService.CoreSettings.IsTrendingVisible)
 			{
-
 				CancellationTokenSource source = new CancellationTokenSource();
 				source.Cancel();
 				CancellationTokenTimer = source.Token;
@@ -306,7 +295,6 @@ public partial class HomeViewModel : ObservableRecipient
 
 		async void GetTrending()
 		{
-
 			if (CancellationTokenTimer.IsCancellationRequested)
 			{
 				timer.Stop();
@@ -324,7 +312,6 @@ public partial class HomeViewModel : ObservableRecipient
 
 				foreach (Newtonsoft.Json.Linq.JToken item in list)
 				{
-
 					TrendingItems.Add(new TrendingItem(item["webSearchUrl"].ToString(), item["name"].ToString(), item["image"]["url"].ToString(), item["query"]["text"].ToString()));
 				}
 			}

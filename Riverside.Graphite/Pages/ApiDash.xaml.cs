@@ -103,7 +103,6 @@ namespace Riverside.Graphite.Pages
 			}
 			catch
 			{
-
 			}
 		}
 

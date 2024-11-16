@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using static Riverside.GraphiteQrCore.QRCodeGenerator;
@@ -41,7 +41,7 @@ public class QRCode : AbstractQRCode, IDisposable
 			{
 				for (var y = 0; y < size + offset; y = y + pixelsPerModule)
 				{
-					var module = this.QrCodeData.ModuleMatrix[(y + pixelsPerModule) / pixelsPerModule - 1][(x + pixelsPerModule) / pixelsPerModule - 1];
+					var module = this.QrCodeData.ModuleMatrix[((y + pixelsPerModule) / pixelsPerModule) - 1][((x + pixelsPerModule) / pixelsPerModule) - 1];
 
 					if (module)
 					{
@@ -80,7 +80,7 @@ public class QRCode : AbstractQRCode, IDisposable
 			{
 				for (var y = 0; y < size + offset; y = y + pixelsPerModule)
 				{
-					var moduleBrush = this.QrCodeData.ModuleMatrix[(y + pixelsPerModule) / pixelsPerModule - 1][(x + pixelsPerModule) / pixelsPerModule - 1] ? darkBrush : lightBrush;
+					var moduleBrush = this.QrCodeData.ModuleMatrix[((y + pixelsPerModule) / pixelsPerModule) - 1][((x + pixelsPerModule) / pixelsPerModule) - 1] ? darkBrush : lightBrush;
 					gfx.FillRectangle(moduleBrush, new Rectangle(x - offset, y - offset, pixelsPerModule, pixelsPerModule));
 				}
 			}
@@ -91,7 +91,7 @@ public class QRCode : AbstractQRCode, IDisposable
 				float iconDestHeight = drawIconFlag ? iconDestWidth * icon.Height / icon.Width : 0;
 				float iconX = (bmp.Width - iconDestWidth) / 2;
 				float iconY = (bmp.Height - iconDestHeight) / 2;
-				var centerDest = new RectangleF(iconX - iconBorderWidth, iconY - iconBorderWidth, iconDestWidth + iconBorderWidth * 2, iconDestHeight + iconBorderWidth * 2);
+				var centerDest = new RectangleF(iconX - iconBorderWidth, iconY - iconBorderWidth, iconDestWidth + (iconBorderWidth * 2), iconDestHeight + (iconBorderWidth * 2));
 				var iconDestRect = new RectangleF(iconX, iconY, iconDestWidth, iconDestHeight);
 				var iconBgBrush = iconBackgroundColor != null ? new SolidBrush((Color)iconBackgroundColor) : lightBrush;
 				//Only render icon/logo background, if iconBorderWith is set > 0
@@ -115,13 +115,13 @@ public class QRCode : AbstractQRCode, IDisposable
 	{
 		var roundedRect = new GraphicsPath();
 		roundedRect.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
-		roundedRect.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - cornerRadius * 2, rect.Y);
-		roundedRect.AddArc(rect.X + rect.Width - cornerRadius * 2, rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
-		roundedRect.AddLine(rect.Right, rect.Y + cornerRadius * 2, rect.Right, rect.Y + rect.Height - cornerRadius * 2);
-		roundedRect.AddArc(rect.X + rect.Width - cornerRadius * 2, rect.Y + rect.Height - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
-		roundedRect.AddLine(rect.Right - cornerRadius * 2, rect.Bottom, rect.X + cornerRadius * 2, rect.Bottom);
-		roundedRect.AddArc(rect.X, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 90);
-		roundedRect.AddLine(rect.X, rect.Bottom - cornerRadius * 2, rect.X, rect.Y + cornerRadius * 2);
+		roundedRect.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - (cornerRadius * 2), rect.Y);
+		roundedRect.AddArc(rect.X + rect.Width - (cornerRadius * 2), rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
+		roundedRect.AddLine(rect.Right, rect.Y + (cornerRadius * 2), rect.Right, rect.Y + rect.Height - (cornerRadius * 2));
+		roundedRect.AddArc(rect.X + rect.Width - (cornerRadius * 2), rect.Y + rect.Height - (cornerRadius * 2), cornerRadius * 2, cornerRadius * 2, 0, 90);
+		roundedRect.AddLine(rect.Right - (cornerRadius * 2), rect.Bottom, rect.X + (cornerRadius * 2), rect.Bottom);
+		roundedRect.AddArc(rect.X, rect.Bottom - (cornerRadius * 2), cornerRadius * 2, cornerRadius * 2, 90, 90);
+		roundedRect.AddLine(rect.X, rect.Bottom - (cornerRadius * 2), rect.X, rect.Y + (cornerRadius * 2));
 		roundedRect.CloseFigure();
 		return roundedRect;
 	}

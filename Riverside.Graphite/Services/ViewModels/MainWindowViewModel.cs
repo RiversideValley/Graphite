@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
@@ -53,13 +53,10 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[RelayCommand]
 	public void CloseMoreFlyout()
 	{
-
 		_ = MainView.DispatcherQueue.TryEnqueue(() =>
 		{
 			MainView?.MoreFlyout.Hide();
 		});
-
-
 	}
 	[RelayCommand]
 	public Task GetActiveWebView()

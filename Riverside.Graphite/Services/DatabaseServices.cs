@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -17,7 +17,7 @@ public class DatabaseServices : IDatabaseService
 		if (!AuthService.IsUserAuthenticated)
 		{
 			return Task.FromResult(false);
-		};
+		}
 
 		try
 		{
@@ -50,7 +50,7 @@ public class DatabaseServices : IDatabaseService
 		if (!AuthService.IsUserAuthenticated)
 		{
 			return Task.FromResult(false);
-		};
+		}
 
 		try
 		{
@@ -81,7 +81,7 @@ public class DatabaseServices : IDatabaseService
 		if (!AuthService.IsUserAuthenticated)
 		{
 			return Task.FromResult(false);
-		};
+		}
 
 		try
 		{
@@ -96,7 +96,6 @@ public class DatabaseServices : IDatabaseService
 			}
 		}
 		catch (Exception ex)
-
 		{
 			ExceptionLogger.LogException(ex);
 			Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
@@ -133,7 +132,6 @@ public class DatabaseServices : IDatabaseService
 			}
 		}
 		catch (Exception ex)
-
 		{
 			ExceptionLogger.LogException(ex);
 			Console.WriteLine($"Error in Creating Downloads Database: {ex.Message}");

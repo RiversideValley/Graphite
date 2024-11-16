@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -38,7 +38,6 @@ public class SettingsActions : IUISettings
 			SettingsContext.Settings.Update(settings);
 			var result = await SettingsContext.SaveChangesAsync();
 			return result > 0 ? true : false;
-
 		}
 		catch (Exception ex)
 		{
@@ -55,7 +54,6 @@ public class SettingsActions : IUISettings
 			SettingsContext.Settings.Add(settings);
 			var result = await SettingsContext.SaveChangesAsync();
 			return result > 0 ? true : false;
-
 		}
 		catch (Exception ex)
 		{

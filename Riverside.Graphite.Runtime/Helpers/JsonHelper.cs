@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Core.Helper;
 using System;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Runtime.Helpers
 {
-
 	public delegate Task SaveToFileDelegate(JArray newArray);
 
 	public class JsonHelper
@@ -65,8 +64,6 @@ namespace Riverside.Graphite.Runtime.Helpers
 				}
 				await Task.Delay(360);
 			}
-
 		}
-
 	}
 }

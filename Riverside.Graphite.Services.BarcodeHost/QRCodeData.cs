@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Riverside.GraphiteQrCore;
 
@@ -65,7 +65,7 @@ public class QRCodeData : IDisposable
 		//Set QR code version
 		var sideLen = (int)bytes[4];
 		bytes.RemoveRange(0, 5);
-		this.Version = (sideLen - 21 - 8) / 4 + 1;
+		this.Version = ((sideLen - 21 - 8) / 4) + 1;
 
 		//Unpack
 		var modules = new Queue<bool>(8 * bytes.Count);
@@ -88,7 +88,6 @@ public class QRCodeData : IDisposable
 				this.ModuleMatrix[y][x] = modules.Dequeue();
 			}
 		}
-
 	}
 
 	public byte[] GetRawData(Compression compressMode)
@@ -110,7 +109,7 @@ public class QRCodeData : IDisposable
 				dataQueue.Enqueue((bool)module ? 1 : 0);
 			}
 		}
-		for (int i = 0; i < 8 - (ModuleMatrix.Count * ModuleMatrix.Count) % 8; i++)
+		for (int i = 0; i < 8 - ((ModuleMatrix.Count * ModuleMatrix.Count) % 8); i++)
 		{
 			dataQueue.Enqueue(0);
 		}
@@ -164,14 +163,13 @@ public class QRCodeData : IDisposable
 
 	private static int ModulesPerSideFromVersion(int version)
 	{
-		return 21 + (version - 1) * 4;
+		return 21 + ((version - 1) * 4);
 	}
 
 	public void Dispose()
 	{
 		this.ModuleMatrix = null;
 		this.Version = 0;
-
 	}
 
 	public enum Compression

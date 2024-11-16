@@ -37,12 +37,10 @@ namespace Riverside.Graphite
 		{
 			if (sender is ToggleSwitch toggleSwitch)
 			{
-
 				// Assuming 'url' and 'selection' have been defined earlier
 				bool autoSettingValue = toggleSwitch.IsOn;
 
 				AppService.AppSettings.LightMode = autoSettingValue;
-
 			}
 		}
 

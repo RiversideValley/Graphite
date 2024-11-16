@@ -1,4 +1,4 @@
-﻿using Riverside.GraphiteQrCore.Extensions;
+using Riverside.GraphiteQrCore.Extensions;
 using System;
 using System.Collections;
 using System.Drawing;
@@ -43,7 +43,7 @@ public class SvgQRCode : AbstractQRCode, IDisposable
 	public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
 		var offset = drawQuietZones ? 0 : 4;
-		var edgeSize = this.QrCodeData.ModuleMatrix.Count * pixelsPerModule - (offset * 2 * pixelsPerModule);
+		var edgeSize = (this.QrCodeData.ModuleMatrix.Count * pixelsPerModule) - (offset * 2 * pixelsPerModule);
 		var viewBox = new Size(edgeSize, edgeSize);
 		return this.GetGraphic(viewBox, darkColor, lightColor, drawQuietZones, sizingMode, logo);
 	}
@@ -61,7 +61,7 @@ public class SvgQRCode : AbstractQRCode, IDisposable
 	public string GetGraphic(int pixelsPerModule, string darkColorHex, string lightColorHex, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
 		var offset = drawQuietZones ? 0 : 4;
-		var edgeSize = this.QrCodeData.ModuleMatrix.Count * pixelsPerModule - (offset * 2 * pixelsPerModule);
+		var edgeSize = (this.QrCodeData.ModuleMatrix.Count * pixelsPerModule) - (offset * 2 * pixelsPerModule);
 		var viewBox = new Size(edgeSize, edgeSize);
 		return this.GetGraphic(viewBox, darkColorHex, lightColorHex, drawQuietZones, sizingMode, logo);
 	}
@@ -219,8 +219,8 @@ public class SvgQRCode : AbstractQRCode, IDisposable
 	{
 		var imgWidth = logo.GetIconSizePercent() / 100d * viewBox.Width;
 		var imgHeight = logo.GetIconSizePercent() / 100d * viewBox.Height;
-		var imgPosX = viewBox.Width / 2d - imgWidth / 2d;
-		var imgPosY = viewBox.Height / 2d - imgHeight / 2d;
+		var imgPosX = (viewBox.Width / 2d) - (imgWidth / 2d);
+		var imgPosY = (viewBox.Height / 2d) - (imgHeight / 2d);
 		return new ImageAttributes()
 		{
 			Width = imgWidth,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Riverside.Graphite.Runtime.Helpers.Logging;
@@ -10,7 +10,6 @@ public static class ExceptionLogger
 
 	public static void LogInformation(string message)
 	{
-
 		try
 		{
 			using (StreamWriter writer = new StreamWriter(InformationFilePath, true))
@@ -25,8 +24,6 @@ public static class ExceptionLogger
 			// Log the exception to the console if an error occurs while logging
 			Console.WriteLine($"Error while logging information: {logEx.Message}");
 		}
-
-
 	}
 	public static void LogException(Exception ex)
 	{

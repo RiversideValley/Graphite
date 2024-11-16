@@ -20,7 +20,6 @@ namespace Riverside.Graphite
 
 		private void SearchengineSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
 			try
 			{
 				string selection = e.AddedItems[0].ToString();
@@ -59,7 +58,6 @@ namespace Riverside.Graphite
 			{
 				Console.WriteLine("An error occurred: " + ex.Message);
 			}
-
 		}
 
 		private void ToggleSetting(string settingName, bool value)

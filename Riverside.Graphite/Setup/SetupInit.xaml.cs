@@ -41,6 +41,5 @@ public sealed partial class SetupInit : Page
 	{
 		RestoreBackupDialog dlg = new() { XamlRoot = XamlRoot };
 		_ = await dlg.ShowAsync();
-
 	}
 }

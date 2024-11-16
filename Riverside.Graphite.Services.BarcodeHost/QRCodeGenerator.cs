@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -291,7 +291,7 @@ public class QRCodeGenerator : IDisposable
 			var sb = new StringBuilder();
 			generator = generator.PadRight(fStrEcc.Length, '0');
 			for (var i = 0; i < fStrEcc.Length; i++)
-				sb.Append((Convert.ToInt32(fStrEcc[i]) ^ Convert.ToInt32(generator[i])).ToString());
+				sb.Append(Convert.ToInt32(fStrEcc[i]) ^ Convert.ToInt32(generator[i]));
 			fStrEcc = sb.ToString().TrimStart('0');
 		}
 		fStrEcc = fStrEcc.PadLeft(10, '0');
@@ -299,7 +299,7 @@ public class QRCodeGenerator : IDisposable
 
 		var sbMask = new StringBuilder();
 		for (var i = 0; i < fStr.Length; i++)
-			sbMask.Append((Convert.ToInt32(fStr[i]) ^ Convert.ToInt32(fStrMask[i])).ToString());
+			sbMask.Append(Convert.ToInt32(fStr[i]) ^ Convert.ToInt32(fStrMask[i]));
 		return sbMask.ToString();
 	}
 
@@ -314,7 +314,7 @@ public class QRCodeGenerator : IDisposable
 			var sb = new StringBuilder();
 			generator = generator.PadRight(vStrEcc.Length, '0');
 			for (var i = 0; i < vStrEcc.Length; i++)
-				sb.Append((Convert.ToInt32(vStrEcc[i]) ^ Convert.ToInt32(generator[i])).ToString());
+				sb.Append(Convert.ToInt32(vStrEcc[i]) ^ Convert.ToInt32(generator[i]));
 			vStrEcc = sb.ToString().TrimStart('0');
 		}
 		vStrEcc = vStrEcc.PadLeft(12, '0');
@@ -365,8 +365,8 @@ public class QRCodeGenerator : IDisposable
 			{
 				for (var y = 0; y < 3; y++)
 				{
-					qrCode.ModuleMatrix[y + size - 11][x] = vStr[x * 3 + y] == '1';
-					qrCode.ModuleMatrix[x][y + size - 11] = vStr[x * 3 + y] == '1';
+					qrCode.ModuleMatrix[y + size - 11][x] = vStr[(x * 3) + y] == '1';
+					qrCode.ModuleMatrix[x][y + size - 11] = vStr[(x * 3) + y] == '1';
 				}
 			}
 		}
@@ -422,7 +422,6 @@ public class QRCodeGenerator : IDisposable
 					{
 						qrTemp.ModuleMatrix[y][x] = qrCode.ModuleMatrix[y][x];
 					}
-
 				}
 
 				var formatStr = GetFormatString(eccLevel, pattern.Key - 1);
@@ -548,8 +547,8 @@ public class QRCodeGenerator : IDisposable
 		}
 		public static void PlaceDarkModule(ref QRCodeData qrCode, int version, ref List<Rectangle> blockedModules)
 		{
-			qrCode.ModuleMatrix[4 * version + 9][8] = true;
-			blockedModules.Add(new Rectangle(8, 4 * version + 9, 1, 1));
+			qrCode.ModuleMatrix[(4 * version) + 9][8] = true;
+			blockedModules.Add(new Rectangle(8, (4 * version) + 9, 1, 1));
 		}
 
 		public static void PlaceFinderPatterns(ref QRCodeData qrCode, ref List<Rectangle> blockedModules)
@@ -798,14 +797,13 @@ public class QRCodeGenerator : IDisposable
 							blackModules++;
 
 				var percent = (blackModules / (qrCode.ModuleMatrix.Count * qrCode.ModuleMatrix.Count)) * 100;
-				var prevMultipleOf5 = Math.Abs((int)Math.Floor(percent / 5) * 5 - 50) / 5;
-				var nextMultipleOf5 = Math.Abs((int)Math.Floor(percent / 5) * 5 - 45) / 5;
+				var prevMultipleOf5 = Math.Abs(((int)Math.Floor(percent / 5) * 5) - 50) / 5;
+				var nextMultipleOf5 = Math.Abs(((int)Math.Floor(percent / 5) * 5) - 45) / 5;
 				score4 = Math.Min(prevMultipleOf5, nextMultipleOf5) * 10;
 
 				return score1 + score2 + score3 + score4;
 			}
 		}
-
 	}
 
 	private static List<string> CalculateECCWords(string bitString, ECCInfo eccInfo)
@@ -863,7 +861,6 @@ public class QRCodeGenerator : IDisposable
 
 	private static int GetVersion(int length, EncodingMode encMode, ECCLevel eccLevel)
 	{
-
 		var fittingVersions = capacityTable.Where(
 			x => x.Details.Any(
 				y => (y.ErrorCorrectionLevel == eccLevel
@@ -909,7 +906,7 @@ public class QRCodeGenerator : IDisposable
 	private static Polynom CalculateMessagePolynom(string bitString)
 	{
 		var messagePol = new Polynom();
-		for (var i = bitString.Length / 8 - 1; i >= 0; i--)
+		for (var i = (bitString.Length / 8) - 1; i >= 0; i--)
 		{
 			messagePol.PolyItems.Add(new PolynomItem(BinToDec(bitString.Substring(0, 8)), i));
 			bitString = bitString.Remove(0, 8);
@@ -1053,7 +1050,6 @@ public class QRCodeGenerator : IDisposable
 			var dec = Convert.ToInt32(plainText.Substring(0, 3));
 			codeText += DecToBin(dec, 10);
 			plainText = plainText.Substring(3);
-
 		}
 		if (plainText.Length == 2)
 		{
@@ -1074,10 +1070,9 @@ public class QRCodeGenerator : IDisposable
 		while (plainText.Length >= 2)
 		{
 			var token = plainText.Substring(0, 2);
-			var dec = alphanumEncDict[token[0]] * 45 + alphanumEncDict[token[1]];
+			var dec = (alphanumEncDict[token[0]] * 45) + alphanumEncDict[token[1]];
 			codeText += DecToBin(dec, 11);
 			plainText = plainText.Substring(2);
-
 		}
 		if (plainText.Length > 0)
 		{

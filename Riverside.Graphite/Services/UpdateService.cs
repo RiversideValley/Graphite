@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +48,7 @@ public class UpdateService
 			List<string> filesToPatch = await CompareVersionsAsync(serverData, dllFiles);
 
 			// Write the names of DLLs to be patched into the patch.core file if there are updates
-			if (filesToPatch.Any())
+			if (filesToPatch.Count != 0)
 			{
 				string patchCoreFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "patch.core");
 				await File.WriteAllLinesAsync(patchCoreFilePath, filesToPatch);

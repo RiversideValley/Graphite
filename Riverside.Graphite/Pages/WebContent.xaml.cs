@@ -116,7 +116,6 @@ public sealed partial class WebContent : Page
 		WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = preventionLevel;
 
 		WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/msal", CoreWebView2HostResourceAccessKind.Allow);
-
 	}
 
 
@@ -206,7 +205,6 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.NavigationStarting += (sender, args) =>
 		{
-
 			//s.DispatcherQueue.TryEnqueue(async () =>
 			//{
 
@@ -240,14 +238,12 @@ public sealed partial class WebContent : Page
 			//youtube doesn't report navigation when view different videos. 
 			_ = await Task.Factory.StartNew(async () =>
 			{
-
 				await Task.Delay(1800);
 
 				try
 				{
 					_ = (DispatcherQueue?.TryEnqueue(async () =>
 					{
-
 						// Delay for stability
 
 						using MemoryStream memoryStream = new();
@@ -277,12 +273,10 @@ public sealed partial class WebContent : Page
 				}
 				catch (Exception)
 				{
-
 					throw;
 				}
 
 				return Task.CompletedTask;
-
 			});
 
 			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
@@ -295,7 +289,6 @@ public sealed partial class WebContent : Page
 		{
 			ProgressLoading.IsIndeterminate = false;
 			ProgressLoading.Visibility = Visibility.Collapsed;
-
 		};
 
 		s.CoreWebView2.SourceChanged += (sender, args) =>
@@ -317,7 +310,6 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.WebResourceRequested += (sender, args) =>
 		{
-
 			if (IsLogoutRequest(args.Request))
 			{
 				AppService.IsAppUserAuthenicated = false;
@@ -337,11 +329,9 @@ public sealed partial class WebContent : Page
 					}
 				}
 			}
-
 		};
 		s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
 		{
-
 			if (IsLoginRequest(e.Request))
 			{
 				CoreWebView2WebResourceResponseView response = e.Response;
@@ -349,7 +339,6 @@ public sealed partial class WebContent : Page
 				{
 					AppService.IsAppUserAuthenicated = true;
 					Console.WriteLine("Login successful.");
-
 				}
 			}
 
@@ -371,7 +360,6 @@ public sealed partial class WebContent : Page
                                                     } return findMsalAccountKeys();})();"
 						).AsTask().ContinueWith(keys =>
 						{
-
 							// Critical section here
 							JToken token = JToken.Parse(keys.Result);
 
@@ -382,7 +370,6 @@ public sealed partial class WebContent : Page
 									AppService.IsAppUserAuthenicated = true;
 								}
 							}
-
 						});
 
 			await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeysSession() {
@@ -400,7 +387,6 @@ public sealed partial class WebContent : Page
                                                     } return findMsalAccountKeysSession();})();"
 				).AsTask().ContinueWith(keys =>
 				{
-
 					// Critical section here
 					JToken token = JToken.Parse(keys.Result);
 
@@ -411,9 +397,7 @@ public sealed partial class WebContent : Page
 							AppService.IsAppUserAuthenicated = true;
 						}
 					}
-
 				});
-
 		};
 
 		s.CoreWebView2.PermissionRequested += async (sender, args) =>
@@ -465,7 +449,6 @@ public sealed partial class WebContent : Page
 		//{
 
 		//};
-
 	}
 
 	private string FormatPermissionKind(string permissionKind)
@@ -514,7 +497,6 @@ public sealed partial class WebContent : Page
 		}
 		catch (Exception)
 		{
-
 			return false;
 		}
 

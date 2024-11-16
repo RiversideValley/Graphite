@@ -52,7 +52,6 @@ public sealed partial class FireBrowserTabViewItem : TabViewItem
 						ImgTabViewHeader.Header = new TextBlock() { Text = web.WebView.CoreWebView2?.DocumentTitle, IsColorFontEnabled = true, FontSize = 12, MaxLines = 2, TextWrapping = TextWrapping.WrapWholeWords };
 						ViewModel.IsTooltipEnabled = true;
 					}
-
 				}
 			}
 		}
