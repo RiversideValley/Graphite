@@ -22,8 +22,8 @@
 	<mp:PhoneIdentity PhoneProductId="43147b3a-2c1f-4d38-b141-57a3821c43db" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
 	<Properties>
-		<DisplayName>FireBrowserWinUi</DisplayName>
-		<PublisherDisplayName>Bluebird Devs</PublisherDisplayName>
+		<DisplayName>Graphite</DisplayName>
+		<PublisherDisplayName>Riverside Valley Corporation</PublisherDisplayName>
 		<Logo>Assets\StoreLogo.png</Logo>
 	</Properties>
 
@@ -41,8 +41,8 @@
 		  Executable="$targetnametoken$.exe"
 		  EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
-			  DisplayName="FireBrowserWinUi"
-			  Description="Riverside.Graphite"
+			  DisplayName="Graphite"
+			  Description="Elegant design meets blazing performance. Graphite does it all with speed, simplicity, and security."
 			  BackgroundColor="transparent"
 			  Square150x150Logo="Assets\Square150x150Logo.png"
 			  Square44x44Logo="Assets\Square44x44Logo.png">
