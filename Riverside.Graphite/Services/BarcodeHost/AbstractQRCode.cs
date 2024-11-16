@@ -9,17 +9,17 @@ public abstract class AbstractQRCode
 
 	protected AbstractQRCode(QRCodeData data)
 	{
-		this.QrCodeData = data;
+		QrCodeData = data;
 	}
 
-	virtual public void SetQRCodeData(QRCodeData data)
+	public virtual void SetQRCodeData(QRCodeData data)
 	{
-		this.QrCodeData = data;
+		QrCodeData = data;
 	}
 
 	public void Dispose()
 	{
-		this.QrCodeData?.Dispose();
-		this.QrCodeData = null;
+		QrCodeData?.Dispose();
+		QrCodeData = null;
 	}
 }

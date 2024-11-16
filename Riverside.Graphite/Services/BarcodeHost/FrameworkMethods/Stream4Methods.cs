@@ -1,5 +1,6 @@
 ﻿namespace Riverside.Graphite.Services.BarcodeHost.FrameworkMethods;
-class Stream4Methods
+
+internal class Stream4Methods
 {
 	public static void CopyTo(System.IO.Stream input, System.IO.Stream output)
 	{

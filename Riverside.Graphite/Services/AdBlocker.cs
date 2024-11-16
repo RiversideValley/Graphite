@@ -13,9 +13,9 @@ namespace Riverside.Graphite.Services
 	public class AdBlockerWrapper : IDisposable
 	{
 		private bool _isEnabled;
-		private HashSet<string> _adDomains;
-		private List<Regex> _adPatterns;
-		private HashSet<string> _whitelist;
+		private readonly HashSet<string> _adDomains;
+		private readonly List<Regex> _adPatterns;
+		private readonly HashSet<string> _whitelist;
 		private WebView2 _webView;
 		private bool disposedValue;
 
@@ -33,7 +33,7 @@ namespace Riverside.Graphite.Services
 			string easyListPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "EasyList.txt");
 			if (File.Exists(easyListPath))
 			{
-				foreach (var line in File.ReadLines(easyListPath))
+				foreach (string line in File.ReadLines(easyListPath))
 				{
 					ProcessRule(line);
 				}
@@ -50,20 +50,22 @@ namespace Riverside.Graphite.Services
 
 			// Ignore comments
 			if (rule.StartsWith("!"))
+			{
 				return;
+			}
 
 			// Handle exception rules
 			if (rule.StartsWith("@@"))
 			{
-				_whitelist.Add(rule.Substring(2));
+				_ = _whitelist.Add(rule[2..]);
 				return;
 			}
 
 			// Handle domain anchors
 			if (rule.StartsWith("||"))
 			{
-				string domain = rule.Substring(2).Split('^')[0];
-				_adDomains.Add(domain);
+				string domain = rule[2..].Split('^')[0];
+				_ = _adDomains.Add(domain);
 				return;
 			}
 
@@ -123,7 +125,7 @@ namespace Riverside.Graphite.Services
 			{
 				ExceptionLogger.LogException(ex);
 			}
-			await _webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GraphiteBlocker);
+			_ = await _webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GraphiteBlocker);
 		}
 
 		private async void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
@@ -164,7 +166,7 @@ namespace Riverside.Graphite.Services
 
 		private Task BlockAdsIfNecessary(string uriString, dynamic e)
 		{
-			Uri uri = new Uri(uriString);
+			Uri uri = new(uriString);
 
 			// Check whitelist first
 			if (_whitelist.Any(rule => Regex.IsMatch(uriString, WildcardToRegex(rule))))
@@ -203,7 +205,7 @@ namespace Riverside.Graphite.Services
 
 				if (_isEnabled)
 				{
-					await _webView.CoreWebView2.ExecuteScriptAsync(GraphiteBlocker);
+					_ = await _webView.CoreWebView2.ExecuteScriptAsync(GraphiteBlocker);
 				}
 			}
 			catch (Exception)

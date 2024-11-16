@@ -8,21 +8,22 @@ namespace FireAuthService
 		{
 			CreateHostBuilder(args).Build().Run();
 		}
-		public static IHostBuilder CreateHostBuilder(string[] args) =>
-
-			Host.CreateDefaultBuilder(args)
+		public static IHostBuilder CreateHostBuilder(string[] args)
+		{
+			return Host.CreateDefaultBuilder(args)
 				.ConfigureServices((hostContext, services) =>
 				{
-					services.AddHostedService<Worker>();
-					services.AddWindowsService(op =>
+					_ = services.AddHostedService<Worker>();
+					_ = services.AddWindowsService(op =>
 					{
 						op.ServiceName = "FireAuthService";
 					});
-					services.AddLogging(configure => configure.AddConsole())
+					_ = services.AddLogging(configure => configure.AddConsole())
 								.Configure<LoggerFilterOptions>(options => options.MinLevel = Microsoft.Extensions.Logging.LogLevel.Information);
 				}).ConfigureLogging(options =>
 								{
-									options.AddEventSourceLogger();
+									_ = options.AddEventSourceLogger();
 								});
+		}
 	}
 }

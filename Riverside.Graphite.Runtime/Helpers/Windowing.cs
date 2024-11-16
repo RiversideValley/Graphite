@@ -46,7 +46,7 @@ public class Windowing
 
 	public static void FlashWindow(IntPtr hwnd)
 	{
-		FlashWindow(hwnd, true);
+		_ = FlashWindow(hwnd, true);
 	}
 	public static bool AnimateWindow(IntPtr hwnd)
 	{
@@ -110,9 +110,9 @@ public class Windowing
 
 	public static Window FromIntPtr(IntPtr hwnd)
 	{
-		var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
-		var appWindow = AppWindow.GetFromWindowId(windowId);
-		var window = new Window();
+		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
+		_ = AppWindow.GetFromWindowId(windowId);
+		Window window = new();
 		InitializeWithWindow.Initialize(window, nint.Parse(hwnd.ToInt64().ToString()));
 		return window;
 	}
@@ -125,8 +125,8 @@ public class Windowing
 	public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 	public static bool EnumTheWindows(IntPtr hWnd, IntPtr lParam)
 	{
-		StringBuilder sb = new StringBuilder(256);
-		GetWindowText(hWnd, sb, sb.Capacity);
+		StringBuilder sb = new(256);
+		_ = GetWindowText(hWnd, sb, sb.Capacity);
 		Console.WriteLine(sb.ToString());
 		return true;
 	}
@@ -136,12 +136,12 @@ public class Windowing
 
 	public static List<IntPtr> FindWindowsByName(string windowName)
 	{
-		List<IntPtr> windows = new List<IntPtr>();
+		List<IntPtr> windows = new();
 
-		EnumWindows((hWnd, lParam) =>
+		_ = EnumWindows((hWnd, lParam) =>
 		{
-			StringBuilder sb = new StringBuilder(256);
-			GetWindowText(hWnd, sb, sb.Capacity);
+			StringBuilder sb = new(256);
+			_ = GetWindowText(hWnd, sb, sb.Capacity);
 			if (sb.ToString().Contains(windowName))
 			{
 				windows.Add(hWnd);
@@ -159,7 +159,7 @@ public class Windowing
 		int currentX = 0;
 		int currentY = 0;
 
-		foreach (var hWnd in windows)
+		foreach (nint hWnd in windows)
 		{
 			int width, height;
 
@@ -168,10 +168,16 @@ public class Windowing
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
 				if (currentX == 0)
+				{
 					currentX = rect.left;
+				}
+
 				if (currentY == 0)
+				{
 					currentY = rect.top;
-				MoveWindow(hWnd, currentX, currentY, width, height, true);
+				}
+
+				_ = MoveWindow(hWnd, currentX, currentY, width, height, true);
 				currentX += offset;
 				currentY += offset;
 			}
@@ -179,14 +185,14 @@ public class Windowing
 	}
 	public static IntPtr[] GetChildWindows(IntPtr hwndParent)
 	{
-		var childWindows = new List<IntPtr>();
+		List<nint> childWindows = new();
 		EnumWindowsProc callback = (hWnd, lParam) =>
 		{
 			childWindows.Add(hWnd);
 			return true; // Continue enumeration
 		};
 
-		EnumChildWindows(hwndParent, callback, IntPtr.Zero);
+		_ = EnumChildWindows(hwndParent, callback, IntPtr.Zero);
 		return childWindows.ToArray();
 	}
 	[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -220,12 +226,12 @@ public class Windowing
 
 	public static void CascadeAllWindows(nint win)
 	{
-		var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(win);
+		nint hwnd = WinRT.Interop.WindowNative.GetWindowHandle(win);
 
-		Windowing.RECT rect = new Windowing.RECT { left = 0, top = 0, right = 800, bottom = 600 };
+		Windowing.RECT rect = new() { left = 0, top = 0, right = 800, bottom = 600 };
 		IntPtr[] childWindows = Windowing.GetChildWindows(hwnd);
 
-		Windowing.CascadeWindows(hwnd, 0, ref rect, (uint)childWindows.Length, childWindows);
+		_ = Windowing.CascadeWindows(hwnd, 0, ref rect, (uint)childWindows.Length, childWindows);
 	}
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RECT
@@ -248,9 +254,9 @@ public class Windowing
 	public static uint SWP_NOCOPYBITS = 0x0100;
 	public static uint SWP_NOOWNERZORDER = 0x0200;
 	public static uint SWP_NOSENDCHANGING = 0x0400;
-	public static readonly IntPtr HWND_TOP = new IntPtr(0);
-	public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-	public static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+	public static readonly IntPtr HWND_TOP = new(0);
+	public static readonly IntPtr HWND_TOPMOST = new(-1);
+	public static readonly IntPtr HWND_BOTTOM = new(1);
 	public const uint WM_CLOSE = 0x0010;
 	public enum WindowShowStyle : uint
 	{
@@ -283,24 +289,26 @@ public class Windowing
 
 	public static void HideWindow(IntPtr hWnd)
 	{
-		ShowWindow(hWnd, WindowShowStyle.SW_HIDE);
+		_ = ShowWindow(hWnd, WindowShowStyle.SW_HIDE);
 	}
 	public static void MaximizeWindow(IntPtr hWnd)
 	{
-		ShowWindow(hWnd, WindowShowStyle.SW_MAXIMIZE);
+		_ = ShowWindow(hWnd, WindowShowStyle.SW_MAXIMIZE);
 	}
 
-	static public async Task<SizeInt32?> SizeWindow()
+	public static async Task<SizeInt32?> SizeWindow()
 	{
-		var displayList = await DeviceInformation.FindAllAsync
+		DeviceInformationCollection displayList = await DeviceInformation.FindAllAsync
 						  (DisplayMonitor.GetDeviceSelector());
 
 		if (!displayList.Any())
+		{
 			return null;
+		}
 
-		var monitorInfo = await DisplayMonitor.FromInterfaceIdAsync(displayList[0].Id);
+		DisplayMonitor monitorInfo = await DisplayMonitor.FromInterfaceIdAsync(displayList[0].Id);
 
-		var winSize = new SizeInt32();
+		SizeInt32 winSize = new();
 
 		if (monitorInfo == null)
 		{
@@ -316,13 +324,13 @@ public class Windowing
 		return winSize;
 	}
 
-	static public Task DialogWindow(Window window)
+	public static Task DialogWindow(Window window)
 	{
 		try
 		{
 			IntPtr hWnd = WindowNative.GetWindowHandle(window);
 			WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-			var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+			AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
 			if (appWindow != null)
 			{
@@ -334,11 +342,11 @@ public class Windowing
 				appWindow.TitleBar.ButtonInactiveForegroundColor = Colors.Gray;
 
 				// Set window size
-				var size = new SizeInt32(600, 900);
+				SizeInt32 size = new(600, 900);
 				appWindow.Resize(size);
 
 				// Remove default window chrome
-				var presenter = appWindow.Presenter as OverlappedPresenter;
+				OverlappedPresenter presenter = appWindow.Presenter as OverlappedPresenter;
 				if (presenter != null)
 				{
 					presenter.IsResizable = false;
@@ -353,7 +361,7 @@ public class Windowing
 
 		return Task.CompletedTask;
 	}
-	static public AppWindow GetAppWindow(Window window)
+	public static AppWindow GetAppWindow(Window window)
 	{
 		IntPtr hWnd = WindowNative.GetWindowHandle(window);
 		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);

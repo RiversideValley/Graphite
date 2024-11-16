@@ -16,7 +16,7 @@ public static class ExceptionEmailer
 		{
 			StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync("firebrowserwinui.flog", CreationCollisionOption.OpenIfExists);
 
-			using (StreamWriter writer = new StreamWriter(await file.OpenStreamForWriteAsync()))
+			using (StreamWriter writer = new(await file.OpenStreamForWriteAsync()))
 			{
 				writer.WriteLine("Exception Occurred at " + DateTime.Now.ToString());
 				writer.WriteLine("Message: " + ex.Message);
@@ -26,7 +26,7 @@ public static class ExceptionEmailer
 				writer.WriteLine("-------------------------------------------------------------");
 			}
 
-			var dialog = new ContentDialog
+			ContentDialog dialog = new()
 			{
 				Title = "Error",
 				Content = $"The app encountered an error. Would you like to send the bug report to the developers?\n{ex.Message}",
@@ -37,18 +37,18 @@ public static class ExceptionEmailer
 
 			dialog.PrimaryButtonClick += async (sender, args) =>
 			{
-				var email = new EmailMessage();
+				EmailMessage email = new();
 				email.Subject = "Bug Report";
 				email.To.Add(new EmailRecipient("firebrowserdevs@gmail.com"));
 				email.Body = "Any Extra Info Can Help Find The Bug.\nPlease find attached file for the bug report above.";
-				var fileStream = await file.OpenReadAsync();
-				var contentType = file.ContentType;
-				var streamRef = RandomAccessStreamReference.CreateFromStream(fileStream);
+				IRandomAccessStreamWithContentType fileStream = await file.OpenReadAsync();
+				string contentType = file.ContentType;
+				RandomAccessStreamReference streamRef = RandomAccessStreamReference.CreateFromStream(fileStream);
 				email.Attachments.Add(new EmailAttachment(file.Name, streamRef, contentType));
 				await EmailManager.ShowComposeNewEmailAsync(email);
 			};
 
-			await dialog.ShowAsync();
+			_ = await dialog.ShowAsync();
 		}
 		catch
 		{

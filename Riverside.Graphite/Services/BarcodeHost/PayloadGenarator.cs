@@ -14,9 +14,9 @@ public static class PayloadGenerator
 {
 	public abstract class Payload
 	{
-		public virtual int Version { get { return -1; } }
-		public virtual QRCodeGenerator.ECCLevel EccLevel { get { return QRCodeGenerator.ECCLevel.M; } }
-		public virtual QRCodeGenerator.EciMode EciMode { get { return QRCodeGenerator.EciMode.Default; } }
+		public virtual int Version => -1;
+		public virtual QRCodeGenerator.ECCLevel EccLevel => QRCodeGenerator.ECCLevel.M;
+		public virtual QRCodeGenerator.EciMode EciMode => QRCodeGenerator.EciMode.Default;
 		public abstract override string ToString();
 	}
 
@@ -40,13 +40,13 @@ public static class PayloadGenerator
 			this.password = EscapeInput(password);
 			this.password = escapeHexStrings && isHexStyle(this.password) ? "\"" + this.password + "\"" : this.password;
 			this.authenticationMode = authenticationMode.ToString();
-			this.isHiddenSsid = isHiddenSSID;
+			isHiddenSsid = isHiddenSSID;
 		}
 
 		public override string ToString()
 		{
 			return
-				$"WIFI:T:{this.authenticationMode};S:{this.ssid};P:{this.password};{(this.isHiddenSsid ? "H:true" : string.Empty)};";
+				$"WIFI:T:{authenticationMode};S:{ssid};P:{password};{(isHiddenSsid ? "H:true" : string.Empty)};";
 		}
 
 		public enum Authentication
@@ -80,23 +80,29 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			var returnVal = string.Empty;
-			switch (this.encoding)
+			string returnVal = string.Empty;
+			switch (encoding)
 			{
 				case MailEncoding.MAILTO:
-					var parts = new List<string>();
-					if (!string.IsNullOrEmpty(this.subject))
-						parts.Add("subject=" + Uri.EscapeDataString(this.subject));
-					if (!string.IsNullOrEmpty(this.message))
-						parts.Add("body=" + Uri.EscapeDataString(this.message));
-					var queryString = parts.Count != 0 ? $"?{string.Join("&", parts.ToArray())}" : "";
-					returnVal = $"mailto:{this.mailReceiver}{queryString}";
+					List<string> parts = new();
+					if (!string.IsNullOrEmpty(subject))
+					{
+						parts.Add("subject=" + Uri.EscapeDataString(subject));
+					}
+
+					if (!string.IsNullOrEmpty(message))
+					{
+						parts.Add("body=" + Uri.EscapeDataString(message));
+					}
+
+					string queryString = parts.Count != 0 ? $"?{string.Join("&", parts.ToArray())}" : "";
+					returnVal = $"mailto:{mailReceiver}{queryString}";
 					break;
 				case MailEncoding.MATMSG:
-					returnVal = $"MATMSG:TO:{this.mailReceiver};SUB:{EscapeInput(this.subject)};BODY:{EscapeInput(this.message)};;";
+					returnVal = $"MATMSG:TO:{mailReceiver};SUB:{EscapeInput(subject)};BODY:{EscapeInput(message)};;";
 					break;
 				case MailEncoding.SMTP:
-					returnVal = $"SMTP:{this.mailReceiver}:{EscapeInput(this.subject, true)}:{EscapeInput(this.message, true)}";
+					returnVal = $"SMTP:{mailReceiver}:{EscapeInput(subject, true)}:{EscapeInput(message, true)}";
 					break;
 			}
 			return returnVal;
@@ -123,7 +129,7 @@ public static class PayloadGenerator
 		public SMS(string number, SMSEncoding encoding = SMSEncoding.SMS)
 		{
 			this.number = number;
-			this.subject = string.Empty;
+			subject = string.Empty;
 			this.encoding = encoding;
 		}
 
@@ -142,23 +148,29 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			var returnVal = string.Empty;
-			switch (this.encoding)
+			string returnVal = string.Empty;
+			switch (encoding)
 			{
 				case SMSEncoding.SMS:
-					var queryString = string.Empty;
-					if (!string.IsNullOrEmpty(this.subject))
-						queryString = $"?body={Uri.EscapeDataString(this.subject)}";
-					returnVal = $"sms:{this.number}{queryString}";
+					string queryString = string.Empty;
+					if (!string.IsNullOrEmpty(subject))
+					{
+						queryString = $"?body={Uri.EscapeDataString(subject)}";
+					}
+
+					returnVal = $"sms:{number}{queryString}";
 					break;
 				case SMSEncoding.SMS_iOS:
-					var queryStringiOS = string.Empty;
-					if (!string.IsNullOrEmpty(this.subject))
-						queryStringiOS = $";body={Uri.EscapeDataString(this.subject)}";
-					returnVal = $"sms:{this.number}{queryStringiOS}";
+					string queryStringiOS = string.Empty;
+					if (!string.IsNullOrEmpty(subject))
+					{
+						queryStringiOS = $";body={Uri.EscapeDataString(subject)}";
+					}
+
+					returnVal = $"sms:{number}{queryStringiOS}";
 					break;
 				case SMSEncoding.SMSTO:
-					returnVal = $"SMSTO:{this.number}:{this.subject}";
+					returnVal = $"SMSTO:{number}:{subject}";
 					break;
 			}
 			return returnVal;
@@ -185,7 +197,7 @@ public static class PayloadGenerator
 		public MMS(string number, MMSEncoding encoding = MMSEncoding.MMS)
 		{
 			this.number = number;
-			this.subject = string.Empty;
+			subject = string.Empty;
 			this.encoding = encoding;
 		}
 
@@ -204,20 +216,26 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			var returnVal = string.Empty;
-			switch (this.encoding)
+			string returnVal = string.Empty;
+			switch (encoding)
 			{
 				case MMSEncoding.MMSTO:
-					var queryStringMmsTo = string.Empty;
-					if (!string.IsNullOrEmpty(this.subject))
-						queryStringMmsTo = $"?subject={Uri.EscapeDataString(this.subject)}";
-					returnVal = $"mmsto:{this.number}{queryStringMmsTo}";
+					string queryStringMmsTo = string.Empty;
+					if (!string.IsNullOrEmpty(subject))
+					{
+						queryStringMmsTo = $"?subject={Uri.EscapeDataString(subject)}";
+					}
+
+					returnVal = $"mmsto:{number}{queryStringMmsTo}";
 					break;
 				case MMSEncoding.MMS:
-					var queryStringMms = string.Empty;
-					if (!string.IsNullOrEmpty(this.subject))
-						queryStringMms = $"?body={Uri.EscapeDataString(this.subject)}";
-					returnVal = $"mms:{this.number}{queryStringMms}";
+					string queryStringMms = string.Empty;
+					if (!string.IsNullOrEmpty(subject))
+					{
+						queryStringMms = $"?body={Uri.EscapeDataString(subject)}";
+					}
+
+					returnVal = $"mms:{number}{queryStringMms}";
 					break;
 			}
 			return returnVal;
@@ -250,15 +268,12 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			switch (this.encoding)
+			return encoding switch
 			{
-				case GeolocationEncoding.GEO:
-					return $"geo:{this.latitude},{this.longitude}";
-				case GeolocationEncoding.GoogleMaps:
-					return $"http://maps.google.com/maps?q={this.latitude},{this.longitude}";
-				default:
-					return "geo:";
-			}
+				GeolocationEncoding.GEO => $"geo:{latitude},{longitude}",
+				GeolocationEncoding.GoogleMaps => $"http://maps.google.com/maps?q={latitude},{longitude}",
+				_ => "geo:",
+			};
 		}
 
 		public enum GeolocationEncoding
@@ -283,7 +298,7 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			return $"tel:{this.number}";
+			return $"tel:{number}";
 		}
 	}
 
@@ -302,7 +317,7 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			return $"skype:{this.skypeUsername}?call";
+			return $"skype:{skypeUsername}?call";
 		}
 	}
 
@@ -321,7 +336,7 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			return (!this.url.StartsWith("http") ? "http://" + this.url : this.url);
+			return !url.StartsWith("http") ? "http://" + url : url;
 		}
 	}
 
@@ -350,14 +365,14 @@ public static class PayloadGenerator
 		/// <param name="message">The message</param>
 		public WhatsAppMessage(string message)
 		{
-			this.number = string.Empty;
+			number = string.Empty;
 			this.message = message;
 		}
 
 		public override string ToString()
 		{
-			var cleanedPhone = Regex.Replace(this.number, @"^[0+]+|[ ()-]", string.Empty);
-			return ($"https://wa.me/{cleanedPhone}?text={Uri.EscapeDataString(message)}");
+			string cleanedPhone = Regex.Replace(number, @"^[0+]+|[ ()-]", string.Empty);
+			return $"https://wa.me/{cleanedPhone}?text={Uri.EscapeDataString(message)}";
 		}
 	}
 
@@ -379,7 +394,7 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			return $"MEBKM:TITLE:{this.title};URL:{this.url};;";
+			return $"MEBKM:TITLE:{title};URL:{url};;";
 		}
 	}
 
@@ -461,48 +476,80 @@ public static class PayloadGenerator
 			{
 				payload += "MECARD+\r\n";
 				if (!string.IsNullOrEmpty(firstname) && !string.IsNullOrEmpty(lastname))
+				{
 					payload += $"N:{lastname}, {firstname}\r\n";
+				}
 				else if (!string.IsNullOrEmpty(firstname) || !string.IsNullOrEmpty(lastname))
+				{
 					payload += $"N:{firstname}{lastname}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(org))
+				{
 					payload += $"ORG:{org}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(orgTitle))
+				{
 					payload += $"TITLE:{orgTitle}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(phone))
+				{
 					payload += $"TEL:{phone}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(mobilePhone))
+				{
 					payload += $"TEL:{mobilePhone}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(workPhone))
+				{
 					payload += $"TEL:{workPhone}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(email))
+				{
 					payload += $"EMAIL:{email}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(note))
+				{
 					payload += $"NOTE:{note}\r\n";
+				}
+
 				if (birthday != null)
-					payload += $"BDAY:{((DateTime)birthday).ToString("yyyyMMdd")}\r\n";
-				string addressString = string.Empty;
-				if (addressOrder == AddressOrder.Default)
 				{
-					addressString = $"ADR:,,{(!string.IsNullOrEmpty(street) ? street + " " : "")}{(!string.IsNullOrEmpty(houseNumber) ? houseNumber : "")},{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")},{(!string.IsNullOrEmpty(city) ? city : "")},{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")},{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
+					payload += $"BDAY:{(DateTime)birthday:yyyyMMdd}\r\n";
 				}
-				else
-				{
-					addressString = $"ADR:,,{(!string.IsNullOrEmpty(houseNumber) ? houseNumber + " " : "")}{(!string.IsNullOrEmpty(street) ? street : "")},{(!string.IsNullOrEmpty(city) ? city : "")},{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")},{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")},{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
-				}
+				string addressString = addressOrder == AddressOrder.Default
+	? $"ADR:,,{(!string.IsNullOrEmpty(street) ? street + " " : "")}{(!string.IsNullOrEmpty(houseNumber) ? houseNumber : "")},{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")},{(!string.IsNullOrEmpty(city) ? city : "")},{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")},{(!string.IsNullOrEmpty(country) ? country : "")}\r\n"
+	: $"ADR:,,{(!string.IsNullOrEmpty(houseNumber) ? houseNumber + " " : "")}{(!string.IsNullOrEmpty(street) ? street : "")},{(!string.IsNullOrEmpty(city) ? city : "")},{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")},{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")},{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
 				payload += addressString;
 				if (!string.IsNullOrEmpty(website))
+				{
 					payload += $"URL:{website}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(nickname))
+				{
 					payload += $"NICKNAME:{nickname}\r\n";
+				}
+
 				payload = payload.Trim(new char[] { '\r', '\n' });
 			}
 			else
 			{
-				var version = outputType.ToString().Substring(5);
+				string version = outputType.ToString()[5..];
 				if (version.Length > 1)
+				{
 					version = version.Insert(1, ".");
+				}
 				else
+				{
 					version += ".0";
+				}
 
 				payload += "BEGIN:VCARD\r\n";
 				payload += $"VERSION:{version}\r\n";
@@ -521,11 +568,18 @@ public static class PayloadGenerator
 				{
 					payload += $"TEL;";
 					if (outputType == ContactOutputType.VCard21)
+					{
 						payload += $"HOME;VOICE:{phone}";
+					}
 					else if (outputType == ContactOutputType.VCard3)
+					{
 						payload += $"TYPE=HOME,VOICE:{phone}";
+					}
 					else
+					{
 						payload += $"TYPE=home,voice;VALUE=uri:tel:{phone}";
+					}
+
 					payload += "\r\n";
 				}
 
@@ -533,11 +587,18 @@ public static class PayloadGenerator
 				{
 					payload += $"TEL;";
 					if (outputType == ContactOutputType.VCard21)
+					{
 						payload += $"HOME;CELL:{mobilePhone}";
+					}
 					else if (outputType == ContactOutputType.VCard3)
+					{
 						payload += $"TYPE=HOME,CELL:{mobilePhone}";
+					}
 					else
+					{
 						payload += $"TYPE=home,cell;VALUE=uri:tel:{mobilePhone}";
+					}
+
 					payload += "\r\n";
 				}
 
@@ -545,43 +606,64 @@ public static class PayloadGenerator
 				{
 					payload += $"TEL;";
 					if (outputType == ContactOutputType.VCard21)
+					{
 						payload += $"WORK;VOICE:{workPhone}";
+					}
 					else if (outputType == ContactOutputType.VCard3)
+					{
 						payload += $"TYPE=WORK,VOICE:{workPhone}";
+					}
 					else
+					{
 						payload += $"TYPE=work,voice;VALUE=uri:tel:{workPhone}";
+					}
+
 					payload += "\r\n";
 				}
 
 
 				payload += "ADR;";
 				if (outputType == ContactOutputType.VCard21)
+				{
 					payload += "HOME;PREF:";
+				}
 				else if (outputType == ContactOutputType.VCard3)
+				{
 					payload += "TYPE=HOME,PREF:";
+				}
 				else
+				{
 					payload += "TYPE=home,pref:";
-				string addressString = string.Empty;
-				if (addressOrder == AddressOrder.Default)
-				{
-					addressString = $";;{(!string.IsNullOrEmpty(street) ? street + " " : "")}{(!string.IsNullOrEmpty(houseNumber) ? houseNumber : "")};{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")};{(!string.IsNullOrEmpty(city) ? city : "")};{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")};{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
 				}
-				else
-				{
-					addressString = $";;{(!string.IsNullOrEmpty(houseNumber) ? houseNumber + " " : "")}{(!string.IsNullOrEmpty(street) ? street : "")};{(!string.IsNullOrEmpty(city) ? city : "")};{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")};{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")};{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
-				}
+				string addressString = addressOrder == AddressOrder.Default
+	? $";;{(!string.IsNullOrEmpty(street) ? street + " " : "")}{(!string.IsNullOrEmpty(houseNumber) ? houseNumber : "")};{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")};{(!string.IsNullOrEmpty(city) ? city : "")};{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")};{(!string.IsNullOrEmpty(country) ? country : "")}\r\n"
+	: $";;{(!string.IsNullOrEmpty(houseNumber) ? houseNumber + " " : "")}{(!string.IsNullOrEmpty(street) ? street : "")};{(!string.IsNullOrEmpty(city) ? city : "")};{(!string.IsNullOrEmpty(stateRegion) ? stateRegion : "")};{(!string.IsNullOrEmpty(zipCode) ? zipCode : "")};{(!string.IsNullOrEmpty(country) ? country : "")}\r\n";
 				payload += addressString;
 
 				if (birthday != null)
-					payload += $"BDAY:{((DateTime)birthday).ToString("yyyyMMdd")}\r\n";
+				{
+					payload += $"BDAY:{(DateTime)birthday:yyyyMMdd}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(website))
+				{
 					payload += $"URL:{website}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(email))
+				{
 					payload += $"EMAIL:{email}\r\n";
+				}
+
 				if (!string.IsNullOrEmpty(note))
+				{
 					payload += $"NOTE:{note}\r\n";
+				}
+
 				if (outputType != ContactOutputType.VCard21 && !string.IsNullOrEmpty(nickname))
+				{
 					payload += $"NICKNAME:{nickname}\r\n";
+				}
 
 				payload += "END:VCARD";
 			}
@@ -649,10 +731,10 @@ public static class PayloadGenerator
 		{
 			string query = null;
 
-			var queryValues = new KeyValuePair<string, string>[]{
-			  new KeyValuePair<string, string>(nameof(label), label),
-			  new KeyValuePair<string, string>(nameof(message), message),
-			  new KeyValuePair<string, string>(nameof(amount), amount.HasValue ? amount.Value.ToString("#.########", CultureInfo.InvariantCulture) : null)
+			KeyValuePair<string, string>[] queryValues = new KeyValuePair<string, string>[]{
+			  new(nameof(label), label),
+			  new(nameof(message), message),
+			  new(nameof(amount), amount.HasValue ? amount.Value.ToString("#.########", CultureInfo.InvariantCulture) : null)
 			};
 
 			if (queryValues.Any(keyPair => !string.IsNullOrEmpty(keyPair.Value)))
@@ -730,10 +812,13 @@ public static class PayloadGenerator
 			this.creditor = creditor;
 			this.ultimateCreditor = ultimateCreditor;
 
-			this.additionalInformation = additionalInformation != null ? additionalInformation : new AdditionalInformation();
+			this.additionalInformation = additionalInformation ?? new AdditionalInformation();
 
 			if (amount != null && amount.ToString().Length > 12)
+			{
 				throw new SwissQrCodeException("Amount (including decimals) must be shorter than 13 places.");
+			}
+
 			this.amount = amount;
 
 			this.currency = currency;
@@ -741,16 +826,28 @@ public static class PayloadGenerator
 			this.debitor = debitor;
 
 			if (iban.IsQrIban && reference.RefType != Reference.ReferenceType.QRR)
+			{
 				throw new SwissQrCodeException("If QR-IBAN is used, you have to choose \"QRR\" as reference type!");
+			}
+
 			if (!iban.IsQrIban && reference.RefType == Reference.ReferenceType.QRR)
+			{
 				throw new SwissQrCodeException("If non QR-IBAN is used, you have to choose either \"SCOR\" or \"NON\" as reference type!");
+			}
+
 			this.reference = reference;
 
 			if (alternativeProcedure1 != null && alternativeProcedure1.Length > 100)
+			{
 				throw new SwissQrCodeException("Alternative procedure information block 1 must be shorter than 101 chars.");
+			}
+
 			this.alternativeProcedure1 = alternativeProcedure1;
 			if (alternativeProcedure2 != null && alternativeProcedure2.Length > 100)
+			{
 				throw new SwissQrCodeException("Alternative procedure information block 2 must be shorter than 101 chars.");
+			}
+
 			this.alternativeProcedure2 = alternativeProcedure2;
 		}
 
@@ -766,26 +863,20 @@ public static class PayloadGenerator
 			public AdditionalInformation(string unstructuredMessage = null, string billInformation = null)
 			{
 				if (((unstructuredMessage != null ? unstructuredMessage.Length : 0) + (billInformation != null ? billInformation.Length : 0)) > 140)
+				{
 					throw new SwissQrCodeAdditionalInformationException("Unstructured message and bill information must be shorter than 141 chars in total/combined.");
+				}
+
 				this.unstructuredMessage = unstructuredMessage;
 				this.billInformation = billInformation;
-				this.trailer = "EPD";
+				trailer = "EPD";
 			}
 
-			public string UnstructureMessage
-			{
-				get { return !string.IsNullOrEmpty(unstructuredMessage) ? unstructuredMessage.Replace("\n", "") : null; }
-			}
+			public string UnstructureMessage => !string.IsNullOrEmpty(unstructuredMessage) ? unstructuredMessage.Replace("\n", "") : null;
 
-			public string BillInformation
-			{
-				get { return !string.IsNullOrEmpty(billInformation) ? billInformation.Replace("\n", "") : null; }
-			}
+			public string BillInformation => !string.IsNullOrEmpty(billInformation) ? billInformation.Replace("\n", "") : null;
 
-			public string Trailer
-			{
-				get { return trailer; }
-			}
+			public string Trailer => trailer;
 
 
 			public class SwissQrCodeAdditionalInformationException : Exception
@@ -824,30 +915,41 @@ public static class PayloadGenerator
 				this.referenceTextType = referenceTextType;
 
 				if (referenceType == ReferenceType.NON && reference != null)
+				{
 					throw new SwissFireBrowserQreferenceException("Reference is only allowed when referenceType not equals \"NON\"");
+				}
+
 				if (referenceType != ReferenceType.NON && reference != null && referenceTextType == null)
+				{
 					throw new SwissFireBrowserQreferenceException("You have to set an ReferenceTextType when using the reference text.");
+				}
+
 				if (referenceTextType == ReferenceTextType.QrReference && reference != null && (reference.Length > 27))
+				{
 					throw new SwissFireBrowserQreferenceException("QR-references have to be shorter than 28 chars.");
+				}
+
 				if (referenceTextType == ReferenceTextType.QrReference && reference != null && !Regex.IsMatch(reference, @"^[0-9]+$"))
+				{
 					throw new SwissFireBrowserQreferenceException("QR-reference must exist out of digits only.");
+				}
+
 				if (referenceTextType == ReferenceTextType.QrReference && reference != null && !ChecksumMod10(reference))
+				{
 					throw new SwissFireBrowserQreferenceException("QR-references is invalid. Checksum error.");
+				}
+
 				if (referenceTextType == ReferenceTextType.CreditorReferenceIso11649 && reference != null && (reference.Length > 25))
+				{
 					throw new SwissFireBrowserQreferenceException("Creditor references (ISO 11649) have to be shorter than 26 chars.");
+				}
 
 				this.reference = reference;
 			}
 
-			public ReferenceType RefType
-			{
-				get { return referenceType; }
-			}
+			public ReferenceType RefType => referenceType;
 
-			public string ReferenceText
-			{
-				get { return !string.IsNullOrEmpty(reference) ? reference.Replace("\n", "") : null; }
-			}
+			public string ReferenceText => !string.IsNullOrEmpty(reference) ? reference.Replace("\n", "") : null;
 
 			/// <summary>
 			/// Reference type. When using a QR-IBAN you have to use either "QRR" or "SCOR"
@@ -885,8 +987,8 @@ public static class PayloadGenerator
 
 		public class Iban
 		{
-			private string iban;
-			private IbanType ibanType;
+			private readonly string iban;
+			private readonly IbanType ibanType;
 
 			/// <summary>
 			/// IBAN object with type information
@@ -896,19 +998,25 @@ public static class PayloadGenerator
 			public Iban(string iban, IbanType ibanType)
 			{
 				if (ibanType == IbanType.Iban && !IsValidIban(iban))
+				{
 					throw new SwissQrCodeIbanException("The IBAN entered isn't valid.");
+				}
+
 				if (ibanType == IbanType.QrIban && !IsValidQRIban(iban))
+				{
 					throw new SwissQrCodeIbanException("The QR-IBAN entered isn't valid.");
+				}
+
 				if (!iban.StartsWith("CH") && !iban.StartsWith("LI"))
+				{
 					throw new SwissQrCodeIbanException("The IBAN must start with \"CH\" or \"LI\".");
+				}
+
 				this.iban = iban;
 				this.ibanType = ibanType;
 			}
 
-			public bool IsQrIban
-			{
-				get { return ibanType == IbanType.QrIban; }
-			}
+			public bool IsQrIban => ibanType == IbanType.QrIban;
 
 			public override string ToString()
 			{
@@ -942,9 +1050,9 @@ public static class PayloadGenerator
 		public class Contact
 		{
 			private static readonly HashSet<string> twoLetterCodes = ValidTwoLetterCodes();
-			private string br = "\r\n";
-			private string name, streetOrAddressline1, houseNumberOrAddressline2, zipCode, city, country;
-			private AddressType adrType;
+			private readonly string br = "\r\n";
+			private readonly string name, streetOrAddressline1, houseNumberOrAddressline2, zipCode, city, country;
+			private readonly AddressType adrType;
 
 			/// <summary>
 			/// Contact type. Can be used for payee, ultimate payee, etc. with address in structured mode (S).
@@ -987,63 +1095,114 @@ public static class PayloadGenerator
 			private Contact(string name, string zipCode, string city, string country, string streetOrAddressline1, string houseNumberOrAddressline2, AddressType addressType)
 			{
 				//Pattern extracted from https://qr-validation.iso-payments.ch as explained in https://github.com/codebude/Riverside.Graphite.Services.BarcodeHost/issues/97
-				var charsetPattern = @"^([a-zA-Z0-9\.,;:'\ \+\-/\(\)?\*\[\]\{\}\\`´~ ]|[!""#%&<>÷=@_$£]|[àáâäçèéêëìíîïñòóôöùúûüýßÀÁÂÄÇÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÑ])*$";
+				string charsetPattern = @"^([a-zA-Z0-9\.,;:'\ \+\-/\(\)?\*\[\]\{\}\\`´~ ]|[!""#%&<>÷=@_$£]|[àáâäçèéêëìíîïñòóôöùúûüýßÀÁÂÄÇÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÑ])*$";
 
-				this.adrType = addressType;
+				adrType = addressType;
 
 				if (string.IsNullOrEmpty(name))
+				{
 					throw new SwissQrCodeContactException("Name must not be empty.");
+				}
+
 				if (name.Length > 70)
+				{
 					throw new SwissQrCodeContactException("Name must be shorter than 71 chars.");
+				}
+
 				if (!Regex.IsMatch(name, charsetPattern))
+				{
 					throw new SwissQrCodeContactException($"Name must match the following pattern as defined in pain.001: {charsetPattern}");
+				}
+
 				this.name = name;
 
-				if (this.adrType == AddressType.StructuredAddress)
+				if (adrType == AddressType.StructuredAddress)
 				{
 					if (!string.IsNullOrEmpty(streetOrAddressline1) && (streetOrAddressline1.Length > 70))
+					{
 						throw new SwissQrCodeContactException("Street must be shorter than 71 chars.");
+					}
+
 					if (!string.IsNullOrEmpty(streetOrAddressline1) && !Regex.IsMatch(streetOrAddressline1, charsetPattern))
+					{
 						throw new SwissQrCodeContactException($"Street must match the following pattern as defined in pain.001: {charsetPattern}");
+					}
+
 					this.streetOrAddressline1 = streetOrAddressline1;
 
 					if (!string.IsNullOrEmpty(houseNumberOrAddressline2) && houseNumberOrAddressline2.Length > 16)
+					{
 						throw new SwissQrCodeContactException("House number must be shorter than 17 chars.");
+					}
+
 					this.houseNumberOrAddressline2 = houseNumberOrAddressline2;
 				}
 				else
 				{
 					if (!string.IsNullOrEmpty(streetOrAddressline1) && (streetOrAddressline1.Length > 70))
+					{
 						throw new SwissQrCodeContactException("Address line 1 must be shorter than 71 chars.");
+					}
+
 					if (!string.IsNullOrEmpty(streetOrAddressline1) && !Regex.IsMatch(streetOrAddressline1, charsetPattern))
+					{
 						throw new SwissQrCodeContactException($"Address line 1 must match the following pattern as defined in pain.001: {charsetPattern}");
+					}
+
 					this.streetOrAddressline1 = streetOrAddressline1;
 
 					if (string.IsNullOrEmpty(houseNumberOrAddressline2))
+					{
 						throw new SwissQrCodeContactException("Address line 2 must be provided for combined addresses (address line-based addresses).");
+					}
+
 					if (!string.IsNullOrEmpty(houseNumberOrAddressline2) && (houseNumberOrAddressline2.Length > 70))
+					{
 						throw new SwissQrCodeContactException("Address line 2 must be shorter than 71 chars.");
+					}
+
 					if (!string.IsNullOrEmpty(houseNumberOrAddressline2) && !Regex.IsMatch(houseNumberOrAddressline2, charsetPattern))
+					{
 						throw new SwissQrCodeContactException($"Address line 2 must match the following pattern as defined in pain.001: {charsetPattern}");
+					}
+
 					this.houseNumberOrAddressline2 = houseNumberOrAddressline2;
 				}
 
-				if (this.adrType == AddressType.StructuredAddress)
+				if (adrType == AddressType.StructuredAddress)
 				{
 					if (string.IsNullOrEmpty(zipCode))
+					{
 						throw new SwissQrCodeContactException("Zip code must not be empty.");
+					}
+
 					if (zipCode.Length > 16)
+					{
 						throw new SwissQrCodeContactException("Zip code must be shorter than 17 chars.");
+					}
+
 					if (!Regex.IsMatch(zipCode, charsetPattern))
+					{
 						throw new SwissQrCodeContactException($"Zip code must match the following pattern as defined in pain.001: {charsetPattern}");
+					}
+
 					this.zipCode = zipCode;
 
 					if (string.IsNullOrEmpty(city))
+					{
 						throw new SwissQrCodeContactException("City must not be empty.");
+					}
+
 					if (city.Length > 35)
+					{
 						throw new SwissQrCodeContactException("City name must be shorter than 36 chars.");
+					}
+
 					if (!Regex.IsMatch(city, charsetPattern))
+					{
 						throw new SwissQrCodeContactException($"City name must match the following pattern as defined in pain.001: {charsetPattern}");
+					}
+
 					this.city = city;
 				}
 				else
@@ -1052,12 +1211,17 @@ public static class PayloadGenerator
 				}
 
 				if (!IsValidTwoLetterCode(country))
+				{
 					throw new SwissQrCodeContactException("Country must be a valid \"two letter\" country code as defined by  ISO 3166-1, but it isn't.");
+				}
 
 				this.country = country;
 			}
 
-			private static bool IsValidTwoLetterCode(string code) => twoLetterCodes.Contains(code);
+			private static bool IsValidTwoLetterCode(string code)
+			{
+				return twoLetterCodes.Contains(code);
+			}
 
 			private static HashSet<string> ValidTwoLetterCodes()
 			{
@@ -1104,7 +1268,7 @@ public static class PayloadGenerator
 		public override string ToString()
 		{
 			//Header "logical" element
-			var SwissQrCodePayload = "SPC" + br; //QRType
+			string SwissQrCodePayload = "SPC" + br; //QRType
 			SwissQrCodePayload += "0200" + br; //Version
 			SwissQrCodePayload += "1" + br; //Coding
 
@@ -1128,9 +1292,13 @@ public static class PayloadGenerator
 
 			//UltmtDbtr "logical" element
 			if (debitor != null)
+			{
 				SwissQrCodePayload += debitor.ToString();
+			}
 			else
+			{
 				SwissQrCodePayload += string.Concat(Enumerable.Repeat(br, 7).ToArray());
+			}
 
 
 			//RmtInf "logical" element
@@ -1145,13 +1313,20 @@ public static class PayloadGenerator
 
 			//AltPmtInf "logical" element
 			if (!string.IsNullOrEmpty(alternativeProcedure1))
+			{
 				SwissQrCodePayload += alternativeProcedure1.Replace("\n", "") + br; //AltPmt
+			}
+
 			if (!string.IsNullOrEmpty(alternativeProcedure2))
+			{
 				SwissQrCodePayload += alternativeProcedure2.Replace("\n", "") + br; //AltPmt
+			}
 
 			//S-QR specification 2.0, chapter 4.2.3
 			if (SwissQrCodePayload.EndsWith(br))
+			{
 				SwissQrCodePayload = SwissQrCodePayload.Remove(SwissQrCodePayload.Length - br.Length);
+			}
 
 			return SwissQrCodePayload;
 		}
@@ -1191,7 +1366,7 @@ public static class PayloadGenerator
 		//Keep in mind, that the ECC level has to be set to "M" when generating a Girocode!
 		//Girocode specification: http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/quick-response-code-guidelines-to-enable-data-capture-for-the-initiation-of-a-sepa-credit-transfer/epc069-12-quick-response-code-guidelines-to-enable-data-capture-for-the-initiation-of-a-sepa-credit-transfer1/
 
-		private string br = "\n";
+		private readonly string br = "\n";
 		private readonly string iban, bic, name, purposeOfCreditTransfer, remittanceInformation, messageToGirocodeUser;
 		private readonly decimal amount;
 		private readonly GirocodeVersion version;
@@ -1219,36 +1394,63 @@ public static class PayloadGenerator
 			this.version = version;
 			this.encoding = encoding;
 			if (!IsValidIban(iban))
+			{
 				throw new GirocodeException("The IBAN entered isn't valid.");
+			}
+
 			this.iban = iban.Replace(" ", "").ToUpper();
 			if (!IsValidBic(bic))
+			{
 				throw new GirocodeException("The BIC entered isn't valid.");
+			}
+
 			this.bic = bic.Replace(" ", "").ToUpper();
 			if (name.Length > 70)
+			{
 				throw new GirocodeException("(Payee-)Name must be shorter than 71 chars.");
+			}
+
 			this.name = name;
 			if (amount.ToString().Replace(",", ".").Contains('.') && amount.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
+			{
 				throw new GirocodeException("Amount must have less than 3 digits after decimal point.");
-			if (amount < 0.01m || amount > 999999999.99m)
+			}
+
+			if (amount is < 0.01m or > 999999999.99m)
+			{
 				throw new GirocodeException("Amount has to at least 0.01 and must be smaller or equal to 999999999.99.");
+			}
+
 			this.amount = amount;
 			if (purposeOfCreditTransfer.Length > 4)
+			{
 				throw new GirocodeException("Purpose of credit transfer can only have 4 chars at maximum.");
+			}
+
 			this.purposeOfCreditTransfer = purposeOfCreditTransfer;
 			if (typeOfRemittance == TypeOfRemittance.Unstructured && remittanceInformation.Length > 140)
+			{
 				throw new GirocodeException("Unstructured reference texts have to shorter than 141 chars.");
+			}
+
 			if (typeOfRemittance == TypeOfRemittance.Structured && remittanceInformation.Length > 35)
+			{
 				throw new GirocodeException("Structured reference texts have to shorter than 36 chars.");
+			}
+
 			this.typeOfRemittance = typeOfRemittance;
 			this.remittanceInformation = remittanceInformation;
 			if (messageToGirocodeUser.Length > 70)
+			{
 				throw new GirocodeException("Message to the Girocode-User reader texts have to shorter than 71 chars.");
+			}
+
 			this.messageToGirocodeUser = messageToGirocodeUser;
 		}
 
 		public override string ToString()
 		{
-			var girocodePayload = "BCD" + br;
+			string girocodePayload = "BCD" + br;
 			girocodePayload += ((version == GirocodeVersion.Version1) ? "001" : "002") + br;
 			girocodePayload += (int)encoding + 1 + br;
 			girocodePayload += "SCT" + br;
@@ -1412,48 +1614,71 @@ public static class PayloadGenerator
 			//Loaded via "contact-constructor"
 			if (internalMode == 1)
 			{
-				if (authority != AuthorityType.contact && authority != AuthorityType.contact_v2)
+				if (authority is not AuthorityType.contact and not AuthorityType.contact_v2)
+				{
 					throw new BezahlCodeException("The constructor without an amount may only ne used with authority types 'contact' and 'contact_v2'.");
+				}
+
 				if (authority == AuthorityType.contact && (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(bnc)))
+				{
 					throw new BezahlCodeException("When using authority type 'contact' the parameters 'account' and 'bnc' must be set.");
+				}
 
 				if (authority != AuthorityType.contact_v2)
 				{
-					var oldFilled = (!string.IsNullOrEmpty(account) && !string.IsNullOrEmpty(bnc));
-					var newFilled = (!string.IsNullOrEmpty(iban) && !string.IsNullOrEmpty(bic));
+					bool oldFilled = !string.IsNullOrEmpty(account) && !string.IsNullOrEmpty(bnc);
+					bool newFilled = !string.IsNullOrEmpty(iban) && !string.IsNullOrEmpty(bic);
 					if ((!oldFilled && !newFilled) || (oldFilled && newFilled))
+					{
 						throw new BezahlCodeException("When using authority type 'contact_v2' either the parameters 'account' and 'bnc' or the parameters 'iban' and 'bic' must be set. Leave the other parameter pair empty.");
+					}
 				}
 			}
 			else if (internalMode == 2)
 			{
 #pragma warning disable CS0612
-				if (authority != AuthorityType.periodicsinglepayment && authority != AuthorityType.singledirectdebit && authority != AuthorityType.singlepayment)
+				if (authority is not AuthorityType.periodicsinglepayment and not AuthorityType.singledirectdebit and not AuthorityType.singlepayment)
+				{
 					throw new BezahlCodeException("The constructor with 'account' and 'bnc' may only be used with 'non SEPA' authority types. Either choose another authority type or switch constructor.");
+				}
+
 				if (authority == AuthorityType.periodicsinglepayment && (string.IsNullOrEmpty(periodicTimeunit) || periodicTimeunitRotation == 0))
+				{
 					throw new BezahlCodeException("When using 'periodicsinglepayment' as authority type, the parameters 'periodicTimeunit' and 'periodicTimeunitRotation' must be set.");
+				}
 #pragma warning restore CS0612
 			}
 			else if (internalMode == 3)
 			{
-				if (authority != AuthorityType.periodicsinglepaymentsepa && authority != AuthorityType.singledirectdebitsepa && authority != AuthorityType.singlepaymentsepa)
+				if (authority is not AuthorityType.periodicsinglepaymentsepa and not AuthorityType.singledirectdebitsepa and not AuthorityType.singlepaymentsepa)
+				{
 					throw new BezahlCodeException("The constructor with 'iban' and 'bic' may only be used with 'SEPA' authority types. Either choose another authority type or switch constructor.");
+				}
+
 				if (authority == AuthorityType.periodicsinglepaymentsepa && (string.IsNullOrEmpty(periodicTimeunit) || periodicTimeunitRotation == 0))
+				{
 					throw new BezahlCodeException("When using 'periodicsinglepaymentsepa' as authority type, the parameters 'periodicTimeunit' and 'periodicTimeunitRotation' must be set.");
+				}
 			}
 
 			this.authority = authority;
 
 			if (name.Length > 70)
+			{
 				throw new BezahlCodeException("(Payee-)Name must be shorter than 71 chars.");
+			}
+
 			this.name = name;
 
 			if (reason.Length > 27)
+			{
 				throw new BezahlCodeException("Reasons texts have to be shorter than 28 chars.");
+			}
+
 			this.reason = reason;
 
-			var oldWayFilled = (!string.IsNullOrEmpty(account) && !string.IsNullOrEmpty(bnc));
-			var newWayFilled = (!string.IsNullOrEmpty(iban) && !string.IsNullOrEmpty(bic));
+			bool oldWayFilled = !string.IsNullOrEmpty(account) && !string.IsNullOrEmpty(bnc);
+			bool newWayFilled = !string.IsNullOrEmpty(iban) && !string.IsNullOrEmpty(bic);
 
 			//Non-SEPA payment types
 #pragma warning disable CS0612
@@ -1461,16 +1686,25 @@ public static class PayloadGenerator
 			{
 #pragma warning restore CS0612
 				if (!Regex.IsMatch(account.Replace(" ", ""), @"^[0-9]{1,9}$"))
+				{
 					throw new BezahlCodeException("The account entered isn't valid.");
+				}
+
 				this.account = account.Replace(" ", "").ToUpper();
 				if (!Regex.IsMatch(bnc.Replace(" ", ""), @"^[0-9]{1,9}$"))
+				{
 					throw new BezahlCodeException("The bnc entered isn't valid.");
+				}
+
 				this.bnc = bnc.Replace(" ", "").ToUpper();
 
-				if (authority != AuthorityType.contact && authority != AuthorityType.contact_v2)
+				if (authority is not AuthorityType.contact and not AuthorityType.contact_v2)
 				{
-					if (postingKey < 0 || postingKey >= 100)
+					if (postingKey is < 0 or >= 100)
+					{
 						throw new BezahlCodeException("PostingKey must be within 0 and 99.");
+					}
+
 					this.postingKey = postingKey;
 				}
 			}
@@ -1479,83 +1713,124 @@ public static class PayloadGenerator
 			if (authority == AuthorityType.periodicsinglepaymentsepa || authority == AuthorityType.singledirectdebitsepa || authority == AuthorityType.singlepaymentsepa || (authority == AuthorityType.contact_v2 && newWayFilled))
 			{
 				if (!IsValidIban(iban))
+				{
 					throw new BezahlCodeException("The IBAN entered isn't valid.");
+				}
+
 				this.iban = iban.Replace(" ", "").ToUpper();
 				if (!IsValidBic(bic))
+				{
 					throw new BezahlCodeException("The BIC entered isn't valid.");
+				}
+
 				this.bic = bic.Replace(" ", "").ToUpper();
 
 				if (authority != AuthorityType.contact_v2)
 				{
 					if (sepaReference.Length > 35)
+					{
 						throw new BezahlCodeException("SEPA reference texts have to be shorter than 36 chars.");
+					}
+
 					this.sepaReference = sepaReference;
 
 					if (!string.IsNullOrEmpty(creditorId) && !Regex.IsMatch(creditorId.Replace(" ", ""), @"^[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|/|\-|:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|/|\-|:|\(|\)|\.|,|']){1,28}$"))
+					{
 						throw new BezahlCodeException("The creditorId entered isn't valid.");
+					}
+
 					this.creditorId = creditorId;
 					if (!string.IsNullOrEmpty(mandateId) && !Regex.IsMatch(mandateId.Replace(" ", ""), @"^([A-Za-z0-9]|[\+|\?|/|\-|:|\(|\)|\.|,|']){1,35}$"))
+					{
 						throw new BezahlCodeException("The mandateId entered isn't valid.");
+					}
+
 					this.mandateId = mandateId;
 					if (dateOfSignature != null)
+					{
 						this.dateOfSignature = (DateTime)dateOfSignature;
+					}
 				}
 			}
 
 			//Checks for all payment types
-			if (authority != AuthorityType.contact && authority != AuthorityType.contact_v2)
+			if (authority is not AuthorityType.contact and not AuthorityType.contact_v2)
 			{
 				if (amount.ToString().Replace(",", ".").Contains('.') && amount.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
+				{
 					throw new BezahlCodeException("Amount must have less than 3 digits after decimal point.");
-				if (amount < 0.01m || amount > 999999999.99m)
+				}
+
+				if (amount is < 0.01m or > 999999999.99m)
+				{
 					throw new BezahlCodeException("Amount has to at least 0.01 and must be smaller or equal to 999999999.99.");
+				}
+
 				this.amount = amount;
 
 				this.currency = currency;
 
 				if (executionDate == null)
+				{
 					this.executionDate = DateTime.Now;
+				}
 				else
 				{
 					if (DateTime.Today.Ticks > executionDate.Value.Ticks)
+					{
 						throw new BezahlCodeException("Execution date must be today or in future.");
+					}
+
 					this.executionDate = (DateTime)executionDate;
 				}
 #pragma warning disable CS0612
-				if (authority == AuthorityType.periodicsinglepayment || authority == AuthorityType.periodicsinglepaymentsepa)
+				if (authority is AuthorityType.periodicsinglepayment or AuthorityType.periodicsinglepaymentsepa)
 #pragma warning restore CS0612
 				{
-					if (periodicTimeunit.ToUpper() != "M" && periodicTimeunit.ToUpper() != "W")
+					if (periodicTimeunit.ToUpper() is not "M" and not "W")
+					{
 						throw new BezahlCodeException("The periodicTimeunit must be either 'M' (monthly) or 'W' (weekly).");
+					}
+
 					this.periodicTimeunit = periodicTimeunit;
-					if (periodicTimeunitRotation < 1 || periodicTimeunitRotation > 52)
+					if (periodicTimeunitRotation is < 1 or > 52)
+					{
 						throw new BezahlCodeException("The periodicTimeunitRotation must be 1 or greater. (It means repeat the payment every 'periodicTimeunitRotation' weeks/months.");
+					}
+
 					this.periodicTimeunitRotation = periodicTimeunitRotation;
 					if (periodicFirstExecutionDate != null)
+					{
 						this.periodicFirstExecutionDate = (DateTime)periodicFirstExecutionDate;
+					}
+
 					if (periodicLastExecutionDate != null)
+					{
 						this.periodicLastExecutionDate = (DateTime)periodicLastExecutionDate;
+					}
 				}
 			}
 		}
 
 		public override string ToString()
 		{
-			var bezahlCodePayload = $"bank://{authority}?";
+			string bezahlCodePayload = $"bank://{authority}?";
 
 			bezahlCodePayload += $"name={Uri.EscapeDataString(name)}&";
 
-			if (authority != AuthorityType.contact && authority != AuthorityType.contact_v2)
+			if (authority is not AuthorityType.contact and not AuthorityType.contact_v2)
 			{
 				//Handle what is same for all payments
 #pragma warning disable CS0612
-				if (authority == AuthorityType.periodicsinglepayment || authority == AuthorityType.singledirectdebit || authority == AuthorityType.singlepayment)
+				if (authority is AuthorityType.periodicsinglepayment or AuthorityType.singledirectdebit or AuthorityType.singlepayment)
 #pragma warning restore CS0612
 				{
 					bezahlCodePayload += $"account={account}&";
 					bezahlCodePayload += $"bnc={bnc}&";
 					if (postingKey > 0)
+					{
 						bezahlCodePayload += $"postingkey={postingKey}&";
+					}
 				}
 				else
 				{
@@ -1563,33 +1838,51 @@ public static class PayloadGenerator
 					bezahlCodePayload += $"bic={bic}&";
 
 					if (!string.IsNullOrEmpty(sepaReference))
+					{
 						bezahlCodePayload += $"separeference={Uri.EscapeDataString(sepaReference)}&";
+					}
 
 					if (authority == AuthorityType.singledirectdebitsepa)
 					{
 						if (!string.IsNullOrEmpty(creditorId))
+						{
 							bezahlCodePayload += $"creditorid={Uri.EscapeDataString(creditorId)}&";
+						}
+
 						if (!string.IsNullOrEmpty(mandateId))
+						{
 							bezahlCodePayload += $"mandateid={Uri.EscapeDataString(mandateId)}&";
+						}
+
 						if (dateOfSignature != DateTime.MinValue)
-							bezahlCodePayload += $"dateofsignature={dateOfSignature.ToString("ddMMyyyy")}&";
+						{
+							bezahlCodePayload += $"dateofsignature={dateOfSignature:ddMMyyyy}&";
+						}
 					}
 				}
 				bezahlCodePayload += $"amount={amount:0.00}&".Replace(".", ",");
 
 				if (!string.IsNullOrEmpty(reason))
+				{
 					bezahlCodePayload += $"reason={Uri.EscapeDataString(reason)}&";
+				}
+
 				bezahlCodePayload += $"currency={currency}&";
-				bezahlCodePayload += $"executiondate={executionDate.ToString("ddMMyyyy")}&";
+				bezahlCodePayload += $"executiondate={executionDate:ddMMyyyy}&";
 #pragma warning disable CS0612
-				if (authority == AuthorityType.periodicsinglepayment || authority == AuthorityType.periodicsinglepaymentsepa)
+				if (authority is AuthorityType.periodicsinglepayment or AuthorityType.periodicsinglepaymentsepa)
 				{
 					bezahlCodePayload += $"periodictimeunit={periodicTimeunit}&";
 					bezahlCodePayload += $"periodictimeunitrotation={periodicTimeunitRotation}&";
 					if (periodicFirstExecutionDate != DateTime.MinValue)
-						bezahlCodePayload += $"periodicfirstexecutiondate={periodicFirstExecutionDate.ToString("ddMMyyyy")}&";
+					{
+						bezahlCodePayload += $"periodicfirstexecutiondate={periodicFirstExecutionDate:ddMMyyyy}&";
+					}
+
 					if (periodicLastExecutionDate != DateTime.MinValue)
-						bezahlCodePayload += $"periodiclastexecutiondate={periodicLastExecutionDate.ToString("ddMMyyyy")}&";
+					{
+						bezahlCodePayload += $"periodiclastexecutiondate={periodicLastExecutionDate:ddMMyyyy}&";
+					}
 				}
 #pragma warning restore CS0612
 			}
@@ -1616,7 +1909,9 @@ public static class PayloadGenerator
 				}
 
 				if (!string.IsNullOrEmpty(reason))
+				{
 					bezahlCodePayload += $"reason={Uri.EscapeDataString(reason)}&";
+				}
 			}
 
 			return bezahlCodePayload.Trim('&');
@@ -1896,16 +2191,18 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			var vEvent = $"BEGIN:VEVENT{Environment.NewLine}";
-			vEvent += $"SUMMARY:{this.subject}{Environment.NewLine}";
-			vEvent += !string.IsNullOrEmpty(this.description) ? $"DESCRIPTION:{this.description}{Environment.NewLine}" : "";
-			vEvent += !string.IsNullOrEmpty(this.location) ? $"LOCATION:{this.location}{Environment.NewLine}" : "";
-			vEvent += $"DTSTART:{this.start}{Environment.NewLine}";
-			vEvent += $"DTEND:{this.end}{Environment.NewLine}";
+			string vEvent = $"BEGIN:VEVENT{Environment.NewLine}";
+			vEvent += $"SUMMARY:{subject}{Environment.NewLine}";
+			vEvent += !string.IsNullOrEmpty(description) ? $"DESCRIPTION:{description}{Environment.NewLine}" : "";
+			vEvent += !string.IsNullOrEmpty(location) ? $"LOCATION:{location}{Environment.NewLine}" : "";
+			vEvent += $"DTSTART:{start}{Environment.NewLine}";
+			vEvent += $"DTEND:{end}{Environment.NewLine}";
 			vEvent += "END:VEVENT";
 
-			if (this.encoding == EventEncoding.iCalComplete)
+			if (encoding == EventEncoding.iCalComplete)
+			{
 				vEvent = $@"BEGIN:VCALENDAR{Environment.NewLine}VERSION:2.0{Environment.NewLine}{vEvent}{Environment.NewLine}END:VCALENDAR";
+			}
 
 			return vEvent;
 		}
@@ -1927,8 +2224,8 @@ public static class PayloadGenerator
 		[Obsolete("This property is obsolete, use " + nameof(AuthAlgorithm) + " instead", false)]
 		public OoneTimePasswordAuthAlgorithm Algorithm
 		{
-			get { return (OoneTimePasswordAuthAlgorithm)Enum.Parse(typeof(OoneTimePasswordAuthAlgorithm), AuthAlgorithm.ToString()); }
-			set { AuthAlgorithm = (OneTimePasswordAuthAlgorithm)Enum.Parse(typeof(OneTimePasswordAuthAlgorithm), value.ToString()); }
+			get => (OoneTimePasswordAuthAlgorithm)Enum.Parse(typeof(OoneTimePasswordAuthAlgorithm), AuthAlgorithm.ToString());
+			set => AuthAlgorithm = (OneTimePasswordAuthAlgorithm)Enum.Parse(typeof(OneTimePasswordAuthAlgorithm), value.ToString());
 		}
 
 		public string Issuer { get; set; }
@@ -1960,23 +2257,20 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			switch (Type)
+			return Type switch
 			{
-				case OneTimePasswordAuthType.TOTP:
-					return TimeToString();
-				case OneTimePasswordAuthType.HOTP:
-					return HMACToString();
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+				OneTimePasswordAuthType.TOTP => TimeToString(),
+				OneTimePasswordAuthType.HOTP => HMACToString(),
+				_ => throw new ArgumentOutOfRangeException(),
+			};
 		}
 
 		private string HMACToString()
 		{
-			var sb = new StringBuilder("otpauth://hotp/");
+			StringBuilder sb = new("otpauth://hotp/");
 			ProcessCommonFields(sb);
-			var actualCounter = Counter ?? 1;
-			sb.Append("&counter=" + actualCounter);
+			int actualCounter = Counter ?? 1;
+			_ = sb.Append("&counter=" + actualCounter);
 			return sb.ToString();
 		}
 
@@ -1987,13 +2281,13 @@ public static class PayloadGenerator
 				throw new Exception("Period must be set when using OneTimePasswordAuthType.TOTP");
 			}
 
-			var sb = new StringBuilder("otpauth://totp/");
+			StringBuilder sb = new("otpauth://totp/");
 
 			ProcessCommonFields(sb);
 
 			if (Period != 30)
 			{
-				sb.Append("&period=" + Period);
+				_ = sb.Append("&period=" + Period);
 			}
 
 			return sb.ToString();
@@ -2034,19 +2328,19 @@ public static class PayloadGenerator
 
 			if (label != null)
 			{
-				sb.Append(label);
+				_ = sb.Append(label);
 			}
 
-			sb.Append("?secret=" + strippedSecret);
+			_ = sb.Append("?secret=" + strippedSecret);
 
 			if (escapedIssuer != null)
 			{
-				sb.Append("&issuer=" + escapedIssuer);
+				_ = sb.Append("&issuer=" + escapedIssuer);
 			}
 
 			if (Digits != 6)
 			{
-				sb.Append("&digits=" + Digits);
+				_ = sb.Append("&digits=" + Digits);
 			}
 		}
 	}
@@ -2056,7 +2350,7 @@ public static class PayloadGenerator
 		private readonly string hostname, password, tag, methodStr, parameter;
 		private readonly Method method;
 		private readonly int port;
-		private Dictionary<string, string> encryptionTexts = new Dictionary<string, string>() {
+		private readonly Dictionary<string, string> encryptionTexts = new() {
 			{ "Chacha20IetfPoly1305", "chacha20-ietf-poly1305" },
 			{ "Aes128Gcm", "aes-128-gcm" },
 			{ "Aes192Gcm", "aes-192-gcm" },
@@ -2118,7 +2412,7 @@ public static class PayloadGenerator
 			)
 			}, tag)
 		{ }
-		private Dictionary<string, string> UrlEncodeTable = new Dictionary<string, string>
+		private readonly Dictionary<string, string> UrlEncodeTable = new()
 		{
 			[" "] = "+",
 			["\0"] = "%00",
@@ -2155,7 +2449,7 @@ public static class PayloadGenerator
 		private string UrlEncode(string i)
 		{
 			string j = i;
-			foreach (var kv in UrlEncodeTable)
+			foreach (KeyValuePair<string, string> kv in UrlEncodeTable)
 			{
 				j = j.Replace(kv.Key, kv.Value);
 			}
@@ -2167,32 +2461,37 @@ public static class PayloadGenerator
 			this.hostname = Uri.CheckHostName(hostname) == UriHostNameType.IPv6
 				? $"[{hostname}]"
 				: hostname;
-			if (port < 1 || port > 65535)
+			if (port is < 1 or > 65535)
+			{
 				throw new ShadowSocksConfigException("Value of 'port' must be within 0 and 65535.");
+			}
+
 			this.port = port;
 			this.password = password;
 			this.method = method;
-			this.methodStr = encryptionTexts[method.ToString()];
+			methodStr = encryptionTexts[method.ToString()];
 			this.tag = tag;
 
 			if (parameters != null)
-				this.parameter =
+			{
+				parameter =
 					string.Join("&",
 					parameters.Select(
 						kv => $"{UrlEncode(kv.Key)}={UrlEncode(kv.Value)}"
 					).ToArray());
+			}
 		}
 
 		public override string ToString()
 		{
 			if (string.IsNullOrEmpty(parameter))
 			{
-				var connectionString = $"{methodStr}:{password}@{hostname}:{port}";
-				var connectionStringEncoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(connectionString));
+				string connectionString = $"{methodStr}:{password}@{hostname}:{port}";
+				string connectionStringEncoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(connectionString));
 				return $"ss://{connectionStringEncoded}{(!string.IsNullOrEmpty(tag) ? $"#{tag}" : string.Empty)}";
 			}
-			var authString = $"{methodStr}:{password}";
-			var authStringEncoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(authString))
+			string authString = $"{methodStr}:{password}";
+			string authStringEncoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(authString))
 				.Replace('+', '-')
 				.Replace('/', '_')
 				.TrimEnd('=');
@@ -2281,10 +2580,16 @@ public static class PayloadGenerator
 		public MoneroTransaction(string address, float? txAmount = null, string txPaymentId = null, string recipientName = null, string txDescription = null)
 		{
 			if (string.IsNullOrEmpty(address))
+			{
 				throw new MoneroTransactionException("The address is mandatory and has to be set.");
+			}
+
 			this.address = address;
-			if (txAmount != null && txAmount <= 0)
+			if (txAmount is not null and <= 0)
+			{
 				throw new MoneroTransactionException("Value of 'txAmount' must be greater than 0.");
+			}
+
 			this.txAmount = txAmount;
 			this.txPaymentId = txPaymentId;
 			this.recipientName = recipientName;
@@ -2293,11 +2598,11 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			var moneroUri = $"monero://{address}{(!string.IsNullOrEmpty(txPaymentId) || !string.IsNullOrEmpty(recipientName) || !string.IsNullOrEmpty(txDescription) || txAmount != null ? "?" : string.Empty)}";
-			moneroUri += (!string.IsNullOrEmpty(txPaymentId) ? $"tx_payment_id={Uri.EscapeDataString(txPaymentId)}&" : string.Empty);
-			moneroUri += (!string.IsNullOrEmpty(recipientName) ? $"recipient_name={Uri.EscapeDataString(recipientName)}&" : string.Empty);
-			moneroUri += (txAmount != null ? $"tx_amount={txAmount.ToString().Replace(",", ".")}&" : string.Empty);
-			moneroUri += (!string.IsNullOrEmpty(txDescription) ? $"tx_description={Uri.EscapeDataString(txDescription)}" : string.Empty);
+			string moneroUri = $"monero://{address}{(!string.IsNullOrEmpty(txPaymentId) || !string.IsNullOrEmpty(recipientName) || !string.IsNullOrEmpty(txDescription) || txAmount != null ? "?" : string.Empty)}";
+			moneroUri += !string.IsNullOrEmpty(txPaymentId) ? $"tx_payment_id={Uri.EscapeDataString(txPaymentId)}&" : string.Empty;
+			moneroUri += !string.IsNullOrEmpty(recipientName) ? $"recipient_name={Uri.EscapeDataString(recipientName)}&" : string.Empty;
+			moneroUri += txAmount != null ? $"tx_amount={txAmount.ToString().Replace(",", ".")}&" : string.Empty;
+			moneroUri += !string.IsNullOrEmpty(txDescription) ? $"tx_description={Uri.EscapeDataString(txDescription)}" : string.Empty;
 			return moneroUri.TrimEnd('&');
 		}
 
@@ -2322,27 +2627,27 @@ public static class PayloadGenerator
 
 	public class SlovenianUpnQr : Payload
 	{
-		private string _payerName = "";
-		private string _payerAddress = "";
-		private string _payerPlace = "";
-		private string _amount = "";
-		private string _code = "";
-		private string _purpose = "";
-		private string _deadLine = "";
-		private string _recipientIban = "";
-		private string _recipientName = "";
-		private string _recipientAddress = "";
-		private string _recipientPlace = "";
-		private string _recipientSiModel = "";
-		private string _recipientSiReference = "";
+		private readonly string _payerName = "";
+		private readonly string _payerAddress = "";
+		private readonly string _payerPlace = "";
+		private readonly string _amount = "";
+		private readonly string _code = "";
+		private readonly string _purpose = "";
+		private readonly string _deadLine = "";
+		private readonly string _recipientIban = "";
+		private readonly string _recipientName = "";
+		private readonly string _recipientAddress = "";
+		private readonly string _recipientPlace = "";
+		private readonly string _recipientSiModel = "";
+		private readonly string _recipientSiReference = "";
 
-		public override int Version { get { return 15; } }
-		public override QRCodeGenerator.ECCLevel EccLevel { get { return QRCodeGenerator.ECCLevel.M; } }
-		public override QRCodeGenerator.EciMode EciMode { get { return QRCodeGenerator.EciMode.Iso8859_2; } }
+		public override int Version => 15;
+		public override QRCodeGenerator.ECCLevel EccLevel => QRCodeGenerator.ECCLevel.M;
+		public override QRCodeGenerator.EciMode EciMode => QRCodeGenerator.EciMode.Iso8859_2;
 
 		private string LimitLength(string value, int maxLength)
 		{
-			return (value.Length <= maxLength) ? value : value.Substring(0, maxLength);
+			return (value.Length <= maxLength) ? value : value[..maxLength];
 		}
 
 		public SlovenianUpnQr(string payerName, string payerAddress, string payerPlace, string recipientName, string recipientAddress, string recipientPlace, string recipientIban, string description, double amount, string recipientSiModel = "SI00", string recipientSiReference = "", string code = "OTHR") :
@@ -2370,7 +2675,7 @@ public static class PayloadGenerator
 		private string FormatAmount(double amount)
 		{
 			int _amt = (int)Math.Round(amount * 100.0);
-			return String.Format("{0:00000000000}", _amt);
+			return string.Format("{0:00000000000}", _amt);
 		}
 
 		private int CalculateChecksum()
@@ -2394,22 +2699,22 @@ public static class PayloadGenerator
 
 		public override string ToString()
 		{
-			var _sb = new StringBuilder();
-			_sb.Append("UPNQR");
-			_sb.Append('\n').Append('\n').Append('\n').Append('\n').Append('\n');
-			_sb.Append(_payerName).Append('\n');
-			_sb.Append(_payerAddress).Append('\n');
-			_sb.Append(_payerPlace).Append('\n');
-			_sb.Append(_amount).Append('\n').Append('\n').Append('\n');
-			_sb.Append(_code.ToUpper()).Append('\n');
-			_sb.Append(_purpose).Append('\n');
-			_sb.Append(_deadLine).Append('\n');
-			_sb.Append(_recipientIban.ToUpper()).Append('\n');
-			_sb.Append(_recipientSiModel).Append(_recipientSiReference).Append('\n');
-			_sb.Append(_recipientName).Append('\n');
-			_sb.Append(_recipientAddress).Append('\n');
-			_sb.Append(_recipientPlace).Append('\n');
-			_sb.AppendFormat("{0:000}", CalculateChecksum()).Append('\n');
+			StringBuilder _sb = new();
+			_ = _sb.Append("UPNQR");
+			_ = _sb.Append('\n').Append('\n').Append('\n').Append('\n').Append('\n');
+			_ = _sb.Append(_payerName).Append('\n');
+			_ = _sb.Append(_payerAddress).Append('\n');
+			_ = _sb.Append(_payerPlace).Append('\n');
+			_ = _sb.Append(_amount).Append('\n').Append('\n').Append('\n');
+			_ = _sb.Append(_code.ToUpper()).Append('\n');
+			_ = _sb.Append(_purpose).Append('\n');
+			_ = _sb.Append(_deadLine).Append('\n');
+			_ = _sb.Append(_recipientIban.ToUpper()).Append('\n');
+			_ = _sb.Append(_recipientSiModel).Append(_recipientSiReference).Append('\n');
+			_ = _sb.Append(_recipientName).Append('\n');
+			_ = _sb.Append(_recipientAddress).Append('\n');
+			_ = _sb.Append(_recipientPlace).Append('\n');
+			_ = _sb.AppendFormat("{0:000}", CalculateChecksum()).Append('\n');
 			return _sb.ToString();
 		}
 	}
@@ -2418,9 +2723,9 @@ public static class PayloadGenerator
 	public class RussiaPaymentOrder : Payload
 	{
 		//base
-		private CharacterSets characterSet;
-		private MandatoryFields mFields;
-		private OptionalFields oFields;
+		private readonly CharacterSets characterSet;
+		private readonly MandatoryFields mFields;
+		private readonly OptionalFields oFields;
 		private string separator = "|";
 
 		private RussiaPaymentOrder()
@@ -2449,7 +2754,9 @@ public static class PayloadGenerator
 			mFields.CorrespAcc = ValidateInput(correspAcc, "CorrespAcc", @"^[1-9]\d{4}[0-9ABCEHKMPTX]\d{14}$");
 
 			if (optionalFields != null)
+			{
 				oFields = optionalFields;
+			}
 		}
 
 		/// <summary>
@@ -2459,8 +2766,8 @@ public static class PayloadGenerator
 		/// <returns></returns>
 		public override string ToString()
 		{
-			var cp = characterSet.ToString().Replace("_", "-");
-			var bytes = ToBytes();
+			string cp = characterSet.ToString().Replace("_", "-");
+			byte[] bytes = ToBytes();
 
 #if !NET35_OR_GREATER && !NETSTANDARD1_3_OR_GREATER
 			System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -2491,20 +2798,23 @@ public static class PayloadGenerator
 				$"{separator}CorrespAcc={mFields.CorrespAcc}";
 
 			//Add optional fields, if filled
-			var optionalFieldsList = GetOptionalFieldsAsList();
+			List<string> optionalFieldsList = GetOptionalFieldsAsList();
 			if (optionalFieldsList.Count > 0)
+			{
 				ret += $"|{string.Join("|", optionalFieldsList.ToArray())}";
+			}
+
 			ret += separator;
 
 			//Encode return string as byte[] with correct CharacterSet
 #if !NET35_OR_GREATER
 			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
-			var cp = this.characterSet.ToString().Replace("_", "-");
+			string cp = characterSet.ToString().Replace("_", "-");
 			byte[] bytesOut = Encoding.Convert(Encoding.UTF8, Encoding.GetEncoding(cp), Encoding.UTF8.GetBytes(ret));
-			if (bytesOut.Length > 300)
-				throw new RussiaPaymentOrderException($"Data too long. Payload must not exceed 300 bytes, but actually is {bytesOut.Length} bytes long. Remove additional data fields or shorten strings/values.");
-			return bytesOut;
+			return bytesOut.Length > 300
+				? throw new RussiaPaymentOrderException($"Data too long. Payload must not exceed 300 bytes, but actually is {bytesOut.Length} bytes long. Remove additional data fields or shorten strings/values.")
+				: bytesOut;
 		}
 
 
@@ -2516,15 +2826,17 @@ public static class PayloadGenerator
 		{
 			// See chapter 5.2.1 of Standard (https://sbqr.ru/standard/files/standart.pdf)
 
-			var mandatoryValues = GetMandatoryFieldsAsList();
-			var optionalValues = GetOptionalFieldsAsList();
+			List<string> mandatoryValues = GetMandatoryFieldsAsList();
+			List<string> optionalValues = GetOptionalFieldsAsList();
 
 			// Possible candidates for field separation
-			var separatorCandidates = new string[] { "|", "#", ";", ":", "^", "_", "~", "{", "}", "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "/", "@" };
-			foreach (var sepCandidate in separatorCandidates)
+			string[] separatorCandidates = new string[] { "|", "#", ";", ":", "^", "_", "~", "{", "}", "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "/", "@" };
+			foreach (string sepCandidate in separatorCandidates)
 			{
 				if (!mandatoryValues.Any(x => x.Contains(sepCandidate)) && !optionalValues.Any(x => x.Contains(sepCandidate)))
+				{
 					return sepCandidate;
+				}
 			}
 			throw new RussiaPaymentOrderException("No valid separator found.");
 		}
@@ -2549,8 +2861,8 @@ public static class PayloadGenerator
 					.Where(field => field.GetValue(oFields, null) != null)
 					.Select(field =>
 					{
-						var objValue = field.GetValue(oFields, null);
-						var value = field.PropertyType.Equals(typeof(DateTime?)) ? ((DateTime)objValue).ToString("dd.MM.yyyy") : objValue.ToString();
+						object objValue = field.GetValue(oFields, null);
+						string value = field.PropertyType.Equals(typeof(DateTime?)) ? ((DateTime)objValue).ToString("dd.MM.yyyy") : objValue.ToString();
 						return $"{field.Name}={value}";
 					})
 					.ToList();
@@ -2578,8 +2890,8 @@ public static class PayloadGenerator
 					.Where(field => field.GetValue(mFields) != null)
 					.Select(field =>
 					{
-						var objValue = field.GetValue(mFields);
-						var value = field.FieldType.Equals(typeof(DateTime?)) ? ((DateTime)objValue).ToString("dd.MM.yyyy") : objValue.ToString();
+						object objValue = field.GetValue(mFields);
+						string value = field.FieldType.Equals(typeof(DateTime?)) ? ((DateTime)objValue).ToString("dd.MM.yyyy") : objValue.ToString();
 						return $"{field.Name}={value}";
 					})
 					.ToList();
@@ -2610,11 +2922,16 @@ public static class PayloadGenerator
 		private static string ValidateInput(string input, string fieldname, string[] patterns, string errorText = null)
 		{
 			if (input == null)
+			{
 				throw new RussiaPaymentOrderException($"The input for '{fieldname}' must not be null.");
-			foreach (var pattern in patterns)
+			}
+
+			foreach (string pattern in patterns)
 			{
 				if (!Regex.IsMatch(input, pattern))
+				{
 					throw new RussiaPaymentOrderException(errorText ?? $"The input for '{fieldname}' ({input}) doesn't match the pattern {pattern}");
+				}
 			}
 			return input;
 		}
@@ -2637,8 +2954,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string Sum
 			{
-				get { return _sum; }
-				set { _sum = ValidateInput(value, "Sum", @"^\d{1,18}$"); }
+				get => _sum;
+				set => _sum = ValidateInput(value, "Sum", @"^\d{1,18}$");
 			}
 
 			private string _purpose;
@@ -2648,8 +2965,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string Purpose
 			{
-				get { return _purpose; }
-				set { _purpose = ValidateInput(value, "Purpose", @"^.{1,160}$"); }
+				get => _purpose;
+				set => _purpose = ValidateInput(value, "Purpose", @"^.{1,160}$");
 			}
 
 			private string _payeeInn;
@@ -2659,8 +2976,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string PayeeINN
 			{
-				get { return _payeeInn; }
-				set { _payeeInn = ValidateInput(value, "PayeeINN", @"^.{1,12}$"); }
+				get => _payeeInn;
+				set => _payeeInn = ValidateInput(value, "PayeeINN", @"^.{1,12}$");
 			}
 
 			private string _payerInn;
@@ -2670,8 +2987,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string PayerINN
 			{
-				get { return _payerInn; }
-				set { _payerInn = ValidateInput(value, "PayerINN", @"^.{1,12}$"); }
+				get => _payerInn;
+				set => _payerInn = ValidateInput(value, "PayerINN", @"^.{1,12}$");
 			}
 
 			private string _drawerStatus;
@@ -2681,8 +2998,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string DrawerStatus
 			{
-				get { return _drawerStatus; }
-				set { _drawerStatus = ValidateInput(value, "DrawerStatus", @"^.{1,2}$"); }
+				get => _drawerStatus;
+				set => _drawerStatus = ValidateInput(value, "DrawerStatus", @"^.{1,2}$");
 			}
 
 			private string _kpp;
@@ -2692,8 +3009,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string KPP
 			{
-				get { return _kpp; }
-				set { _kpp = ValidateInput(value, "KPP", @"^.{1,9}$"); }
+				get => _kpp;
+				set => _kpp = ValidateInput(value, "KPP", @"^.{1,9}$");
 			}
 
 			private string _cbc;
@@ -2703,8 +3020,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string CBC
 			{
-				get { return _cbc; }
-				set { _cbc = ValidateInput(value, "CBC", @"^.{1,20}$"); }
+				get => _cbc;
+				set => _cbc = ValidateInput(value, "CBC", @"^.{1,20}$");
 			}
 
 			private string _oktmo;
@@ -2714,8 +3031,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string OKTMO
 			{
-				get { return _oktmo; }
-				set { _oktmo = ValidateInput(value, "OKTMO", @"^.{1,11}$"); }
+				get => _oktmo;
+				set => _oktmo = ValidateInput(value, "OKTMO", @"^.{1,11}$");
 			}
 
 			private string _paytReason;
@@ -2725,8 +3042,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string PaytReason
 			{
-				get { return _paytReason; }
-				set { _paytReason = ValidateInput(value, "PaytReason", @"^.{1,2}$"); }
+				get => _paytReason;
+				set => _paytReason = ValidateInput(value, "PaytReason", @"^.{1,2}$");
 			}
 
 			private string _taxPeriod;
@@ -2736,8 +3053,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string TaxPeriod
 			{
-				get { return _taxPeriod; }
-				set { _taxPeriod = ValidateInput(value, "ТaxPeriod", @"^.{1,10}$"); }
+				get => _taxPeriod;
+				set => _taxPeriod = ValidateInput(value, "ТaxPeriod", @"^.{1,10}$");
 			}
 
 			private string _docNo;
@@ -2747,8 +3064,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string DocNo
 			{
-				get { return _docNo; }
-				set { _docNo = ValidateInput(value, "DocNo", @"^.{1,15}$"); }
+				get => _docNo;
+				set => _docNo = ValidateInput(value, "DocNo", @"^.{1,15}$");
 			}
 
 			/// <summary>
@@ -2764,8 +3081,8 @@ public static class PayloadGenerator
 			/// </summary>
 			public string TaxPaytKind
 			{
-				get { return _taxPaytKind; }
-				set { _taxPaytKind = ValidateInput(value, "TaxPaytKind", @"^.{1,2}$"); }
+				get => _taxPaytKind;
+				set => _taxPaytKind = ValidateInput(value, "TaxPaytKind", @"^.{1,2}$");
 			}
 
 			/// <summary>
@@ -3003,22 +3320,25 @@ public static class PayloadGenerator
 	private static bool IsValidIban(string iban)
 	{
 		//Clean IBAN
-		var ibanCleared = iban.ToUpper().Replace(" ", "").Replace("-", "");
+		string ibanCleared = iban.ToUpper().Replace(" ", "").Replace("-", "");
 
 		//Check for general structure
-		var structurallyValid = Regex.IsMatch(ibanCleared, @"^[a-zA-Z]{2}[0-9]{2}([a-zA-Z0-9]?){16,30}$");
+		bool structurallyValid = Regex.IsMatch(ibanCleared, @"^[a-zA-Z]{2}[0-9]{2}([a-zA-Z0-9]?){16,30}$");
 
 		//Check IBAN checksum
-		var checksumValid = false;
-		var sum = $"{ibanCleared.Substring(4)}{ibanCleared.Substring(0, 4)}".ToCharArray().Aggregate("", (current, c) => current + (char.IsLetter(c) ? (c - 55).ToString() : c.ToString()));
+		bool checksumValid = false;
+		string sum = $"{ibanCleared[4..]}{ibanCleared[..4]}".ToCharArray().Aggregate("", (current, c) => current + (char.IsLetter(c) ? (c - 55).ToString() : c.ToString()));
 		int m = 0;
 		for (int i = 0; i < (int)Math.Ceiling((sum.Length - 2) / 7d); i++)
 		{
-			var offset = (i == 0 ? 0 : 2);
-			var start = (i * 7) + offset;
-			var n = (i == 0 ? "" : m.ToString()) + sum.Substring(start, Math.Min(9 - offset, sum.Length - start));
+			int offset = i == 0 ? 0 : 2;
+			int start = (i * 7) + offset;
+			string n = (i == 0 ? "" : m.ToString()) + sum.Substring(start, Math.Min(9 - offset, sum.Length - start));
 			if (!int.TryParse(n, NumberStyles.Any, CultureInfo.InvariantCulture, out m))
+			{
 				break;
+			}
+
 			m = m % 97;
 		}
 		checksumValid = m == 1;
@@ -3027,12 +3347,12 @@ public static class PayloadGenerator
 
 	private static bool IsValidQRIban(string iban)
 	{
-		var foundQrIid = false;
+		bool foundQrIid = false;
 		try
 		{
-			var ibanCleared = iban.ToUpper().Replace(" ", "").Replace("-", "");
-			var possibleQrIid = Convert.ToInt32(ibanCleared.Substring(4, 5));
-			foundQrIid = possibleQrIid >= 30000 && possibleQrIid <= 31999;
+			string ibanCleared = iban.ToUpper().Replace(" ", "").Replace("-", "");
+			int possibleQrIid = Convert.ToInt32(ibanCleared.Substring(4, 5));
+			foundQrIid = possibleQrIid is >= 30000 and <= 31999;
 		}
 		catch { }
 		return IsValidIban(iban) && foundQrIid;
@@ -3059,7 +3379,7 @@ public static class PayloadGenerator
 		{
 			forbiddenChars = new char[1] { ':' };
 		}
-		foreach (var c in forbiddenChars)
+		foreach (char c in forbiddenChars)
 		{
 			inp = inp.Replace(c.ToString(), "\\" + c);
 		}
@@ -3069,21 +3389,24 @@ public static class PayloadGenerator
 	public static bool ChecksumMod10(string digits)
 	{
 		if (string.IsNullOrEmpty(digits) || digits.Length < 2)
+		{
 			return false;
+		}
+
 		int[] mods = new int[] { 0, 9, 4, 6, 8, 2, 7, 1, 3, 5 };
 
 		int remainder = 0;
 		for (int i = 0; i < digits.Length - 1; i++)
 		{
-			var num = Convert.ToInt32(digits[i]) - 48;
+			int num = Convert.ToInt32(digits[i]) - 48;
 			remainder = mods[(num + remainder) % 10];
 		}
-		var checksum = (10 - remainder) % 10;
-		return checksum == Convert.ToInt32(digits[digits.Length - 1]) - 48;
+		int checksum = (10 - remainder) % 10;
+		return checksum == Convert.ToInt32(digits[^1]) - 48;
 	}
 
 	private static bool isHexStyle(string inp)
 	{
-		return (System.Text.RegularExpressions.Regex.IsMatch(inp, @"\A\b[0-9a-fA-F]+\b\Z") || System.Text.RegularExpressions.Regex.IsMatch(inp, @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z"));
+		return System.Text.RegularExpressions.Regex.IsMatch(inp, @"\A\b[0-9a-fA-F]+\b\Z") || System.Text.RegularExpressions.Regex.IsMatch(inp, @"\A\b(0[xX])?[0-9a-fA-F]+\b\Z");
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using Riverside.Graphite.Runtime.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Riverside.Graphite.Runtime.Helpers
 		{
 			try
 			{
-				var options = new JsonSerializerOptions { WriteIndented = true };
+				JsonSerializerOptions options = new() { WriteIndented = true };
 				string jsonString = JsonSerializer.Serialize(Items, options);
 				byte[] encryptedData = EncryptionHelpers.ProtectString(jsonString);
 
@@ -43,14 +44,9 @@ namespace Riverside.Graphite.Runtime.Helpers
 					byte[] encryptedJsonString = File.ReadAllBytes(Models.Data.TotpFilePath);
 					string jsonString = EncryptionHelpers.UnprotectToString(encryptedJsonString);
 
-					if (!string.IsNullOrEmpty(jsonString))
-					{
-						Items = JsonSerializer.Deserialize<ObservableCollection<TwoFactorAuthItem>>(jsonString) ?? new ObservableCollection<TwoFactorAuthItem>();
-					}
-					else
-					{
-						Items = new ObservableCollection<TwoFactorAuthItem>();
-					}
+					Items = !string.IsNullOrEmpty(jsonString)
+						? JsonSerializer.Deserialize<ObservableCollection<TwoFactorAuthItem>>(jsonString) ?? new ObservableCollection<TwoFactorAuthItem>()
+						: new ObservableCollection<TwoFactorAuthItem>();
 				}
 				else
 				{
@@ -87,7 +83,7 @@ namespace Riverside.Graphite.Runtime.Helpers
 					{
 						try
 						{
-							var items = JsonSerializer.Deserialize<ObservableCollection<TwoFactorAuthItem>>(jsonString);
+							ObservableCollection<TwoFactorAuthItem> items = JsonSerializer.Deserialize<ObservableCollection<TwoFactorAuthItem>>(jsonString);
 
 							if (items == null)
 							{

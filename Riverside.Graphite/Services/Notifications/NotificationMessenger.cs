@@ -11,7 +11,7 @@ namespace Riverside.Graphite.Services.Notifications
 {
 	public sealed class NotificationMessenger
 	{
-		private ObservableCollection<FireNotification> messages;
+		private readonly ObservableCollection<FireNotification> messages;
 		private StoreContext _storeContext;
 		public ObservableCollection<FireNotification> PublicMessages => messages;
 
@@ -36,7 +36,10 @@ namespace Riverside.Graphite.Services.Notifications
 		{
 			await InitializeStoreContext();
 
-			if (_storeContext is null) return;
+			if (_storeContext is null)
+			{
+				return;
+			}
 
 			IReadOnlyList<StorePackageUpdate> updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
 
@@ -47,32 +50,32 @@ namespace Riverside.Graphite.Services.Notifications
 				if (updateResult.OverallState == StorePackageUpdateState.Completed)
 				{
 					// Inform the user that the update was successful
-					var toastContentBuilder = new AppNotificationBuilder()
+					AppNotificationBuilder toastContentBuilder = new AppNotificationBuilder()
 						.AddText("Update Complete!")
 						.AddText("The app has been updated successfully.");
 
-					var toast = toastContentBuilder.BuildNotification();
+					AppNotification toast = toastContentBuilder.BuildNotification();
 					AppNotificationManager.Default.Show(toast);
 				}
 				else
 				{
 					// Inform the user that the update failed
-					var toastContentBuilder = new AppNotificationBuilder()
+					AppNotificationBuilder toastContentBuilder = new AppNotificationBuilder()
 						.AddText("Update Failed")
 						.AddText("The app could not be updated. Please try again later.");
 
-					var toast = toastContentBuilder.BuildNotification();
+					AppNotification toast = toastContentBuilder.BuildNotification();
 					AppNotificationManager.Default.Show(toast);
 				}
 			}
 			else
 			{
 				// Inform the user that no updates are available
-				var toastContentBuilder = new AppNotificationBuilder()
+				AppNotificationBuilder toastContentBuilder = new AppNotificationBuilder()
 					.AddText("No Updates Available")
 					.AddText("You already have the latest version of the app.");
 
-				var toast = toastContentBuilder.BuildNotification();
+				AppNotification toast = toastContentBuilder.BuildNotification();
 				AppNotificationManager.Default.Show(toast);
 			}
 
@@ -81,7 +84,7 @@ namespace Riverside.Graphite.Services.Notifications
 
 		public async Task<List<StoreProduct>> GetAssociatedStoreProductsAsync()
 		{
-			List<string> productKinds = new List<string> { "Durable", "Consumable", "UnmanagedConsumable", "Subscription" };
+			List<string> productKinds = new() { "Durable", "Consumable", "UnmanagedConsumable", "Subscription" };
 
 			StoreProductQueryResult result = await _storeContext.GetAssociatedStoreProductsAsync(productKinds);
 
@@ -91,9 +94,9 @@ namespace Riverside.Graphite.Services.Notifications
 				throw new Exception(result.ExtendedError.Message);
 			}
 
-			List<StoreProduct> products = new List<StoreProduct>();
+			List<StoreProduct> products = new();
 
-			foreach (var product in result.Products.Values)
+			foreach (StoreProduct product in result.Products.Values)
 			{
 				products.Add(product);
 				Console.WriteLine($"Product ID: {product.StoreId}, Title: {product.Title}, Price: {product.Price.FormattedPrice}");
@@ -105,7 +108,10 @@ namespace Riverside.Graphite.Services.Notifications
 		{
 			await InitializeStoreContext();
 
-			if (_storeContext is null) return;
+			if (_storeContext is null)
+			{
+				return;
+			}
 
 			WinRT.Interop.InitializeWithWindow.Initialize(_storeContext, WinRT.Interop.WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow));
 			StoreRateAndReviewResult result = await _storeContext.RequestRateAndReviewAppAsync();
@@ -117,27 +123,27 @@ namespace Riverside.Graphite.Services.Notifications
 					if (result.WasUpdated)
 					{
 						// User has already rated the app
-						window.DispatcherQueue.TryEnqueue(() =>
+						_ = window.DispatcherQueue.TryEnqueue(() =>
 						window.NotificationQueue.Show("Thanks for raing our Application", 2000, "Fire Browser"));
 					}
 					else
 					{
 						// User has rated the app for the first time
-						window.DispatcherQueue.TryEnqueue(() =>
+						_ = window.DispatcherQueue.TryEnqueue(() =>
 						window.NotificationQueue.Show("Login to Microsoft and have ability to backup data to the cloud", 2000, "Fire Browser"));
 					}
 				}
 				else if (result.Status == StoreRateAndReviewStatus.CanceledByUser)
 				{
 					// User canceled the rating request
-					window.DispatcherQueue.TryEnqueue(() =>
+					_ = window.DispatcherQueue.TryEnqueue(() =>
 							window.NotificationQueue.Show("Operation was cancelled", 2000, "Fire Browser"));
 				}
 			}
 		}
 		public void NotificationReceived(FireNotification notification)
 		{
-			var text = notification.Originator;
+			string text = notification.Originator;
 
 			text += "\t- Action: " + notification.Action;
 
@@ -170,5 +176,3 @@ namespace Riverside.Graphite.Services.Notifications
 		}
 	}
 }
-
-

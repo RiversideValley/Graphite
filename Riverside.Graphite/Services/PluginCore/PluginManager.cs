@@ -7,16 +7,16 @@ using System.Reflection;
 namespace Riverside.Graphite.Services.PluginCore;
 public class PluginManager
 {
-	public HashSet<String> DirectoryPaths = new HashSet<string>();
-	public HashSet<IPluginBase> CurrentPlugins = new HashSet<IPluginBase>();
+	public HashSet<string> DirectoryPaths = new();
+	public HashSet<IPluginBase> CurrentPlugins = new();
 
-	public PluginManager(String DirectoryPath)
+	public PluginManager(string DirectoryPath)
 	{
-		DirectoryPaths.Add(DirectoryPath);
+		_ = DirectoryPaths.Add(DirectoryPath);
 		LoadPlugins();
 	}
 
-	public PluginManager(List<String> DirectoryPaths)
+	public PluginManager(List<string> DirectoryPaths)
 	{
 		this.DirectoryPaths = new HashSet<string>(DirectoryPaths);
 		LoadPlugins();
@@ -26,9 +26,9 @@ public class PluginManager
 	{
 		CurrentPlugins = new HashSet<IPluginBase>();
 
-		foreach (var ele in DirectoryPaths)
+		foreach (string ele in DirectoryPaths)
 		{
-			DirectoryInfo dir = new DirectoryInfo(ele);
+			DirectoryInfo dir = new(ele);
 
 			foreach (FileInfo file in dir.GetFiles("*.dll"))
 			{
@@ -40,7 +40,7 @@ public class PluginManager
 						IPluginBase b = t.InvokeMember(null,
 											BindingFlags.CreateInstance, null, null, null) as IPluginBase;
 
-						CurrentPlugins.Add(b);
+						_ = CurrentPlugins.Add(b);
 					}
 				}
 			}

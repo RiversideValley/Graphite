@@ -28,16 +28,16 @@ public class HistoryActions : IHistoryActions
 			if (await HistoryContext.Urls.FirstOrDefaultAsync(t => t.url == url) is DbHistoryItem item)
 			{
 				string dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-				HistoryContext.Urls.Where(x => x.url == url).ExecuteUpdate(y => y.SetProperty(z => z.visit_count, z => z.visit_count + 1)
+				_ = HistoryContext.Urls.Where(x => x.url == url).ExecuteUpdate(y => y.SetProperty(z => z.visit_count, z => z.visit_count + 1)
 				.SetProperty(a => a.last_visit_time, dateTime)
 				.SetProperty(b => b.title, title));
 			}
 			else
 			{
-				await HistoryContext.Urls.AddAsync(new DbHistoryItem(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), url, title, visitCount, typedCount, hidden));
+				_ = await HistoryContext.Urls.AddAsync(new DbHistoryItem(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), url, title, visitCount, typedCount, hidden));
 			}
 
-			await HistoryContext.SaveChangesAsync();
+			_ = await HistoryContext.SaveChangesAsync();
 		}
 		catch (Exception ex)
 		{
@@ -50,8 +50,8 @@ public class HistoryActions : IHistoryActions
 	{
 		try
 		{
-			await HistoryContext.Urls.Where(x => x.url == url).ExecuteDeleteAsync();
-			await HistoryContext.SaveChangesAsync();
+			_ = await HistoryContext.Urls.Where(x => x.url == url).ExecuteDeleteAsync();
+			_ = await HistoryContext.SaveChangesAsync();
 		}
 		catch (Exception ex)
 		{
@@ -62,13 +62,13 @@ public class HistoryActions : IHistoryActions
 
 	public async Task DeleteAllHistoryItems()
 	{
-		var tran = HistoryContext.Database.BeginTransaction();
+		Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction tran = HistoryContext.Database.BeginTransaction();
 
 		try
 		{
 			// executesqlAsync doesn't have a default tran so add on.
-			await HistoryContext.Database.ExecuteSqlAsync($"DELETE FROM urls;");
-			await HistoryContext.SaveChangesAsync();
+			_ = await HistoryContext.Database.ExecuteSqlAsync($"DELETE FROM urls;");
+			_ = await HistoryContext.SaveChangesAsync();
 			tran.Commit();
 		}
 		catch (Exception ex)

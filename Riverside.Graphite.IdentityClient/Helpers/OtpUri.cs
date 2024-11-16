@@ -60,17 +60,22 @@ public class OtpUri
 		: this(schema, Base32Encoding.ToString(secret), user, issuer, algorithm, digits, period, counter)
 	{ }
 
-	public Uri ToUri() => new Uri(ToString());
+	public Uri ToUri()
+	{
+		return new Uri(ToString());
+	}
 
 	public override string ToString()
 	{
-		var parameters = new Dictionary<string, string>
+		Dictionary<string, string> parameters = new()
 		{
 			{ "secret", Secret.TrimEnd('=') }
 		};
 
 		if (!string.IsNullOrWhiteSpace(Issuer))
+		{
 			parameters.Add("issuer", Uri.EscapeDataString(Issuer));
+		}
 
 		parameters.Add("algorithm", Algorithm.ToString().ToUpper());
 		parameters.Add("digits", Digits.ToString());
@@ -85,28 +90,28 @@ public class OtpUri
 				break;
 		}
 
-		var uriBuilder = new StringBuilder("otpauth://");
-		uriBuilder.Append(Type.ToString().ToLowerInvariant());
+		StringBuilder uriBuilder = new("otpauth://");
+		_ = uriBuilder.Append(Type.ToString().ToLowerInvariant());
 
 		if (!string.IsNullOrWhiteSpace(Issuer))
 		{
-			uriBuilder.Append('/');
-			uriBuilder.Append(Uri.EscapeDataString(Issuer));
+			_ = uriBuilder.Append('/');
+			_ = uriBuilder.Append(Uri.EscapeDataString(Issuer));
 		}
 
-		uriBuilder.Append(':');
-		uriBuilder.Append(Uri.EscapeDataString(User));
-		uriBuilder.Append('?');
+		_ = uriBuilder.Append(':');
+		_ = uriBuilder.Append(Uri.EscapeDataString(User));
+		_ = uriBuilder.Append('?');
 
-		foreach (var pair in parameters)
+		foreach (KeyValuePair<string, string> pair in parameters)
 		{
-			uriBuilder.Append(pair.Key);
-			uriBuilder.Append('=');
-			uriBuilder.Append(pair.Value);
-			uriBuilder.Append('&');
+			_ = uriBuilder.Append(pair.Key);
+			_ = uriBuilder.Append('=');
+			_ = uriBuilder.Append(pair.Value);
+			_ = uriBuilder.Append('&');
 		}
 
-		uriBuilder.Remove(uriBuilder.Length - 1, 1);
+		_ = uriBuilder.Remove(uriBuilder.Length - 1, 1);
 		return uriBuilder.ToString();
 	}
 }

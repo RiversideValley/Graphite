@@ -2,6 +2,7 @@
 using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 
@@ -16,25 +17,27 @@ public class FavManager
 		InitializeDatabase();
 	}
 
+	[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)")]
+	[RequiresDynamicCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)")]
 	private void InitializeDatabase()
 	{
 		// Create the directory if it doesn't exist
-		Directory.CreateDirectory(Path.GetDirectoryName(_favoritesDbPath));
+		_ = Directory.CreateDirectory(Path.GetDirectoryName(_favoritesDbPath));
 
 		// Create or open the SQLite database file
-		using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
+		using (SqliteConnection connection = new($"Data Source={_favoritesDbPath}"))
 		{
 			connection.Open();
 
 			// Create the Favorites table if it doesn't exist
-			var createTableSql = @"
+			string createTableSql = @"
                 CREATE TABLE IF NOT EXISTS Favorites (
                     Title TEXT,
                     Url TEXT,
                     IconUrlPath TEXT
                 )";
-			var createTableCommand = new SqliteCommand(createTableSql, connection);
-			createTableCommand.ExecuteNonQuery();
+			SqliteCommand createTableCommand = new(createTableSql, connection);
+			_ = createTableCommand.ExecuteNonQuery();
 		}
 
 		// Check if the old favorites.json file exists
@@ -48,17 +51,17 @@ public class FavManager
 			List<FavItem> favoritesList = JsonSerializer.Deserialize<List<FavItem>>(jsonContent);
 
 			// Insert each item into the SQLite database
-			using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
+			using (SqliteConnection connection = new($"Data Source={_favoritesDbPath}"))
 			{
 				connection.Open();
-				foreach (var favItem in favoritesList)
+				foreach (FavItem favItem in favoritesList)
 				{
-					var insertSql = "INSERT INTO Favorites (Title, Url, IconUrlPath) VALUES (@Title, @Url, @IconUrlPath)";
-					var insertCommand = new SqliteCommand(insertSql, connection);
-					insertCommand.Parameters.AddWithValue("@Title", favItem.Title);
-					insertCommand.Parameters.AddWithValue("@Url", favItem.Url);
-					insertCommand.Parameters.AddWithValue("@IconUrlPath", favItem.IconUrlPath);
-					insertCommand.ExecuteNonQuery();
+					string insertSql = "INSERT INTO Favorites (Title, Url, IconUrlPath) VALUES (@Title, @Url, @IconUrlPath)";
+					SqliteCommand insertCommand = new(insertSql, connection);
+					_ = insertCommand.Parameters.AddWithValue("@Title", favItem.Title);
+					_ = insertCommand.Parameters.AddWithValue("@Url", favItem.Url);
+					_ = insertCommand.Parameters.AddWithValue("@IconUrlPath", favItem.IconUrlPath);
+					_ = insertCommand.ExecuteNonQuery();
 				}
 			}
 
@@ -69,38 +72,34 @@ public class FavManager
 
 	public void SaveFav(string title, string url)
 	{
-		using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
-		{
-			connection.Open();
-			var insertSql = "INSERT INTO Favorites (Title, Url, IconUrlPath) VALUES (@Title, @Url, @IconUrlPath)";
-			var insertCommand = new SqliteCommand(insertSql, connection);
-			insertCommand.Parameters.AddWithValue("@Title", title);
-			insertCommand.Parameters.AddWithValue("@Url", url);
-			insertCommand.Parameters.AddWithValue("@IconUrlPath", $"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={url}&size=32");
-			insertCommand.ExecuteNonQuery();
-		}
+		using SqliteConnection connection = new($"Data Source={_favoritesDbPath}");
+		connection.Open();
+		string insertSql = "INSERT INTO Favorites (Title, Url, IconUrlPath) VALUES (@Title, @Url, @IconUrlPath)";
+		SqliteCommand insertCommand = new(insertSql, connection);
+		_ = insertCommand.Parameters.AddWithValue("@Title", title);
+		_ = insertCommand.Parameters.AddWithValue("@Url", url);
+		_ = insertCommand.Parameters.AddWithValue("@IconUrlPath", $"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={url}&size=32");
+		_ = insertCommand.ExecuteNonQuery();
 	}
 
 	public List<FavItem> LoadFav()
 	{
-		var favorites = new List<FavItem>();
-		using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
+		List<FavItem> favorites = new();
+		using (SqliteConnection connection = new($"Data Source={_favoritesDbPath}"))
 		{
 			connection.Open();
-			var selectSql = "SELECT * FROM Favorites";
-			var selectCommand = new SqliteCommand(selectSql, connection);
-			using (var reader = selectCommand.ExecuteReader())
+			string selectSql = "SELECT * FROM Favorites";
+			SqliteCommand selectCommand = new(selectSql, connection);
+			using SqliteDataReader reader = selectCommand.ExecuteReader();
+			while (reader.Read())
 			{
-				while (reader.Read())
+				FavItem favItem = new()
 				{
-					var favItem = new FavItem
-					{
-						Title = reader.GetString(reader.GetOrdinal("Title")),
-						Url = reader.GetString(reader.GetOrdinal("Url")),
-						IconUrlPath = reader.GetString(reader.GetOrdinal("IconUrlPath"))
-					};
-					favorites.Add(favItem);
-				}
+					Title = reader.GetString(reader.GetOrdinal("Title")),
+					Url = reader.GetString(reader.GetOrdinal("Url")),
+					IconUrlPath = reader.GetString(reader.GetOrdinal("IconUrlPath"))
+				};
+				favorites.Add(favItem);
 			}
 		}
 		return favorites;
@@ -108,13 +107,11 @@ public class FavManager
 
 	public void ClearFavs()
 	{
-		using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
-		{
-			connection.Open();
-			var deleteSql = "DELETE FROM Favorites";
-			var deleteCommand = new SqliteCommand(deleteSql, connection);
-			deleteCommand.ExecuteNonQuery();
-		}
+		using SqliteConnection connection = new($"Data Source={_favoritesDbPath}");
+		connection.Open();
+		string deleteSql = "DELETE FROM Favorites";
+		SqliteCommand deleteCommand = new(deleteSql, connection);
+		_ = deleteCommand.ExecuteNonQuery();
 	}
 
 	public void RemoveFavorite(FavItem selectedItem)
@@ -126,22 +123,20 @@ public class FavManager
 			return;
 		}
 
-		using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
-		{
-			connection.Open();
-			var deleteSql = "DELETE FROM Favorites WHERE Title = @Title AND Url = @Url";
-			var deleteCommand = new SqliteCommand(deleteSql, connection);
-			deleteCommand.Parameters.AddWithValue("@Title", selectedItem.Title);
-			deleteCommand.Parameters.AddWithValue("@Url", selectedItem.Url);
-			deleteCommand.ExecuteNonQuery();
-		}
+		using SqliteConnection connection = new($"Data Source={_favoritesDbPath}");
+		connection.Open();
+		string deleteSql = "DELETE FROM Favorites WHERE Title = @Title AND Url = @Url";
+		SqliteCommand deleteCommand = new(deleteSql, connection);
+		_ = deleteCommand.Parameters.AddWithValue("@Title", selectedItem.Title);
+		_ = deleteCommand.Parameters.AddWithValue("@Url", selectedItem.Url);
+		_ = deleteCommand.ExecuteNonQuery();
 	}
 
 	public void ImportFavoritesFromOtherBrowsers(string browserName)
 	{
-		string favoritesPath = "";
-		List<FavItem> importedFavorites = new List<FavItem>();
-
+		_ = new List<FavItem>();
+		List<FavItem> importedFavorites;
+		string favoritesPath;
 		switch (browserName.ToLower())
 		{
 			case "chrome":
@@ -174,18 +169,16 @@ public class FavManager
 		}
 
 		// Import the favorites into our database
-		using (var connection = new SqliteConnection($"Data Source={_favoritesDbPath}"))
+		using SqliteConnection connection = new($"Data Source={_favoritesDbPath}");
+		connection.Open();
+		foreach (FavItem favItem in importedFavorites)
 		{
-			connection.Open();
-			foreach (var favItem in importedFavorites)
-			{
-				var insertSql = "INSERT INTO Favorites (Title, Url, IconUrlPath) VALUES (@Title, @Url, @IconUrlPath)";
-				var insertCommand = new SqliteCommand(insertSql, connection);
-				insertCommand.Parameters.AddWithValue("@Title", favItem.Title);
-				insertCommand.Parameters.AddWithValue("@Url", favItem.Url);
-				insertCommand.Parameters.AddWithValue("@IconUrlPath", favItem.IconUrlPath);
-				insertCommand.ExecuteNonQuery();
-			}
+			string insertSql = "INSERT INTO Favorites (Title, Url, IconUrlPath) VALUES (@Title, @Url, @IconUrlPath)";
+			SqliteCommand insertCommand = new(insertSql, connection);
+			_ = insertCommand.Parameters.AddWithValue("@Title", favItem.Title);
+			_ = insertCommand.Parameters.AddWithValue("@Url", favItem.Url);
+			_ = insertCommand.Parameters.AddWithValue("@IconUrlPath", favItem.IconUrlPath);
+			_ = insertCommand.ExecuteNonQuery();
 		}
 	}
 
@@ -202,7 +195,7 @@ public class FavManager
 	}
 	private List<FavItem> ImportChromeBookmarks(string bookmarksPath)
 	{
-		List<FavItem> favorites = new List<FavItem>();
+		List<FavItem> favorites = new();
 
 		if (!File.Exists(bookmarksPath))
 		{
@@ -245,7 +238,7 @@ public class FavManager
 
 	private List<FavItem> ImportFirefoxBookmarks(string profilesPath)
 	{
-		List<FavItem> favorites = new List<FavItem>();
+		List<FavItem> favorites = new();
 
 		if (!Directory.Exists(profilesPath))
 		{
@@ -259,25 +252,21 @@ public class FavManager
 			string placesPath = Path.Combine(profile, "places.sqlite");
 			if (File.Exists(placesPath))
 			{
-				using (var connection = new SqliteConnection($"Data Source={placesPath}"))
+				using SqliteConnection connection = new($"Data Source={placesPath}");
+				connection.Open();
+				string selectSql = "SELECT moz_bookmarks.title, moz_places.url FROM moz_bookmarks JOIN moz_places ON moz_bookmarks.fk = moz_places.id WHERE moz_bookmarks.type = 1";
+				SqliteCommand selectCommand = new(selectSql, connection);
+				using SqliteDataReader reader = selectCommand.ExecuteReader();
+				while (reader.Read())
 				{
-					connection.Open();
-					var selectSql = "SELECT moz_bookmarks.title, moz_places.url FROM moz_bookmarks JOIN moz_places ON moz_bookmarks.fk = moz_places.id WHERE moz_bookmarks.type = 1";
-					var selectCommand = new SqliteCommand(selectSql, connection);
-					using (var reader = selectCommand.ExecuteReader())
+					string title = reader.GetString(0);
+					string url = reader.GetString(1);
+					favorites.Add(new FavItem
 					{
-						while (reader.Read())
-						{
-							string title = reader.GetString(0);
-							string url = reader.GetString(1);
-							favorites.Add(new FavItem
-							{
-								Title = title,
-								Url = url,
-								IconUrlPath = $"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={url}&size=32"
-							});
-						}
-					}
+						Title = title,
+						Url = url,
+						IconUrlPath = $"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={url}&size=32"
+					});
 				}
 				break; // We only need to process one profile
 			}

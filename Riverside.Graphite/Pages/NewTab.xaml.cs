@@ -326,7 +326,7 @@ public sealed partial class NewTab : Page
 
 	protected override void OnNavigatedFrom(NavigationEventArgs e)
 	{
-		CancellationTokenSource source = new CancellationTokenSource();
+		CancellationTokenSource source = new();
 		source.Cancel();
 		ViewModel.CancellationTokenTimer = source.Token;
 

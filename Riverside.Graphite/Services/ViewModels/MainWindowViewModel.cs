@@ -62,7 +62,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 	public Task GetActiveWebView()
 	{
 		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
-		if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
+		if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem && currentWindow.TabContent.Content is WebContent web)
 		{
 			WebViewContentPicture = web.PictureWebElement;
 		}
@@ -228,7 +228,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	private void ShowLoginNotification()
 	{
-		ToastRatings.SendToast();
+		_ = ToastRatings.SendToast();
 		ShowNotification("Riverside.Graphite", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
 	}
 

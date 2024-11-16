@@ -22,8 +22,8 @@ namespace Riverside.Graphite.Data.Core.Actions
 		{
 			try
 			{
-				await DownloadContext.Downloads.AddAsync(new DownloadItem(guid, current_path, end_time, start_time));
-				await DownloadContext.SaveChangesAsync();
+				_ = await DownloadContext.Downloads.AddAsync(new DownloadItem(guid, current_path, end_time, start_time));
+				_ = await DownloadContext.SaveChangesAsync();
 			}
 			catch (Exception ex)
 			{
@@ -36,8 +36,8 @@ namespace Riverside.Graphite.Data.Core.Actions
 		{
 			try
 			{
-				await DownloadContext.Downloads.Where(x => x.current_path == current_path).ExecuteDeleteAsync();
-				await DownloadContext.SaveChangesAsync();
+				_ = await DownloadContext.Downloads.Where(x => x.current_path == current_path).ExecuteDeleteAsync();
+				_ = await DownloadContext.SaveChangesAsync();
 			}
 			catch (Exception ex)
 			{

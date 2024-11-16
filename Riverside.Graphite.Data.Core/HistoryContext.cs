@@ -24,5 +24,7 @@ public class HistoryContext : DbContext
 	}
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		=> optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+	{
+		_ = optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+	}
 }

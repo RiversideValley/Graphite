@@ -42,14 +42,14 @@ namespace Riverside.Graphite.Utils
 			try
 			{
 				// First check if we already own the add-on
-				var appLicense = await _storeContext.GetAppLicenseAsync();
-				if (appLicense.AddOnLicenses.TryGetValue(AddOnStoreId, out var addOnLicense) && addOnLicense.IsActive)
+				StoreAppLicense appLicense = await _storeContext.GetAppLicenseAsync();
+				if (appLicense.AddOnLicenses.TryGetValue(AddOnStoreId, out StoreLicense addOnLicense) && addOnLicense.IsActive)
 				{
 					return true;
 				}
 
 				// Open the Store page for the add-on
-				await Launcher.LaunchUriAsync(new Uri($"ms-windows-store://pdp/?ProductId={AddOnStoreId}"));
+				_ = await Launcher.LaunchUriAsync(new Uri($"ms-windows-store://pdp/?ProductId={AddOnStoreId}"));
 
 				// Wait for a short period to allow the user to complete the purchase
 				await Task.Delay(TimeSpan.FromSeconds(30));
@@ -70,8 +70,8 @@ namespace Riverside.Graphite.Utils
 
 			try
 			{
-				var appLicense = await _storeContext.GetAppLicenseAsync();
-				return appLicense.AddOnLicenses.TryGetValue(AddOnStoreId, out var addOnLicense) && addOnLicense.IsActive;
+				StoreAppLicense appLicense = await _storeContext.GetAppLicenseAsync();
+				return appLicense.AddOnLicenses.TryGetValue(AddOnStoreId, out StoreLicense addOnLicense) && addOnLicense.IsActive;
 			}
 			catch (Exception)
 			{

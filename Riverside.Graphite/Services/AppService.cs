@@ -452,9 +452,11 @@ public static class AppService
 
 		List<Riverside.Graphite.Core.User> users = new() { newUser };
 		UserFolderManager.CreateUserFolders(newUser);
-		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, newUser.Username);
+		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, newUser.Username);
 		if (Directory.Exists(userFolderPath))
+		{
 			HideDirectory(userFolderPath);
+		}
 
 		UserDataManager.SaveUsers(users);
 		AuthService.AddUser(newUser);
@@ -463,9 +465,12 @@ public static class AppService
 
 	private static void ValidateCreatePrivateUser()
 	{
-		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
+		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
 
-		if (Directory.Exists(userFolderPath)) return;
+		if (Directory.Exists(userFolderPath))
+		{
+			return;
+		}
 
 		User newUser = new()
 		{
@@ -478,11 +483,12 @@ public static class AppService
 		AuthService.AddUser(newUser);
 		UserFolderManager.CreateUserFolders(newUser);
 	}
-	static void HideDirectory(string directoryPath)
+
+	private static void HideDirectory(string directoryPath)
 	{
 		if (Directory.Exists(directoryPath))
 		{
-			var attributes = File.GetAttributes(directoryPath);
+			FileAttributes attributes = File.GetAttributes(directoryPath);
 			if ((attributes & FileAttributes.Hidden) == 0)
 			{
 				attributes |= FileAttributes.Hidden;

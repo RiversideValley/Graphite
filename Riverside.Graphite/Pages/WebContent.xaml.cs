@@ -303,7 +303,7 @@ public sealed partial class WebContent : Page
 			}
 		};
 
-		s.CoreWebView2.NavigationCompleted += async (sender, args) =>
+		s.CoreWebView2.NavigationCompleted += (sender, args) =>
 		{
 			ProgressLoading.IsIndeterminate = false;
 			ProgressLoading.Visibility = Visibility.Collapsed;
@@ -421,14 +421,14 @@ public sealed partial class WebContent : Page
 		s.CoreWebView2.PermissionRequested += async (sender, args) =>
 		{
 			args.Handled = true;
-			var deferral = args.GetDeferral();
+			Windows.Foundation.Deferral deferral = args.GetDeferral();
 
 			try
 			{
 				await DispatcherQueue.EnqueueAsync(async () =>
 				{
 					string url = WebViewElement.CoreWebView2.Source;
-					var storedPermission = PermissionManager.GetStoredPermission(AuthService.CurrentUser.Username, url, args.PermissionKind);
+					CoreWebView2PermissionState? storedPermission = PermissionManager.GetStoredPermission(AuthService.CurrentUser.Username, url, args.PermissionKind);
 
 					if (storedPermission.HasValue)
 					{
@@ -439,7 +439,7 @@ public sealed partial class WebContent : Page
 					string permissionKind = args.PermissionKind.ToString();
 					string formattedPermission = FormatPermissionKind(permissionKind);
 
-					var result = await ShowPermissionDialogAsync(formattedPermission);
+					ContentDialogResult result = await ShowPermissionDialogAsync(formattedPermission);
 
 					CoreWebView2PermissionState permissionState = result switch
 					{
@@ -450,7 +450,7 @@ public sealed partial class WebContent : Page
 
 					bool? allowed = permissionState == CoreWebView2PermissionState.Allow ? true :
 									permissionState == CoreWebView2PermissionState.Deny ? false :
-									(bool?)null;
+									null;
 
 					PermissionManager.StorePermission(AuthService.CurrentUser.Username, url, args.PermissionKind, allowed);
 					await PermissionManager.SavePermissionsAsync(AuthService.CurrentUser.Username);
@@ -476,8 +476,8 @@ public sealed partial class WebContent : Page
 
 	private async Task<ContentDialogResult> ShowPermissionDialogAsync(string permission)
 	{
-		var rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
-		var dialog = new ContentDialog
+		string rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
+		ContentDialog dialog = new()
 		{
 			Title = $"Allow {rootUrl} to access {permission}?",
 			PrimaryButtonText = "Allow",
@@ -485,7 +485,7 @@ public sealed partial class WebContent : Page
 			CloseButtonText = "Cancel",
 			DefaultButton = ContentDialogButton.Primary,
 			Content = "Managed in firebrowser://privacy",
-			XamlRoot = this.XamlRoot
+			XamlRoot = XamlRoot
 		};
 
 		return await dialog.ShowAsync();

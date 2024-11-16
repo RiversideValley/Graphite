@@ -24,8 +24,8 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	/// <returns>SVG as string</returns>
 	public string GetGraphic(int pixelsPerModule)
 	{
-		var viewBox = new Size(pixelsPerModule * this.QrCodeData.ModuleMatrix.Count, pixelsPerModule * this.QrCodeData.ModuleMatrix.Count);
-		return this.GetGraphic(viewBox, Color.Black, Color.White);
+		Size viewBox = new(pixelsPerModule * QrCodeData.ModuleMatrix.Count, pixelsPerModule * QrCodeData.ModuleMatrix.Count);
+		return GetGraphic(viewBox, Color.Black, Color.White);
 	}
 
 	/// <summary>
@@ -40,10 +40,10 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	/// <returns>SVG as string</returns>
 	public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
-		var offset = drawQuietZones ? 0 : 4;
-		var edgeSize = (this.QrCodeData.ModuleMatrix.Count * pixelsPerModule) - (offset * 2 * pixelsPerModule);
-		var viewBox = new Size(edgeSize, edgeSize);
-		return this.GetGraphic(viewBox, darkColor, lightColor, drawQuietZones, sizingMode, logo);
+		int offset = drawQuietZones ? 0 : 4;
+		int edgeSize = (QrCodeData.ModuleMatrix.Count * pixelsPerModule) - (offset * 2 * pixelsPerModule);
+		Size viewBox = new(edgeSize, edgeSize);
+		return GetGraphic(viewBox, darkColor, lightColor, drawQuietZones, sizingMode, logo);
 	}
 
 	/// <summary>
@@ -58,10 +58,10 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	/// <returns>SVG as string</returns>
 	public string GetGraphic(int pixelsPerModule, string darkColorHex, string lightColorHex, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
-		var offset = drawQuietZones ? 0 : 4;
-		var edgeSize = (this.QrCodeData.ModuleMatrix.Count * pixelsPerModule) - (offset * 2 * pixelsPerModule);
-		var viewBox = new Size(edgeSize, edgeSize);
-		return this.GetGraphic(viewBox, darkColorHex, lightColorHex, drawQuietZones, sizingMode, logo);
+		int offset = drawQuietZones ? 0 : 4;
+		int edgeSize = (QrCodeData.ModuleMatrix.Count * pixelsPerModule) - (offset * 2 * pixelsPerModule);
+		Size viewBox = new(edgeSize, edgeSize);
+		return GetGraphic(viewBox, darkColorHex, lightColorHex, drawQuietZones, sizingMode, logo);
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	/// <returns>SVG as string</returns>
 	public string GetGraphic(Size viewBox, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
-		return this.GetGraphic(viewBox, Color.Black, Color.White, drawQuietZones, sizingMode, logo);
+		return GetGraphic(viewBox, Color.Black, Color.White, drawQuietZones, sizingMode, logo);
 	}
 
 	/// <summary>
@@ -89,7 +89,7 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	/// <returns>SVG as string</returns>
 	public string GetGraphic(Size viewBox, Color darkColor, Color lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
-		return this.GetGraphic(viewBox, ColorTranslator.ToHtml(Color.FromArgb(darkColor.ToArgb())), ColorTranslator.ToHtml(Color.FromArgb(lightColor.ToArgb())), drawQuietZones, sizingMode, logo);
+		return GetGraphic(viewBox, ColorTranslator.ToHtml(Color.FromArgb(darkColor.ToArgb())), ColorTranslator.ToHtml(Color.FromArgb(lightColor.ToArgb())), drawQuietZones, sizingMode, logo);
 	}
 
 	/// <summary>
@@ -105,19 +105,21 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	public string GetGraphic(Size viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
 	{
 		int offset = drawQuietZones ? 0 : 4;
-		int drawableModulesCount = this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : offset * 2);
+		int drawableModulesCount = QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : offset * 2);
 		double pixelsPerModule = Math.Min(viewBox.Width, viewBox.Height) / (double)drawableModulesCount;
 		double qrSize = drawableModulesCount * pixelsPerModule;
 		string svgSizeAttributes = (sizingMode == SizingMode.WidthHeightAttribute) ? $@"width=""{viewBox.Width}"" height=""{viewBox.Height}""" : $@"viewBox=""0 0 {viewBox.Width} {viewBox.Height}""";
 		ImageAttributes? logoAttr = null;
 		if (logo != null)
+		{
 			logoAttr = GetLogoAttributes(logo, viewBox);
+		}
 
 		// Merge horizontal rectangles
 		int[,] matrix = new int[drawableModulesCount, drawableModulesCount];
 		for (int yi = 0; yi < drawableModulesCount; yi += 1)
 		{
-			BitArray bitArray = this.QrCodeData.ModuleMatrix[yi + offset];
+			BitArray bitArray = QrCodeData.ModuleMatrix[yi + offset];
 
 			int x0 = -1;
 			int xL = 0;
@@ -149,8 +151,8 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 			}
 		}
 
-		StringBuilder svgFile = new StringBuilder($@"<svg version=""1.1"" baseProfile=""full"" shape-rendering=""crispEdges"" {svgSizeAttributes} xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"">");
-		svgFile.AppendLine($@"<rect x=""0"" y=""0"" width=""{CleanSvgVal(qrSize)}"" height=""{CleanSvgVal(qrSize)}"" fill=""{lightColorHex}"" />");
+		StringBuilder svgFile = new($@"<svg version=""1.1"" baseProfile=""full"" shape-rendering=""crispEdges"" {svgSizeAttributes} xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"">");
+		_ = svgFile.AppendLine($@"<rect x=""0"" y=""0"" width=""{CleanSvgVal(qrSize)}"" height=""{CleanSvgVal(qrSize)}"" fill=""{lightColorHex}"" />");
 		for (int yi = 0; yi < drawableModulesCount; yi += 1)
 		{
 			double y = yi * pixelsPerModule;
@@ -177,7 +179,9 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 					// Output SVG rectangles
 					double x = xi * pixelsPerModule;
 					if (logo == null || !logo.FillLogoBackground() || !IsBlockedByLogo(x, y, logoAttr, pixelsPerModule))
-						svgFile.AppendLine($@"<rect x=""{CleanSvgVal(x)}"" y=""{CleanSvgVal(y)}"" width=""{CleanSvgVal(xL * pixelsPerModule)}"" height=""{CleanSvgVal(yL * pixelsPerModule)}"" fill=""{darkColorHex}"" />");
+					{
+						_ = svgFile.AppendLine($@"<rect x=""{CleanSvgVal(x)}"" y=""{CleanSvgVal(y)}"" width=""{CleanSvgVal(xL * pixelsPerModule)}"" height=""{CleanSvgVal(yL * pixelsPerModule)}"" fill=""{darkColorHex}"" />");
+					}
 				}
 			}
 		}
@@ -187,24 +191,24 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 		{
 			if (!logo.IsEmbedded())
 			{
-				svgFile.AppendLine($@"<svg width=""100%"" height=""100%"" version=""1.1"" xmlns = ""http://www.w3.org/2000/svg"">");
-				svgFile.AppendLine($@"<image x=""{CleanSvgVal(logoAttr.Value.X)}"" y=""{CleanSvgVal(logoAttr.Value.Y)}"" width=""{CleanSvgVal(logoAttr.Value.Width)}"" height=""{CleanSvgVal(logoAttr.Value.Height)}"" xlink:href=""{logo.GetDataUri()}"" />");
-				svgFile.AppendLine(@"</svg>");
+				_ = svgFile.AppendLine($@"<svg width=""100%"" height=""100%"" version=""1.1"" xmlns = ""http://www.w3.org/2000/svg"">");
+				_ = svgFile.AppendLine($@"<image x=""{CleanSvgVal(logoAttr.Value.X)}"" y=""{CleanSvgVal(logoAttr.Value.Y)}"" width=""{CleanSvgVal(logoAttr.Value.Width)}"" height=""{CleanSvgVal(logoAttr.Value.Height)}"" xlink:href=""{logo.GetDataUri()}"" />");
+				_ = svgFile.AppendLine(@"</svg>");
 			}
 			else
 			{
-				var rawLogo = (string)logo.GetRawLogo();
-				var svg = System.Xml.Linq.XDocument.Parse(rawLogo);
+				string rawLogo = (string)logo.GetRawLogo();
+				System.Xml.Linq.XDocument svg = System.Xml.Linq.XDocument.Parse(rawLogo);
 				svg.Root.SetAttributeValue("x", CleanSvgVal(logoAttr.Value.X));
 				svg.Root.SetAttributeValue("y", CleanSvgVal(logoAttr.Value.Y));
 				svg.Root.SetAttributeValue("width", CleanSvgVal(logoAttr.Value.Width));
 				svg.Root.SetAttributeValue("height", CleanSvgVal(logoAttr.Value.Height));
 				svg.Root.SetAttributeValue("shape-rendering", "geometricPrecision");
-				svgFile.AppendLine(svg.ToString(System.Xml.Linq.SaveOptions.DisableFormatting).Replace("svg:", ""));
+				_ = svgFile.AppendLine(svg.ToString(System.Xml.Linq.SaveOptions.DisableFormatting).Replace("svg:", ""));
 			}
 		}
 
-		svgFile.Append(@"</svg>");
+		_ = svgFile.Append(@"</svg>");
 		return svgFile.ToString();
 	}
 
@@ -215,10 +219,10 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 
 	private ImageAttributes GetLogoAttributes(SvgLogo logo, Size viewBox)
 	{
-		var imgWidth = logo.GetIconSizePercent() / 100d * viewBox.Width;
-		var imgHeight = logo.GetIconSizePercent() / 100d * viewBox.Height;
-		var imgPosX = (viewBox.Width / 2d) - (imgWidth / 2d);
-		var imgPosY = (viewBox.Height / 2d) - (imgHeight / 2d);
+		double imgWidth = logo.GetIconSizePercent() / 100d * viewBox.Width;
+		double imgHeight = logo.GetIconSizePercent() / 100d * viewBox.Height;
+		double imgPosX = (viewBox.Width / 2d) - (imgWidth / 2d);
+		double imgPosY = (viewBox.Height / 2d) - (imgHeight / 2d);
 		return new ImageAttributes()
 		{
 			Width = imgWidth,
@@ -258,12 +262,12 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 	/// </summary>
 	public class SvgLogo
 	{
-		private string _logoData;
-		private MediaType _mediaType;
-		private int _iconSizePercent;
-		private bool _fillLogoBackground;
-		private object _logoRaw;
-		private bool _isEmbedded;
+		private readonly string _logoData;
+		private readonly MediaType _mediaType;
+		private readonly int _iconSizePercent;
+		private readonly bool _fillLogoBackground;
+		private readonly object _logoRaw;
+		private readonly bool _isEmbedded;
 
 
 		/// <summary>
@@ -275,13 +279,11 @@ public partial class SvgQRCode : AbstractQRCode, IDisposable
 		public SvgLogo(Bitmap iconRasterized, int iconSizePercent = 15, bool fillLogoBackground = true)
 		{
 			_iconSizePercent = iconSizePercent;
-			using (var ms = new System.IO.MemoryStream())
+			using (System.IO.MemoryStream ms = new())
 			{
-				using (var bitmap = new Bitmap(iconRasterized))
-				{
-					bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-					_logoData = Convert.ToBase64String(ms.GetBuffer(), Base64FormattingOptions.None);
-				}
+				using Bitmap bitmap = new(iconRasterized);
+				bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+				_logoData = Convert.ToBase64String(ms.GetBuffer(), Base64FormattingOptions.None);
 			}
 			_mediaType = MediaType.PNG;
 			_fillLogoBackground = fillLogoBackground;

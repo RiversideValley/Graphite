@@ -1,6 +1,7 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Riverside.Graphite.Runtime.Helpers
 
 	public static class PermissionManager
 	{
-		private static readonly Dictionary<string, List<SitePermission>> _userPermissions = new Dictionary<string, List<SitePermission>>();
+		private static readonly Dictionary<string, List<SitePermission>> _userPermissions = new();
 
 		public static async Task LoadPermissionsAsync(string username)
 		{
@@ -45,8 +46,8 @@ namespace Riverside.Graphite.Runtime.Helpers
 				_userPermissions[username] = new List<SitePermission>();
 			}
 
-			var rootUrl = new Uri(url).GetLeftPart(UriPartial.Authority);
-			var sitePermission = _userPermissions[username].Find(sp => sp.Url == rootUrl);
+			string rootUrl = new Uri(url).GetLeftPart(UriPartial.Authority);
+			SitePermission sitePermission = _userPermissions[username].Find(sp => sp.Url == rootUrl);
 			if (sitePermission == null)
 			{
 				sitePermission = new SitePermission { Url = rootUrl };
@@ -63,8 +64,8 @@ namespace Riverside.Graphite.Runtime.Helpers
 				return null;
 			}
 
-			var rootUrl = new Uri(url).GetLeftPart(UriPartial.Authority);
-			var sitePermission = _userPermissions[username].Find(sp => sp.Url == rootUrl);
+			string rootUrl = new Uri(url).GetLeftPart(UriPartial.Authority);
+			SitePermission sitePermission = _userPermissions[username].Find(sp => sp.Url == rootUrl);
 			if (sitePermission != null && sitePermission.Permissions.TryGetValue(kind.ToString(), out bool? allowed))
 			{
 				if (allowed.HasValue)

@@ -18,29 +18,29 @@ public partial class QRCode : AbstractQRCode, IDisposable
 
 	public Bitmap GetGraphic(int pixelsPerModule)
 	{
-		return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
+		return GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
 	}
 
 	public Bitmap GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true)
 	{
-		return this.GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones);
+		return GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones);
 	}
 
 	public Bitmap GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true)
 	{
-		var size = (this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8)) * pixelsPerModule;
-		var offset = drawQuietZones ? 0 : 4 * pixelsPerModule;
+		int size = (QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8)) * pixelsPerModule;
+		int offset = drawQuietZones ? 0 : 4 * pixelsPerModule;
 
-		var bmp = new Bitmap(size, size);
-		using (var gfx = Graphics.FromImage(bmp))
-		using (var lightBrush = new SolidBrush(lightColor))
-		using (var darkBrush = new SolidBrush(darkColor))
+		Bitmap bmp = new(size, size);
+		using (Graphics gfx = Graphics.FromImage(bmp))
+		using (SolidBrush lightBrush = new(lightColor))
+		using (SolidBrush darkBrush = new(darkColor))
 		{
-			for (var x = 0; x < size + offset; x = x + pixelsPerModule)
+			for (int x = 0; x < size + offset; x = x + pixelsPerModule)
 			{
-				for (var y = 0; y < size + offset; y = y + pixelsPerModule)
+				for (int y = 0; y < size + offset; y = y + pixelsPerModule)
 				{
-					var module = this.QrCodeData.ModuleMatrix[((y + pixelsPerModule) / pixelsPerModule) - 1][((x + pixelsPerModule) / pixelsPerModule) - 1];
+					bool module = QrCodeData.ModuleMatrix[((y + pixelsPerModule) / pixelsPerModule) - 1][((x + pixelsPerModule) / pixelsPerModule) - 1];
 
 					if (module)
 					{
@@ -53,7 +53,7 @@ public partial class QRCode : AbstractQRCode, IDisposable
 				}
 			}
 
-			gfx.Save();
+			_ = gfx.Save();
 		}
 
 		return bmp;
@@ -61,25 +61,25 @@ public partial class QRCode : AbstractQRCode, IDisposable
 
 	public Bitmap GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Bitmap icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true, Color? iconBackgroundColor = null)
 	{
-		var size = (this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8)) * pixelsPerModule;
-		var offset = drawQuietZones ? 0 : 4 * pixelsPerModule;
+		int size = (QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8)) * pixelsPerModule;
+		int offset = drawQuietZones ? 0 : 4 * pixelsPerModule;
 
-		var bmp = new Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		Bitmap bmp = new(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-		using (var gfx = Graphics.FromImage(bmp))
-		using (var lightBrush = new SolidBrush(lightColor))
-		using (var darkBrush = new SolidBrush(darkColor))
+		using (Graphics gfx = Graphics.FromImage(bmp))
+		using (SolidBrush lightBrush = new(lightColor))
+		using (SolidBrush darkBrush = new(darkColor))
 		{
 			gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			gfx.CompositingQuality = CompositingQuality.HighQuality;
 			gfx.Clear(lightColor);
-			var drawIconFlag = icon != null && iconSizePercent > 0 && iconSizePercent <= 100;
+			bool drawIconFlag = icon != null && iconSizePercent > 0 && iconSizePercent <= 100;
 
-			for (var x = 0; x < size + offset; x = x + pixelsPerModule)
+			for (int x = 0; x < size + offset; x = x + pixelsPerModule)
 			{
-				for (var y = 0; y < size + offset; y = y + pixelsPerModule)
+				for (int y = 0; y < size + offset; y = y + pixelsPerModule)
 				{
-					var moduleBrush = this.QrCodeData.ModuleMatrix[((y + pixelsPerModule) / pixelsPerModule) - 1][((x + pixelsPerModule) / pixelsPerModule) - 1] ? darkBrush : lightBrush;
+					SolidBrush moduleBrush = QrCodeData.ModuleMatrix[((y + pixelsPerModule) / pixelsPerModule) - 1][((x + pixelsPerModule) / pixelsPerModule) - 1] ? darkBrush : lightBrush;
 					gfx.FillRectangle(moduleBrush, new Rectangle(x - offset, y - offset, pixelsPerModule, pixelsPerModule));
 				}
 			}
@@ -90,21 +90,19 @@ public partial class QRCode : AbstractQRCode, IDisposable
 				float iconDestHeight = drawIconFlag ? iconDestWidth * icon.Height / icon.Width : 0;
 				float iconX = (bmp.Width - iconDestWidth) / 2;
 				float iconY = (bmp.Height - iconDestHeight) / 2;
-				var centerDest = new RectangleF(iconX - iconBorderWidth, iconY - iconBorderWidth, iconDestWidth + (iconBorderWidth * 2), iconDestHeight + (iconBorderWidth * 2));
-				var iconDestRect = new RectangleF(iconX, iconY, iconDestWidth, iconDestHeight);
-				var iconBgBrush = iconBackgroundColor != null ? new SolidBrush((Color)iconBackgroundColor) : lightBrush;
+				RectangleF centerDest = new(iconX - iconBorderWidth, iconY - iconBorderWidth, iconDestWidth + (iconBorderWidth * 2), iconDestHeight + (iconBorderWidth * 2));
+				RectangleF iconDestRect = new(iconX, iconY, iconDestWidth, iconDestHeight);
+				SolidBrush iconBgBrush = iconBackgroundColor != null ? new SolidBrush((Color)iconBackgroundColor) : lightBrush;
 				//Only render icon/logo background, if iconBorderWith is set > 0
 				if (iconBorderWidth > 0)
 				{
-					using (GraphicsPath iconPath = CreateRoundedRectanglePath(centerDest, iconBorderWidth * 2))
-					{
-						gfx.FillPath(iconBgBrush, iconPath);
-					}
+					using GraphicsPath iconPath = CreateRoundedRectanglePath(centerDest, iconBorderWidth * 2);
+					gfx.FillPath(iconBgBrush, iconPath);
 				}
 				gfx.DrawImage(icon, iconDestRect, new RectangleF(0, 0, icon.Width, icon.Height), GraphicsUnit.Pixel);
 			}
 
-			gfx.Save();
+			_ = gfx.Save();
 		}
 
 		return bmp;
@@ -112,7 +110,7 @@ public partial class QRCode : AbstractQRCode, IDisposable
 
 	internal GraphicsPath CreateRoundedRectanglePath(RectangleF rect, int cornerRadius)
 	{
-		var roundedRect = new GraphicsPath();
+		GraphicsPath roundedRect = new();
 		roundedRect.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
 		roundedRect.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - (cornerRadius * 2), rect.Y);
 		roundedRect.AddArc(rect.X + rect.Width - (cornerRadius * 2), rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);

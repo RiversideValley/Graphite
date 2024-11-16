@@ -34,7 +34,7 @@ namespace Riverside.Graphite
 		public BitmapImage MsProfilePicture { get; set; }
 
 		//public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
-		public Visibility IsMsLoginVisibility { get { return IsMsLogin ? Visibility.Visible : Visibility.Collapsed; } }
+		public Visibility IsMsLoginVisibility => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
 
 		private readonly Func<bool> _IsCoreFolder = () =>
 		{

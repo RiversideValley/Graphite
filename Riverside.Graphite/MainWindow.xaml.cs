@@ -82,7 +82,9 @@ public sealed partial class MainWindow : Window
 			if (AuthService.CurrentUser is Riverside.Graphite.Core.User user)
 			{
 				if (user?.Username != "Private")
+				{
 					DownloadFlyout = new DownloadFlyout();
+				}
 			}
 		}
 		catch (Exception ex)
@@ -93,8 +95,10 @@ public sealed partial class MainWindow : Window
 
 		Closed += (s, e) =>
 		{
-			if (AuthService.CurrentUser.Username != "__Admin__" && AuthService.CurrentUser.Username != "Private")
+			if (AuthService.CurrentUser.Username is not "__Admin__" and not "Private")
+			{
 				AppService.Admin_Delete_Account();
+			}
 		};
 		SizeChanged += async (s, e) =>
 		{
@@ -792,14 +796,7 @@ public sealed partial class MainWindow : Window
 
 				break;
 			case "Home" when TabContent.Content is WebContent:
-				if (incog == true)
-				{
-					_ = TabContent.Navigate(typeof(InPrivate));
-				}
-				else
-				{
-					_ = TabContent.Navigate(typeof(NewTab));
-				}
+				_ = incog == true ? TabContent.Navigate(typeof(InPrivate)) : TabContent.Navigate(typeof(NewTab));
 				UrlBox.Text = "";
 				passer.Tab.Header = WebContent.IsIncognitoModeEnabled ? "Incognito" : "NewTab";
 				passer.Tab.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource()
@@ -851,7 +848,10 @@ public sealed partial class MainWindow : Window
 				break;
 			case "AddFavorite":
 
-				if (string.IsNullOrEmpty(FavoriteTitle.Text) || string.IsNullOrEmpty(FavoriteUrl.Text)) break;
+				if (string.IsNullOrEmpty(FavoriteTitle.Text) || string.IsNullOrEmpty(FavoriteUrl.Text))
+				{
+					break;
+				}
 
 				FavManager fv = new();
 				fv.SaveFav(FavoriteTitle.Text.ToString(), FavoriteUrl.Text.ToString());

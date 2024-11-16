@@ -261,7 +261,7 @@ public partial class HomeViewModel : ObservableRecipient
 			case Visibility.Visible:
 				CancellationTokenSource tVis = new CancellationTokenSource();
 				CancellationTokenTimer = tVis.Token;
-				UpdateTrending();
+				_ = UpdateTrending();
 				break;
 			case Visibility.Collapsed:
 				CancellationTokenSource tClose = new CancellationTokenSource();
@@ -275,13 +275,13 @@ public partial class HomeViewModel : ObservableRecipient
 
 	public Task UpdateTrending()
 	{
-		var timer = new DispatcherTimer();
+		DispatcherTimer timer = new();
 		timer.Interval = TimeSpan.FromMinutes(4);
 		timer.Tick += (s, e) =>
 		{
 			if (!SettingsService.CoreSettings.IsTrendingVisible)
 			{
-				CancellationTokenSource source = new CancellationTokenSource();
+				CancellationTokenSource source = new();
 				source.Cancel();
 				CancellationTokenTimer = source.Token;
 			}

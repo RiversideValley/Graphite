@@ -27,10 +27,14 @@ public class Base64QRCode : AbstractQRCode, IDisposable
 	}
 
 	public string GetGraphic(int pixelsPerModule)
-		=> GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
+	{
+		return GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
+	}
 
 	public string GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
-		=> GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones, imgType);
+	{
+		return GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones, imgType);
+	}
 
 	public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
 	{
@@ -46,7 +50,7 @@ public class Base64QRCode : AbstractQRCode, IDisposable
 
 	private string BitmapToBase64(Bitmap bmp, ImageType imgType)
 	{
-		var iFormat = imgType switch
+		ImageFormat iFormat = imgType switch
 		{
 			ImageType.Jpeg => ImageFormat.Jpeg,
 			ImageType.Gif => ImageFormat.Gif,
@@ -70,9 +74,9 @@ public static class Base64QRCodeHelper
 {
 	public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
 	{
-		using var qrGenerator = new QRCodeGenerator();
-		using var qrCodeData = qrGenerator.CreateQrCode(plainText, eccLevel, forceUtf8, utf8BOM, eciMode, requestedVersion);
-		using var qrCode = new Base64QRCode(qrCodeData);
+		using QRCodeGenerator qrGenerator = new();
+		using QRCodeData qrCodeData = qrGenerator.CreateQrCode(plainText, eccLevel, forceUtf8, utf8BOM, eciMode, requestedVersion);
+		using Base64QRCode qrCode = new(qrCodeData);
 		return qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex, drawQuietZones, imgType);
 	}
 }

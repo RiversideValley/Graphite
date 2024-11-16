@@ -13,7 +13,7 @@ namespace Riverside.Graphite.Core
 			try
 			{
 				string currentDate = DateTime.Now.ToString("yyyyMMdd"); // Only year, month, and day
-				string randomGuid = Guid.NewGuid().ToString("N").Substring(0, 5); // Generate a 5-character substring from GUID
+				string randomGuid = Guid.NewGuid().ToString("N")[..5]; // Generate a 5-character substring from GUID
 				string backupFileName = $"firebrowserbackup_{currentDate}_{randomGuid}.firebackup";
 				string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				string fireBrowserUserCorePath = Path.Combine(documentsPath, "FireBrowserUserCore");
@@ -28,12 +28,7 @@ namespace Riverside.Graphite.Core
 				//ZipFile.CreateFromDirectory(fireBrowserUserCorePath, backupFilePath, CompressionLevel.Optimal, false);
 				ZipDirectoryExcludingSubfolder(fireBrowserUserCorePath, backupFilePath, @"\EBWebView");
 
-				if (!File.Exists(backupFilePath))
-				{
-					throw new FileNotFoundException("Backup file was not created successfully.");
-				}
-
-				return backupFilePath;
+				return !File.Exists(backupFilePath) ? throw new FileNotFoundException("Backup file was not created successfully.") : backupFilePath;
 			}
 			catch (Exception ex)
 			{
@@ -41,28 +36,24 @@ namespace Riverside.Graphite.Core
 			}
 		}
 
-		static void ZipDirectoryExcludingSubfolder(string sourceDirectory, string destinationZipFile, string subfolderToExclude)
+		private static void ZipDirectoryExcludingSubfolder(string sourceDirectory, string destinationZipFile, string subfolderToExclude)
 		{
-			using (FileStream zipToOpen = new FileStream(destinationZipFile, FileMode.Create))
-			{
-				using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
-				{
-					var files = EnumerateFilesExcludingSubfolder(sourceDirectory, subfolderToExclude);
+			using FileStream zipToOpen = new(destinationZipFile, FileMode.Create);
+			using ZipArchive archive = new(zipToOpen, ZipArchiveMode.Create);
+			IEnumerable<string> files = EnumerateFilesExcludingSubfolder(sourceDirectory, subfolderToExclude);
 
-					foreach (var file in files)
-					{
-						string entryName = Path.GetRelativePath(sourceDirectory, file);
-						archive.CreateEntryFromFile(file, entryName);
-					}
-				}
+			foreach (string file in files)
+			{
+				string entryName = Path.GetRelativePath(sourceDirectory, file);
+				_ = archive.CreateEntryFromFile(file, entryName);
 			}
 		}
 
-		static IEnumerable<string> EnumerateFilesExcludingSubfolder(string sourceDirectory, string subfolderToExclude)
+		private static IEnumerable<string> EnumerateFilesExcludingSubfolder(string sourceDirectory, string subfolderToExclude)
 		{
-			var files = new List<string>();
+			List<string> files = new();
 
-			foreach (var directory in Directory.EnumerateDirectories(sourceDirectory, "*", SearchOption.AllDirectories))
+			foreach (string directory in Directory.EnumerateDirectories(sourceDirectory, "*", SearchOption.AllDirectories))
 			{
 				if (!directory.Contains(subfolderToExclude, StringComparison.OrdinalIgnoreCase))
 				{
@@ -126,7 +117,7 @@ namespace Riverside.Graphite.Core
 				}
 
 				// Create the FireBrowserUserCore folder
-				Directory.CreateDirectory(restorePath);
+				_ = Directory.CreateDirectory(restorePath);
 
 				// Extract the backup file to FireBrowserUserCore
 				ZipFile.ExtractToDirectory(restorefile, restorePath);

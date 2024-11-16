@@ -11,13 +11,13 @@ namespace Riverside.Graphite.Services.Notifications.Toasts;
 public class ToastWithTextBox
 {
 	public const string Title = "Riverside.Graphite Notifications";
-	const string textboxReplyId = "textboxReply";
+	private const string textboxReplyId = "textboxReply";
 
 	public static ObservableCollection<FireNotification> NotificationMessages = new();
 
 	public static bool SendToast()
 	{
-		var appNotification = new AppNotificationBuilder()
+		AppNotification appNotification = new AppNotificationBuilder()
 			.AddArgument("action", "ToastClick")
 			.AddArgument(((int)EnumMessageStatus.Informational).ToString(), "UserStatus")
 			.SetAppLogoOverride(new Uri("file://" + App.GetFullPathToAsset("favicon.png")), AppNotificationImageCrop.Circle)
@@ -41,8 +41,8 @@ public class ToastWithTextBox
 		// the background (sending the payload back to your App Server) without ever showing the App's UI.
 		// This is not something that can easily be demonstrated in a sample such as this one, as we need to show the UI to demonstrate how
 		// the payload is routed internally
-		var noteMsg = new NotificationMessenger(ref NotificationMessages);
-		var notification = new FireNotification();
+		NotificationMessenger noteMsg = new(ref NotificationMessages);
+		FireNotification notification = new();
 
 		notification.Originator = Title;
 		notification.Action = notificationActivatedEventArgs.Arguments["action"];
@@ -52,7 +52,7 @@ public class ToastWithTextBox
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			nint hWnd = WindowNative.GetWindowHandle(window);
-			Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
+			_ = Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
 		}
 	}
 }

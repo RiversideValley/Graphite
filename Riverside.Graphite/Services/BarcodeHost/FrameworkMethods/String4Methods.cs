@@ -1,18 +1,22 @@
-﻿using System;
-
-namespace Riverside.Graphite.Services.BarcodeHost.FrameworkMethods;
+﻿namespace Riverside.Graphite.Services.BarcodeHost.FrameworkMethods;
 internal static class String40Methods
 {
 	/// <returns>
 	///   <c>true</c> if the <paramref name="value"/> is null or white space; otherwise, <c>false</c>.
 	/// </returns>
-	public static bool IsNullOrWhiteSpace(String value)
+	public static bool IsNullOrWhiteSpace(string value)
 	{
-		if (value == null) return true;
+		if (value == null)
+		{
+			return true;
+		}
 
 		for (int i = 0; i < value.Length; i++)
 		{
-			if (!Char.IsWhiteSpace(value[i])) return false;
+			if (!char.IsWhiteSpace(value[i]))
+			{
+				return false;
+			}
 		}
 
 		return true;
@@ -31,7 +35,7 @@ internal static class String40Methods
 
 	public static bool IsAllDigit(string str)
 	{
-		foreach (var c in str)
+		foreach (char c in str)
 		{
 			if (!char.IsDigit(c))
 			{

@@ -32,12 +32,9 @@ public partial class App : Application
 
 	public static T GetService<T>() where T : class
 	{
-		if (App.Current is not App || App.Current.Services is null)
-		{
-			throw new NullReferenceException("Application or Services are not properly initialized.");
-		}
-
-		return App.Current.Services.GetService(typeof(T)) is not T service
+		return App.Current is null || App.Current.Services is null
+			? throw new NullReferenceException("Application or Services are not properly initialized.")
+			: App.Current.Services.GetService(typeof(T)) is not T service
 			? throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.")
 			: service;
 	}
@@ -78,16 +75,17 @@ public partial class App : Application
 	}
 	public static string GetFullPathToExe()
 	{
-		var path = AppDomain.CurrentDomain.BaseDirectory;
-		var pos = path.LastIndexOf("\\");
-		return path.Substring(0, pos);
+		string path = AppDomain.CurrentDomain.BaseDirectory;
+		int pos = path.LastIndexOf("\\");
+		return path[..pos];
 	}
 
 	public static string GetFullPathToAsset(string assetName)
 	{
 		return GetFullPathToExe() + "\\Assets\\" + assetName;
 	}
-	void OnProcessExit(object sender, EventArgs e)
+
+	private void OnProcessExit(object sender, EventArgs e)
 	{
 		NotificationManager.Unregister();
 	}
@@ -119,7 +117,7 @@ public partial class App : Application
 	{
 		App.Current.Services = App.Current.ConfigureServices();
 
-		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
+		CancellationToken InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
 
 		try
 		{
@@ -157,7 +155,7 @@ public partial class App : Application
 			ExceptionLogger.LogException(ex);
 		}
 
-		var currentInstance = AppInstance.GetCurrent();
+		AppInstance currentInstance = AppInstance.GetCurrent();
 		if (currentInstance.IsCurrent)
 		{
 			// AppInstance.GetActivatedEventArgs will report the correct ActivationKind,
@@ -168,7 +166,7 @@ public partial class App : Application
 				ExtendedActivationKind extendedKind = activationArgs.Kind;
 				if (extendedKind == ExtendedActivationKind.AppNotification)
 				{
-					var notificationActivatedEventArgs = (AppNotificationActivatedEventArgs)activationArgs.Data;
+					AppNotificationActivatedEventArgs notificationActivatedEventArgs = (AppNotificationActivatedEventArgs)activationArgs.Data;
 					NotificationManager.ProcessLaunchActivationArgs(notificationActivatedEventArgs);
 				}
 			}

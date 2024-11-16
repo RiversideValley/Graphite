@@ -17,7 +17,7 @@ namespace Riverside.Graphite.Services.Notifications.Toasts
 
 		public static bool SendToast()
 		{
-			var appNotification = new AppNotificationBuilder()
+			AppNotification appNotification = new AppNotificationBuilder()
 				.AddArgument("action", "ToastClick")
 				.AddArgument(((int)EnumMessageStatus.Updated).ToString(), "UserStatus")
 				.SetAppLogoOverride(new Uri("file://" + App.GetFullPathToAsset("fire_globe1.png")), AppNotificationImageCrop.Circle)
@@ -36,15 +36,15 @@ namespace Riverside.Graphite.Services.Notifications.Toasts
 
 		public static async void NotificationReceived(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-			var noteMsg = new NotificationMessenger(ref NotificationMessages);
-			var notification = new FireNotification();
+			NotificationMessenger noteMsg = new(ref NotificationMessages);
+			FireNotification notification = new();
 			notification.Originator = Title;
 			notification.Action = notificationActivatedEventArgs.Arguments["action"];
 			await noteMsg.InstallUpdatesAsync(notification);
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 				nint hWnd = WindowNative.GetWindowHandle(window);
-				Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
+				_ = Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
 			}
 		}
 	}

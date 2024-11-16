@@ -33,14 +33,16 @@ public sealed partial class DownloadFlyout : Flyout
 	{
 		try
 		{
-			if (AuthService.CurrentUser is not Riverside.Graphite.Core.User)
+			if (AuthService.CurrentUser is null)
+			{
 				return;
+			}
 
 			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
 			{
 				try
 				{
-					var db = new DatabaseServices();
+					DatabaseServices db = new();
 					_ = await db.DatabaseCreationValidation();
 					_ = await db.InsertUserSettings();
 				}

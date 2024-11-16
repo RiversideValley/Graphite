@@ -44,7 +44,7 @@ namespace Riverside.Graphite.Runtime.Helpers
 		[ObservableProperty]
 		private string _SearchQuery;
 		private string _trendlist;
-		public string TrendingList { get { return _trendlist; } set { SetProperty(ref _trendlist, value); } }
+		public string TrendingList { get => _trendlist; set => SetProperty(ref _trendlist, value); }
 
 
 		public BingSearchApi()
@@ -63,30 +63,25 @@ namespace Riverside.Graphite.Runtime.Helpers
 			try
 			{
 				// Create a query
-				var client = new HttpClient();
+				HttpClient client = new();
 				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "29948d69f0294a5a9b8b75831dd06c8a");
 				//<summary>
-				var queryString = HttpUtility.ParseQueryString(string.Empty);
+				System.Collections.Specialized.NameValueCollection queryString = HttpUtility.ParseQueryString(string.Empty);
 				queryString["q"] = userQuery;
 				//var query = "https://api.bing.microsoft.com/v7.0/search?" + queryString;
 				//</summary> user for a bing search 
 
-				var query = $"https://api.bing.microsoft.com/v7.0/news/trendingtopics?mkt=nl-nl";
+				string query = $"https://api.bing.microsoft.com/v7.0/news/trendingtopics?mkt=nl-nl";
 				// Run the query
 				HttpResponseMessage httpResponseMessage = client.GetAsync(query).Result;
 
 				// Deserialize the response content
-				var responseContentString = httpResponseMessage.Content.ReadAsStringAsync().Result;
+				string responseContentString = httpResponseMessage.Content.ReadAsStringAsync().Result;
 				JObject responseObjects = JObject.Parse(responseContentString);
 
-				if (responseObjects.SelectToken("value") != null)
-				{
-					return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(responseObjects.SelectToken("value").ToList()));
-				}
-				else
-				{
-					return Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(new List<string>()));
-				}
+				return responseObjects.SelectToken("value") != null
+					? Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(responseObjects.SelectToken("value").ToList()))
+					: Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(new List<string>()));
 			}
 			catch (Exception e)
 			{
@@ -95,7 +90,8 @@ namespace Riverside.Graphite.Runtime.Helpers
 
 			return Task.FromResult<string>(null);
 		}
-		static void DisplayAllRankedResults(JsonElement responseObjects)
+
+		private static void DisplayAllRankedResults(JsonElement responseObjects)
 		{
 			string[] rankingGroups = new string[] { "pole", "mainline", "sidebar", "_type", "TrendingTopics" };
 
@@ -156,7 +152,7 @@ namespace Riverside.Graphite.Runtime.Helpers
 			}
 		}
 
-		static void DisplaySpecificResults(JsonElement resultIndex, JsonElement items, string title, params string[] fields)
+		private static void DisplaySpecificResults(JsonElement resultIndex, JsonElement items, string title, params string[] fields)
 		{
 			if (resultIndex.ValueKind == JsonValueKind.Undefined)
 			{
@@ -178,26 +174,25 @@ namespace Riverside.Graphite.Runtime.Helpers
 				}
 			}
 		}
-		static void DisplayItem(JsonElement item, string title, string[] fields)
+
+		private static void DisplayItem(JsonElement item, string title, string[] fields)
 		{
-			var doc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "bingSearch.txt");
+			string doc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "bingSearch.txt");
 
 			try
 			{
-				using (StreamWriter writer = new StreamWriter(doc, append: true))
+				using StreamWriter writer = new(doc, append: true);
+				writer.WriteLine($"--- {title} ---");
+				foreach (string field in fields)
 				{
-					writer.WriteLine($"--- {title} ---");
-					foreach (string field in fields)
+					if (item.TryGetProperty(field, out JsonElement fieldValue))
 					{
-						if (item.TryGetProperty(field, out JsonElement fieldValue))
-						{
-							string content = $"- {field}: {fieldValue}";
-							writer.WriteLine(content);
-							Console.WriteLine(content);
-						}
+						string content = $"- {field}: {fieldValue}";
+						writer.WriteLine(content);
+						Console.WriteLine(content);
 					}
-					writer.WriteLine(); // Add a blank line between items
 				}
+				writer.WriteLine(); // Add a blank line between items
 			}
 			catch (Exception ex)
 			{

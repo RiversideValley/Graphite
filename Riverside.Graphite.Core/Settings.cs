@@ -6,9 +6,9 @@ namespace Riverside.Graphite.Core;
 
 public class Settings
 {
-	void DefaultSettings()
+	private void DefaultSettings()
 	{
-		var self = this;
+		Settings self = this;
 		self.PackageName = "FireBrowswerWinUi3_"; //+ Guid.NewGuid().ToString();
 		self.DisableJavaScript = false;
 		self.DisablePassSave = false;
@@ -87,7 +87,9 @@ public class Settings
 		Self = this;
 
 		if (LoadDefaults)
+		{
 			DefaultSettings();
+		}
 	}
 	public Settings() { }
 

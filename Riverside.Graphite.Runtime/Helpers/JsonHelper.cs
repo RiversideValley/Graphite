@@ -22,16 +22,18 @@ namespace Riverside.Graphite.Runtime.Helpers
 		}
 
 
-		internal protected async Task SaveJArrayAsync(JArray newArray)
+		protected internal async Task SaveJArrayAsync(JArray newArray)
 		{
-			AsyncLockObject lockObject = new AsyncLockObject();
+			AsyncLockObject lockObject = new();
 
 			if (!File.Exists(FileBeingUsed))
-				File.Create(FileBeingUsed);
+			{
+				_ = File.Create(FileBeingUsed);
+			}
 
 			using (await lockObject.LockAsync())
 			{
-				List<JArray> existingArrays = new List<JArray>();
+				List<JArray> existingArrays = new();
 
 				if (File.Exists(FileBeingUsed))
 				{
@@ -39,9 +41,9 @@ namespace Riverside.Graphite.Runtime.Helpers
 
 					if (!string.IsNullOrWhiteSpace(existingContent))
 					{
-						var existingEntries = JArray.Parse(existingContent);
+						JArray existingEntries = JArray.Parse(existingContent);
 
-						foreach (var entry in existingEntries)
+						foreach (JToken entry in existingEntries)
 						{
 							existingArrays.Add((JArray)entry);
 						}

@@ -6,7 +6,7 @@ namespace Riverside.Graphite.Core.Helper
 {
 	public class AsyncLockObject
 	{
-		private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+		private readonly SemaphoreSlim _semaphore = new(1, 1);
 
 		public async Task<IDisposable> LockAsync()
 		{
@@ -25,7 +25,7 @@ namespace Riverside.Graphite.Core.Helper
 
 			public void Dispose()
 			{
-				_semaphore.Release();
+				_ = _semaphore.Release();
 			}
 		}
 	}

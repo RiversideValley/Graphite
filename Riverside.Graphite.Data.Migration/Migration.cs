@@ -16,7 +16,10 @@ public class Migration
 		// Get the path of the data folder of the browser
 		string datapath = appData + Browser.Paths.ElementAt((int)from.BrowserName);
 
-		if (!Directory.Exists(datapath)) return null;
+		if (!Directory.Exists(datapath))
+		{
+			return null;
+		}
 
 		if (from.BrowserBase == Browser.Base.Chromium)
 		{

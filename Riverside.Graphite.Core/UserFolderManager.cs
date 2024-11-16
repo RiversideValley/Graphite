@@ -9,9 +9,9 @@ public static class UserFolderManager
 
 	public static void CreateUserFolders(User user)
 	{
-		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username);
+		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username);
 
-		Parallel.ForEach(SubFolderNames, folderName =>
+		_ = Parallel.ForEach(SubFolderNames, folderName =>
 			Directory.CreateDirectory(Path.Combine(userFolderPath, folderName)));
 	}
 }

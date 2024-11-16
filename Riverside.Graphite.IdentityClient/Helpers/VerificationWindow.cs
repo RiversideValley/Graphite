@@ -20,9 +20,9 @@ public class VerificationWindow
 	public IEnumerable<long> ValidationCandidates(long initialFrame)
 	{
 		yield return initialFrame;
-		for (var i = 1; i <= _previous; i++)
+		for (int i = 1; i <= _previous; i++)
 		{
-			var val = initialFrame - i;
+			long val = initialFrame - i;
 			if (val < 0)
 			{
 				break;
@@ -30,7 +30,7 @@ public class VerificationWindow
 			yield return val;
 		}
 
-		for (var i = 1; i <= _future; i++)
+		for (int i = 1; i <= _future; i++)
 		{
 			yield return initialFrame + i;
 		}

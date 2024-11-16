@@ -12,12 +12,10 @@ public static class ExceptionLogger
 	{
 		try
 		{
-			using (StreamWriter writer = new StreamWriter(InformationFilePath, true))
-			{
-				writer.WriteLine($"Ilogger {DateTime.Now}:");
-				writer.WriteLine(message);
-				writer.WriteLine("------------------------------------------------------------------");
-			}
+			using StreamWriter writer = new(InformationFilePath, true);
+			writer.WriteLine($"Ilogger {DateTime.Now}:");
+			writer.WriteLine(message);
+			writer.WriteLine("------------------------------------------------------------------");
 		}
 		catch (Exception logEx)
 		{
@@ -29,12 +27,10 @@ public static class ExceptionLogger
 	{
 		try
 		{
-			using (StreamWriter writer = new StreamWriter(LogFilePath, true))
-			{
-				writer.WriteLine($"Exception occurred at {DateTime.Now}:");
-				LogExceptionDetails(ex, writer);
-				writer.WriteLine("------------------------------------------------------------------");
-			}
+			using StreamWriter writer = new(LogFilePath, true);
+			writer.WriteLine($"Exception occurred at {DateTime.Now}:");
+			LogExceptionDetails(ex, writer);
+			writer.WriteLine("------------------------------------------------------------------");
 		}
 		catch (Exception logEx)
 		{

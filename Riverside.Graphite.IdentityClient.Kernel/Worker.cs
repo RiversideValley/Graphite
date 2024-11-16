@@ -11,7 +11,7 @@ namespace FireAuthService;
 public class Worker : BackgroundService
 {
 	private readonly HttpListener _listener;
-	private static IPublicClientApplication _app;
+	private static IPublicClientApplication? _app;
 	private static readonly string[] _scopes = new string[] { "user.read" };
 	protected string ClientId { get; } = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
 	protected string RedirectUri { get; } = "urn:ietf:wg:oauth:2.0:oob";
@@ -24,7 +24,7 @@ public class Worker : BackgroundService
 	{
 		_listener = new HttpListener();
 		_listener.Prefixes.Add("http://+:12221/");
-		var myLogger = new MyIdentityLogger();
+		_ = new MyIdentityLogger();
 
 		try
 		{
@@ -42,14 +42,15 @@ public class Worker : BackgroundService
 			throw;
 		}
 	}
-	class MyIdentityLogger : IIdentityLogger
+
+	private class MyIdentityLogger : IIdentityLogger
 	{
 		public EventLogLevel MinLogLevel { get; }
 
 		public MyIdentityLogger()
 		{
 			//Retrieve the log level from an environment variable
-			var msalEnvLogLevel = Environment.GetEnvironmentVariable("MSAL_LOG_LEVEL");
+			string? msalEnvLogLevel = Environment.GetEnvironmentVariable("MSAL_LOG_LEVEL");
 
 			if (Enum.TryParse(msalEnvLogLevel, out EventLogLevel msalLogLevel))
 			{
@@ -154,11 +155,11 @@ public class Worker : BackgroundService
 	}
 	private async Task HandleAuthRequest(HttpListenerContext context)
 	{
-		var result = await _app.AcquireTokenInteractive(_scopes).ExecuteAsync();
+		AuthenticationResult result = await _app.AcquireTokenInteractive(_scopes).ExecuteAsync();
 
 		if (result != null)
 		{
-			var cookie = new Cookie("msalToken", result.AccessToken)
+			Cookie cookie = new("msalToken", result.AccessToken)
 			{
 				HttpOnly = true,
 				Secure = true,
@@ -180,7 +181,7 @@ public class Worker : BackgroundService
 
 	private async Task ProcessRequest(HttpListenerContext context)
 	{
-		HttpListenerRequest request = context.Request;
+		_ = context.Request;
 		HttpListenerResponse response = context.Response;
 
 		string responseString = "<html><title>Hello from FireBrowser Auth Servcie</title></html>";

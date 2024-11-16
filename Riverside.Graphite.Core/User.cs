@@ -5,7 +5,7 @@ namespace Riverside.Graphite.Core;
 
 public class User
 {
-	private User user;
+	private readonly User user;
 	public User(User user)
 	{
 		this.user = user;

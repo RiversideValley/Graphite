@@ -10,7 +10,7 @@ public sealed partial class PermissionDialog : ContentDialog
 
 	public PermissionDialog(string title, string manageText)
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 		DialogTitle = title;
 		ManageText = manageText;
 	}

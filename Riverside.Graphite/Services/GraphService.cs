@@ -16,7 +16,7 @@ namespace Riverside.Graphite.Services
 	public class GraphService : IGraphService
 	{
 		private User _user;
-		private TimeZoneInfo _userTimeZone;
+		private readonly TimeZoneInfo _userTimeZone;
 		public BitmapImage ProfileMicrosoft { get; set; }
 
 		public GraphService()

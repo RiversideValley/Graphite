@@ -25,19 +25,25 @@ public class Hotp : Otp
 
 	private static void VerifyParameters(int hotpSize)
 	{
-		if (hotpSize < 6 || hotpSize > 8)
+		if (hotpSize is < 6 or > 8)
 		{
 			throw new ArgumentOutOfRangeException(nameof(hotpSize));
 		}
 	}
 
-	public string ComputeHOTP(long counter) => Compute(counter, _hashMode);
+	public string ComputeHOTP(long counter)
+	{
+		return Compute(counter, _hashMode);
+	}
 
-	public bool VerifyHotp(string hotp, long counter) => hotp == ComputeHOTP(counter);
+	public bool VerifyHotp(string hotp, long counter)
+	{
+		return hotp == ComputeHOTP(counter);
+	}
 
 	protected override string Compute(long counter, OtpHashMode mode)
 	{
-		var otp = CalculateOtp(KeyUtilities.GetBigEndianBytes(counter), mode);
+		long otp = CalculateOtp(KeyUtilities.GetBigEndianBytes(counter), mode);
 		return Digits(otp, _hotpSize);
 	}
 }

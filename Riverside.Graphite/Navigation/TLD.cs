@@ -33,7 +33,7 @@ public class TLD
 	{
 		try
 		{
-			var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Navigation/DomainMap.txt"));
+			StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Navigation/DomainMap.txt"));
 			KnownDomains = await ReadTextFile(file);
 		}
 		catch (FileNotFoundException ex) when (HandleFileNotFoundException(ex))
@@ -52,5 +52,8 @@ public class TLD
 		return true; // Return true to suppress the exception
 	}
 
-	public static string GetTLDfromURL(string url) => url[(url.LastIndexOf(".") + 1)..];
+	public static string GetTLDfromURL(string url)
+	{
+		return url[(url.LastIndexOf(".") + 1)..];
+	}
 }
