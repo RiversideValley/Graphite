@@ -67,7 +67,6 @@ public sealed partial class WebContent : Page
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 
 		AdBlockerService = new AdBlockerWrapper();
-		
 	}
 
 	private async Task AfterComplete()
