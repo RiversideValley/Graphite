@@ -1,5 +1,4 @@
 using CommunityToolkit.WinUI.Behaviors;
-using FireBrowserDatabase;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -42,6 +41,7 @@ using WinRT.Interop;
 using Settings = Riverside.Graphite.Core.Settings;
 using User = Riverside.Graphite.Core.User;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
+using Riverside.Graphite.Data.Core.Models;
 
 namespace Riverside.Graphite;
 

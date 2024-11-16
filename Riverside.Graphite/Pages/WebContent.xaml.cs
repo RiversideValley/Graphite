@@ -26,7 +26,7 @@ using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 using static Riverside.Graphite.MainWindow;
-using WebViewAdBlocker;
+
 
 namespace Riverside.Graphite.Pages;
 

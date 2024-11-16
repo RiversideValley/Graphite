@@ -25,7 +25,7 @@ public class HistoryActions : IHistoryActions
 	{
 		try
 		{
-			if (await HistoryContext.Urls.FirstOrDefaultAsync(t => t.url == url) is HistoryItem item)
+			if (await HistoryContext.Urls.FirstOrDefaultAsync(t => t.url == url) is DbHistoryItem item)
 			{
 				string dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 				HistoryContext.Urls.Where(x => x.url == url).ExecuteUpdate(y => y.SetProperty(z => z.visit_count, z => z.visit_count + 1)
@@ -34,7 +34,7 @@ public class HistoryActions : IHistoryActions
 			}
 			else
 			{
-				await HistoryContext.Urls.AddAsync(new HistoryItem(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), url, title, visitCount, typedCount, hidden));
+				await HistoryContext.Urls.AddAsync(new DbHistoryItem(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), url, title, visitCount, typedCount, hidden));
 			}
 
 			await HistoryContext.SaveChangesAsync();
@@ -79,12 +79,12 @@ public class HistoryActions : IHistoryActions
 		}
 	}
 
-	public async Task<ObservableCollection<FireBrowserDatabase.HistoryItem>> GetAllHistoryItems()
+	public async Task<ObservableCollection<HistoryItem>> GetAllHistoryItems()
 	{
 		try
 		{
-			List<FireBrowserDatabase.HistoryItem> items = (from x in HistoryContext.Urls
-														   select new FireBrowserDatabase.HistoryItem
+			List<HistoryItem> items = (from x in HistoryContext.Urls
+														   select new HistoryItem
 														   {
 															   Id = x.hidden,
 															   Url = x.url,
@@ -96,13 +96,13 @@ public class HistoryActions : IHistoryActions
 															   ImageSource = new BitmapImage(new Uri($"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={x.url}&size=32"))
 														   }).OrderBy(x => x.LastVisitTime).Reverse().ToList();
 
-			return await Task.FromResult(items.ToObservableCollection<FireBrowserDatabase.HistoryItem>());
+			return await Task.FromResult(items.ToObservableCollection<HistoryItem>());
 		}
 		catch (Exception ex)
 		{
 			ExceptionLogger.LogException(ex);
 			Console.WriteLine($"Error gathering History Items: {ex.Message}");
-			return await Task.FromResult(new ObservableCollection<FireBrowserDatabase.HistoryItem>());
+			return await Task.FromResult(new ObservableCollection<HistoryItem>());
 		}
 	}
 }

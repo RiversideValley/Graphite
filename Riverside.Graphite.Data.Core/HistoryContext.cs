@@ -11,7 +11,7 @@ namespace Riverside.Graphite.Data.Core;
 
 public class HistoryContext : DbContext
 {
-	public DbSet<HistoryItem> Urls { get; set; }
+	public DbSet<DbHistoryItem> Urls { get; set; }
 	//public DbSet<DownloadItem> Downloads { get; set; }
 	//public DbSet<DbUser> Users { get; set; }
 

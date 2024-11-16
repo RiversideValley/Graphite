@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Riverside.Graphite.Data.Core.Models;
 
-public class HistoryItem : IHistoryItem
+public class DbHistoryItem : IHistoryItem
 {
 	[Key]
 	public int id { get; set; }
@@ -14,7 +14,7 @@ public class HistoryItem : IHistoryItem
 	public int typed_count { get; set; }
 	public int hidden { get; set; }
 
-	public HistoryItem(string last_visit_time, string url, string title, int visit_count, int typed_count, int hidden)
+	public DbHistoryItem(string last_visit_time, string url, string title, int visit_count, int typed_count, int hidden)
 	{
 		this.last_visit_time = last_visit_time;
 		this.url = url;
