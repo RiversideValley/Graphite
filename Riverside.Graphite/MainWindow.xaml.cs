@@ -11,6 +11,7 @@ using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Runtime.Helpers;
@@ -18,10 +19,10 @@ using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.BarcodeHost;
 using Riverside.Graphite.Services.Notifications.Toasts;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
-using Riverside.Graphite.Services.BarcodeHost;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,7 +42,6 @@ using WinRT.Interop;
 using Settings = Riverside.Graphite.Core.Settings;
 using User = Riverside.Graphite.Core.User;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
-using Riverside.Graphite.Data.Core.Models;
 
 namespace Riverside.Graphite;
 

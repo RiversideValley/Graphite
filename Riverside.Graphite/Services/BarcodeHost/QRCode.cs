@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
 
 namespace Riverside.Graphite.Services.BarcodeHost;
 

@@ -84,17 +84,17 @@ public class HistoryActions : IHistoryActions
 		try
 		{
 			List<HistoryItem> items = (from x in HistoryContext.Urls
-														   select new HistoryItem
-														   {
-															   Id = x.hidden,
-															   Url = x.url,
-															   Title = x.title,
-															   VisitCount = x.visit_count,
-															   TypedCount = x.typed_count,
-															   LastVisitTime = x.last_visit_time,
-															   Hidden = x.hidden,
-															   ImageSource = new BitmapImage(new Uri($"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={x.url}&size=32"))
-														   }).OrderBy(x => x.LastVisitTime).Reverse().ToList();
+									   select new HistoryItem
+									   {
+										   Id = x.hidden,
+										   Url = x.url,
+										   Title = x.title,
+										   VisitCount = x.visit_count,
+										   TypedCount = x.typed_count,
+										   LastVisitTime = x.last_visit_time,
+										   Hidden = x.hidden,
+										   ImageSource = new BitmapImage(new Uri($"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={x.url}&size=32"))
+									   }).OrderBy(x => x.LastVisitTime).Reverse().ToList();
 
 			return await Task.FromResult(items.ToObservableCollection<HistoryItem>());
 		}

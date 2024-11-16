@@ -1,10 +1,5 @@
 ﻿using Riverside.Graphite.Services.BarcodeHost;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
 
 namespace Riverside.Graphite.Helpers;

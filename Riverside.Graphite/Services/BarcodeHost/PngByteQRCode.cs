@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
 
 namespace Riverside.Graphite.Services.BarcodeHost;
 public sealed class PngByteQRCode : AbstractQRCode, IDisposable

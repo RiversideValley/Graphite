@@ -1,4 +1,3 @@
-using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -6,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Riverside.Graphite.Services
 {
@@ -28,7 +25,7 @@ namespace Riverside.Graphite.Services
 			_adDomains = new HashSet<string>();
 			_adPatterns = new List<Regex>();
 			_whitelist = new HashSet<string>();
-			LoadEasyList(); 
+			LoadEasyList();
 		}
 
 		private void LoadEasyList()
@@ -86,7 +83,7 @@ namespace Riverside.Graphite.Services
 
 		~AdBlockerWrapper()
 		{
-			Dispose(false); 
+			Dispose(false);
 		}
 
 		public void Unregister()
@@ -103,7 +100,7 @@ namespace Riverside.Graphite.Services
 			try
 			{
 				_webView = webView;
-				
+
 				await _webView.EnsureCoreWebView2Async();
 
 				_webView.CoreWebView2.NavigationStarting += WebView_NavigationStarting;
@@ -122,10 +119,11 @@ namespace Riverside.Graphite.Services
 
 		private async void WebView_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
 		{
-			if (args.Exception is Exception ex) { 
-				ExceptionLogger.LogException(ex);	
+			if (args.Exception is Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
 			}
-			await _webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GraphiteBlocker); 
+			await _webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GraphiteBlocker);
 		}
 
 		private async void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
@@ -171,7 +169,7 @@ namespace Riverside.Graphite.Services
 			// Check whitelist first
 			if (_whitelist.Any(rule => Regex.IsMatch(uriString, WildcardToRegex(rule))))
 			{
-				return Task.CompletedTask; 
+				return Task.CompletedTask;
 			}
 
 			if (_adDomains.Contains(uri.Host) || _adPatterns.Any(pattern => pattern.IsMatch(uriString)))
@@ -220,7 +218,7 @@ namespace Riverside.Graphite.Services
 			{
 				if (disposing)
 				{
-					Unregister(); 
+					Unregister();
 				}
 				disposedValue = true;
 			}

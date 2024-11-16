@@ -37,7 +37,7 @@ public sealed partial class WebContent : Page
 	public BitmapImage PictureWebElement { get; set; }
 	public WebView2 WebView { get; set; }
 	private SettingsService SettingsService { get; set; }
-	private AdBlockerWrapper AdBlockerService {  get; set; }
+	private AdBlockerWrapper AdBlockerService { get; set; }
 	public WebContent()
 	{
 		SettingsService = App.GetService<SettingsService>();
@@ -132,7 +132,7 @@ public sealed partial class WebContent : Page
 
 	protected override void OnNavigatedFrom(NavigationEventArgs e)
 	{
-		AdBlockerService.Dispose(); 
+		AdBlockerService.Dispose();
 	}
 	//static int FirstAttempt = 0;
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -142,15 +142,16 @@ public sealed partial class WebContent : Page
 
 		await WebViewElement.EnsureCoreWebView2Async();
 
-		if (AdBlockerService is not null) {
+		if (AdBlockerService is not null)
+		{
 			AdBlockerService.Toggle();
 			await AdBlockerService.Initialize(WebViewElement);
 		}
 
-		
+
 		LoadSettings();
 
-	
+
 
 		if (param?.Param != null)
 		{

@@ -3,8 +3,6 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.Text;
-using static Riverside.Graphite.Services.BarcodeHost.QRCodeGenerator;
-using static Riverside.Graphite.Services.BarcodeHost.SvgQRCode;
 
 namespace Riverside.Graphite.Services.BarcodeHost;
 
