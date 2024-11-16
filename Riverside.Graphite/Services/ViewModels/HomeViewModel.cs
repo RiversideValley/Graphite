@@ -1,13 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FireBrowserDatabase;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Pages.Models;

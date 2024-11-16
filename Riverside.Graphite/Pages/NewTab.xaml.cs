@@ -1,4 +1,4 @@
-using FireBrowserDatabase;
+
 using Microsoft.Bing.WebSearch.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages.Models;
 using Riverside.Graphite.Runtime.Helpers;

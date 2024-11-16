@@ -10,7 +10,7 @@ namespace Riverside.Graphite.Data.Migration;
 public class MigrationData
 {
 	//make this cookies history and favorites
-	public List<HistoryItem> History { get; set; }
+	public List<DbHistoryItem> History { get; set; }
 }
 
 public class Browser

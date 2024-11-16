@@ -181,11 +181,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Riverside.Graphite.Adblock\Riverside.Graphite.Adblock.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Assets\Riverside.Graphite.Assets.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.IdentityClient\Riverside.Graphite.IdentityClient.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Data\Riverside.Graphite.Data.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Core\Riverside.Graphite.Data.Core.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Favorites\Riverside.Graphite.Data.Favorites.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Migration\Riverside.Graphite.Data.Migration.csproj" />
