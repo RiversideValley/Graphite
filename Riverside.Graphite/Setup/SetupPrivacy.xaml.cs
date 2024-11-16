@@ -39,7 +39,7 @@ public sealed partial class SetupPrivacy : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.DisableGenAutoFill = autoSettingValue; ;
+			AppService.AppSettings.DisableGenAutoFill = autoSettingValue;
 		}
 	}
 
