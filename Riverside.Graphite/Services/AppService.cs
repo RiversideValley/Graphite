@@ -39,7 +39,6 @@ public static class AppService
 	public static IGraphService GraphService { get; set; }
 	public static DispatcherQueue Dispatcher { get; set; }
 
-
 	public static async Task WindowsController(CancellationToken cancellationToken)
 	{
 		try

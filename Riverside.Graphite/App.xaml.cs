@@ -46,6 +46,7 @@ public partial class App : Application
 		ServiceCollection services = new();
 
 		_ = services.AddSingleton<WeakReferenceMessenger>();
+		_ = services.AddSingleton<WebViewAdBlocker.AdBlockerWrapper>();
 		_ = services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider =>
 			provider.GetRequiredService<WeakReferenceMessenger>());
 		_ = services.AddSingleton<DownloadService>();
