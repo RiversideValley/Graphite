@@ -45,7 +45,6 @@ namespace Riverside.Graphite.Services
 			{
 				Console.WriteLine("EasyList.txt not found in Assets folder.");
 			}
-
 		}
 
 		private void ProcessRule(string rule)
