@@ -16,7 +16,6 @@ public class UpdateService
 	// Local DLL file names
 	private readonly string[] localFileNames = {
 	"Riverside.Graphite.Adblock.dll",
-	"Riverside.Graphite.Navigation.dll",
 	"Riverside.Graphite.Core.dll",
 	"Riverside.Graphite.Extensions.dll",
 	"Riverside.Graphite.Data.Favorites.dll",
