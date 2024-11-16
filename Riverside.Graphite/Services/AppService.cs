@@ -245,7 +245,7 @@ public static class AppService
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
 			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-			appWindow.SetIcon("logo.ico");
+			appWindow.SetIcon("Assets\\AppTiles\\Logo.ico");
 		}
 	}
 

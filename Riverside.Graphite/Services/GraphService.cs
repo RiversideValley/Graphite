@@ -125,7 +125,7 @@ namespace Riverside.Graphite.Services
 				else
 				{
 					MemoryStream memoryStream = new();
-					using FileStream fileStream = new("ms-appx:///Assets/Microsoft.png", FileMode.Open, FileAccess.Read);
+					using FileStream fileStream = new("ms-appx:///Assets/Icons/Products/MicrosoftOffice.png", FileMode.Open, FileAccess.Read);
 					await fileStream.CopyToAsync(memoryStream);
 					memoryStream.Position = 0;
 					BitmapImage bitmapImage = new();

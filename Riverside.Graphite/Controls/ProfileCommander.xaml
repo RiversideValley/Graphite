@@ -74,7 +74,7 @@
                     <Image
                         Width="14"
                         Height="14"
-                        Source="ms-appx:///Assets//Microsoft.png" />
+                        Source="ms-appx:///Assets/Icons/Products/MicrosoftOffice.png" />
                 </Button>
             </StackPanel>
             <Expander

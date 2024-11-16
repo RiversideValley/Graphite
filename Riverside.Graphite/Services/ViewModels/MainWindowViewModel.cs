@@ -77,7 +77,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			using Stream stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
 			if (stream == null)
 			{
-				MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
+				MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Icons/Products/MicrosoftOffice.png"));
 				return;
 			}
 

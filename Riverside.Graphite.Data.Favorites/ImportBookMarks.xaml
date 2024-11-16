@@ -61,7 +61,7 @@
                     <Image
                         Width="40"
                         Height="40"
-                        Source="ms-appx:///Assets/chrome_logo.png" />
+                        Source="ms-appx:///Assets/Icons/Products/Browser-Chrome.png" />
                 </Button>
                 <TextBlock
                     Margin="0,8,0,0"
@@ -77,7 +77,7 @@
                     <Image
                         Width="40"
                         Height="40"
-                        Source="ms-appx:///Assets/firefox_logo.png" />
+                        Source="ms-appx:///Assets/Icons/Products/Browser-Firefox.png" />
                 </Button>
                 <TextBlock
                     Margin="0,8,0,0"
@@ -94,7 +94,7 @@
                     <Image
                         Width="40"
                         Height="40"
-                        Source="ms-appx:///Assets/edge_logo.png" />
+                        Source="ms-appx:///Assets/Icons/Products/Browser-Edge.png" />
                 </Button>
                 <TextBlock
                     Margin="0,8,0,0"
@@ -111,7 +111,7 @@
                     <Image
                         Width="40"
                         Height="40"
-                        Source="ms-appx:///Assets/arc_logo.png" />
+                        Source="ms-appx:///Assets/Icons/Products/Browser-Arc.png" />
                 </Button>
                 <TextBlock
                     Margin="0,8,0,0"
@@ -128,7 +128,7 @@
                     <Image
                         Width="40"
                         Height="40"
-                        Source="ms-appx:///Assets/brave_logo.png" />
+                        Source="ms-appx:///Assets/Icons/Products/Browser-Brave.png" />
                 </Button>
                 <TextBlock
                     Margin="0,8,0,0"

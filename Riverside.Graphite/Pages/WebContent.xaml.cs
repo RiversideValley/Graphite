@@ -120,7 +120,7 @@ public sealed partial class WebContent : Page
 
 		WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = preventionLevel;
 
-		WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/msal", CoreWebView2HostResourceAccessKind.Allow);
+		WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/WebView/AppFrontend", CoreWebView2HostResourceAccessKind.Allow);
 	}
 
 

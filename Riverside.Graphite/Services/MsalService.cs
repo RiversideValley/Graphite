@@ -100,7 +100,7 @@ namespace Riverside.Graphite.Services
 		private async Task<IPublicClientApplication> InitializeMsalWithCache()
 		{
 			// Initialize the PublicClientApplication
-			//string RedirectUri = $"msal{ClientId}://auth";
+			//string RedirectUri = $"{ClientId}://auth";
 			string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
 			//string RedirectUri = "http://localhost";
 			IntPtr mainWnd = IntPtr.Zero;
