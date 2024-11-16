@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using Riverside.Graphite.Runtime.Exceptions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;

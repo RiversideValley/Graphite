@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <UseRidGraph>true</UseRidGraph>
     <UseAOT>Enabled</UseAOT>
@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup>
