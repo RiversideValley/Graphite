@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using Riverside.Graphite.Runtime.Exceptions;
 using System;
@@ -57,7 +57,6 @@ namespace WebViewAdBlocker
 			{
 				Console.WriteLine("Adblocker.js not found in Assets folder.");
 			}
-
 		}
 
 		private void ProcessRule(string rule)
@@ -131,8 +130,6 @@ namespace WebViewAdBlocker
 				ExceptionLogger.LogException(ex);
 				throw;
 			}
-
-
 		}
 
 		private async void WebView_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
