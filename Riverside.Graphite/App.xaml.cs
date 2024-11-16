@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -64,7 +64,6 @@ public partial class App : Application
 
 	public App()
 	{
-
 		AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		InitializeComponent();
 		UnhandledException += Current_UnhandledException;
@@ -117,8 +116,6 @@ public partial class App : Application
 
 	protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
 	{
-
-
 		App.Current.Services = App.Current.ConfigureServices();
 
 		var InstanceCreationToken = AppService.CancellationToken = CancellationToken.None;
@@ -132,7 +129,6 @@ public partial class App : Application
 		}
 		catch (Exception e)
 		{
-
 			ExceptionLogger.LogException(e);
 		}
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Dispatching;
+using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppNotifications;
 using System;
 using System.Collections.ObjectModel;
@@ -21,7 +21,5 @@ namespace Riverside.Graphite.Services.Notifications.Interfaces
 		public DateTimeOffset ExpirationTime { get; set; }
 		public abstract AppNotification Notification { get; set; }
 		public abstract DispatcherQueue DispatcherQueue { get; set; }
-
-
 	}
 }

@@ -1,4 +1,4 @@
-﻿using Riverside.GraphiteQrCore.FrameworkMethods;
+using Riverside.GraphiteQrCore.FrameworkMethods;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -89,7 +89,7 @@ public static class PayloadGenerator
 						parts.Add("subject=" + Uri.EscapeDataString(this.subject));
 					if (!string.IsNullOrEmpty(this.message))
 						parts.Add("body=" + Uri.EscapeDataString(this.message));
-					var queryString = parts.Any() ? $"?{string.Join("&", parts.ToArray())}" : "";
+					var queryString = parts.Count != 0 ? $"?{string.Join("&", parts.ToArray())}" : "";
 					returnVal = $"mailto:{this.mailReceiver}{queryString}";
 					break;
 				case MailEncoding.MATMSG:
@@ -999,7 +999,7 @@ public static class PayloadGenerator
 					throw new SwissQrCodeContactException($"Name must match the following pattern as defined in pain.001: {charsetPattern}");
 				this.name = name;
 
-				if (AddressType.StructuredAddress == this.adrType)
+				if (this.adrType == AddressType.StructuredAddress)
 				{
 					if (!string.IsNullOrEmpty(streetOrAddressline1) && (streetOrAddressline1.Length > 70))
 						throw new SwissQrCodeContactException("Street must be shorter than 71 chars.");
@@ -1028,7 +1028,7 @@ public static class PayloadGenerator
 					this.houseNumberOrAddressline2 = houseNumberOrAddressline2;
 				}
 
-				if (AddressType.StructuredAddress == this.adrType)
+				if (this.adrType == AddressType.StructuredAddress)
 				{
 					if (string.IsNullOrEmpty(zipCode))
 						throw new SwissQrCodeContactException("Zip code must not be empty.");
@@ -1067,7 +1067,7 @@ public static class PayloadGenerator
 
 			public override string ToString()
 			{
-				string contactData = $"{(AddressType.StructuredAddress == adrType ? "S" : "K")}{br}"; //AdrTp
+				string contactData = $"{(adrType == AddressType.StructuredAddress ? "S" : "K")}{br}"; //AdrTp
 				contactData += name.Replace("\n", "") + br; //Name
 				contactData += (!string.IsNullOrEmpty(streetOrAddressline1) ? streetOrAddressline1.Replace("\n", "") : string.Empty) + br; //StrtNmOrAdrLine1
 				contactData += (!string.IsNullOrEmpty(houseNumberOrAddressline2) ? houseNumberOrAddressline2.Replace("\n", "") : string.Empty) + br; //BldgNbOrAdrLine2
@@ -1227,7 +1227,7 @@ public static class PayloadGenerator
 			if (name.Length > 70)
 				throw new GirocodeException("(Payee-)Name must be shorter than 71 chars.");
 			this.name = name;
-			if (amount.ToString().Replace(",", ".").Contains(".") && amount.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
+			if (amount.ToString().Replace(",", ".").Contains('.') && amount.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
 				throw new GirocodeException("Amount must have less than 3 digits after decimal point.");
 			if (amount < 0.01m || amount > 999999999.99m)
 				throw new GirocodeException("Amount has to at least 0.01 and must be smaller or equal to 999999999.99.");
@@ -1505,7 +1505,7 @@ public static class PayloadGenerator
 			//Checks for all payment types
 			if (authority != AuthorityType.contact && authority != AuthorityType.contact_v2)
 			{
-				if (amount.ToString().Replace(",", ".").Contains(".") && amount.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
+				if (amount.ToString().Replace(",", ".").Contains('.') && amount.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
 					throw new BezahlCodeException("Amount must have less than 3 digits after decimal point.");
 				if (amount < 0.01m || amount > 999999999.99m)
 					throw new BezahlCodeException("Amount has to at least 0.01 and must be smaller or equal to 999999999.99.");
@@ -1536,11 +1536,7 @@ public static class PayloadGenerator
 					if (periodicLastExecutionDate != null)
 						this.periodicLastExecutionDate = (DateTime)periodicLastExecutionDate;
 				}
-
 			}
-
-
-
 		}
 
 		public override string ToString()
@@ -2015,14 +2011,14 @@ public static class PayloadGenerator
 
 			if (!String40Methods.IsNullOrWhiteSpace(Issuer))
 			{
-				if (Issuer.Contains(":"))
+				if (Issuer.Contains(':'))
 				{
 					throw new Exception("Issuer must not have a ':'");
 				}
 				escapedIssuer = Uri.EscapeDataString(Issuer);
 			}
 
-			if (!String40Methods.IsNullOrWhiteSpace(Label) && Label.Contains(":"))
+			if (!String40Methods.IsNullOrWhiteSpace(Label) && Label.Contains(':'))
 			{
 				throw new Exception("Label must not have a ':'");
 			}
@@ -2065,9 +2061,7 @@ public static class PayloadGenerator
 			{ "Aes128Gcm", "aes-128-gcm" },
 			{ "Aes192Gcm", "aes-192-gcm" },
 			{ "Aes256Gcm", "aes-256-gcm" },
-
 			{ "XChacha20IetfPoly1305", "xchacha20-ietf-poly1305" },
-
 			{ "Aes128Cfb", "aes-128-cfb" },
 			{ "Aes192Cfb", "aes-192-cfb" },
 			{ "Aes256Cfb", "aes-256-cfb" },
@@ -2078,9 +2072,7 @@ public static class PayloadGenerator
 			{ "Camellia192Cfb", "camellia-192-cfb" },
 			{ "Camellia256Cfb", "camellia-256-cfb" },
 			{ "Chacha20Ietf", "chacha20-ietf" },
-
 			{ "Aes256Cb", "aes-256-cfb" },
-
 			{ "Aes128Ofb", "aes-128-ofb" },
 			{ "Aes192Ofb", "aes-192-ofb" },
 			{ "Aes256Ofb", "aes-256-ofb" },
@@ -2090,12 +2082,10 @@ public static class PayloadGenerator
 			{ "Aes128Cfb8", "aes-128-cfb8" },
 			{ "Aes192Cfb8", "aes-192-cfb8" },
 			{ "Aes256Cfb8", "aes-256-cfb8" },
-
 			{ "Chacha20", "chacha20" },
 			{ "BfCfb", "bf-cfb" },
 			{ "Rc4Md5", "rc4-md5" },
 			{ "Salsa20", "salsa20" },
-
 			{ "DesCfb", "des-cfb" },
 			{ "IdeaCfb", "idea-cfb" },
 			{ "Rc2Cfb", "rc2-cfb" },
@@ -2332,7 +2322,6 @@ public static class PayloadGenerator
 
 	public class SlovenianUpnQr : Payload
 	{
-
 		private string _payerName = "";
 		private string _payerAddress = "";
 		private string _payerPlace = "";
@@ -2488,7 +2477,6 @@ public static class PayloadGenerator
 		/// </summary>
 		/// <remarks>Should be used if CharacterSets equals windows-1251 or koi8-r</remarks>
 		/// <returns></returns>
-
 		public byte[] ToBytes()
 		{
 			//Calculate the seperator
@@ -3001,7 +2989,6 @@ public static class PayloadGenerator
 			windows_1251 = 1,       // Encoding.GetEncoding("windows-1251")
 			utf_8 = 2,              // Encoding.UTF8                          
 			koi8_r = 3              // Encoding.GetEncoding("koi8-r")
-
 		}
 
 		public class RussiaPaymentOrderException : Exception
@@ -3011,7 +2998,6 @@ public static class PayloadGenerator
 			{
 			}
 		}
-
 	}
 
 	private static bool IsValidIban(string iban)
@@ -3029,7 +3015,7 @@ public static class PayloadGenerator
 		for (int i = 0; i < (int)Math.Ceiling((sum.Length - 2) / 7d); i++)
 		{
 			var offset = (i == 0 ? 0 : 2);
-			var start = i * 7 + offset;
+			var start = (i * 7) + offset;
 			var n = (i == 0 ? "" : m.ToString()) + sum.Substring(start, Math.Min(9 - offset, sum.Length - start));
 			if (!int.TryParse(n, NumberStyles.Any, CultureInfo.InvariantCulture, out m))
 				break;

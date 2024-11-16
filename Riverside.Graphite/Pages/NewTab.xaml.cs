@@ -55,8 +55,6 @@ public sealed partial class NewTab : Page
 		userSettings = ViewModel.SettingsService.CoreSettings;
 
 		InitializeComponent();
-
-
 	}
 
 
@@ -93,11 +91,8 @@ public sealed partial class NewTab : Page
 	}
 	private async void QueryThis_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
 	{
-
-
 		if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
 		{
-
 			if (!string.IsNullOrEmpty(sender.Text))
 			{
 				List<HistoryItem> suggestions = await SearchControls(sender.Text);
@@ -116,7 +111,6 @@ public sealed partial class NewTab : Page
 					l.Add(h);
 					sender.ItemsSource = l;
 				}
-
 			}
 			else
 			{
@@ -127,14 +121,11 @@ public sealed partial class NewTab : Page
 				h.ImageSource = bip;
 				l.Add(h);
 				sender.ItemsSource = l;
-
 			}
 
 			//pause execution and make thread safer... 
 			await Task.Delay(200);
-
-		};
-
+		}
 	}
 
 	private async Task<List<HistoryItem>> SearchBingApi(string text)
@@ -158,13 +149,10 @@ public sealed partial class NewTab : Page
 			{
 				Uri convertUrl = new(webPage.Url);
 				setBitmap.UriSource = new Uri(string.Format("https://www.google.com/s2/favicons?domain_url={0}", convertUrl, convertUrl.Host));
-
 			}
 			catch (Exception)
 			{
-
 				Console.WriteLine("Failed to set the uri from the web result");
-
 			}
 
 			if (setBitmap is null)
@@ -183,7 +171,6 @@ public sealed partial class NewTab : Page
 		}
 
 		return items.DistinctBy(x => x.Title).OrderByDescending(z => z.LastVisitTime).ToList();
-
 	}
 
 	private Task<List<HistoryItem>> SearchControls(string query)
@@ -197,7 +184,6 @@ public sealed partial class NewTab : Page
 			{
 				suggestions.Add(item);
 			}
-
 		}
 		foreach (FavItem item in ViewModel.FavoriteItems!)
 		{
@@ -428,8 +414,6 @@ public sealed partial class NewTab : Page
 					Console.WriteLine($"Error: {ex.Message}");
 				}
 				break;
-
-
 		}
 
 		return new SolidColorBrush();
@@ -455,7 +439,6 @@ public sealed partial class NewTab : Page
 			if (!File.Exists(storedDbPath))
 			{
 				File.WriteAllText(storedDbPath, "[]");
-
 			}
 
 			Guid gd = Guid.NewGuid();
@@ -594,7 +577,6 @@ public sealed partial class NewTab : Page
 				await ViewModel.SettingsService?.SaveChangesToSettings(AuthService.CurrentUser, userSettings);
 				userSettings = ViewModel.SettingsService.CoreSettings;
 				//SearchengineSelection.SelectedItem = selection.ProviderName; 
-
 			}
 			_ = NewTabSearchBox.Focus(FocusState.Programmatic);
 		}
@@ -613,7 +595,6 @@ public sealed partial class NewTab : Page
 			{
 				ViewModel.TrendingItem = e.AddedItems.FirstOrDefault() as TrendingItem;
 				window.NavigateToUrl(ViewModel.TrendingItem.webSearchUrl);
-
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-﻿using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Data.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +22,6 @@ public class Browser
 		Chrome,
 		Opera,
 		ArcBrowser,
-
 	}
 
 	public enum Base

@@ -13,7 +13,6 @@ using WinRT.Interop;
 namespace Riverside.Graphite.Controls;
 public sealed partial class RestoreBackUp : Window
 {
-
 	private AppWindow appWindow;
 	private AppWindowTitleBar titleBar;
 

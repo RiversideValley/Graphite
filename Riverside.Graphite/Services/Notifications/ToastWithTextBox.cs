@@ -10,7 +10,6 @@ using WinRT.Interop;
 namespace Riverside.Graphite.Services.Notifications.Toasts;
 public class ToastWithTextBox
 {
-
 	public const string Title = "Riverside.Graphite Notifications";
 	const string textboxReplyId = "textboxReply";
 

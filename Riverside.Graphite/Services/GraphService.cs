@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Microsoft.Graph.Models;
@@ -15,14 +15,12 @@ namespace Riverside.Graphite.Services
 {
 	public class GraphService : IGraphService
 	{
-
 		private User _user;
 		private TimeZoneInfo _userTimeZone;
 		public BitmapImage ProfileMicrosoft { get; set; }
 
 		public GraphService()
 		{
-
 		}
 
 		public Task CreateEventAsync(Event newEvent)
@@ -77,8 +75,6 @@ namespace Riverside.Graphite.Services
 		{
 			try
 			{
-
-
 				if (AppService.MsalService.IsSignedIn)
 				{
 					// Get the user, cache for subsequent calls
@@ -97,7 +93,6 @@ namespace Riverside.Graphite.Services
 			}
 
 			return null;
-
 		}
 
 		public async Task<Stream> GetUserPhotoAsync()
@@ -124,7 +119,6 @@ namespace Riverside.Graphite.Services
 						BitmapImage bitmapImage = new();
 						await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
 						ProfileMicrosoft = bitmapImage;
-
 					}
 					return _userPhoto;
 				}
@@ -137,13 +131,10 @@ namespace Riverside.Graphite.Services
 					BitmapImage bitmapImage = new();
 					await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
 					ProfileMicrosoft = bitmapImage;
-
 				}
 			}
 
 			return null;
 		}
-
-
 	}
 }

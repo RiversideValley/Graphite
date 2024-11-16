@@ -1,4 +1,4 @@
-﻿namespace Riverside.Graphite.Services.Notifications
+namespace Riverside.Graphite.Services.Notifications
 {
 	public struct FireNotification
 	{
@@ -6,7 +6,7 @@
 		public string Action;
 		public bool HasInput;
 		public string Input;
-	};
+	}
 }
 
 

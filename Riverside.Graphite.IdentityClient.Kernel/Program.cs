@@ -6,9 +6,7 @@ namespace FireAuthService
 	{
 		public static void Main(string[] args)
 		{
-
 			CreateHostBuilder(args).Build().Run();
-
 		}
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 
@@ -22,13 +20,9 @@ namespace FireAuthService
 					});
 					services.AddLogging(configure => configure.AddConsole())
 								.Configure<LoggerFilterOptions>(options => options.MinLevel = Microsoft.Extensions.Logging.LogLevel.Information);
-
-
 				}).ConfigureLogging(options =>
 								{
 									options.AddEventSourceLogger();
 								});
-
-
 	}
 }

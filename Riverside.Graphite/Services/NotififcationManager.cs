@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -85,13 +85,10 @@ namespace Riverside.Graphite.Services
 					return false; // Couldn't find a NotificationHandler for scenarioId.
 				}
 			}
-
 		}
 
 		void OnNotificationInvoked(object sender, AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-
-
 			if (!DispatchNotification(notificationActivatedEventArgs))
 			{
 				Console.WriteLine("Unregisterd author of notifications");

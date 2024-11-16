@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
@@ -91,7 +91,6 @@ namespace Riverside.Graphite.Runtime.Helpers
 			catch (Exception e)
 			{
 				ExceptionLogger.LogException(e);
-
 			}
 
 			return Task.FromResult<string>(null);

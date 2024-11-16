@@ -1,4 +1,4 @@
-﻿using Riverside.Graphite.IdentityClient.Enums;
+using Riverside.Graphite.IdentityClient.Enums;
 using Riverside.Graphite.IdentityClient.Helpers;
 using System;
 
@@ -66,7 +66,7 @@ public class Totp : Otp
 	public int RemainingSeconds(DateTime timestamp) => RemainingSecondsForSpecificTime(_correctedTime.GetCorrectedTime(timestamp));
 
 	private int RemainingSecondsForSpecificTime(DateTime timestamp) =>
-		_step - (int)((timestamp.Ticks - UnicEpocTicks) / TicksToSeconds % _step);
+		_step - (int)(((timestamp.Ticks - UnicEpocTicks) / TicksToSeconds) % _step);
 
 	public DateTime WindowStart() => WindowStartForSpecificTime(_correctedTime.CorrectedUtcNow);
 

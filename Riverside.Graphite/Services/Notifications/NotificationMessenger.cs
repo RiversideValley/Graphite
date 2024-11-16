@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
@@ -19,7 +19,6 @@ namespace Riverside.Graphite.Services.Notifications
 		{
 			messages = messagesPage;
 			_ = InitializeStoreContext();
-
 		}
 		private async Task InitializeStoreContext()
 		{
@@ -29,16 +28,12 @@ namespace Riverside.Graphite.Services.Notifications
 			{
 				Windows.System.User firstUser = users[0];
 				_storeContext = StoreContext.GetForUser(firstUser);
-
 			}
 			else { _storeContext = StoreContext.GetDefault(); }
-
-
 		}
 
 		public async Task InstallUpdatesAsync(FireNotification notification)
 		{
-
 			await InitializeStoreContext();
 
 			if (_storeContext is null) return;
@@ -117,7 +112,6 @@ namespace Riverside.Graphite.Services.Notifications
 
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-
 				if (result.Status == StoreRateAndReviewStatus.Succeeded)
 				{
 					if (result.WasUpdated)
@@ -132,18 +126,14 @@ namespace Riverside.Graphite.Services.Notifications
 						window.DispatcherQueue.TryEnqueue(() =>
 						window.NotificationQueue.Show("Login to Microsoft and have ability to backup data to the cloud", 2000, "Fire Browser"));
 					}
-
-
 				}
 				else if (result.Status == StoreRateAndReviewStatus.CanceledByUser)
 				{
 					// User canceled the rating request
 					window.DispatcherQueue.TryEnqueue(() =>
 							window.NotificationQueue.Show("Operation was cancelled", 2000, "Fire Browser"));
-
 				}
 			}
-
 		}
 		public void NotificationReceived(FireNotification notification)
 		{
@@ -176,7 +166,6 @@ namespace Riverside.Graphite.Services.Notifications
 						messages.Insert(0, notification);
 					});
 				}
-
 			}
 		}
 	}

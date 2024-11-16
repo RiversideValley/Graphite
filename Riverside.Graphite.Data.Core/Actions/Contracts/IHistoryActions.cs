@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Data.Core.Actions.Contracts
@@ -10,6 +10,5 @@ namespace Riverside.Graphite.Data.Core.Actions.Contracts
 		Task DeleteAllHistoryItems();
 		Task<ObservableCollection<FireBrowserDatabase.HistoryItem>> GetAllHistoryItems();
 		HistoryContext HistoryContext { get; }
-
 	}
 }

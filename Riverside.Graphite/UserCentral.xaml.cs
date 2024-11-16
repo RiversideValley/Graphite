@@ -14,7 +14,6 @@ using WinRT.Interop;
 
 namespace Riverside.Graphite
 {
-
 	public sealed partial class UserCentral : Window
 	{
 		public static UserCentral Instance { get; private set; }
@@ -33,8 +32,6 @@ namespace Riverside.Graphite
 			};
 			// Get the AppWindow for this window
 			_ = Windowing.DialogWindow(this).ConfigureAwait(false);
-
-
 		}
 
 
@@ -101,8 +98,6 @@ namespace Riverside.Graphite
 			await Windowing.DialogWindow(usr);
 			Windowing.Center(usr);
 			_ = Windowing.ShowWindow(WindowNative.GetWindowHandle(usr), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
-
-
 		}
 
 		private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
@@ -113,7 +108,5 @@ namespace Riverside.Graphite
 				presenter?.Minimize();
 			}
 		}
-
-
 	}
 }

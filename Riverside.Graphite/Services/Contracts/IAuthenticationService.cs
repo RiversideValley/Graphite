@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Microsoft.Graph;
@@ -31,7 +31,6 @@ namespace Riverside.Graphite.Services.Contracts
 		/// Attempts to sign in a user.
 		/// </summary>
 		/// <returns>true if authentication succeeds, false if not</returns>
-
 		public Task<AuthenticationResult> SignInAsync();
 
 		/// <summary>

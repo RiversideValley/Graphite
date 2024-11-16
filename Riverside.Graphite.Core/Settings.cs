@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Riverside.Graphite.Core;
 public class DbSettings
 {
-
 	[Key]
 	public string PackageName { get; set; }
 	public bool DisableJavaScript { get; set; } // Use "0" for false, "1" for true
@@ -78,7 +77,6 @@ public class DbSettings
 
 
 	// public bool WelcomeMsg { get; set; }
-
 }
 public class Settings
 {

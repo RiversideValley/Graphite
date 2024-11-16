@@ -47,7 +47,6 @@ namespace Riverside.Graphite;
 
 public sealed partial class MainWindow : Window
 {
-
 	private AppWindow appWindow;
 	public DownloadFlyout DownloadFlyout { get; set; }
 	public ProfileCommander Commander { get; set; }
@@ -85,7 +84,6 @@ public sealed partial class MainWindow : Window
 				if (user?.Username != "Private")
 					DownloadFlyout = new DownloadFlyout();
 			}
-
 		}
 		catch (Exception ex)
 		{
@@ -124,7 +122,6 @@ public sealed partial class MainWindow : Window
 					await Task.Delay(60);
 					_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, maxWidth, appWindow.Size.Height, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
 					Windowing.FlashWindow(hWnd);
-
 				}
 				if (appWindow.Size.Height < maxHeight)
 				{
@@ -142,8 +139,6 @@ public sealed partial class MainWindow : Window
 
 	public void LoadDependencies()
 	{
-
-
 	}
 	public async void Init()
 	{
@@ -152,7 +147,6 @@ public sealed partial class MainWindow : Window
 		//string workerProjectName = "FireAuthService";
 		//string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
 		//string nameService = nameof(FireAuthService).ToString();
-
 	}
 
 
@@ -184,8 +178,6 @@ public sealed partial class MainWindow : Window
 
 	private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
 	{
-
-
 		if (Tabs.TabItems?.Count > 1)
 		{
 			if (SettingsService.CoreSettings.ConfirmCloseDlg)
@@ -211,7 +203,6 @@ public sealed partial class MainWindow : Window
 						await Task.Delay(250);
 
 						Application.Current.Exit();
-
 					};
 					_ = await quickConfigurationDialog.ShowAsync();
 				}
@@ -310,8 +301,6 @@ public sealed partial class MainWindow : Window
 			.Where(u => u != currentUsername && !u.Contains("__Admin__"))
 			.ToList()
 			.ForEach(UserListView.Items.Add);
-
-
 	}
 
 	public void SmallUpdates()
@@ -1062,8 +1051,6 @@ public sealed partial class MainWindow : Window
 		{
 			ExceptionLogger.LogException(ex);
 		}
-
-
 	}
 
 	private ObservableCollection<HistoryItem> browserHistory;
@@ -1081,7 +1068,6 @@ public sealed partial class MainWindow : Window
 		{
 			ExceptionLogger.LogException(ex);
 		}
-
 	}
 
 	#endregion
@@ -1190,7 +1176,6 @@ public sealed partial class MainWindow : Window
 	private void ClearHistoryDataMenuItem_Click(object sender, RoutedEventArgs e) { ClearDb(); }
 	private void SearchHistoryMenuFlyout_Click(object sender, RoutedEventArgs e)
 	{
-
 		HistorySearchMenuItem.Visibility = HistorySearchMenuItem.Visibility == Visibility.Collapsed
 			? Visibility.Visible
 			: Visibility.Collapsed;
@@ -1392,6 +1377,4 @@ public sealed partial class MainWindow : Window
 	{
 		UrlBox.Text = args.SelectedItem.ToString();
 	}
-
-
 }

@@ -1,4 +1,4 @@
-﻿using Riverside.Graphite.IdentityClient.Enums;
+using Riverside.Graphite.IdentityClient.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -90,20 +90,20 @@ public class OtpUri
 
 		if (!string.IsNullOrWhiteSpace(Issuer))
 		{
-			uriBuilder.Append("/");
+			uriBuilder.Append('/');
 			uriBuilder.Append(Uri.EscapeDataString(Issuer));
 		}
 
-		uriBuilder.Append(":");
+		uriBuilder.Append(':');
 		uriBuilder.Append(Uri.EscapeDataString(User));
-		uriBuilder.Append("?");
+		uriBuilder.Append('?');
 
 		foreach (var pair in parameters)
 		{
 			uriBuilder.Append(pair.Key);
-			uriBuilder.Append("=");
+			uriBuilder.Append('=');
 			uriBuilder.Append(pair.Value);
-			uriBuilder.Append("&");
+			uriBuilder.Append('&');
 		}
 
 		uriBuilder.Remove(uriBuilder.Length - 1, 1);

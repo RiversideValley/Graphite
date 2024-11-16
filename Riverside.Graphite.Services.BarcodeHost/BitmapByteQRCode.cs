@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Riverside.GraphiteQrCore.QRCodeGenerator;
@@ -51,7 +51,7 @@ public class BitmapByteQRCode : AbstractQRCode, IDisposable
 				for (var y = 0; y < sideLength; y = y + pixelsPerModule)
 				{
 					var module =
-						this.QrCodeData.ModuleMatrix[(x + pixelsPerModule) / pixelsPerModule - 1][(y + pixelsPerModule) / pixelsPerModule - 1];
+						this.QrCodeData.ModuleMatrix[((x + pixelsPerModule) / pixelsPerModule) - 1][((y + pixelsPerModule) / pixelsPerModule) - 1];
 					for (int i = 0; i < pixelsPerModule; i++)
 					{
 						bmp.AddRange(module ? moduleDark : moduleLight);
@@ -79,7 +79,7 @@ public class BitmapByteQRCode : AbstractQRCode, IDisposable
 			colorString = colorString.Substring(1);
 		byte[] byteColor = new byte[colorString.Length / 2];
 		for (int i = 0; i < byteColor.Length; i++)
-			byteColor[i] = byte.Parse(colorString.Substring(i * 2, 2), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
+			byteColor[i] = byte.Parse(colorString.AsSpan(i * 2, 2), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
 		return byteColor;
 	}
 
@@ -116,6 +116,5 @@ public static class BitmapByteQRCodeHelper
 		using (var qrCode = qrGen.CreateQrCode(txt, eccLevel))
 		using (var qrBmp = new BitmapByteQRCode(qrCode))
 			return qrBmp.GetGraphic(size);
-
 	}
 }

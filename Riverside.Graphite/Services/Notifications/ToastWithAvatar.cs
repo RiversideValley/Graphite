@@ -47,6 +47,5 @@ public sealed class ToastRatings
 			nint hWnd = WindowNative.GetWindowHandle(window);
 			Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
 		}
-
 	}
 }

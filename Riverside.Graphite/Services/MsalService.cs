@@ -1,4 +1,4 @@
-﻿
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
@@ -43,7 +43,6 @@ namespace Riverside.Graphite.Services
 		public MsalAuthService()
 		{
 			_pca = new Lazy<Task<IPublicClientApplication>>(InitializeMsalWithCache);
-
 		}
 
 		/// <inheritdoc/>
@@ -77,7 +76,6 @@ namespace Riverside.Graphite.Services
 			// First attempt to get a token silently
 			//           return false;
 			return null;
-
 		}
 
 		public async Task SignOutAsync()
@@ -117,7 +115,6 @@ namespace Riverside.Graphite.Services
 
 			if (App.Current.m_window is not null)
 			{
-
 				if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
 				{
 					mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
@@ -145,7 +142,6 @@ namespace Riverside.Graphite.Services
 			//MsalCacheHelper.EnableCache(pca.UserTokenCache);
 
 			return pca;
-
 		}
 		private Task RegisterMsalCacheAsync(ITokenCache tokenCache)
 		{
@@ -260,9 +256,5 @@ namespace Riverside.Graphite.Services
 				request.Headers.Add("Authorization", $"Bearer {result.AccessToken}");
 			}
 		}
-
 	}
-
-
-
 }

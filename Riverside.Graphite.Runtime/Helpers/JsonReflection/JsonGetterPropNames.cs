@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -24,6 +24,5 @@ namespace Riverside.Graphite.Runtime.Helpers.JsonReflection
 			return jsonPropertyNames;
 		}
 	}
-
 }
 

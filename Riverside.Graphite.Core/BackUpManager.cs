@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -140,6 +140,5 @@ namespace Riverside.Graphite.Core
 				return Task.FromResult(false);
 			}
 		}
-
 	}
 }

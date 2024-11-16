@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,11 +26,9 @@ namespace Riverside.Graphite.Services
 			WebView = new WebView2();
 			WebView.Source = new Uri(TheAddressToGo ?? "https://copilot.microsoft.com/");
 			WebView.EnsureCoreWebView2Async().AsTask();
-
 		}
 		public async Task<Task> LoadWebSite(string source)
 		{
-
 			bool isNavigationCompleted = default;
 
 
@@ -62,17 +60,14 @@ namespace Riverside.Graphite.Services
 
 				return Task.CompletedTask;
 			}
-
 			catch (Exception e)
 			{
 				return Task.FromException(e);
 				throw;
 			}
-
 		}
 		internal void SetupWebView()
 		{
-
 			WebView.CoreWebView2.NewWindowRequested += (s, e) =>
 			{
 				var decode = HttpUtility.UrlDecode(e.Uri);

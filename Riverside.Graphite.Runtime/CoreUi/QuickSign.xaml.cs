@@ -19,7 +19,6 @@ public sealed partial class QuickSign : Window
 	private IMessenger Messenger { get; set; }
 	public QuickSign(string site)
 	{
-
 		this.InitializeComponent();
 
 		webView.NavigationCompleted += (sender, e) =>
@@ -30,8 +29,6 @@ public sealed partial class QuickSign : Window
 		InitializeWindow().ConfigureAwait(false);
 		NavigateToSite(site);
 		LoadWeb();
-
-
 	}
 
 	private Task InitializeWindow()
@@ -102,7 +99,6 @@ public sealed partial class QuickSign : Window
 		}
 
 		Windowing.ShowWindow(WindowNative.GetWindowHandle(this), Windowing.WindowShowStyle.SW_SHOWNOACTIVATE | Windowing.WindowShowStyle.SW_RESTORE);
-
 	}
 
 	private void ContextMenuItem_Click(object sender, RoutedEventArgs e)
@@ -120,5 +116,4 @@ public sealed partial class QuickSign : Window
 
 		Ctx.Hide();
 	}
-
 }

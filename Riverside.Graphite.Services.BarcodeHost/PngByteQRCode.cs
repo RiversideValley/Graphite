@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using static Riverside.GraphiteQrCore.QRCodeGenerator;
@@ -55,7 +55,7 @@ public sealed class PngByteQRCode : AbstractQRCode, IDisposable
 		var moduleMatrix = this.QrCodeData.ModuleMatrix;
 		var matrixSize = moduleMatrix.Count - (drawQuietZones ? 0 : 8);
 		var quietZoneOffset = (drawQuietZones ? 0 : 4);
-		var bytesPerScanline = (matrixSize * pixelsPerModule + 7) / 8 + 1; // A monochrome scanline is one byte for filter type then one bit per pixel.
+		var bytesPerScanline = (((matrixSize * pixelsPerModule) + 7) / 8) + 1; // A monochrome scanline is one byte for filter type then one bit per pixel.
 		var scanlines = new byte[bytesPerScanline * matrixSize * pixelsPerModule];
 
 		for (var y = 0; y < matrixSize; y++)
@@ -75,14 +75,14 @@ public sealed class PngByteQRCode : AbstractQRCode, IDisposable
 				var endIndex = pixelIndex + pixelsPerModule;
 				for (; pixelIndex < endIndex; pixelIndex++)
 				{
-					scanlines[scanlineOffset + 1 + pixelIndex / 8] |= (byte)(0x80 >> (pixelIndex % 8));
+					scanlines[scanlineOffset + 1 + (pixelIndex / 8)] |= (byte)(0x80 >> (pixelIndex % 8));
 				}
 			}
 
 			// Copy the scanline required number of times.
 			for (var copyCount = 1; copyCount < pixelsPerModule; copyCount++)
 			{
-				Array.Copy(scanlines, scanlineOffset, scanlines, scanlineOffset + copyCount * bytesPerScanline, bytesPerScanline);
+				Array.Copy(scanlines, scanlineOffset, scanlines, scanlineOffset + (copyCount * bytesPerScanline), bytesPerScanline);
 			}
 		}
 

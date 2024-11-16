@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
@@ -28,14 +28,12 @@ public class SettingsService : ISettingsService
 	{
 		try
 		{
-
 			if (AuthService.IsUserAuthenticated)
 			{
 				CurrentUser = AuthService.CurrentUser ?? null;
 				Actions = new SettingsActions(AuthService.CurrentUser.Username);
 				CoreSettings = await Actions?.GetSettingsAsync();
 			}
-
 		}
 		catch (Exception ex)
 		{
@@ -47,7 +45,6 @@ public class SettingsService : ISettingsService
 	{
 		try
 		{
-
 			if (!AuthService.IsUserAuthenticated)
 			{
 				return;
@@ -73,7 +70,6 @@ public class SettingsService : ISettingsService
 		{
 			ExceptionLogger.LogException(ex);
 			Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-
 		}
 	}
 }

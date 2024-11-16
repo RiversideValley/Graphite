@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Bing.WebSearch;
 using Microsoft.Bing.WebSearch.Models;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -19,7 +19,6 @@ namespace Riverside.Graphite.Runtime.Helpers
 		{
 			WebSearchClient = new WebSearchClient(new ApiKeyServiceClientCredentials(ApiKey));
 			FiltersJsonPropsSearchResponse = JsonReflection.JsonGetterPropNames.GetJsonPropertyNames<SearchResponse>();
-
 		}
 
 		public async Task<SearchResponse> WebSearchResultTypesLookup(string queryText)
@@ -32,14 +31,12 @@ namespace Riverside.Graphite.Runtime.Helpers
 				if (webData != null)
 					return webData;
 			}
-
 			catch (Exception ex)
 			{
 				ExceptionLogger.LogException(ex);
 			}
 
 			return null;
-
 		}
 
 		public async Task<SearchResponse> WebResultsWithCountAndOffset(string queryText, int offSet, int resultCount)
@@ -84,7 +81,6 @@ namespace Riverside.Graphite.Runtime.Helpers
 				IList<string> promoteAnswertypeStrings = new List<string>() { FilterBy };
 				var webData = await WebSearchClient.Web.SearchAsync(query: queryText, answerCount: 2, promote: promoteAnswertypeStrings, safeSearch: SafeSearch.Strict);
 				if (webData != null) return webData;
-
 			}
 			catch (Exception ex)
 			{

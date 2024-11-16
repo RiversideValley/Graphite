@@ -52,7 +52,6 @@ namespace Riverside.Graphite.IdentityClient.Dialogs
 				package.SetText(code);
 				Clipboard.SetContent(package);
 			}
-
 		}
 	}
 }

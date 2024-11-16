@@ -49,8 +49,6 @@ namespace Riverside.Graphite.Pages.Patch
 			timer.Interval = TimeSpan.FromMilliseconds(40); // Adjust the interval for smoother animation
 			timer.Tick += (s, args) => AnimateWindow(windowHandle);
 			timer.Start();
-
-
 		}
 
 		private void AnimateWindow(IntPtr hwnd)
@@ -78,7 +76,6 @@ namespace Riverside.Graphite.Pages.Patch
 				timer.Stop();
 				// Ensure window ends at the center position
 				_ = Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, endY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
-
 			}
 		}
 		private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)

@@ -38,7 +38,6 @@ public sealed partial class DownloadFlyout : Flyout
 
 			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
 			{
-
 				try
 				{
 					var db = new DatabaseServices();
@@ -63,8 +62,7 @@ public sealed partial class DownloadFlyout : Flyout
 					downloadItem.ServiceDownloads = DownloadService;
 					DownloadItemsListView.Items.Insert(0, downloadItem);
 				});
-			};
-
+			}
 		}
 		catch (Exception ex)
 		{

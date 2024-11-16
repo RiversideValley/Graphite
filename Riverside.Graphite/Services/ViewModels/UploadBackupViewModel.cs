@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Behaviors;
 using Microsoft.UI.Xaml;
@@ -73,17 +73,14 @@ namespace Riverside.Graphite.Services.ViewModels
 				Duration = TimeSpan.FromSeconds(3)
 			};
 			_ = (UpLoadBackup.Instance?.NotificationQueue.Show(note));
-
 		}
 
 		[RelayCommand]
 		private async Task BackUpCore()
 		{
-
 			BackUpDialog dlg = new();
 			dlg.XamlRoot = UpLoadBackup.Instance?.GridMainUploadBackup.XamlRoot;
 			_ = await dlg.ShowAsync();
-
 		}
 		//public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
 		//{
@@ -171,10 +168,7 @@ namespace Riverside.Graphite.Services.ViewModels
 
 			//await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
 			//await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
-
 		}
-
-
 	}
 
 
@@ -183,6 +177,4 @@ namespace Riverside.Graphite.Services.ViewModels
 		public string Name { get; set; }
 		public string Email { get; set; }
 	}
-
-
 }

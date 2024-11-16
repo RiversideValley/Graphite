@@ -26,7 +26,6 @@ namespace Riverside.Graphite
 			Activated += (s, e) => { _ = Userbox.Focus(FocusState.Programmatic); };
 			Closed += async (s, e) =>
 			{
-
 				await Task.Delay(420);
 
 				IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserCentral));
@@ -155,13 +154,10 @@ namespace Riverside.Graphite
 			{
 				Windowing.HideWindow(hWnd);
 			}
-
-
 		}
 
 		private void Button_Click_Close(object sender, RoutedEventArgs e)
 		{
-
 			IntPtr hUser = Windowing.FindWindow(null, nameof(UserCentral));
 			if (hUser != IntPtr.Zero)
 			{
@@ -173,7 +169,6 @@ namespace Riverside.Graphite
 			{
 				Windowing.HideWindow(hWnd);
 			}
-
 		}
 	}
 }

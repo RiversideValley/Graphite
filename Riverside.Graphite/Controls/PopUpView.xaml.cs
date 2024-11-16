@@ -116,5 +116,4 @@ public sealed partial class PopUpView : UserControl
 		// Stop the timer
 		dragTimer.Stop();
 	}
-
 }

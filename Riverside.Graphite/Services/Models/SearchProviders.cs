@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +52,5 @@ namespace Riverside.Graphite.Services.Models
 
 			return provider?.ProviderUrl ?? "https://www.google.com/search?q="; // Return a default URL if no match is found
 		}
-
 	}
 }

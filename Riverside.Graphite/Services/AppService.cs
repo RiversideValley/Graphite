@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -200,23 +200,18 @@ public static class AppService
 			}
 			else
 			{
-
 				ActiveWindow = new UserCentral();
 				ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
 				ConfigureWindowAppearance();
 				ActiveWindow.Activate();
 				Windowing.Center(ActiveWindow);
 			}
-
-
 		}
 		catch (Exception e)
 		{
 			ExceptionLogger.LogException(e);
 			Console.WriteLine($"Activation utilizing Protocol Activation failed..\n {e.Message}");
-
 		}
-
 	}
 
 	private static string ExtractUsernameFromUrl(string url)
@@ -257,7 +252,6 @@ public static class AppService
 
 	private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
 	{
-
 		string userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
 		if (!Directory.Exists(userExist))
 		{
@@ -275,7 +269,6 @@ public static class AppService
 
 		ActiveWindow?.Close();
 		await ShowMainWindow(cancellationToken);
-
 	}
 
 	private static async Task ShowMainWindow(CancellationToken cancellationToken)
@@ -306,7 +299,6 @@ public static class AppService
 		}
 
 		await CloseCancelToken(ref cancellationToken);
-
 	}
 
 	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
@@ -357,7 +349,6 @@ public static class AppService
 					_ = await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
 					File.Delete(updateSql);
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -369,16 +360,13 @@ public static class AppService
 
 		if (AuthService.IsUserAuthenticated)
 		{
-
 			DatabaseServices dbServer = new();
 
 			try
 			{
-
 				_ = await dbServer.DatabaseCreationValidation();
 				_ = await dbServer.InsertUserSettings();
 				// if we get to here than all is validated and open Browser. 
-
 			}
 			catch (Exception ex)
 			{
@@ -414,9 +402,7 @@ public static class AppService
 					{
 						_ = await settingsActions.UpdateSettingsAsync(AppSettings);
 					}
-
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -430,7 +416,6 @@ public static class AppService
 		};
 
 		await ConfigureSettingsWindow(ActiveWindow);
-
 	}
 
 	public static async Task ConfigureSettingsWindow(Window winIncoming)
@@ -461,7 +446,6 @@ public static class AppService
 
 	public static void Admin_Create_Account()
 	{
-
 		Riverside.Graphite.Core.User newUser = new()
 		{
 			Username = "__Admin__",
@@ -476,7 +460,6 @@ public static class AppService
 		UserDataManager.SaveUsers(users);
 		AuthService.AddUser(newUser);
 		_ = AuthService.Authenticate(newUser.Username);
-
 	}
 
 	private static void ValidateCreatePrivateUser()
@@ -495,7 +478,6 @@ public static class AppService
 
 		AuthService.AddUser(newUser);
 		UserFolderManager.CreateUserFolders(newUser);
-
 	}
 	static void HideDirectory(string directoryPath)
 	{

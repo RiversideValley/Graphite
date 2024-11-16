@@ -43,9 +43,7 @@ namespace Riverside.Graphite
 				titleBar.ButtonBackgroundColor = btnColor;
 				titleBar.InactiveBackgroundColor = btnColor;
 				titleBar.ButtonInactiveBackgroundColor = btnColor;
-
 			}
-
 		}
 
 		private void setup_Loaded(object sender, RoutedEventArgs e)

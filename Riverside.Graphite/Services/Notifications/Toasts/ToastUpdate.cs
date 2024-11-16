@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using Riverside.Graphite.Runtime.Helpers;
@@ -11,7 +11,6 @@ namespace Riverside.Graphite.Services.Notifications.Toasts
 {
 	public class ToastUpdate
 	{
-
 		public const string Title = "Fire Browser Notifications";
 
 		public static ObservableCollection<FireNotification> NotificationMessages = new();
@@ -47,7 +46,6 @@ namespace Riverside.Graphite.Services.Notifications.Toasts
 				nint hWnd = WindowNative.GetWindowHandle(window);
 				Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
 			}
-
 		}
 	}
 }

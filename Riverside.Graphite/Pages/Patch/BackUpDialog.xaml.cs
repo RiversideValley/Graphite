@@ -83,7 +83,6 @@ namespace Riverside.Graphite.Pages.Patch
 			}
 			catch (Exception)
 			{
-				;
 			}
 		}
 
