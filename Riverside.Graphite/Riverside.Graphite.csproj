@@ -145,6 +145,7 @@
     <Content Remove="Riverside.Graphite.Assets\Wide310x150Logo.scale-400.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\adblocker.js" />
     <None Remove="Assets\favicon.png" />
     <None Remove="Assets\UI\CrimsonUI.xaml" />
     <None Remove="ChangeUsernameCore.xaml" />
@@ -193,6 +194,9 @@
     <ProjectReference Include="..\Riverside.Graphite.Navigation\Riverside.Graphite.Navigation.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Assets\adblocker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\chrome_logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -26,6 +26,7 @@ using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 using static Riverside.Graphite.MainWindow;
+using WebViewAdBlocker;
 
 namespace Riverside.Graphite.Pages;
 
@@ -36,10 +37,12 @@ public sealed partial class WebContent : Page
 	public BitmapImage PictureWebElement { get; set; }
 	public WebView2 WebView { get; set; }
 	private SettingsService SettingsService { get; set; }
-
+	private AdBlockerWrapper AdBlockerService {  get; set; }
 	public WebContent()
 	{
 		SettingsService = App.GetService<SettingsService>();
+		AdBlockerService = App.GetService<AdBlockerWrapper>();
+
 		InitializeComponent();
 		WebView = WebViewElement;
 		Init();
@@ -62,6 +65,9 @@ public sealed partial class WebContent : Page
 		string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
 		Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
+
+		AdBlockerService = new AdBlockerWrapper();
+		
 	}
 
 	private async Task AfterComplete()
@@ -125,15 +131,25 @@ public sealed partial class WebContent : Page
 		ShareUIHelper.ShowShareUIURL(url, title, hWnd);
 	}
 
+	protected override void OnNavigatedFrom(NavigationEventArgs e)
+	{
+		AdBlockerService.Dispose(); 
+	}
 	//static int FirstAttempt = 0;
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
 		base.OnNavigatedTo(e);
 		param = e.Parameter as Passer;
+		if (AdBlockerService is not null) {
+			AdBlockerService.Toggle();
+			await AdBlockerService.Initialize(WebViewElement);
+		}
 
 		await WebViewElement.EnsureCoreWebView2Async();
 
 		LoadSettings();
+
+	
 
 		if (param?.Param != null)
 		{
