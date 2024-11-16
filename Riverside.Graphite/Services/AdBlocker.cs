@@ -131,7 +131,7 @@ namespace Riverside.Graphite.Services
 
 		private async void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
 		{
-			await Task.Delay(1200);
+			await Task.Delay(320);
 			await InjectAdBlockingScript();
 		}
 
