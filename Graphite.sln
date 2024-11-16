@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Extensio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Navigation", "Riverside.Graphite.Navigation\Riverside.Graphite.Navigation.csproj", "{5D126172-5E4F-4B1D-8FC2-B3101D955BB4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Services", "Riverside.Graphite.Services\Riverside.Graphite.Services.csproj", "{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Data.Migration", "Riverside.Graphite.Data.Migration\Riverside.Graphite.Data.Migration.csproj", "{50A8BEB2-BC84-4CD0-B3D2-D0E2CA22DF6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riverside.Graphite.IdentityClient.Kernel", "Riverside.Graphite.IdentityClient.Kernel\Riverside.Graphite.IdentityClient.Kernel.csproj", "{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}"
@@ -226,22 +224,6 @@ Global
 		{5D126172-5E4F-4B1D-8FC2-B3101D955BB4}.Release|x64.Build.0 = Release|x64
 		{5D126172-5E4F-4B1D-8FC2-B3101D955BB4}.Release|x86.ActiveCfg = Release|Any CPU
 		{5D126172-5E4F-4B1D-8FC2-B3101D955BB4}.Release|x86.Build.0 = Release|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|x64.ActiveCfg = Debug|x64
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|x64.Build.0 = Debug|x64
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Debug|x86.Build.0 = Debug|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|ARM64.Build.0 = Release|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|x64.ActiveCfg = Release|x64
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|x64.Build.0 = Release|x64
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|x86.ActiveCfg = Release|Any CPU
-		{20CED5A7-ABEE-4BF7-A5E6-3142B9EC8F3E}.Release|x86.Build.0 = Release|Any CPU
 		{50A8BEB2-BC84-4CD0-B3D2-D0E2CA22DF6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50A8BEB2-BC84-4CD0-B3D2-D0E2CA22DF6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50A8BEB2-BC84-4CD0-B3D2-D0E2CA22DF6D}.Debug|ARM64.ActiveCfg = Debug|Any CPU
