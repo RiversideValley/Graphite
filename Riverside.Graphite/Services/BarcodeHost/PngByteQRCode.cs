@@ -316,22 +316,3 @@ public sealed class PngByteQRCode : AbstractQRCode, IDisposable
 		}
 	}
 }
-
-public static class PngByteQRCodeHelper
-{
-	public static byte[] GetQRCode(string plainText, int pixelsPerModule, byte[] darkColorRgba, byte[] lightColorRgba, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true)
-	{
-		using (var qrGenerator = new QRCodeGenerator())
-		using (var qrCodeData = qrGenerator.CreateQrCode(plainText, eccLevel, forceUtf8, utf8BOM, eciMode, requestedVersion))
-		using (var qrCode = new PngByteQRCode(qrCodeData))
-			return qrCode.GetGraphic(pixelsPerModule, darkColorRgba, lightColorRgba, drawQuietZones);
-	}
-
-	public static byte[] GetQRCode(string txt, QRCodeGenerator.ECCLevel eccLevel, int size, bool drawQuietZones = true)
-	{
-		using (var qrGen = new QRCodeGenerator())
-		using (var qrCode = qrGen.CreateQrCode(txt, eccLevel))
-		using (var qrPng = new PngByteQRCode(qrCode))
-			return qrPng.GetGraphic(size, drawQuietZones);
-	}
-}

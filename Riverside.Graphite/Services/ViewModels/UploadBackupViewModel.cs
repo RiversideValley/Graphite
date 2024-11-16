@@ -170,11 +170,4 @@ namespace Riverside.Graphite.Services.ViewModels
 			//await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
 		}
 	}
-
-
-	public class EmailUser
-	{
-		public string Name { get; set; }
-		public string Email { get; set; }
-	}
 }

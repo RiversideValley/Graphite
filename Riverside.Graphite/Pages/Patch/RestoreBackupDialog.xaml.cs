@@ -110,16 +110,10 @@ namespace Riverside.Graphite.Pages.Patch
 		}
 	}
 
-	public class BackupFileInfo
+	public class BackupFileInfo(string fileName, string filePath)
 	{
-		public string FileName { get; }
-		public string FilePath { get; }
-
-		public BackupFileInfo(string fileName, string filePath)
-		{
-			FileName = fileName;
-			FilePath = filePath;
-		}
+		public string FileName { get; } = fileName;
+		public string FilePath { get; } = filePath;
 
 		public override string ToString()
 		{

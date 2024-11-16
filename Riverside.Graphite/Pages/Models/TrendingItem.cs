@@ -1,7 +1,5 @@
 namespace Riverside.Graphite.Pages.Models
 {
-	public record TrendingListItem(string webSearchUrl, string name, string url, string text);
-
 	public class TrendingItem
 	{
 		public string webSearchUrl { get; set; }

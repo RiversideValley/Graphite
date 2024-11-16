@@ -8,7 +8,7 @@ namespace Riverside.Graphite.Services.BarcodeHost;
 #if NET6_0_WINDOWS
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 #endif
-public class QRCode : AbstractQRCode, IDisposable
+public partial class QRCode : AbstractQRCode, IDisposable
 {
 	/// <summary>
 	/// Constructor without params to be used in COM Objects connections
@@ -124,19 +124,5 @@ public class QRCode : AbstractQRCode, IDisposable
 		roundedRect.AddLine(rect.X, rect.Bottom - (cornerRadius * 2), rect.X, rect.Y + (cornerRadius * 2));
 		roundedRect.CloseFigure();
 		return roundedRect;
-	}
-}
-
-#if NET6_0_WINDOWS
-[System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
-public static class QRCodeHelper
-{
-	public static Bitmap GetQRCode(string plainText, int pixelsPerModule, Color darkColor, Color lightColor, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, Bitmap icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true)
-	{
-		using (var qrGenerator = new QRCodeGenerator())
-		using (var qrCodeData = qrGenerator.CreateQrCode(plainText, eccLevel, forceUtf8, utf8BOM, eciMode, requestedVersion))
-		using (var qrCode = new QRCode(qrCodeData))
-			return qrCode.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones);
 	}
 }
