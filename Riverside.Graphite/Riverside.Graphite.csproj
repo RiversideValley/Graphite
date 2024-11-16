@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <UseRidGraph>true</UseRidGraph>
@@ -243,6 +243,9 @@
     </Content>
     <Content Update="Assets\Icons\SiteSettings.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\WebView\Adblock\adblocker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\WebView\AppFrontend\adblocker.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
