@@ -27,161 +27,167 @@ using Windows.Storage.Streams;
 using WinRT.Interop;
 using static Riverside.Graphite.MainWindow;
 
-
-namespace Riverside.Graphite.Pages;
-
-public sealed partial class WebContent : Page
+namespace Riverside.Graphite.Pages
 {
-	private Passer param;
-	public static bool IsIncognitoModeEnabled { get; set; } = false;
-	public BitmapImage PictureWebElement { get; set; }
-	public WebView2 WebView { get; set; }
-	private SettingsService SettingsService { get; set; }
-	private AdBlockerWrapper AdBlockerService { get; set; }
-	public WebContent()
+	public sealed partial class WebContent : Page
 	{
-		SettingsService = App.GetService<SettingsService>();
-		AdBlockerService = App.GetService<AdBlockerWrapper>();
+		private Passer param;
+		public static bool IsIncognitoModeEnabled { get; set; } = false;
+		public BitmapImage PictureWebElement { get; set; }
+		public WebView2 WebView { get; private set; }
+		private SettingsService SettingsService { get; }
+		private AdBlockerWrapper AdBlockerService { get; }
+		private readonly SpeechSynthesizer synthesizer = new();
+		private bool isOffline = false;
 
-		InitializeComponent();
-		WebView = WebViewElement;
-		Init();
-	}
-
-	private void Init()
-	{
-		User currentUser = AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
-
-		if (currentUser == null)
+		public WebContent()
 		{
-			return;
+			SettingsService = App.GetService<SettingsService>();
+			AdBlockerService = App.GetService<AdBlockerWrapper>();
+
+			InitializeComponent();
+			WebView = WebViewElement;
+			Init();
 		}
 
-		if (!AuthService.Authenticate(currentUser.Username))
+		private void Init()
 		{
-			return;
+			User currentUser = AuthService.IsUserAuthenticated ? AuthService.CurrentUser : null;
+
+			if (currentUser == null || !AuthService.Authenticate(currentUser.Username))
+			{
+				return;
+			}
+
+			string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
+			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
+			Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 		}
 
-		string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
-		Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
-		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
-
-		AdBlockerService = new AdBlockerWrapper();
-	}
-
-	private async Task AfterComplete()
-	{
-		if (!IsIncognitoModeEnabled)
+		private async Task AfterComplete()
 		{
+			if (IsIncognitoModeEnabled) return;
+
 			await Task.Delay(500);
 			User username = AuthService.CurrentUser;
-			string source = WebViewElement.CoreWebView2.Source.ToString();
-			string title = WebViewElement.CoreWebView2.DocumentTitle.ToString();
+			string source = WebViewElement.CoreWebView2.Source;
+			string title = WebViewElement.CoreWebView2.DocumentTitle;
 
-			HistoryActions dbContext = new(username.Username);
+		    var dbContext = new HistoryActions(username.Username);
 			await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
 
-			string isSecure = source.Contains("https") ? "\uE72E" : (source.Contains("http") ? "\uE785" : "");
+			UpdateSecurityInfo(source);
+		}
+
+		private void UpdateSecurityInfo(string source)
+		{
+			string isSecure = source.StartsWith("https://") ? "\uE72E" :
+							  source.StartsWith("http://") ? "\uE785" : "";
 			param.ViewModel.SecurityIcon = isSecure;
-			param.ViewModel.SecurityIcontext = isSecure == "\uE72E" ? "Https Secured Website" : (isSecure == "\uE785" ? "Http UnSecured Website" : "");
-		}
-	}
-
-	private void LoadSettings()
-	{
-		CoreWebView2Settings webViewSettings = WebViewElement.CoreWebView2.Settings;
-		Settings coreSettings = SettingsService.CoreSettings;
-
-		webViewSettings.IsScriptEnabled = !coreSettings.DisableJavaScript;
-		webViewSettings.IsPasswordAutosaveEnabled = !coreSettings.DisablePassSave;
-		webViewSettings.IsGeneralAutofillEnabled = !coreSettings.DisableGenAutoFill;
-		webViewSettings.IsWebMessageEnabled = !coreSettings.DisableWebMess;
-		webViewSettings.AreBrowserAcceleratorKeysEnabled = coreSettings.BrowserKeys;
-		webViewSettings.IsStatusBarEnabled = coreSettings.StatusBar;
-		webViewSettings.AreDefaultScriptDialogsEnabled = coreSettings.BrowserScripts;
-
-		SetTrackingPreventionLevel(coreSettings.TrackPrevention);
-	}
-
-	private void SetTrackingPreventionLevel(int level)
-	{
-		Dictionary<int, CoreWebView2TrackingPreventionLevel> levelMappings = new()
-		{
-		  { 0, CoreWebView2TrackingPreventionLevel.None },
-		  { 1, CoreWebView2TrackingPreventionLevel.Basic },
-		  { 2, CoreWebView2TrackingPreventionLevel.Balanced },
-		  { 3, CoreWebView2TrackingPreventionLevel.Strict }
-		};
-
-		if (!levelMappings.TryGetValue(level, out CoreWebView2TrackingPreventionLevel preventionLevel))
-		{
-			preventionLevel = CoreWebView2TrackingPreventionLevel.Balanced; // default value
+			param.ViewModel.SecurityIcontext = isSecure switch
+			{
+				"\uE72E" => "HTTPS Secured Website",
+				"\uE785" => "HTTP Unsecured Website",
+				_ => ""
+			};
 		}
 
-		WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = preventionLevel;
-
-		WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/WebView/AppFrontend", CoreWebView2HostResourceAccessKind.Allow);
-	}
-
-
-	private void ShareUi(string url, string title)
-	{
-		nint hWnd = WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow);
-		ShareUIHelper.ShowShareUIURL(url, title, hWnd);
-	}
-
-	protected override void OnNavigatedFrom(NavigationEventArgs e)
-	{
-		AdBlockerService.Dispose();
-	}
-	//static int FirstAttempt = 0;
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
-	{
-		base.OnNavigatedTo(e);
-		param = e.Parameter as Passer;
-
-		await WebViewElement.EnsureCoreWebView2Async();
-
-		//if (AdBlockerService is not null)
-	//	{
-		//	AdBlockerService.Toggle();
-		//	await AdBlockerService.Initialize(WebViewElement);
-	//}
-
-
-		LoadSettings();
-
-
-
-		if (param?.Param != null)
+		private void LoadSettings()
 		{
-			WebViewElement.CoreWebView2.Navigate(param.Param.ToString());
+			CoreWebView2Settings webViewSettings = WebViewElement.CoreWebView2.Settings;
+			Settings coreSettings = SettingsService.CoreSettings;
+
+			webViewSettings.IsScriptEnabled = !coreSettings.DisableJavaScript;
+			webViewSettings.IsPasswordAutosaveEnabled = !coreSettings.DisablePassSave;
+			webViewSettings.IsGeneralAutofillEnabled = !coreSettings.DisableGenAutoFill;
+			webViewSettings.IsWebMessageEnabled = !coreSettings.DisableWebMess;
+			webViewSettings.AreBrowserAcceleratorKeysEnabled = coreSettings.BrowserKeys;
+			webViewSettings.IsStatusBarEnabled = coreSettings.StatusBar;
+			webViewSettings.AreDefaultScriptDialogsEnabled = coreSettings.BrowserScripts;
+
+			SetTrackingPreventionLevel(coreSettings.TrackPrevention);
 		}
 
-		WebView2 s = WebViewElement;
-
-		string userAgent = SettingsService.CoreSettings?.Useragent ?? "1";
-
-		if (!string.IsNullOrEmpty(userAgent) && userAgent.Contains("Edg/"))
+		private void SetTrackingPreventionLevel(int level)
 		{
-			s.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
+			WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = level switch
+			{
+				0 => CoreWebView2TrackingPreventionLevel.None,
+				1 => CoreWebView2TrackingPreventionLevel.Basic,
+				2 => CoreWebView2TrackingPreventionLevel.Balanced,
+				3 => CoreWebView2TrackingPreventionLevel.Strict,
+				_ => CoreWebView2TrackingPreventionLevel.Balanced
+			};
+
+			WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/WebView/AppFrontend", CoreWebView2HostResourceAccessKind.Allow);
 		}
 
-		// Event handlers...
-		s.CoreWebView2.ContainsFullScreenElementChanged += (sender, args) =>
+		private void ShareUi(string url, string title)
 		{
-			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
-			window.GoFullScreenWeb(s.CoreWebView2.ContainsFullScreenElement);
-		};
+			nint hWnd = WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow);
+			ShareUIHelper.ShowShareUIURL(url, title, hWnd);
+		}
 
-		s.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = true;
-		s.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-		s.CoreWebView2.DownloadStarting += CoreWebView2_DownloadStarting;
-		s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-		s.CoreWebView2.ContextMenuRequested += CoreWebView2_ContextMenuRequested;
-		s.CoreWebView2.ScriptDialogOpening += async (sender, args) =>
+		protected override void OnNavigatedFrom(NavigationEventArgs e)
 		{
-			_ = args.GetDeferral();
+			AdBlockerService.Dispose();
+		}
+
+		protected override async void OnNavigatedTo(NavigationEventArgs e)
+		{
+			base.OnNavigatedTo(e);
+			param = e.Parameter as Passer;
+
+			await WebViewElement.EnsureCoreWebView2Async();
+
+			LoadSettings();
+
+			if (param?.Param != null)
+			{
+				WebViewElement.CoreWebView2.Navigate(param.Param.ToString());
+			}
+
+			WebView2 s = WebViewElement;
+
+			string userAgent = SettingsService.CoreSettings?.Useragent ?? "1";
+
+			if (!string.IsNullOrEmpty(userAgent) && userAgent.Contains("Edg/"))
+			{
+				s.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
+			}
+
+			SetupEventHandlers(s);
+		}
+
+		private void SetupEventHandlers(WebView2 s)
+		{
+			s.CoreWebView2.ContainsFullScreenElementChanged += (sender, args) =>
+			{
+				MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+				window.GoFullScreenWeb(s.CoreWebView2.ContainsFullScreenElement);
+			};
+
+			s.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = true;
+			s.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+			s.CoreWebView2.DownloadStarting += CoreWebView2_DownloadStarting;
+			s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+			s.CoreWebView2.ContextMenuRequested += CoreWebView2_ContextMenuRequested;
+			s.CoreWebView2.ScriptDialogOpening += ScriptDialogOpening;
+			s.CoreWebView2.DocumentTitleChanged += DocumentTitleChanged;
+			s.CoreWebView2.FaviconChanged += FaviconChanged;
+			s.CoreWebView2.NavigationStarting += NavigationStarting;
+			s.CoreWebView2.HistoryChanged += HistoryChanged;
+			s.CoreWebView2.NavigationCompleted += NavigationCompleted;
+			s.CoreWebView2.SourceChanged += SourceChanged;
+			s.CoreWebView2.NewWindowRequested += NewWindowRequested;
+			s.CoreWebView2.WebResourceRequested += WebResourceRequested;
+			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
+			s.CoreWebView2.PermissionRequested += PermissionRequested;
+		}
+
+		private async void ScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
+		{
+			var deferral = args.GetDeferral();
 			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			UIScript ui = new($"{sender.DocumentTitle} says", args.Message, window.Content.XamlRoot);
 			ContentDialogResult result = await ui.ShowAsync();
@@ -190,16 +196,18 @@ public sealed partial class WebContent : Page
 			{
 				sender.Reload();
 			}
-		};
-		s.CoreWebView2.DocumentTitleChanged += (sender, args) =>
+			deferral.Complete();
+		}
+
+		private void DocumentTitleChanged(CoreWebView2 sender, object args)
 		{
 			if (!IsIncognitoModeEnabled)
 			{
 				param.Tab.Header = WebViewElement.CoreWebView2.DocumentTitle;
 			}
-		};
+		}
 
-		s.CoreWebView2.FaviconChanged += async (sender, args) =>
+		private async void FaviconChanged(CoreWebView2 sender, object args)
 		{
 			try
 			{
@@ -217,11 +225,9 @@ public sealed partial class WebContent : Page
 			{
 				ExceptionLogger.LogException(ex);
 			}
-		};
+		}
 
-
-
-		s.CoreWebView2.NavigationStarting += (sender, args) =>
+		private void NavigationStarting(CoreWebView2 sender, CoreWebView2NavigationStartingEventArgs args)
 		{
 			ProgressLoading.IsIndeterminate = true;
 			ProgressLoading.Visibility = Visibility.Visible;
@@ -230,36 +236,32 @@ public sealed partial class WebContent : Page
 			{
 				CheckNetworkStatus();
 			}
-		};
+		}
 
-		s.CoreWebView2.HistoryChanged += async (sender, args) =>
+		private async void HistoryChanged(CoreWebView2 sender, object args)
 		{
-			//optimize with background task, and use dispatcher to be thread safe 
-			//youtube doesn't report navigation when view different videos. 
-			_ = await Task.Factory.StartNew(async () =>
+			await Task.Run(async () =>
 			{
 				await Task.Delay(1800);
 
 				try
 				{
-					_ = (DispatcherQueue?.TryEnqueue(async () =>
+					await DispatcherQueue.EnqueueAsync(async () =>
 					{
-						// Delay for stability
-
 						using MemoryStream memoryStream = new();
 						try
 						{
-							await s.CoreWebView2?.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Jpeg, memoryStream.AsRandomAccessStream());
-							_ = memoryStream.Seek(0, SeekOrigin.Begin);
+							await sender.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Jpeg, memoryStream.AsRandomAccessStream());
+							memoryStream.Seek(0, SeekOrigin.Begin);
 
 							BitmapImage bitmap = new() { DecodePixelHeight = 512, DecodePixelWidth = 640 };
-							bitmap.SetSource(memoryStream.AsRandomAccessStream());
-							_ = memoryStream.Seek(0, SeekOrigin.Begin);
+							await bitmap.SetSourceAsync(memoryStream.AsRandomAccessStream());
+							memoryStream.Seek(0, SeekOrigin.Begin);
 
 							PictureWebElement = bitmap;
 
 							MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
-							if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
+							if (currentWindow?.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
 							{
 								tab.BitViewWebContent = web.PictureWebElement;
 							}
@@ -269,68 +271,61 @@ public sealed partial class WebContent : Page
 							ExceptionLogger.LogException(ex);
 							Console.Write($"Error capturing preview of website:\n{ex.Message}");
 						}
-					}));
+					});
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-					throw;
+					ExceptionLogger.LogException(ex);
 				}
-
-				return Task.CompletedTask;
 			});
 
 			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
 			{
 				await AfterComplete();
 			}
-		};
+		}
 
-		s.CoreWebView2.NavigationCompleted += (sender, args) =>
+		private void NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
 		{
 			ProgressLoading.IsIndeterminate = false;
 			ProgressLoading.Visibility = Visibility.Collapsed;
-		};
+		}
 
-		s.CoreWebView2.SourceChanged += (sender, args) =>
+		private void SourceChanged(CoreWebView2 sender, CoreWebView2SourceChangedEventArgs args)
 		{
 			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
 			{
 				param.ViewModel.CurrentAddress = sender.Source;
 			}
-		};
+		}
 
-		s.CoreWebView2.NewWindowRequested += (sender, args) =>
+		private void NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
 		{
 			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			param?.TabView.TabItems.Add(window.CreateNewTab(typeof(WebContent), args.Uri));
 			args.Handled = true;
-		};
+		}
 
-		s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-
-		s.CoreWebView2.WebResourceRequested += (sender, args) =>
+		private void WebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
 		{
 			if (IsLogoutRequest(args.Request))
 			{
 				AppService.IsAppUserAuthenicated = false;
-				Console.WriteLine("Usr has logged out. ");
-				s.CoreWebView2?.Navigate("https://fireapp.msal/main.html");
+				Console.WriteLine("User has logged out.");
+				sender.Navigate("https://fireapp.msal/main.html");
 				return;
 			}
 
 			if (IsLoginRequest(args.Request))
 			{
-				if (args.Request.Headers.Count() > 0)
+				if (args.Request.Headers.Any(x => x.Key == "X-Microsoft-Account-Single-Sign-On-Cookies"))
 				{
-					KeyValuePair<string, string> cookie = args.Request.Headers.Where(x => x.Key == "X-Microsoft-Account-Single-Sign-On-Cookies").FirstOrDefault();
-					if (cookie.Value != null)
-					{
-						AppService.IsAppUserAuthenicated = true;
-					}
+					AppService.IsAppUserAuthenicated = true;
 				}
 			}
-		};
-		s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
+		}
+
+		private async void WebResourceResponseReceived(CoreWebView2 sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
 		{
 			if (IsLoginRequest(e.Request))
 			{
@@ -342,29 +337,28 @@ public sealed partial class WebContent : Page
 				}
 			}
 
-			// Check both localStorage and sessionStorage for MSAL account keys
 			string script = @"
-    (function() {
-        function findMsalKeys(storage) {
-            return Object.keys(storage)
-                .filter(key => key.includes('msal.account') || key.includes('msalToken'))
-                .map(key => ({
-                    key: key,
-                    value: storage.getItem(key),
-                    keyValue: key.includes('msal.account') 
-                        ? JSON.parse(storage.getItem(JSON.parse(storage.getItem(key))))
-                        : storage.getItem(key)
-                }));
-        }
-        return {
-            localStorage: findMsalKeys(localStorage),
-            sessionStorage: findMsalKeys(sessionStorage)
-        };
-    })();";
+            (function() {
+                function findMsalKeys(storage) {
+                    return Object.keys(storage)
+                        .filter(key => key.includes('msal.account') || key.includes('msalToken'))
+                        .map(key => ({
+                            key: key,
+                            value: storage.getItem(key),
+                            keyValue: key.includes('msal.account') 
+                                ? JSON.parse(storage.getItem(JSON.parse(storage.getItem(key))))
+                                : storage.getItem(key)
+                        }));
+                }
+                return {
+                    localStorage: findMsalKeys(localStorage),
+                    sessionStorage: findMsalKeys(sessionStorage)
+                };
+            })();";
 
 			try
 			{
-				var result = await s.ExecuteScriptAsync(script);
+				var result = await sender.ExecuteScriptAsync(script);
 				var tokenData = JObject.Parse(result);
 
 				bool hasLocalStorageKeys = tokenData["localStorage"].HasValues;
@@ -375,18 +369,17 @@ public sealed partial class WebContent : Page
 					AppService.IsAppUserAuthenicated = true;
 				}
 
-				// Double check logout
 				if (!AppService.IsAppUserAuthenicated)
 				{
 					string logoutScript = @"
-            (function() {
-                return {
-                    hasLoginButton: !!document.querySelector('button[aria-label=""Login""]'),
-                    hasLogoutButton: !!document.querySelector('button[aria-label=""Logout""]')
-                };
-            })();";
+                    (function() {
+                        return {
+                            hasLoginButton: !!document.querySelector('button[aria-label=""Login""]'),
+                            hasLogoutButton: !!document.querySelector('button[aria-label=""Logout""]')
+                        };
+                    })();";
 
-					var logoutResult = await s.ExecuteScriptAsync(logoutScript);
+					var logoutResult = await sender.ExecuteScriptAsync(logoutScript);
 					var logoutData = JObject.Parse(logoutResult);
 
 					if (logoutData["hasLoginButton"].Value<bool>() && !logoutData["hasLogoutButton"].Value<bool>())
@@ -400,12 +393,12 @@ public sealed partial class WebContent : Page
 			{
 				Console.WriteLine($"Error checking authentication status: {ex.Message}");
 			}
-		};
+		}
 
-		s.CoreWebView2.PermissionRequested += async (sender, args) =>
+		private async void PermissionRequested(CoreWebView2 sender, CoreWebView2PermissionRequestedEventArgs args)
 		{
 			args.Handled = true;
-			Windows.Foundation.Deferral deferral = args.GetDeferral();
+			var deferral = args.GetDeferral();
 
 			try
 			{
@@ -439,277 +432,245 @@ public sealed partial class WebContent : Page
 			{
 				deferral.Complete();
 			}
-		};
-		//s.CoreWebView2.WebResourceRequested += async (sender, args) =>
-		//{
+		}
 
-		//};
-	}
-
-
-
-	private string FormatPermissionKind(string permissionKind)
-	{
-		return string.Join(" ", System.Text.RegularExpressions.Regex.Split(permissionKind, @"(?<!^)(?=[A-Z])"));
-	}
-
-	private async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(string permission)
-	{
-		string rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
-		ContentDialog dialog = new ContentDialog
+		private string FormatPermissionKind(string permissionKind)
 		{
-			Title = $"Allow {rootUrl} to access {permission}?",
-			PrimaryButtonText = "Allow",
-			SecondaryButtonText = "Deny",
-			CloseButtonText = "Cancel",
-			DefaultButton = ContentDialogButton.Primary,
-			Content = "Managed in firebrowser://privacy",
-			XamlRoot = this.XamlRoot
-		};
+			return string.Join(" ", System.Text.RegularExpressions.Regex.Split(permissionKind, @"(?<!^)(?=[A-Z])"));
+		}
 
-		ContentDialogResult result = await dialog.ShowAsync();
-
-		return result switch
+		private async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(string permission)
 		{
-			ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
-			ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
-			_ => CoreWebView2PermissionState.Default
-		};
-	}
-
-	private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
-	{
-		// Define your login URL patterns
-		string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize" };
-
-		// Check if the request URL matches any known login URL patterns
-		return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
-	}
-
-	private bool IsLoginSuccessful(CoreWebView2WebResourceResponseView response)
-	{
-		try
-		{
-			if (response.Headers.Count() > 0)
+			string rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
+			ContentDialog dialog = new ContentDialog
 			{
-				KeyValuePair<string, string> c_Set = response.Headers.Where(head => head.Key == "Set-Cookie").FirstOrDefault();
-				if (c_Set.Value is not null)
-				{
-					return true;
-				}
+				Title = $"Allow {rootUrl} to access {permission}?",
+				PrimaryButtonText = "Allow",
+				SecondaryButtonText = "Deny",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary,
+				Content = "Managed in firebrowser://privacy",
+				XamlRoot = this.XamlRoot
+			};
+
+			ContentDialogResult result = await dialog.ShowAsync();
+
+			return result switch
+			{
+				ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
+				ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
+				_ => CoreWebView2PermissionState.Default
+			};
+		}
+
+		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
+		{
+			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize" };
+			return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
+		}
+
+		private bool IsLoginSuccessful(CoreWebView2WebResourceResponseView response)
+		{
+			try
+			{
+				return response.Headers.Any(head => head.Key == "Set-Cookie");
+			}
+			catch
+			{
+				return false;
 			}
 		}
-		catch (Exception)
+
+		private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
 		{
-			return false;
+			string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?" };
+			return logoutUrls.Any(logoutUrl => request.Uri.StartsWith(logoutUrl, StringComparison.OrdinalIgnoreCase));
 		}
 
-		return false;
-	}
-
-	private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
-	{
-		// Define your logout URL patterns
-		string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?" };
-
-		// Check if the request URL matches any known logout URL patterns
-		return logoutUrls.Any(logoutUrl => request.Uri.StartsWith(logoutUrl, StringComparison.OrdinalIgnoreCase));
-	}
-
-	private void CoreWebView2_DownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
-	{
-		MainWindow mainWindow = (Application.Current as App)?.m_window as MainWindow;
-
-		mainWindow.DownloadFlyout.DownloadItemsListView.Items.Insert(0, new DownloadItem(args.DownloadOperation));
-		mainWindow.DownloadFlyout.ShowAt(mainWindow.DownBtn);
-
-		args.Handled = true;
-	}
-
-	private string SelectionText;
-	private void CoreWebView2_ContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
-	{
-		_ = (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
-		OpenLinks.Visibility = Visibility.Collapsed;
-		FlyoutBase flyout = FlyoutBase.GetAttachedFlyout(WebViewElement);
-
-		FlyoutShowOptions options = new()
-		{
-			Position = args.Location,
-			ShowMode = FlyoutShowMode.Standard
-		};
-
-		if (args.ContextMenuTarget.Kind == CoreWebView2ContextMenuTargetKind.SelectedText)
-		{
-			SelectionText = args.ContextMenuTarget.SelectionText;
-		}
-		else if (args.ContextMenuTarget.HasLinkUri)
-		{
-			SelectionText = args.ContextMenuTarget.LinkUri;
-			OpenLinks.Visibility = Visibility.Visible;
-		}
-
-		flyout ??= (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
-		flyout.ShowAt(WebViewElement, options);
-		args.Handled = true;
-	}
-
-	private async void ContextMenuItem_Click(object sender, RoutedEventArgs e)
-	{
-		if (sender is not AppBarButton { Tag: not null } button)
-		{
-			return;
-		}
-
-		CoreWebView2 webview = WebViewElement.CoreWebView2;
-
-		switch (button.Tag)
-		{
-			case "MenuBack" when WebViewElement.CanGoBack: webview.GoBack(); break;
-			case "Forward" when WebViewElement.CanGoForward: webview.GoForward(); break;
-			case "Source": webview.OpenDevToolsWindow(); break;
-			case "Select": _ = await webview.ExecuteScriptAsync("document.execCommand('selectAll', false, null);"); break;
-			case "Copy": ClipBoard.WriteStringToClipboard(SelectionText); break;
-			case "Taskmgr": webview.OpenTaskManagerWindow(); break;
-			case "Save": HandleSaveAsync(); break;
-			case "Share": ShareUi(webview.DocumentTitle, webview.Source); break;
-			case "Print": webview.ShowPrintUI(CoreWebView2PrintDialogKind.Browser); break;
-		}
-
-		Ctx.Hide();
-	}
-
-	private async void HandleSaveAsync()
-	{
-		_ = WebViewElement.CoreWebView2.DocumentTitle;
-		using IRandomAccessStream fileStream = await WebViewElement.CoreWebView2.PrintToPdfStreamAsync(null);
-		using DataReader reader = new(fileStream.GetInputStreamAt(0));
-		GC.Collect();
-	}
-
-	// Declare the SpeechSynthesizer once, outside the method
-	private readonly SpeechSynthesizer synthesizer = new();
-
-	private async void ConvertTextToSpeech(string text)
-	{
-		if (string.IsNullOrWhiteSpace(text))
-		{
-			return;
-		}
-
-		// Get the selected language and gender from the settings
-		string lang = SettingsService.CoreSettings.Lang;
-		string gender = SettingsService.CoreSettings.Gender;
-
-		// Construct the voice name based on gender
-		string voiceName = gender switch
-		{
-			"Male" => $"Microsoft Server Speech Text to Speech Voice ({lang}, Mark)", // Use the correct male voice name
-			"Female" => $"Microsoft Zira", // Use the correct female voice name
-			_ => throw new ArgumentException("Invalid gender selection")
-		};
-
-		// Create the SSML string
-		string ssml = $"<speak version='1.0' xml:lang='{lang}'><voice name='{voiceName}'>{text}</voice></speak>";
-
-		// Synthesize speech to stream
-		SpeechSynthesisStream synthesisStream = await synthesizer.SynthesizeSsmlToStreamAsync(ssml);
-
-		// Create and play the media player
-		MediaPlayer mediaPlayer = new()
-		{
-			Source = MediaSource.CreateFromStream(synthesisStream, synthesisStream.ContentType)
-		};
-
-		mediaPlayer.MediaEnded += (_, args) => mediaPlayer.Dispose();
-
-		mediaPlayer.Play();
-	}
-
-	public static async void OpenNewWindow(Uri uri)
-	{
-		_ = await Windows.System.Launcher.LaunchUriAsync(uri);
-	}
-
-	private void ContextClicked_Click(object sender, RoutedEventArgs e)
-	{
-		if (sender is MenuFlyoutItem button && button.Tag != null)
+		private void CoreWebView2_DownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
 		{
 			MainWindow mainWindow = (Application.Current as App)?.m_window as MainWindow;
 
-			switch ((sender as MenuFlyoutItem).Tag)
-			{
-				case "Read":
-					ConvertTextToSpeech(SelectionText);
-					break;
-				case "WebApp":
-					// Handle WebApp functionality
-					break;
-				case "OpenInTab":
-					if (IsIncognitoModeEnabled)
-					{
-						FireBrowserTabViewItem newTab = mainWindow?.CreateNewIncog(typeof(WebContent), new Uri(SelectionText));
-						mainWindow?.Tabs.TabItems.Add(newTab);
-					}
-					else
-					{
-						FireBrowserTabViewItem newTab = mainWindow?.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
-						mainWindow?.Tabs.TabItems.Add(newTab);
-					}
-					if (SettingsService.CoreSettings.OpenTabHandel)
-					{
-						select();
-					}
+			mainWindow.DownloadFlyout.DownloadItemsListView.Items.Insert(0, new DownloadItem(args.DownloadOperation));
+			mainWindow.DownloadFlyout.ShowAt(mainWindow.DownBtn);
 
-					break;
-				case "OpenInWindow":
-					OpenNewWindow(new Uri(SelectionText));
-					break;
-				case "OpenInPop":
-					OpenPopUpView(new Uri(SelectionText));
-					break;
-			}
+			args.Handled = true;
 		}
-		Ctx.Hide();
-	}
 
-
-	private void OpenPopUpView(Uri uri)
-	{
-		PopUpView popUpView = new();
-		popUpView.SetSource(uri);
-		Canvas cv = new();
-		cv.Children.Add(popUpView);
-		Main.Children.Add(cv);
-		popUpView.Show();
-	}
-
-	public void select()
-	{
-		((Application.Current as App)?.m_window as MainWindow)?.SelectNewTab();
-	}
-
-	private bool isOffline = false;
-	private async void CheckNetworkStatus()
-	{
-		while (true)
+		private string SelectionText;
+		private void CoreWebView2_ContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
 		{
-			bool isInternetAvailable = NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
-			if (isInternetAvailable && isOffline)
+			var ctx = (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
+			OpenLinks.Visibility = Visibility.Collapsed;
+			FlyoutBase flyout = FlyoutBase.GetAttachedFlyout(WebViewElement);
+
+			FlyoutShowOptions options = new()
 			{
-				WebViewElement.Reload();
-				Grid.Visibility = Visibility.Visible;
-				offlinePage.Visibility = Visibility.Collapsed;
-				isOffline = false;
+				Position = args.Location,
+				ShowMode = FlyoutShowMode.Standard
+			};
+
+			if (args.ContextMenuTarget.Kind == CoreWebView2ContextMenuTargetKind.SelectedText)
+			{
+				SelectionText = args.ContextMenuTarget.SelectionText;
 			}
-			else if (!isInternetAvailable)
+			else if (args.ContextMenuTarget.HasLinkUri)
 			{
-				offlinePage.Visibility = Visibility.Visible;
-				Grid.Visibility = Visibility.Collapsed;
-				isOffline = true;
+				SelectionText = args.ContextMenuTarget.LinkUri;
+				OpenLinks.Visibility = Visibility.Visible;
+			}
+
+			flyout ??= ctx;
+			flyout.ShowAt(WebViewElement, options);
+			args.Handled = true;
+		}
+
+		private async void ContextMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			if (sender is not AppBarButton { Tag: not null } button)
+			{
+				return;
+			}
+
+			CoreWebView2 webview = WebViewElement.CoreWebView2;
+
+			switch (button.Tag)
+			{
+				case "MenuBack" when WebViewElement.CanGoBack: webview.GoBack(); break;
+				case "Forward" when WebViewElement.CanGoForward: webview.GoForward(); break;
+				case "Source": webview.OpenDevToolsWindow(); break;
+				case "Select": _ = await webview.ExecuteScriptAsync("document.execCommand('selectAll', false, null);"); break;
+				case "Copy": ClipBoard.WriteStringToClipboard(SelectionText); break;
+				case "Taskmgr": webview.OpenTaskManagerWindow(); break;
+				case "Save": HandleSaveAsync(); break;
+				case "Share": ShareUi(webview.DocumentTitle, webview.Source); break;
+				case "Print": webview.ShowPrintUI(CoreWebView2PrintDialogKind.Browser); break;
+			}
+
+			Ctx.Hide();
+		}
+
+		private async void HandleSaveAsync()
+		{
+			_ = WebViewElement.CoreWebView2.DocumentTitle;
+			using IRandomAccessStream fileStream = await WebViewElement.CoreWebView2.PrintToPdfStreamAsync(null);
+			using DataReader reader = new(fileStream.GetInputStreamAt(0));
+			GC.Collect();
+		}
+
+		private async void ConvertTextToSpeech(string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+			{
+				return;
+			}
+
+			string lang = SettingsService.CoreSettings.Lang;
+			string gender = SettingsService.CoreSettings.Gender;
+
+			string voiceName = gender switch
+			{
+				"Male" => $"Microsoft Server Speech Text to Speech Voice ({lang}, Mark)",
+				"Female" => $"Microsoft Zira",
+				_ => throw new ArgumentException("Invalid gender selection")
+			};
+
+			string ssml = $"<speak version='1.0' xml:lang='{lang}'><voice name='{voiceName}'>{text}</voice></speak>";
+
+			SpeechSynthesisStream synthesisStream = await synthesizer.SynthesizeSsmlToStreamAsync(ssml);
+
+			MediaPlayer mediaPlayer = new()
+			{
+				Source = MediaSource.CreateFromStream(synthesisStream, synthesisStream.ContentType)
+			};
+
+			mediaPlayer.MediaEnded += (_, args) => mediaPlayer.Dispose();
+
+			mediaPlayer.Play();
+		}
+
+		public static async void OpenNewWindow(Uri uri)
+		{
+			_ = await Windows.System.Launcher.LaunchUriAsync(uri);
+		}
+
+		private void ContextClicked_Click(object sender, RoutedEventArgs e)
+		{
+			if (sender is MenuFlyoutItem button && button.Tag != null)
+			{
+				MainWindow mainWindow = (Application.Current as App)?.m_window as MainWindow;
+
+				switch (button.Tag)
+				{
+					case "Read":
+						ConvertTextToSpeech(SelectionText);
+						break;
+					case "WebApp":
+						// Handle WebApp functionality
+						break;
+					case "OpenInTab":
+						if (IsIncognitoModeEnabled)
+						{
+							FireBrowserTabViewItem newTab = mainWindow?.CreateNewIncog(typeof(WebContent), new Uri(SelectionText));
+							mainWindow?.Tabs.TabItems.Add(newTab);
+						}
+						else
+						{
+							FireBrowserTabViewItem newTab = mainWindow?.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
+							mainWindow?.Tabs.TabItems.Add(newTab);
+						}
+						if (SettingsService.CoreSettings.OpenTabHandel)
+						{
+							select();
+						}
+						break;
+					case "OpenInWindow":
+						OpenNewWindow(new Uri(SelectionText));
+						break;
+					case "OpenInPop":
+						OpenPopUpView(new Uri(SelectionText));
+						break;
+				}
+			}
+			Ctx.Hide();
+		}
+
+		private void OpenPopUpView(Uri uri)
+		{
+			PopUpView popUpView = new();
+			popUpView.SetSource(uri);
+			Canvas cv = new();
+			cv.Children.Add(popUpView);
+			Main.Children.Add(cv);
+			popUpView.Show();
+		}
+
+		public void select()
+		{
+			((Application.Current as App)?.m_window as MainWindow)?.SelectNewTab();
+		}
+
+		private async void CheckNetworkStatus()
+		{
+			while (true)
+			{
+				bool isInternetAvailable = NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
+				if (isInternetAvailable && isOffline)
+				{
+					WebViewElement.Reload();
+					Grid.Visibility = Visibility.Visible;
+					offlinePage.Visibility = Visibility.Collapsed;
+					isOffline = false;
+				}
+				else if (!isInternetAvailable)
+				{
+					offlinePage.Visibility = Visibility.Visible;
+					Grid.Visibility = Visibility.Collapsed;
+					isOffline = true;
+					await Task.Delay(1000);
+				}
 				await Task.Delay(1000);
 			}
-			await Task.Delay(1000);
 		}
 	}
 }
