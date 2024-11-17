@@ -324,7 +324,7 @@ public sealed partial class MainWindow : Window
 		nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		appWindow = AppWindow.GetFromWindowId(windowId);
-		appWindow.SetIcon("logo.ico");
+		appWindow.SetIcon("Logo.ico");
 
 		if (!AppWindowTitleBar.IsCustomizationSupported())
 		{
