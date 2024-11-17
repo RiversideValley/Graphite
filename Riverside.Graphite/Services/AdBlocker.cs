@@ -32,7 +32,6 @@ namespace Riverside.Graphite.Services
 		}
 
 		private async Task  LoadScript() {
-
 			GraphiteBlocker = await LoadFileHelper.LoadFileAsync(new Uri("ms-appx:///Assets/WebView/AdBlock/adblocker.js")); 
 		}
 		public void Unregister()
@@ -115,7 +114,5 @@ namespace Riverside.Graphite.Services
 			Dispose(disposing: true);
 			GC.SuppressFinalize(this);
 		}
-
-		
 	}
 }
