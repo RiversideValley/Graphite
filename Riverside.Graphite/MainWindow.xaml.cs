@@ -141,16 +141,10 @@ public sealed partial class MainWindow : Window
 		appWindow.Closing += AppWindow_Closing;
 	}
 
-	public void LoadDependencies()
-	{
-	}
 	public async void Init()
 	{
 		await Riverside.Graphite.Runtime.Models.Data.Init();
 		_ = Directory.GetParent(Windows.ApplicationModel.Package.Current.InstalledLocation.Path).Parent.Parent.Parent.Parent.Parent.FullName;
-		//string workerProjectName = "FireAuthService";
-		//string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
-		//string nameService = nameof(FireAuthService).ToString();
 	}
 
 
