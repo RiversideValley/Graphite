@@ -19,7 +19,7 @@
             </NavigationViewItem>
             <NavigationViewItem Content="Design and Themes (New)" Tag="Design">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Style.png" />
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Appearance.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
             <NavigationViewItem Content="Privacy" Tag="Privacy">
@@ -29,7 +29,7 @@
             </NavigationViewItem>
             <NavigationViewItem Content="WebView" Tag="WebView">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/Webset.png" />
+                    <ImageIcon Source="ms-appx:///Assets/Icons/SiteSettings.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
             <NavigationViewItem Content="New Tab" Tag="NewTab">
@@ -39,7 +39,7 @@
             </NavigationViewItem>
             <NavigationViewItem Content="Enqryption" Tag="Enqryption">
                 <NavigationViewItem.Icon>
-                    <ImageIcon Source="ms-appx:///Assets/Icons/enqryption.png" />
+                    <ImageIcon Source="ms-appx:///Assets/Icons/Encryption.png" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
             <NavigationViewItem Content="Accessibility" Tag="Accessibility">
