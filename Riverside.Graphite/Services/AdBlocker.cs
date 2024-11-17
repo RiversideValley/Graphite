@@ -48,7 +48,7 @@ namespace Riverside.Graphite.Services
 				_webView = webView;
 
 				await _webView.EnsureCoreWebView2Async();
-				
+
 				_webView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
 				_webView.CoreWebView2Initialized += WebView_CoreWebView2Initialized;
 				
@@ -59,8 +59,6 @@ namespace Riverside.Graphite.Services
 				throw;
 			}
 		}
-
-		
 
 		private async void WebView_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
 		{
