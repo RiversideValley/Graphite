@@ -488,6 +488,7 @@ public sealed partial class WebContent : Page
 			XamlRoot = XamlRoot
 		};
 
+		dialog.XamlRoot = this.XamlRoot; //dont forget xamlroot for dialogs dont remove it!
 		return await dialog.ShowAsync();
 	}
 
