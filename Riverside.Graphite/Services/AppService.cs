@@ -29,6 +29,7 @@ namespace Riverside.Graphite.Services;
 public static class AppService
 {
 	public static Window ActiveWindow { get; set; }
+	public static HashSet<Window> FireWindows { get; set; }	
 	public static Settings AppSettings { get; set; }
 	public static CancellationToken CancellationToken { get; set; }
 	public static bool IsAppGoingToClose { get; set; }

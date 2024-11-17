@@ -94,32 +94,23 @@ public sealed partial class MainWindow : Window
 		}
 
 
-		Closed += async(s, e) =>
+		Closed += (s, e) =>
 		{
 			if (AuthService.CurrentUser.Username is not "__Admin__" and not "Private")
 			{
 				AppService.Admin_Delete_Account();
 			}
-			
-			string nameof = "Copilot By Graphite";
+		
+			foreach (Window win in AppService.FireWindows) {
 
-			if (Windowing.FindWindowsByName(nameof) is List<nint> collection)
-			{
-
-				if (collection.Count > 0)
-				{
-					foreach (nint winId in collection)
+				var obj = new object();
+				lock (obj) {
+					if (Windowing.IsWindow(WindowNative.GetWindowHandle(win)))
 					{
-						if (Windowing.IsWindow(winId))
-						{
-							Windowing.DestroyWindow(winId);
-						}
-						else
-							continue;
+						win.Close();
 					}
 				}
 			}
-
 		};
 		SizeChanged += async (s, e) =>
 		{

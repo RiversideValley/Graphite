@@ -72,6 +72,9 @@ public partial class App : Application
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--window-size=0,0 --window-position=40000,40000");
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
+
+		AppService.FireWindows = new HashSet<Window>(); 
+
 	}
 	public static string GetFullPathToExe()
 	{

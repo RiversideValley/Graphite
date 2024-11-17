@@ -185,7 +185,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 			}
 
-		wndCopilot.Activate(); 
+		wndCopilot.Activate();
+		AppService.FireWindows.Add(wndCopilot); 
 		Windowing.AnimateWindow(hWnd, 2000, Windowing.AW_HOR_NEGATIVE | Windowing.AW_SLIDE | Windowing.AW_ACTIVATE);
 
 	}
