@@ -223,24 +223,6 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.NavigationStarting += (sender, args) =>
 		{
-			//s.DispatcherQueue.TryEnqueue(async () =>
-			//{
-
-			//    var user = await AppService.MsalService.SignInAsync();
-			//    if (user != null)
-			//    {
-			//        var token = user.AccessToken ?? null;
-			//        if (token == null) return;
-
-			//        string script = $"localStorage.setItem('msalToken','{token}'); ";
-
-			//        await sender.ExecuteScriptAsync(script);
-			//    }
-
-			//});
-
-
-
 			ProgressLoading.IsIndeterminate = true;
 			ProgressLoading.Visibility = Visibility.Visible;
 
@@ -360,62 +342,64 @@ public sealed partial class WebContent : Page
 				}
 			}
 
-			// add this msal.account.keys
-			// double check logout 
+			// Check both localStorage and sessionStorage for MSAL account keys
+			string script = @"
+    (function() {
+        function findMsalKeys(storage) {
+            return Object.keys(storage)
+                .filter(key => key.includes('msal.account') || key.includes('msalToken'))
+                .map(key => ({
+                    key: key,
+                    value: storage.getItem(key),
+                    keyValue: key.includes('msal.account') 
+                        ? JSON.parse(storage.getItem(JSON.parse(storage.getItem(key))))
+                        : storage.getItem(key)
+                }));
+        }
+        return {
+            localStorage: findMsalKeys(localStorage),
+            sessionStorage: findMsalKeys(sessionStorage)
+        };
+    })();";
 
-			await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeys() {
-                                                        const keys = [];
-                                                        for (let i = 0; i < localStorage.length; i++) {
-                                                            const key = localStorage.key(i);
-                                                            if (key.includes(""msal.account"")) {
-                                                                keys.push({ key: key, value: JSON.parse(localStorage.getItem(key)), keyValue: JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem(key)))) });
-                                                            }
-                                                            if (key.includes(""msalToken"")) {
-                                                                keys.push({ key: key, value: key, keyValue: localStorage.getItem(key) });
-                                                            }
-                                                        }
-                                                        return keys;
-                                                    } return findMsalAccountKeys();})();"
-						).AsTask().ContinueWith(keys =>
-						{
-							// Critical section here
-							JToken token = JToken.Parse(keys.Result);
+			try
+			{
+				var result = await s.ExecuteScriptAsync(script);
+				var tokenData = JObject.Parse(result);
 
-							if (token is JArray array)
-							{
-								if (array.Count > 0)
-								{
-									AppService.IsAppUserAuthenicated = true;
-								}
-							}
-						});
+				bool hasLocalStorageKeys = tokenData["localStorage"].HasValues;
+				bool hasSessionStorageKeys = tokenData["sessionStorage"].HasValues;
 
-			await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeysSession() {
-                                                        const keys = [];
-                                                        for (let i = 0; i < sessionStorage.length; i++) {
-                                                            const key = sessionStorage.key(i);
-                                                            if (key.includes(""msal.account"")) {
-                                                                keys.push({ key: key, value: JSON.parse(sessionStorage.getItem(key)), keyValue: JSON.parse(sessionStorage.getItem(JSON.parse(sessionStorage.getItem(key)))) });
-                                                            }
-                                                            if (key.includes(""msalToken"")) {
-                                                                keys.push({ key: key, value: key, keyValue: sessionStorage.getItem(key) });
-                                                            }
-                                                        }
-                                                        return keys;
-                                                    } return findMsalAccountKeysSession();})();"
-				).AsTask().ContinueWith(keys =>
+				if (hasLocalStorageKeys || hasSessionStorageKeys)
 				{
-					// Critical section here
-					JToken token = JToken.Parse(keys.Result);
+					AppService.IsAppUserAuthenicated = true;
+				}
 
-					if (token is JArray array)
+				// Double check logout
+				if (!AppService.IsAppUserAuthenicated)
+				{
+					string logoutScript = @"
+            (function() {
+                return {
+                    hasLoginButton: !!document.querySelector('button[aria-label=""Login""]'),
+                    hasLogoutButton: !!document.querySelector('button[aria-label=""Logout""]')
+                };
+            })();";
+
+					var logoutResult = await s.ExecuteScriptAsync(logoutScript);
+					var logoutData = JObject.Parse(logoutResult);
+
+					if (logoutData["hasLoginButton"].Value<bool>() && !logoutData["hasLogoutButton"].Value<bool>())
 					{
-						if (array.Count > 0)
-						{
-							AppService.IsAppUserAuthenicated = true;
-						}
+						AppService.IsAppUserAuthenicated = false;
+						Console.WriteLine("User logged out.");
 					}
-				});
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error checking authentication status: {ex.Message}");
+			}
 		};
 
 		s.CoreWebView2.PermissionRequested += async (sender, args) =>
@@ -461,6 +445,8 @@ public sealed partial class WebContent : Page
 
 		//};
 	}
+
+
 
 	private string FormatPermissionKind(string permissionKind)
 	{
