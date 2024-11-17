@@ -142,11 +142,11 @@ public sealed partial class WebContent : Page
 
 		await WebViewElement.EnsureCoreWebView2Async();
 
-		if (AdBlockerService is not null)
-		{
-			AdBlockerService.Toggle();
-			await AdBlockerService.Initialize(WebViewElement);
-		}
+		//if (AdBlockerService is not null)
+	//	{
+		//	AdBlockerService.Toggle();
+		//	await AdBlockerService.Initialize(WebViewElement);
+	//}
 
 
 		LoadSettings();
@@ -439,14 +439,7 @@ public sealed partial class WebContent : Page
 					string permissionKind = args.PermissionKind.ToString();
 					string formattedPermission = FormatPermissionKind(permissionKind);
 
-					ContentDialogResult result = await ShowPermissionDialogAsync(formattedPermission);
-
-					CoreWebView2PermissionState permissionState = result switch
-					{
-						ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
-						ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
-						_ => CoreWebView2PermissionState.Default
-					};
+					CoreWebView2PermissionState permissionState = await ShowAndHandlePermissionDialogAsync(formattedPermission);
 
 					bool? allowed = permissionState == CoreWebView2PermissionState.Allow ? true :
 									permissionState == CoreWebView2PermissionState.Deny ? false :
@@ -474,10 +467,10 @@ public sealed partial class WebContent : Page
 		return string.Join(" ", System.Text.RegularExpressions.Regex.Split(permissionKind, @"(?<!^)(?=[A-Z])"));
 	}
 
-	private async Task<ContentDialogResult> ShowPermissionDialogAsync(string permission)
+	private async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(string permission)
 	{
 		string rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
-		ContentDialog dialog = new()
+		ContentDialog dialog = new ContentDialog
 		{
 			Title = $"Allow {rootUrl} to access {permission}?",
 			PrimaryButtonText = "Allow",
@@ -485,11 +478,17 @@ public sealed partial class WebContent : Page
 			CloseButtonText = "Cancel",
 			DefaultButton = ContentDialogButton.Primary,
 			Content = "Managed in firebrowser://privacy",
-			XamlRoot = XamlRoot
+			XamlRoot = this.XamlRoot
 		};
 
-		dialog.XamlRoot = this.XamlRoot; //dont forget xamlroot for dialogs dont remove it!
-		return await dialog.ShowAsync();
+		ContentDialogResult result = await dialog.ShowAsync();
+
+		return result switch
+		{
+			ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
+			ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
+			_ => CoreWebView2PermissionState.Default
+		};
 	}
 
 	private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
