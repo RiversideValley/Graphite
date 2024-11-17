@@ -52,7 +52,8 @@ public class Windowing
 	{
 		return AnimateWindow(hwnd, 200, AW_SLIDE | AW_ACTIVATE | AW_BLEND);
 	}
-
+	[DllImport("user32.dll", SetLastError = true)]
+	public static extern bool DestroyWindow(IntPtr hWnd);
 	[DllImport("user32.dll", SetLastError = true)]
 	public static extern IntPtr GetForegroundWindow();
 

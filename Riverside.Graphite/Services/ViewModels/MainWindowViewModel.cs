@@ -2,6 +2,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
+using Microsoft.Graph.Groups.Item.Team.Channels.Item.DoesUserHaveAccessuserIdUserIdTenantIdTenantIdUserPrincipalNameUserPrincipalName;
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,7 +21,12 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Graphics;
 using WinRT.Interop;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
 
 namespace Riverside.Graphite.Services.ViewModels;
 
@@ -94,7 +102,80 @@ public partial class MainWindowViewModel : ObservableRecipient
 			MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
 		}
 	}
+	[RelayCommand]
+	private async Task GoCopilotOpen() {
 
+		const string nameof = "Copilot By Graphite"; 
+		if (Windowing.FindWindowsByName(nameof) is List<nint> collection) {
+
+			if (collection.Count > 0)
+			{
+				foreach (nint winId in collection)
+				{
+					if (Windowing.IsWindow(winId))
+					{
+						bool success = Windowing.DestroyWindow(winId); 
+						if (!success) { 
+							int error = Marshal.GetLastWin32Error(); 
+							throw new Exception($"DestroyWindow failed with error code {error}"); 
+						}
+					}
+					else
+						continue; 
+				}
+				return;
+			}
+		}
+
+		if (MainView.DispatcherQueue is null) { MainView?.NotificationQueue.Show("Copilot wasn't able to load", 2000, "Graphite notificatoin");  return; }
+
+
+		
+			SizeInt32? desktop = await Windowing.SizeWindow();
+
+			Window wndCopilot = new Window();
+		
+			
+			WebView2 web = new WebView2();
+			web.Margin = new Thickness(0, 32, 0, 0); 
+			web.Source =  new Uri("https://copilot.microsoft.com/?showconv=1&?auth=1");
+			await web.EnsureCoreWebView2Async();
+			web.CoreWebView2.NewWindowRequested += (s, e) =>
+			{
+
+				MainView.TabWebView.Source = new(e.Uri);
+				e.Handled = true;
+
+			};
+
+			wndCopilot.Content = web; 
+			
+			// window procs
+			IntPtr hWnd = WindowNative.GetWindowHandle(wndCopilot);
+			WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+			AppWindow appWindow = AppWindow.GetFromWindowId(wndId) ;
+			appWindow.SetIcon("ms-appx:///Assets/Icons/copilot.png");
+
+			if (appWindow != null)
+			{
+				appWindow.MoveAndResize(new RectInt32(0, 0, 600, (int)(desktop.Value.Height * .5)));
+				appWindow.MoveInZOrderAtTop();
+				appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+				appWindow.Title = nameof;
+				AppWindowTitleBar titleBar = appWindow.TitleBar;
+				Windows.UI.Color btnColor = Colors.Transparent;
+				titleBar.BackgroundColor = btnColor;
+				titleBar.ForegroundColor = Colors.WhiteSmoke;
+				titleBar.ButtonBackgroundColor = btnColor;
+				titleBar.ButtonInactiveBackgroundColor = btnColor;
+				appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+
+			}
+
+		wndCopilot.Activate(); 
+		Windowing.AnimateWindow(hWnd, 1500, Windowing.AW_HOR_NEGATIVE | Windowing.AW_SLIDE);
+
+	}
 	[RelayCommand]
 	private async Task LogOut()
 	{

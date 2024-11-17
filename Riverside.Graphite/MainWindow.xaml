@@ -956,6 +956,16 @@
                     Content="{firebrowser:FluentIcon Glyph=&#xE712;}"
                     Flyout="{StaticResource MoreFlyout}"
                     Style="{ThemeResource QuietButtonStyle}" />
+                <Button
+                    x:Name="toolbtnCopilot"
+                    VerticalAlignment="Center"
+                    Command="{x:Bind ViewModelMain.GoCopilotOpenCommand}"
+                    Style="{ThemeResource QuietButtonStyle}">
+                    <Image
+                        Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        Height="{Binding Path=Height, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        Source="ms-appx:///Assets/Icons/copilot.png" />
+                </Button>
 
             </StackPanel>
         </Grid>
