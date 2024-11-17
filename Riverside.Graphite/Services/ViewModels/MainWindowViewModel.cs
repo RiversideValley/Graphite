@@ -102,11 +102,13 @@ public partial class MainWindowViewModel : ObservableRecipient
 			MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
 		}
 	}
-	[RelayCommand]
-	private async Task GoCopilotOpen() {
 
-		const string nameof = "Copilot By Graphite"; 
-		if (Windowing.FindWindowsByName(nameof) is List<nint> collection) {
+	const string nameof = "Copilot By Graphite";
+	public Task<bool> CopilotExists() {
+
+		
+		if (Windowing.FindWindowsByName(nameof) is List<nint> collection)
+		{
 
 			if (collection.Count > 0)
 			{
@@ -114,19 +116,30 @@ public partial class MainWindowViewModel : ObservableRecipient
 				{
 					if (Windowing.IsWindow(winId))
 					{
-						bool success = Windowing.DestroyWindow(winId); 
-						if (!success) { 
-							int error = Marshal.GetLastWin32Error(); 
-							throw new Exception($"DestroyWindow failed with error code {error}"); 
+						bool success = Windowing.DestroyWindow(winId);
+						if (!success)
+						{
+							int error = Marshal.GetLastWin32Error();
+							throw new Exception($"DestroyWindow failed with error code {error}");
 						}
 					}
 					else
-						continue; 
+						continue;
 				}
-				return;
+				return Task.FromResult(true);
 			}
 		}
 
+		return Task.FromResult(false);
+
+	}
+
+	[RelayCommand]
+	private async Task GoCopilotOpen() {
+
+
+		if (await CopilotExists())
+			return; 
 				
 			SizeInt32? desktop = await Windowing.SizeWindow();
 

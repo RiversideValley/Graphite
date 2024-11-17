@@ -99,6 +99,9 @@ public sealed partial class MainWindow : Window
 			{
 				AppService.Admin_Delete_Account();
 			}
+
+			_=	ViewModelMain.CopilotExists();
+
 		};
 		SizeChanged += async (s, e) =>
 		{
