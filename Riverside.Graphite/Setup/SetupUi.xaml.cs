@@ -1,6 +1,6 @@
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Services;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Riverside.Graphite;
@@ -24,7 +24,6 @@ public sealed partial class SetupUi : Page
 		{
 			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.Auto = autoSettingValue;
-
 		}
 	}
 
@@ -52,8 +51,7 @@ public sealed partial class SetupUi : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.NtpDateTime = autoSettingValue; ;
-
+			AppService.AppSettings.NtpDateTime = autoSettingValue;
 		}
 	}
 
@@ -68,7 +66,6 @@ public sealed partial class SetupUi : Page
 
 	private void Color_TextChanged(object sender, TextChangedEventArgs e)
 	{
-
 		string color = Color.Text.ToString();
 		if (!string.IsNullOrEmpty(color))
 		{
@@ -113,7 +110,6 @@ public sealed partial class SetupUi : Page
 		}
 
 		AppService.AppSettings.Background = type;
-
 	}
 
 	private void SearchHome_Toggled(object sender, RoutedEventArgs e)
@@ -122,8 +118,7 @@ public sealed partial class SetupUi : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.IsSearchVisible = autoSettingValue; ;
-
+			AppService.AppSettings.IsSearchVisible = autoSettingValue;
 		}
 	}
 
@@ -133,8 +128,7 @@ public sealed partial class SetupUi : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.IsHistoryVisible = autoSettingValue; ;
-
+			AppService.AppSettings.IsHistoryVisible = autoSettingValue;
 		}
 	}
 
@@ -144,8 +138,7 @@ public sealed partial class SetupUi : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.IsFavoritesVisible = autoSettingValue; ;
-
+			AppService.AppSettings.IsFavoritesVisible = autoSettingValue;
 		}
 	}
 
@@ -155,8 +148,7 @@ public sealed partial class SetupUi : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.IsTrendingVisible = autoSettingValue; ;
-
+			AppService.AppSettings.IsTrendingVisible = autoSettingValue;
 		}
 	}
 }

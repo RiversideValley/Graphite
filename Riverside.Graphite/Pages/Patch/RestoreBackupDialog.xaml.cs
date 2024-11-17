@@ -1,6 +1,6 @@
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Services;
 using System;
 using System.IO;
 using System.Linq;
@@ -39,7 +39,6 @@ namespace Riverside.Graphite.Pages.Patch
 
 		private async void RestartAndCloseWindows()
 		{
-
 			// close whatever window is open ie: setup, usercentral --> need to give control back to windowscontroller....
 
 
@@ -52,7 +51,6 @@ namespace Riverside.Graphite.Pages.Patch
 			// is main is open give use option on next start up... 
 			if (App.Current.m_window is not null)
 			{
-
 				IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
 
 				if (hWnd != IntPtr.Zero)
@@ -67,13 +65,8 @@ namespace Riverside.Graphite.Pages.Patch
 					};
 					dlg.XamlRoot = XamlRoot;
 					_ = await dlg.ShowAsync(ContentDialogPlacement.Popup);
-
 				}
-
 			}
-
-
-
 		}
 		private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
 		{
@@ -87,7 +80,6 @@ namespace Riverside.Graphite.Pages.Patch
 				await File.WriteAllTextAsync(restoreFilePath, SelectedBackupPath);
 
 				RestartAndCloseWindows();
-
 			}
 			else
 			{
@@ -118,16 +110,10 @@ namespace Riverside.Graphite.Pages.Patch
 		}
 	}
 
-	public class BackupFileInfo
+	public class BackupFileInfo(string fileName, string filePath)
 	{
-		public string FileName { get; }
-		public string FilePath { get; }
-
-		public BackupFileInfo(string fileName, string filePath)
-		{
-			FileName = fileName;
-			FilePath = filePath;
-		}
+		public string FileName { get; } = fileName;
+		public string FilePath { get; } = filePath;
 
 		public override string ToString()
 		{

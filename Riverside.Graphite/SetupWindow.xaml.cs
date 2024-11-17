@@ -1,7 +1,7 @@
-using Riverside.Graphite.Runtime.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Riverside.Graphite.Runtime.Helpers;
 using System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,9 +43,7 @@ namespace Riverside.Graphite
 				titleBar.ButtonBackgroundColor = btnColor;
 				titleBar.InactiveBackgroundColor = btnColor;
 				titleBar.ButtonInactiveBackgroundColor = btnColor;
-
 			}
-
 		}
 
 		private void setup_Loaded(object sender, RoutedEventArgs e)

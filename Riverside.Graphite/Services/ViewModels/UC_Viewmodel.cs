@@ -1,12 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Models;
-using Microsoft.Graph.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +34,7 @@ namespace Riverside.Graphite
 		public BitmapImage MsProfilePicture { get; set; }
 
 		//public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
-		public Visibility IsMsLoginVisibility { get { return IsMsLogin ? Visibility.Visible : Visibility.Collapsed; ; } }
+		public Visibility IsMsLoginVisibility => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
 
 		private readonly Func<bool> _IsCoreFolder = () =>
 		{
@@ -56,36 +55,29 @@ namespace Riverside.Graphite
 		[RelayCommand(CanExecute = nameof(IsMsLogin))]
 		private async Task MsLogOut()
 		{
-
 			if (IsMsLogin)
 			{
 				await AppService.MsalService?.SignOutAsync();
 				IsMsLogin = AppService.MsalService.IsSignedIn;
 				RaisePropertyChanges(nameof(IsMsLoginVisibility));
-
 			}
-
 		}
 
 		[RelayCommand]
 		private async Task LoginToMicrosoft()
 		{
-
 			Microsoft.Identity.Client.AuthenticationResult answer = await AppService.MsalService?.SignInAsync();
 			RaisePropertyChanges(nameof(IsMsLogin));
 			IsMsLogin = answer is not null && answer.AccessToken is not null;
 
 			if (IsMsLogin)
 			{
-
 				if (AppService.GraphService.ProfileMicrosoft is null)
 				{
-
-
 					using Stream stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
 					if (stream == null)
 					{
-						MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
+						MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Icons/Products/MicrosoftOffice.png"));
 						RaisePropertyChanges(nameof(MsProfilePicture));
 						return;
 					}
@@ -103,8 +95,6 @@ namespace Riverside.Graphite
 				{
 					MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
 				}
-
-
 			}
 			RaisePropertyChanges(nameof(IsMsLoginVisibility));
 		}
@@ -120,7 +110,6 @@ namespace Riverside.Graphite
 		[RelayCommand]
 		private async Task AdminCenter()
 		{
-
 			UpLoadBackup win = new();
 			win.AppWindow.SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.CompactOverlay);
 			Windows.Graphics.SizeInt32? desktop = await Windowing.SizeWindow();
@@ -129,7 +118,6 @@ namespace Riverside.Graphite
 			_ = Windowing.ShowWindow(WindowNative.GetWindowHandle(win), Windowing.WindowShowStyle.SW_SHOWDEFAULT);
 			_ = Windowing.AnimateWindow(WindowNative.GetWindowHandle(win), 2000, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_ACTIVATE);
 			win.AppWindow?.ShowOnceWithRequestedStartupState();
-
 		}
 
 		[RelayCommand]
@@ -145,11 +133,9 @@ namespace Riverside.Graphite
 		[RelayCommand]
 		private async Task BackUpCore()
 		{
-
 			BackUpDialog dlg = new();
 			dlg.XamlRoot = ParentGrid?.XamlRoot;
 			_ = await dlg.ShowAsync();
-
 		}
 
 		[RelayCommand(CanExecute = nameof(IsCoreFolder))]

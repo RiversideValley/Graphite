@@ -1,9 +1,9 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11,7 +11,7 @@ namespace Riverside.Graphite.Data.Core;
 
 public class HistoryContext : DbContext
 {
-	public DbSet<HistoryItem> Urls { get; set; }
+	public DbSet<DbHistoryItem> Urls { get; set; }
 	//public DbSet<DownloadItem> Downloads { get; set; }
 	//public DbSet<DbUser> Users { get; set; }
 
@@ -24,6 +24,7 @@ public class HistoryContext : DbContext
 	}
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		=> optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
-
+	{
+		_ = optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+	}
 }

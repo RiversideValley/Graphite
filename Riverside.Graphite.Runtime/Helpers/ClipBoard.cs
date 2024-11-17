@@ -7,7 +7,7 @@ public class ClipBoard
 	{
 		text ??= string.Empty; // Simplified null check using the null-coalescing assignment
 
-		var dataPackage = new DataPackage()
+		DataPackage dataPackage = new()
 		{
 			RequestedOperation = DataPackageOperation.Copy
 		};

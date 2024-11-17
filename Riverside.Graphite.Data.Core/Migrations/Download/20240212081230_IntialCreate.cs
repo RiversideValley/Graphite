@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
 namespace Riverside.Graphite.Data.Core.Migrations.Download;
 
 /// <inheritdoc />
@@ -10,7 +8,7 @@ public partial class IntialCreate : Migration
 	/// <inheritdoc />
 	protected override void Up(MigrationBuilder migrationBuilder)
 	{
-		migrationBuilder.CreateTable(
+		_ = migrationBuilder.CreateTable(
 			name: "Downloads",
 			columns: table => new
 			{
@@ -23,14 +21,14 @@ public partial class IntialCreate : Migration
 			},
 			constraints: table =>
 			{
-				table.PrimaryKey("PK_Downloads", x => x.id);
+				_ = table.PrimaryKey("PK_Downloads", x => x.id);
 			});
 	}
 
 	/// <inheritdoc />
 	protected override void Down(MigrationBuilder migrationBuilder)
 	{
-		migrationBuilder.DropTable(
+		_ = migrationBuilder.DropTable(
 			name: "Downloads");
 	}
 }

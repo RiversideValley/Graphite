@@ -4,14 +4,12 @@ namespace Riverside.Graphite.Runtime.CoreUi;
 
 public sealed partial class SecurityInfo : Flyout
 {
-
 	public SecurityInfo()
 	{
-		this.InitializeComponent();
+		InitializeComponent();
 	}
 
 	public void Data()
 	{
-
 	}
 }

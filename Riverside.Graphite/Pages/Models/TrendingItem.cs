@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Riverside.Graphite.Pages.Models
 {
-	public record TrendingListItem(string webSearchUrl, string name, string url, string text);
-
 	public class TrendingItem
 	{
 		public string webSearchUrl { get; set; }
@@ -22,6 +14,5 @@ namespace Riverside.Graphite.Pages.Models
 			url = _url;
 			text = _text;
 		}
-
 	}
 }

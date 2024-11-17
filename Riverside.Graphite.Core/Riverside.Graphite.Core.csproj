@@ -38,10 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Riverside.Graphite.Runtime.Exceptions\Riverside.Graphite.Runtime.Exceptions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Update="AddUserWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

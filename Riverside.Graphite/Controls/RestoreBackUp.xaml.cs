@@ -1,9 +1,9 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Runtime.Helpers;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -13,7 +13,6 @@ using WinRT.Interop;
 namespace Riverside.Graphite.Controls;
 public sealed partial class RestoreBackUp : Window
 {
-
 	private AppWindow appWindow;
 	private AppWindowTitleBar titleBar;
 

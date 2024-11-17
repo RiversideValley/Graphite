@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 
@@ -14,15 +15,17 @@ public static class UserDataManager
 	public static UserDataResult LoadUsers()
 	{
 		if (!File.Exists(CoreFilePath))
+		{
 			return new() { Users = [], CurrentUsername = string.Empty };
+		}
 
-		var users = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(CoreFilePath)) ?? [];
+		List<User> users = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(CoreFilePath)) ?? [];
 		return new() { Users = users, CurrentUsername = AuthService.IsUserAuthenticated ? AuthService.CurrentUser.Username : "Guest" };
 	}
 
 	public static void SaveUsers(List<User> users)
 	{
-		Directory.CreateDirectory(CoreFolderPath);
+		_ = Directory.CreateDirectory(CoreFolderPath);
 		File.WriteAllText(CoreFilePath, JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
 	}
 
@@ -30,12 +33,14 @@ public static class UserDataManager
 	{
 		try
 		{
-			var userData = LoadUsers();
+			UserDataResult userData = LoadUsers();
 			if (userData.Users.RemoveAll(u => u.Username == username) > 0)
 			{
 				string userFolderPath = Path.Combine(CoreFolderPath, UsersFolderPath, username);
 				if (Directory.Exists(userFolderPath))
+				{
 					Directory.Delete(userFolderPath, true);
+				}
 
 				SaveUsers(userData.Users);
 				AuthService.users = AuthService.LoadUsersFromJson();

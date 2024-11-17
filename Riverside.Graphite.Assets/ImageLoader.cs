@@ -4,9 +4,9 @@ using System;
 using System.Collections.Concurrent;
 
 namespace Riverside.Graphite.Assets;
-public class ImageLoader : MarkupExtension
+public partial class ImageLoader : MarkupExtension
 {
-	private static readonly ConcurrentDictionary<string, BitmapImage> ImageCache = new ConcurrentDictionary<string, BitmapImage>();
+	private static readonly ConcurrentDictionary<string, BitmapImage> ImageCache = new();
 
 	private string _imageName;
 
@@ -16,29 +16,39 @@ public class ImageLoader : MarkupExtension
 		set
 		{
 			if (string.IsNullOrEmpty(value))
+			{
 				throw new ArgumentException("ImageName cannot be null or empty.");
+			}
+
 			_imageName = value;
 		}
 	}
 
-	protected override object ProvideValue() => LoadImage(ImageName);
+	protected override object ProvideValue()
+	{
+		return LoadImage(ImageName);
+	}
 
 	public BitmapImage LoadImage(string imageName)
 	{
 		if (string.IsNullOrEmpty(imageName))
+		{
 			return null;
+		}
 
-		if (ImageCache.TryGetValue(imageName, out var cachedImage))
+		if (ImageCache.TryGetValue(imageName, out BitmapImage cachedImage))
+		{
 			return cachedImage;
+		}
 
 		try
 		{
-			var uri = new Uri($"ms-appx:///Riverside.Graphite.Assets/Assets/{imageName}");
+			Uri uri = new($"ms-appx:///Riverside.Graphite.Assets/Assets/{imageName}");
 
-			var _ = uri; // Dispose Uri object after use
+			_ = uri; // Dispose Uri object after use
 
 			cachedImage = new BitmapImage(uri);
-			ImageCache.TryAdd(imageName, cachedImage);
+			_ = ImageCache.TryAdd(imageName, cachedImage);
 		}
 		catch (Exception ex)
 		{

@@ -31,9 +31,15 @@ public static class EncryptionHelpers
 
 
 
-	private static string GetCallingAppName() => Process.GetCurrentProcess().ProcessName;
+	private static string GetCallingAppName()
+	{
+		return Process.GetCurrentProcess().ProcessName;
+	}
 
-	private static bool IsAllowedApp(string appName) => appName == nameof(Riverside.Graphite) || appName == "FireVault" || appName == "Protecc";
+	private static bool IsAllowedApp(string appName)
+	{
+		return appName is (nameof(Riverside.Graphite)) or "FireVault" or "Protecc";
+	}
 
 	public static string UnprotectToString(byte[] data)
 	{

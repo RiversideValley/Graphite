@@ -1,7 +1,7 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,12 +37,10 @@ namespace Riverside.Graphite
 		{
 			if (sender is ToggleSwitch toggleSwitch)
 			{
-
 				// Assuming 'url' and 'selection' have been defined earlier
 				bool autoSettingValue = toggleSwitch.IsOn;
 
 				AppService.AppSettings.LightMode = autoSettingValue;
-
 			}
 		}
 

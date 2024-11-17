@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,18 +16,13 @@ public class UpdateService
 	// Local DLL file names
 	private readonly string[] localFileNames = {
 	"Riverside.Graphite.Adblock.dll",
-	"Riverside.GraphiteSetup.dll",
-	"Riverside.GraphiteQrCore.dll",
-	"Riverside.Graphite.Navigation.dll",
 	"Riverside.Graphite.Core.dll",
 	"Riverside.Graphite.Extensions.dll",
 	"Riverside.Graphite.Data.Favorites.dll",
-	"Riverside.Graphite.Runtime.Exceptions.dll",
 	"Riverside.Graphite.Data.Core.dll",
 	"Riverside.Graphite.Data.dll",
 	"Riverside.Graphite.Runtime.dll",
 	"Riverside.Graphite.IdentityClient.dll",
-	"Riverside.Graphite.IdentityClient.Private.dll",
 	"Riverside.Graphite.Assets.dll"
 };
 
@@ -51,7 +46,7 @@ public class UpdateService
 			List<string> filesToPatch = await CompareVersionsAsync(serverData, dllFiles);
 
 			// Write the names of DLLs to be patched into the patch.core file if there are updates
-			if (filesToPatch.Any())
+			if (filesToPatch.Count != 0)
 			{
 				string patchCoreFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "patch.core");
 				await File.WriteAllLinesAsync(patchCoreFilePath, filesToPatch);

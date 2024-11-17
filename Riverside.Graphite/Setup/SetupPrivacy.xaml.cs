@@ -1,7 +1,7 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 
 namespace Riverside.Graphite;
 public sealed partial class SetupPrivacy : Page
@@ -29,8 +29,7 @@ public sealed partial class SetupPrivacy : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.DisableJavaScript = autoSettingValue; ;
-
+			AppService.AppSettings.DisableJavaScript = autoSettingValue;
 		}
 	}
 
@@ -40,8 +39,7 @@ public sealed partial class SetupPrivacy : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.DisableGenAutoFill = autoSettingValue; ; ;
-
+			AppService.AppSettings.DisableGenAutoFill = autoSettingValue;
 		}
 	}
 
@@ -52,7 +50,6 @@ public sealed partial class SetupPrivacy : Page
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.DisableWebMess = autoSettingValue;
-
 		}
 	}
 
@@ -63,7 +60,6 @@ public sealed partial class SetupPrivacy : Page
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.DisablePassSave = autoSettingValue;
-
 		}
 	}
 

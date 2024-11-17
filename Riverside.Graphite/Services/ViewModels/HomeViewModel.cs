@@ -1,21 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.Models;
-using Riverside.Graphite.Data.Favorites;
-using FireBrowserDatabase;
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.Pages.Models;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Pages.Models;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +23,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using static Riverside.Graphite.Pages.NewTab;
 
 
 namespace Riverside.Graphite.ViewModels;
@@ -78,10 +77,10 @@ public partial class HomeViewModel : ObservableRecipient
 	private SearchProviders _SearchProvider;
 	public SettingsService SettingsService { get; set; }
 	private DispatcherTimer timer { get; set; }
-	
-	public CancellationToken CancellationTokenTimer { get; set; }	
+
+	public CancellationToken CancellationTokenTimer { get; set; }
 	public ObservableCollection<TrendingItem> TrendingItems { get; set; }
-	
+
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
 	private void LoadUISettings()
@@ -181,7 +180,6 @@ public partial class HomeViewModel : ObservableRecipient
 	public HomeViewModel(IMessenger messenger)
 		: base(messenger)
 	{
-
 		FavoriteItems = new ObservableCollection<FavItem>();
 		FavoriteItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FavoriteItems));
 
@@ -198,15 +196,12 @@ public partial class HomeViewModel : ObservableRecipient
 	[RelayCommand]
 	private void ProtocolHandler(object sender)
 	{
-
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			_ = (window.DispatcherQueue?.TryEnqueue(() =>
 			{
-
 				if (sender is Button btn)
 				{
-
 					switch (btn.Tag.ToString())
 					{
 						case "Settings":
@@ -229,7 +224,6 @@ public partial class HomeViewModel : ObservableRecipient
 				}
 			}));
 		}
-
 	}
 	public Task Intialize()
 	{
@@ -262,55 +256,51 @@ public partial class HomeViewModel : ObservableRecipient
 
 	partial void OnIsTrendingVisibleChanged(Visibility value)
 	{
-
 		switch (value)
 		{
 			case Visibility.Visible:
 				CancellationTokenSource tVis = new CancellationTokenSource();
 				CancellationTokenTimer = tVis.Token;
-				UpdateTrending(); 
+				_ = UpdateTrending();
 				break;
 			case Visibility.Collapsed:
 				CancellationTokenSource tClose = new CancellationTokenSource();
-				tClose.Cancel(); 
+				tClose.Cancel();
 				CancellationTokenTimer = tClose.Token;
 				break;
 			default:
 				break;
 		}
-		
-
-
 	}
 
 	public Task UpdateTrending()
 	{
-		
-		var timer = new DispatcherTimer(); 
+		DispatcherTimer timer = new();
 		timer.Interval = TimeSpan.FromMinutes(4);
 		timer.Tick += (s, e) =>
 		{
-			if (!SettingsService.CoreSettings.IsTrendingVisible) {
-				
-				CancellationTokenSource source = new CancellationTokenSource();
-				source.Cancel(); 
+			if (!SettingsService.CoreSettings.IsTrendingVisible)
+			{
+				CancellationTokenSource source = new();
+				source.Cancel();
 				CancellationTokenTimer = source.Token;
 			}
 			GetTrending();
 			RaisePropertyChanges(nameof(TrendingItems));
 		};
-		
+
 		timer.Start();
 		// initial load.
-		GetTrending(); 
+		GetTrending();
 
-		async void GetTrending() {
-
-			if (CancellationTokenTimer.IsCancellationRequested) {
+		async void GetTrending()
+		{
+			if (CancellationTokenTimer.IsCancellationRequested)
+			{
 				timer.Stop();
 				return;
 			}
-			
+
 
 			BingSearchApi bing = new();
 			string topics = await bing.TrendingListTask("calico cats");
@@ -322,13 +312,12 @@ public partial class HomeViewModel : ObservableRecipient
 
 				foreach (Newtonsoft.Json.Linq.JToken item in list)
 				{
-
 					TrendingItems.Add(new TrendingItem(item["webSearchUrl"].ToString(), item["name"].ToString(), item["image"]["url"].ToString(), item["query"]["text"].ToString()));
 				}
 			}
 		}
-		
-		return Task.CompletedTask; 
+
+		return Task.CompletedTask;
 	}
 	public Settings.NewTabBackground BackgroundType
 	{

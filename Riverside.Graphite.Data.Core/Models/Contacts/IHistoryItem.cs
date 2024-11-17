@@ -1,4 +1,4 @@
-﻿namespace Riverside.Graphite.Data.Core.Models.Contacts;
+namespace Riverside.Graphite.Data.Core.Models.Contacts;
 
 public interface IHistoryItem
 {
@@ -9,5 +9,4 @@ public interface IHistoryItem
 	int visit_count { get; set; }
 	int typed_count { get; set; }
 	int hidden { get; set; }
-
 }

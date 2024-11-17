@@ -1,8 +1,8 @@
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.ViewModels;
 using System.ComponentModel;
 
 namespace Riverside.Graphite.Controls;
@@ -52,7 +52,6 @@ public sealed partial class FireBrowserTabViewItem : TabViewItem
 						ImgTabViewHeader.Header = new TextBlock() { Text = web.WebView.CoreWebView2?.DocumentTitle, IsColorFontEnabled = true, FontSize = 12, MaxLines = 2, TextWrapping = TextWrapping.WrapWholeWords };
 						ViewModel.IsTooltipEnabled = true;
 					}
-
 				}
 			}
 		}

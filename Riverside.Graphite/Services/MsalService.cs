@@ -1,14 +1,14 @@
-﻿
+
 using CommunityToolkit.Mvvm.ComponentModel;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Services.Contracts;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,7 +43,6 @@ namespace Riverside.Graphite.Services
 		public MsalAuthService()
 		{
 			_pca = new Lazy<Task<IPublicClientApplication>>(InitializeMsalWithCache);
-
 		}
 
 		/// <inheritdoc/>
@@ -77,7 +76,6 @@ namespace Riverside.Graphite.Services
 			// First attempt to get a token silently
 			//           return false;
 			return null;
-
 		}
 
 		public async Task SignOutAsync()
@@ -102,7 +100,7 @@ namespace Riverside.Graphite.Services
 		private async Task<IPublicClientApplication> InitializeMsalWithCache()
 		{
 			// Initialize the PublicClientApplication
-			//string RedirectUri = $"msal{ClientId}://auth";
+			//string RedirectUri = $"{ClientId}://auth";
 			string RedirectUri = "ms-appx-web://microsoft.aad.brokerplugin/edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
 			//string RedirectUri = "http://localhost";
 			IntPtr mainWnd = IntPtr.Zero;
@@ -117,7 +115,6 @@ namespace Riverside.Graphite.Services
 
 			if (App.Current.m_window is not null)
 			{
-
 				if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
 				{
 					mainWnd = WindowNative.GetWindowHandle(App.Current.m_window);
@@ -145,7 +142,6 @@ namespace Riverside.Graphite.Services
 			//MsalCacheHelper.EnableCache(pca.UserTokenCache);
 
 			return pca;
-
 		}
 		private Task RegisterMsalCacheAsync(ITokenCache tokenCache)
 		{
@@ -260,9 +256,5 @@ namespace Riverside.Graphite.Services
 				request.Headers.Add("Authorization", $"Bearer {result.AccessToken}");
 			}
 		}
-
 	}
-
-
-
 }

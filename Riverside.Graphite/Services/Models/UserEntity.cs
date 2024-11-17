@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Data.Tables;
 using System;
 
@@ -17,6 +17,4 @@ namespace Riverside.Graphite.Services.Models
 		public ETag ETag { get; set; }
 		public DateTimeOffset? Timestamp { get; set; }
 	}
-
-
 }

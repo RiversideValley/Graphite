@@ -15,7 +15,7 @@ public class Shortcut
 
 		await Task.Run(() =>
 		{
-			var shell = new WshShell();
+			WshShell shell = new();
 			IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
 
 			// Set the target application and command-line argument

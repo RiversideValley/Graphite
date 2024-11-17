@@ -1,13 +1,13 @@
-﻿using Azure.Data.Tables;
+using Azure.Data.Tables;
 using Azure.Storage.Blobs;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services.Models;
 using Microsoft.Identity.Client;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,11 +44,9 @@ namespace Riverside.Graphite.Services
 
 		private AzBackupService(Riverside.Graphite.Core.User fireUser, string _storageName, string _containerName)
 		{
-
 			StoragAccountName = _storageName;
 			ContainerName = _containerName ?? string.Empty;
 			FireUser = fireUser;
-
 		}
 		public AzBackupService(string connString, string storagAccountName, string containerName, Riverside.Graphite.Core.User user) : this(user, storagAccountName, containerName)
 		{
@@ -90,7 +88,6 @@ namespace Riverside.Graphite.Services
 
 					return user;
 				}
-
 			}
 			catch (MsalClientException)
 			{
@@ -161,14 +158,12 @@ namespace Riverside.Graphite.Services
 				}
 
 				return files;
-
 			}
 			catch (Exception ex)
 			{
 				ExceptionLogger.LogException(ex);
 				throw;
 			}
-
 		}
 		public async Task<ResponseAZFILE> UploadAndStoreFile(string blobName, IRandomAccessStream fileStream, Riverside.Graphite.Core.User fireUser)
 		{
@@ -187,19 +182,13 @@ namespace Riverside.Graphite.Services
 			{
 				ExceptionLogger.LogException(ex);
 				return new ResponseAZFILE(ex.StackTrace, ex.Message!);
-
 			}
-
-
-
 		}
 
 		public async Task<ResponseAZFILE> DownloadBackupFile(string blobName)
 		{
 			try
 			{
-
-
 				object response = new();
 				string fileName = blobName;
 				// Upload the file to Azure Blob Storage
@@ -271,7 +260,6 @@ namespace Riverside.Graphite.Services
 
 
 					return new ResponseAZFILE(blobName, LocalFilePath);
-
 				}
 			}
 			catch (Exception ex)
@@ -314,14 +302,12 @@ namespace Riverside.Graphite.Services
 				string sasUrl = blockBlob.Uri.AbsoluteUri + sasToken; //blockBlob.Uri.AbsoluteUri
 
 				return new ResponseAZFILE(blobName, sasUrl);
-
 			}
 			catch (Exception ex)
 			{
 				ExceptionLogger.LogException(ex);
 				throw;
 			}
-
 		}
 		#endregion
 
@@ -360,7 +346,6 @@ namespace Riverside.Graphite.Services
 				Console.WriteLine($"SID: {userSID}");
 				Console.WriteLine($"Domain: {userDomainName}");
 				return Task.FromResult(windowsIdentity);
-
 			}
 			catch (Exception ex)
 			{
@@ -369,13 +354,10 @@ namespace Riverside.Graphite.Services
 			}
 
 			return null;
-
 		}
 
 		public static Task<WindowsIdentity> GetPrincipalUser()
 		{
-
-
 			IntPtr hProcess = GetCurrentProcess();
 
 			if (OpenProcessToken(hProcess, TOKEN_READ, out nint hToken))
@@ -407,7 +389,6 @@ namespace Riverside.Graphite.Services
 				}
 
 				return Task.FromResult(winId);
-
 			}
 			else
 			{

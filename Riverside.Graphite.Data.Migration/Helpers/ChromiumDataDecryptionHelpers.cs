@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -24,7 +25,7 @@ namespace Riverside.Graphite.Data.Migration.Helpers
 			// Get decryption key stored in the browser's 'Local State' json file
 			string localState = File.ReadAllText(path);
 
-			var obj = JsonSerializer.Deserialize<Key>(localState);
+			Key obj = JsonSerializer.Deserialize<Key>(localState);
 
 			return obj.os_crypt.encrypted_key;
 		}
@@ -52,7 +53,7 @@ namespace Riverside.Graphite.Data.Migration.Helpers
 		{
 			string path = Path.Combine(browserLocalAppDataFolder, "Local State");
 			string keyString = GetKeyString(path);
-			var key = GetKey(keyString);
+			byte[] key = GetKey(keyString);
 
 			byte[] nonce, ciphertextTag;
 			Prepare(encryptedData, out nonce, out ciphertextTag);
@@ -65,12 +66,10 @@ namespace Riverside.Graphite.Data.Migration.Helpers
 		{
 			try
 			{
-				using (var aes = new AesGcm(key))
-				{
-					byte[] plaintextBytes = new byte[encryptedBytes.Length];
-					aes.Decrypt(iv, encryptedBytes, null, plaintextBytes);
-					return Encoding.UTF8.GetString(plaintextBytes).TrimEnd("\0".ToCharArray());
-				}
+				using AesGcm aes = new(key);
+				byte[] plaintextBytes = new byte[encryptedBytes.Length];
+				aes.Decrypt(iv, encryptedBytes, null, plaintextBytes);
+				return Encoding.UTF8.GetString(plaintextBytes).TrimEnd("\0".ToCharArray());
 			}
 			catch
 			{

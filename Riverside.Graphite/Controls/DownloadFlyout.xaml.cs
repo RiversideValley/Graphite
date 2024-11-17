@@ -1,9 +1,9 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,15 +33,16 @@ public sealed partial class DownloadFlyout : Flyout
 	{
 		try
 		{
-			if (AuthService.CurrentUser is not Riverside.Graphite.Core.User)
-				return; 
+			if (AuthService.CurrentUser is null)
+			{
+				return;
+			}
 
 			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
 			{
-				
 				try
 				{
-					var db = new DatabaseServices();
+					DatabaseServices db = new();
 					_ = await db.DatabaseCreationValidation();
 					_ = await db.InsertUserSettings();
 				}
@@ -63,8 +64,7 @@ public sealed partial class DownloadFlyout : Flyout
 					downloadItem.ServiceDownloads = DownloadService;
 					DownloadItemsListView.Items.Insert(0, downloadItem);
 				});
-			};
-
+			}
 		}
 		catch (Exception ex)
 		{

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <UseRidGraph>true</UseRidGraph>
@@ -11,7 +11,7 @@
     <RuntimeIdentifiers>win-x64;</RuntimeIdentifiers>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <ApplicationIcon>logo.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\AppTiles\Logo.ico</ApplicationIcon>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
@@ -75,21 +75,18 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="Assets\arc_logo.png" />
-    <Content Remove="Assets\brave_logo.png" />
-    <Content Remove="Assets\favicon.ico" />
-    <Content Remove="Assets\firefox_logo.png" />
-    <Content Remove="Assets\Google.png" />
-    <Content Remove="Assets\index.html" />
-    <Content Remove="Assets\main.html" />
-    <Content Remove="Assets\Microsoft.png" />
-    <Content Remove="Assets\msal\EventType_MSAL.js" />
-    <Content Remove="Assets\msal\favicon.ico" />
-    <Content Remove="Assets\msal\notfound.html" />
-    <Content Remove="Assets\msal\tsconfig.json" />
-    <Content Remove="Assets\Prize.png" />
-    <Content Remove="Assets\SegoeFluentIcons2.ttf" />
-    <Content Remove="Assets\setup_image.png" />
+    <Content Remove="Assets\Icons\Products\Browser-Arc.png" />
+    <Content Remove="Assets\Icons\Products\Browser-Brave.png" />
+    <Content Remove="Assets\AppTiles\Logo.ico" />
+    <Content Remove="Assets\Icons\Products\Browser-Firefox.png" />
+    <Content Remove="Assets\Icons\Products\Google.png" />
+    <Content Remove="Assets\WebView\index.html" />
+    <Content Remove="Assets\Icons\Products\MicrosoftOffice.png" />
+    <Content Remove="Assets\WebView\AppFrontend\EventType_MSAL.js" />
+    <Content Remove="Assets\WebView\AppFrontend\favicon.ico" />
+    <Content Remove="Assets\Webview\AppFrontend\tsconfig.json" />
+    <Content Remove="Assets\Glyphs\SegoeFluentIcons2.ttf" />
+    <Content Remove="Assets\Experience\OOBE\Hero.png" />
     <Content Remove="Assets\UI\CrimsonUI.xaml" />
     <Content Remove="Riverside.Graphite.Assets\costum.png" />
     <Content Remove="Riverside.Graphite.Assets\default.png" />
@@ -145,8 +142,11 @@
     <Content Remove="Riverside.Graphite.Assets\Wide310x150Logo.scale-400.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\adblocker.js" />
     <None Remove="Assets\favicon.png" />
     <None Remove="Assets\UI\CrimsonUI.xaml" />
+    <None Remove="Assets\WebView\AppFrontend\main.html" />
+    <None Remove="Assets\WebView\AppFrontend\notfound.html" />
     <None Remove="ChangeUsernameCore.xaml" />
     <None Remove="Controls\CreateBackup.xaml" />
     <None Remove="Controls\PopUpView.xaml" />
@@ -175,30 +175,25 @@
     <None Remove="Styles\Thickness.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="logo.ico">
+    <Content Include="Assets\AppTiles\Logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Riverside.Graphite.Adblock\Riverside.Graphite.Adblock.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Assets\Riverside.Graphite.Assets.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.IdentityClient.Private\Riverside.Graphite.IdentityClient.Private.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.IdentityClient\Riverside.Graphite.IdentityClient.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Data\Riverside.Graphite.Data.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Core\Riverside.Graphite.Data.Core.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Runtime.Exceptions\Riverside.Graphite.Runtime.Exceptions.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Favorites\Riverside.Graphite.Data.Favorites.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Runtime.Licensing\Riverside.Graphite.Runtime.Licensing.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Data.Migration\Riverside.Graphite.Data.Migration.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Extensions\Riverside.Graphite.Extensions.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Navigation\Riverside.Graphite.Navigation.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Services.BarcodeHost\Riverside.Graphite.Services.BarcodeHost.csproj" />
-    <ProjectReference Include="..\Riverside.Graphite.Services\Riverside.Graphite.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Assets\chrome_logo.png">
+    <Content Update="Assets\WebView\Adblocker\adblocker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Products\Browser-Chrome.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\costum.png">
@@ -207,7 +202,7 @@
     <Content Update="Assets\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\edge_logo.png">
+    <Content Update="Assets\Icons\Products\Browser-Edge.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\featured.png">
@@ -228,30 +223,42 @@
     <Content Update="Assets\Icons\Accessibility.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Icons\enqryption.png">
+    <Content Update="Assets\Icons\Encryption.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Icons\Home.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Icons\More.png">
+    <Content Update="Assets\Icons\Settings.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Icons\Privacy.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Icons\Style.png">
+    <Content Update="Assets\Icons\Appearance.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Icons\Tabs.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="Assets\Icons\Webset.png">
+    <Content Update="Assets\Icons\SiteSettings.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\WebView\Adblock\adblocker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\WebView\AppFrontend\adblocker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\WebView\AppFrontend\package.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\WebView\AppFrontend\src\index.jsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Accounts.ico">
+    <None Update="Assets\Icons\Accounts.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\favicon.ico">
@@ -281,11 +288,23 @@
     <None Update="Assets\setup_image.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\WebView\AppFrontend\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Update="Assets\WebView\AppFrontend\main.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\WebView\AppFrontend\notfound.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Update="backup.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="buy.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Navigation\DomainMap.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Page Update="Styles\Thickness.xaml">
       <Generator>MSBuild:Compile</Generator>

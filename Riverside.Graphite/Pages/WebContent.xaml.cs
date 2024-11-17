@@ -1,13 +1,5 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.CoreUi;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.ShareHelper;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -15,6 +7,14 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json.Linq;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.CoreUi;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Runtime.ShareHelper;
+using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +27,7 @@ using Windows.Storage.Streams;
 using WinRT.Interop;
 using static Riverside.Graphite.MainWindow;
 
+
 namespace Riverside.Graphite.Pages;
 
 public sealed partial class WebContent : Page
@@ -36,10 +37,12 @@ public sealed partial class WebContent : Page
 	public BitmapImage PictureWebElement { get; set; }
 	public WebView2 WebView { get; set; }
 	private SettingsService SettingsService { get; set; }
-
+	private AdBlockerWrapper AdBlockerService { get; set; }
 	public WebContent()
 	{
 		SettingsService = App.GetService<SettingsService>();
+		AdBlockerService = App.GetService<AdBlockerWrapper>();
+
 		InitializeComponent();
 		WebView = WebViewElement;
 		Init();
@@ -62,6 +65,8 @@ public sealed partial class WebContent : Page
 		string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
 		Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
+
+		AdBlockerService = new AdBlockerWrapper();
 	}
 
 	private async Task AfterComplete()
@@ -115,8 +120,7 @@ public sealed partial class WebContent : Page
 
 		WebViewElement.CoreWebView2.Profile.PreferredTrackingPreventionLevel = preventionLevel;
 
-		WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/msal", CoreWebView2HostResourceAccessKind.Allow);
-
+		WebViewElement.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/WebView/AppFrontend", CoreWebView2HostResourceAccessKind.Allow);
 	}
 
 
@@ -126,6 +130,10 @@ public sealed partial class WebContent : Page
 		ShareUIHelper.ShowShareUIURL(url, title, hWnd);
 	}
 
+	protected override void OnNavigatedFrom(NavigationEventArgs e)
+	{
+		AdBlockerService.Dispose();
+	}
 	//static int FirstAttempt = 0;
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
@@ -134,7 +142,16 @@ public sealed partial class WebContent : Page
 
 		await WebViewElement.EnsureCoreWebView2Async();
 
+		if (AdBlockerService is not null)
+		{
+			AdBlockerService.Toggle();
+			await AdBlockerService.Initialize(WebViewElement);
+		}
+
+
 		LoadSettings();
+
+
 
 		if (param?.Param != null)
 		{
@@ -206,7 +223,6 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.NavigationStarting += (sender, args) =>
 		{
-
 			//s.DispatcherQueue.TryEnqueue(async () =>
 			//{
 
@@ -240,14 +256,12 @@ public sealed partial class WebContent : Page
 			//youtube doesn't report navigation when view different videos. 
 			_ = await Task.Factory.StartNew(async () =>
 			{
-
 				await Task.Delay(1800);
 
 				try
 				{
 					_ = (DispatcherQueue?.TryEnqueue(async () =>
 					{
-
 						// Delay for stability
 
 						using MemoryStream memoryStream = new();
@@ -277,12 +291,10 @@ public sealed partial class WebContent : Page
 				}
 				catch (Exception)
 				{
-
 					throw;
 				}
 
 				return Task.CompletedTask;
-
 			});
 
 			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
@@ -291,11 +303,10 @@ public sealed partial class WebContent : Page
 			}
 		};
 
-		s.CoreWebView2.NavigationCompleted += async (sender, args) =>
+		s.CoreWebView2.NavigationCompleted += (sender, args) =>
 		{
 			ProgressLoading.IsIndeterminate = false;
 			ProgressLoading.Visibility = Visibility.Collapsed;
-
 		};
 
 		s.CoreWebView2.SourceChanged += (sender, args) =>
@@ -317,7 +328,6 @@ public sealed partial class WebContent : Page
 
 		s.CoreWebView2.WebResourceRequested += (sender, args) =>
 		{
-
 			if (IsLogoutRequest(args.Request))
 			{
 				AppService.IsAppUserAuthenicated = false;
@@ -337,11 +347,9 @@ public sealed partial class WebContent : Page
 					}
 				}
 			}
-
 		};
 		s.CoreWebView2.WebResourceResponseReceived += async (s, e) =>
 		{
-
 			if (IsLoginRequest(e.Request))
 			{
 				CoreWebView2WebResourceResponseView response = e.Response;
@@ -349,7 +357,6 @@ public sealed partial class WebContent : Page
 				{
 					AppService.IsAppUserAuthenicated = true;
 					Console.WriteLine("Login successful.");
-
 				}
 			}
 
@@ -371,7 +378,6 @@ public sealed partial class WebContent : Page
                                                     } return findMsalAccountKeys();})();"
 						).AsTask().ContinueWith(keys =>
 						{
-
 							// Critical section here
 							JToken token = JToken.Parse(keys.Result);
 
@@ -382,7 +388,6 @@ public sealed partial class WebContent : Page
 									AppService.IsAppUserAuthenicated = true;
 								}
 							}
-
 						});
 
 			await s.ExecuteScriptAsync(@"(function() { function findMsalAccountKeysSession() {
@@ -400,7 +405,6 @@ public sealed partial class WebContent : Page
                                                     } return findMsalAccountKeysSession();})();"
 				).AsTask().ContinueWith(keys =>
 				{
-
 					// Critical section here
 					JToken token = JToken.Parse(keys.Result);
 
@@ -411,22 +415,20 @@ public sealed partial class WebContent : Page
 							AppService.IsAppUserAuthenicated = true;
 						}
 					}
-
 				});
-
 		};
 
 		s.CoreWebView2.PermissionRequested += async (sender, args) =>
 		{
 			args.Handled = true;
-			var deferral = args.GetDeferral();
+			Windows.Foundation.Deferral deferral = args.GetDeferral();
 
 			try
 			{
 				await DispatcherQueue.EnqueueAsync(async () =>
 				{
 					string url = WebViewElement.CoreWebView2.Source;
-					var storedPermission = PermissionManager.GetStoredPermission(AuthService.CurrentUser.Username, url, args.PermissionKind);
+					CoreWebView2PermissionState? storedPermission = PermissionManager.GetStoredPermission(AuthService.CurrentUser.Username, url, args.PermissionKind);
 
 					if (storedPermission.HasValue)
 					{
@@ -437,7 +439,7 @@ public sealed partial class WebContent : Page
 					string permissionKind = args.PermissionKind.ToString();
 					string formattedPermission = FormatPermissionKind(permissionKind);
 
-					var result = await ShowPermissionDialogAsync(formattedPermission);
+					ContentDialogResult result = await ShowPermissionDialogAsync(formattedPermission);
 
 					CoreWebView2PermissionState permissionState = result switch
 					{
@@ -448,7 +450,7 @@ public sealed partial class WebContent : Page
 
 					bool? allowed = permissionState == CoreWebView2PermissionState.Allow ? true :
 									permissionState == CoreWebView2PermissionState.Deny ? false :
-									(bool?)null;
+									null;
 
 					PermissionManager.StorePermission(AuthService.CurrentUser.Username, url, args.PermissionKind, allowed);
 					await PermissionManager.SavePermissionsAsync(AuthService.CurrentUser.Username);
@@ -465,7 +467,6 @@ public sealed partial class WebContent : Page
 		//{
 
 		//};
-
 	}
 
 	private string FormatPermissionKind(string permissionKind)
@@ -475,8 +476,8 @@ public sealed partial class WebContent : Page
 
 	private async Task<ContentDialogResult> ShowPermissionDialogAsync(string permission)
 	{
-		var rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
-		var dialog = new ContentDialog
+		string rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
+		ContentDialog dialog = new()
 		{
 			Title = $"Allow {rootUrl} to access {permission}?",
 			PrimaryButtonText = "Allow",
@@ -484,7 +485,7 @@ public sealed partial class WebContent : Page
 			CloseButtonText = "Cancel",
 			DefaultButton = ContentDialogButton.Primary,
 			Content = "Managed in firebrowser://privacy",
-			XamlRoot = this.XamlRoot
+			XamlRoot = XamlRoot
 		};
 
 		return await dialog.ShowAsync();
@@ -514,11 +515,10 @@ public sealed partial class WebContent : Page
 		}
 		catch (Exception)
 		{
-
 			return false;
 		}
-		
-		return false; 
+
+		return false;
 	}
 
 	private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)

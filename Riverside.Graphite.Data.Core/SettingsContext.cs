@@ -1,5 +1,5 @@
-﻿using Riverside.Graphite.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Riverside.Graphite.Core;
 using System;
 using System.IO;
 
@@ -15,18 +15,13 @@ public class SettingsContext : DbContext
 	public string ConnectionPath { get; set; }
 	public SettingsContext(string username)
 	{
-		if (username == null)
-		{
-			throw new ArgumentNullException(nameof(username));
-		}
-		else
-		{
-			ConnectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
-		}
+		ConnectionPath = username == null
+			? throw new ArgumentNullException(nameof(username))
+			: Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
 	}
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+		_ = optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
 	}
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

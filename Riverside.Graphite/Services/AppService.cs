@@ -1,22 +1,21 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Services.Contracts;
-using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Setup;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Setup;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +38,6 @@ public static class AppService
 	public static IAuthenticationService MsalService { get; set; }
 	public static IGraphService GraphService { get; set; }
 	public static DispatcherQueue Dispatcher { get; set; }
-
 
 	public static async Task WindowsController(CancellationToken cancellationToken)
 	{
@@ -188,7 +186,7 @@ public static class AppService
 				else if (url.StartsWith("firebrowserincog://"))
 				{
 					AppArguments.FireBrowserIncog = url;
-					ValidateCreatePrivateUser(); 
+					ValidateCreatePrivateUser();
 					CheckNormal("Private");
 				}
 				else if (url.Contains(".pdf"))
@@ -201,23 +199,18 @@ public static class AppService
 			}
 			else
 			{
-
 				ActiveWindow = new UserCentral();
 				ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
 				ConfigureWindowAppearance();
 				ActiveWindow.Activate();
 				Windowing.Center(ActiveWindow);
 			}
-
-
 		}
 		catch (Exception e)
 		{
 			ExceptionLogger.LogException(e);
 			Console.WriteLine($"Activation utilizing Protocol Activation failed..\n {e.Message}");
-
 		}
-
 	}
 
 	private static string ExtractUsernameFromUrl(string url)
@@ -252,13 +245,12 @@ public static class AppService
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
 			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-			appWindow.SetIcon("logo.ico");
+			appWindow.SetIcon("Assets\\AppTiles\\Logo.ico");
 		}
 	}
 
 	private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
 	{
-
 		string userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
 		if (!Directory.Exists(userExist))
 		{
@@ -276,7 +268,6 @@ public static class AppService
 
 		ActiveWindow?.Close();
 		await ShowMainWindow(cancellationToken);
-
 	}
 
 	private static async Task ShowMainWindow(CancellationToken cancellationToken)
@@ -307,7 +298,6 @@ public static class AppService
 		}
 
 		await CloseCancelToken(ref cancellationToken);
-
 	}
 
 	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
@@ -358,7 +348,6 @@ public static class AppService
 					_ = await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
 					File.Delete(updateSql);
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -370,16 +359,13 @@ public static class AppService
 
 		if (AuthService.IsUserAuthenticated)
 		{
-
 			DatabaseServices dbServer = new();
 
 			try
 			{
-
 				_ = await dbServer.DatabaseCreationValidation();
 				_ = await dbServer.InsertUserSettings();
 				// if we get to here than all is validated and open Browser. 
-
 			}
 			catch (Exception ex)
 			{
@@ -415,9 +401,7 @@ public static class AppService
 					{
 						_ = await settingsActions.UpdateSettingsAsync(AppSettings);
 					}
-
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -431,7 +415,6 @@ public static class AppService
 		};
 
 		await ConfigureSettingsWindow(ActiveWindow);
-
 	}
 
 	public static async Task ConfigureSettingsWindow(Window winIncoming)
@@ -462,7 +445,6 @@ public static class AppService
 
 	public static void Admin_Create_Account()
 	{
-
 		Riverside.Graphite.Core.User newUser = new()
 		{
 			Username = "__Admin__",
@@ -470,21 +452,25 @@ public static class AppService
 
 		List<Riverside.Graphite.Core.User> users = new() { newUser };
 		UserFolderManager.CreateUserFolders(newUser);
-		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, newUser.Username);
+		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, newUser.Username);
 		if (Directory.Exists(userFolderPath))
+		{
 			HideDirectory(userFolderPath);
+		}
 
 		UserDataManager.SaveUsers(users);
 		AuthService.AddUser(newUser);
 		_ = AuthService.Authenticate(newUser.Username);
-
 	}
 
 	private static void ValidateCreatePrivateUser()
 	{
-		var userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
+		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
 
-		if (Directory.Exists(userFolderPath)) return; 
+		if (Directory.Exists(userFolderPath))
+		{
+			return;
+		}
 
 		User newUser = new()
 		{
@@ -496,13 +482,13 @@ public static class AppService
 
 		AuthService.AddUser(newUser);
 		UserFolderManager.CreateUserFolders(newUser);
-		
 	}
-	static void HideDirectory(string directoryPath)
+
+	private static void HideDirectory(string directoryPath)
 	{
 		if (Directory.Exists(directoryPath))
 		{
-			var attributes = File.GetAttributes(directoryPath);
+			FileAttributes attributes = File.GetAttributes(directoryPath);
 			if ((attributes & FileAttributes.Hidden) == 0)
 			{
 				attributes |= FileAttributes.Hidden;

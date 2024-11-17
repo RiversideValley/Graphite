@@ -11,7 +11,7 @@ namespace FireAuthService;
 public class Worker : BackgroundService
 {
 	private readonly HttpListener _listener;
-	private static IPublicClientApplication _app;
+	private static IPublicClientApplication? _app;
 	private static readonly string[] _scopes = new string[] { "user.read" };
 	protected string ClientId { get; } = "edfc73e2-cac9-4c47-a84c-dedd3561e8b5";
 	protected string RedirectUri { get; } = "urn:ietf:wg:oauth:2.0:oob";
@@ -24,7 +24,7 @@ public class Worker : BackgroundService
 	{
 		_listener = new HttpListener();
 		_listener.Prefixes.Add("http://+:12221/");
-		var myLogger = new MyIdentityLogger();
+		_ = new MyIdentityLogger();
 
 		try
 		{
@@ -41,17 +41,16 @@ public class Worker : BackgroundService
 			Console.WriteLine(e.ToString());
 			throw;
 		}
-
-
 	}
-	class MyIdentityLogger : IIdentityLogger
+
+	private class MyIdentityLogger : IIdentityLogger
 	{
 		public EventLogLevel MinLogLevel { get; }
 
 		public MyIdentityLogger()
 		{
 			//Retrieve the log level from an environment variable
-			var msalEnvLogLevel = Environment.GetEnvironmentVariable("MSAL_LOG_LEVEL");
+			string? msalEnvLogLevel = Environment.GetEnvironmentVariable("MSAL_LOG_LEVEL");
 
 			if (Enum.TryParse(msalEnvLogLevel, out EventLogLevel msalLogLevel))
 			{
@@ -91,10 +90,8 @@ public class Worker : BackgroundService
 					//   await HandleAuthRequest(context);
 					string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Pages", "login.html");
 					await HandleHtmlRequest(context, filePath);
-
 				}
 				else if (context.Request.Url?.AbsolutePath == "/about")
-
 				{
 					context.Response.Redirect("https://apps.microsoft.com/detail/9pcn40xxvcvb?hl=en-us&gl=US");
 					context.Response.Close();
@@ -103,13 +100,11 @@ public class Worker : BackgroundService
 				{
 					string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", "fincog.png");
 					await HandleImageRequest(context, filePath);
-
 				}
 				else if (context.Request.Url?.AbsolutePath == "/index")
 				{
 					string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Pages", "main.html");
 					await HandleHtmlRequest(context, filePath);
-
 				}
 				else if (context.Request.Url?.AbsolutePath == "/repo")
 				{
@@ -120,7 +115,6 @@ public class Worker : BackgroundService
 				{
 					string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Pages", "notfound.html");
 					await HandleHtmlRequest(context, filePath);
-
 				}
 			}
 
@@ -128,7 +122,6 @@ public class Worker : BackgroundService
 		}
 		catch (OperationCanceledException)
 		{
-
 			throw;
 		}
 		catch (Exception e)
@@ -136,41 +129,37 @@ public class Worker : BackgroundService
 			Console.WriteLine(e.Message?.ToString());
 			Environment.Exit(0);
 		}
-
 	}
 
 	private async Task HandleImageRequest(HttpListenerContext context, string _filepath)
 	{
-
 		if (File.Exists(_filepath))
 		{
 			string htmlContent = await File.ReadAllTextAsync(_filepath); context.Response.ContentType = "image/x-icon";
 			byte[] buffer = System.Text.Encoding.UTF8.GetBytes(htmlContent); context.Response.ContentLength64 = buffer.Length;
-			await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+			await context.Response.OutputStream.WriteAsync(buffer);
 			context.Response.OutputStream.Close();
 		}
 		else { context.Response.StatusCode = (int)HttpStatusCode.NotFound; context.Response.Close(); }
 	}
 	private async Task HandleHtmlRequest(HttpListenerContext context, string _filepath)
 	{
-
 		if (File.Exists(_filepath))
 		{
 			string htmlContent = await File.ReadAllTextAsync(_filepath); context.Response.ContentType = "text/html";
 			byte[] buffer = System.Text.Encoding.UTF8.GetBytes(htmlContent); context.Response.ContentLength64 = buffer.Length;
-			await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+			await context.Response.OutputStream.WriteAsync(buffer);
 			context.Response.OutputStream.Close();
 		}
 		else { context.Response.StatusCode = (int)HttpStatusCode.NotFound; context.Response.Close(); }
 	}
 	private async Task HandleAuthRequest(HttpListenerContext context)
 	{
-
-		var result = await _app.AcquireTokenInteractive(_scopes).ExecuteAsync();
+		AuthenticationResult result = await _app.AcquireTokenInteractive(_scopes).ExecuteAsync();
 
 		if (result != null)
 		{
-			var cookie = new Cookie("msalToken", result.AccessToken)
+			Cookie cookie = new("msalToken", result.AccessToken)
 			{
 				HttpOnly = true,
 				Secure = true,
@@ -182,26 +171,24 @@ public class Worker : BackgroundService
 			string authUri = "https://account.microsoft.com/profile/";
 			context.Response.Redirect(authUri);
 			context.Response.Close();
-
 		}
 		else
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 			context.Response.Close();
 		}
-
 	}
 
 	private async Task ProcessRequest(HttpListenerContext context)
 	{
-		HttpListenerRequest request = context.Request;
+		_ = context.Request;
 		HttpListenerResponse response = context.Response;
 
 		string responseString = "<html><title>Hello from FireBrowser Auth Servcie</title></html>";
 		byte[] buffer = Encoding.UTF8.GetBytes(responseString);
 
 		response.ContentLength64 = buffer.Length;
-		await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+		await response.OutputStream.WriteAsync(buffer);
 		response.OutputStream.Close();
 	}
 }

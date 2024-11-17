@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using static Riverside.Graphite.Extensions.IPluginCore;
 
 namespace Riverside.Graphite.Extensions;
 public interface IPluginBase
 {
-	public String Name { get; set; }
-	public String Description { get; set; }
+	public string Name { get; set; }
+	public string Description { get; set; }
 
 	public ObservableCollection<object> DynamicValues { get; set; }
 

@@ -1,7 +1,7 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 using System;
 
 namespace Riverside.Graphite.Pages.SettingsPages;
@@ -62,6 +62,5 @@ public sealed partial class SettingsPrivacy : Page
 
 	private void CamPermission_Toggled(object sender, RoutedEventArgs e)
 	{
-
 	}
 }

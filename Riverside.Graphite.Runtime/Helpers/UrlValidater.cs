@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -10,46 +10,42 @@ using Windows.Storage;
 
 namespace Riverside.Graphite.Runtime.Helpers
 {
-
 	public class UrlValidater
 	{
 		public static async Task<bool> IsUrlReachable(Uri url)
 		{
-			using (var httpClient = new HttpClient())
+			using HttpClient httpClient = new();
+			httpClient.BaseAddress = url;
+			try
 			{
-				httpClient.BaseAddress = url;
-				try
+				HttpResponseMessage response = await httpClient.GetAsync("");
+				if (response.IsSuccessStatusCode)
 				{
-					var response = await httpClient.GetAsync("");
-					if (response.IsSuccessStatusCode)
-					{
-						Console.WriteLine($"URL is reachable: {url}");
-						return true;
-					}
-					else
-					{
-						Console.WriteLine($"URL returned status code {response.StatusCode}: {url}");
-						return false;
-					}
+					Console.WriteLine($"URL is reachable: {url}");
+					return true;
 				}
-				catch (HttpRequestException e)
+				else
 				{
-					Console.WriteLine($"Request error: {e.Message}");
+					Console.WriteLine($"URL returned status code {response.StatusCode}: {url}");
 					return false;
 				}
-				catch (Exception e)
-				{
-					Console.WriteLine($"Unexpected error: {e.Message}");
-					return false;
-				}
+			}
+			catch (HttpRequestException e)
+			{
+				Console.WriteLine($"Request error: {e.Message}");
+				return false;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"Unexpected error: {e.Message}");
+				return false;
 			}
 		}
 		public static Uri? GetValidateUrl(string queryText)
 		{
+			Regex regex = new(@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog|firebrowser)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$", RegexOptions.IgnoreCase);
 
-			Uri uriOut = null;
-			Regex regex = new Regex(@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog|firebrowser)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$", RegexOptions.IgnoreCase);
-
+			Uri uriOut;
 			//Regex($@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$", RegexOptions.IgnoreCase);
 
 			if (IsUrlValid(queryText, regex, out Uri sendUri))
@@ -77,16 +73,16 @@ namespace Riverside.Graphite.Runtime.Helpers
 			return false;
 		}
 
-		static async Task<(string Name, string DisplayName)[]> GetProtocolsFromManifest()
+		private static async Task<(string Name, string DisplayName)[]> GetProtocolsFromManifest()
 		{
-			var packageFolder = Package.Current.InstalledLocation;
-			var manifestFile = await packageFolder.GetFileAsync("AppxManifest.xml");
-			var manifestContent = await FileIO.ReadTextAsync(manifestFile);
-			var xmlDoc = new XmlDocument();
+			StorageFolder packageFolder = Package.Current.InstalledLocation;
+			StorageFile manifestFile = await packageFolder.GetFileAsync("AppxManifest.xml");
+			string manifestContent = await FileIO.ReadTextAsync(manifestFile);
+			XmlDocument xmlDoc = new();
 			xmlDoc.LoadXml(manifestContent);
 
-			var protocolNodes = xmlDoc.SelectNodesNS("//uap:Protocol", "xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"");
-			var protocols = protocolNodes.Select(node => (
+			XmlNodeList protocolNodes = xmlDoc.SelectNodesNS("//uap:Protocol", "xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"");
+			(string Name, string DisplayName)[] protocols = protocolNodes.Select(node => (
 				Name: node.Attributes.GetNamedItem("Name").InnerText,
 				DisplayName: node.SelectSingleNodeNS("uap:DisplayName", "xmlns:uap=\"http://schemas.microsoft.com/appx/manifest/uap/windows10\"").InnerText
 			)).ToArray();

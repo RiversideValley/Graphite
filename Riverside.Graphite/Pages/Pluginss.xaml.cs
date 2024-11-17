@@ -1,6 +1,6 @@
+using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Services.PluginCore;
-using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,

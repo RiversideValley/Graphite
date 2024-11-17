@@ -58,14 +58,14 @@
                 Height="350"
                 CornerRadius="10">
                 <StackPanel>
-                    <Image x:Name="Image" Source="ms-appx:///Assets/default.png" />
+                    <Image x:Name="Image" Source="ms-appx:///Assets/Experience/OOBE/Default.png" />
                     <Image
                         x:Name="Image2"
-                        Source="ms-appx:///Assets/featured.png"
+                        Source="ms-appx:///Assets/Experience/OOBE/Featured.png"
                         Visibility="Collapsed" />
                     <Image
                         x:Name="Image3"
-                        Source="ms-appx:///Assets/costum.png"
+                        Source="ms-appx:///Assets/Experience/OOBE/Costume.png"
                         Visibility="Collapsed" />
                 </StackPanel>
             </Border>

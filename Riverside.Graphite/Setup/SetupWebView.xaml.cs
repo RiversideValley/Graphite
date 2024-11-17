@@ -1,10 +1,10 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services;
 using System;
 using System.IO;
 
@@ -35,7 +35,6 @@ public sealed partial class SetupWebView : Page
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
 			AppService.AppSettings.StatusBar = autoSettingValue;
-
 		}
 	}
 
@@ -45,13 +44,12 @@ public sealed partial class SetupWebView : Page
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
 			bool autoSettingValue = toggleSwitch.IsOn;
-			AppService.AppSettings.BrowserKeys = autoSettingValue; ;
+			AppService.AppSettings.BrowserKeys = autoSettingValue;
 		}
 	}
 
 	private void BrowserScripts_Toggled(object sender, RoutedEventArgs e)
 	{
-
 		if (sender is ToggleSwitch toggleSwitch)
 		{
 			// Assuming 'url' and 'selection' have been defined earlier
@@ -70,7 +68,6 @@ public sealed partial class SetupWebView : Page
 	}
 	private async void CreateNewSettings()
 	{
-
 		try
 		{
 			SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
@@ -88,7 +85,6 @@ public sealed partial class SetupWebView : Page
 					_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
 				}
 			}
-
 		}
 		catch (Exception ex)
 		{

@@ -1,22 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Riverside.Graphite.Services.Contracts;
-using Microsoft.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Messages;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Runtime.Helpers;
 
 namespace Riverside.Graphite.Services
 {
 	public class BackendWebViewController : ObservableRecipient
 	{
-		private ISettingsService SettingsService;
+		private readonly ISettingsService SettingsService;
 		public WebView2 WebView { get; set; }
 		public string TheAddressToGo { get; private set; }
 
@@ -28,12 +25,10 @@ namespace Riverside.Graphite.Services
 		{
 			WebView = new WebView2();
 			WebView.Source = new Uri(TheAddressToGo ?? "https://copilot.microsoft.com/");
-			WebView.EnsureCoreWebView2Async().AsTask();
-
+			_ = WebView.EnsureCoreWebView2Async().AsTask();
 		}
 		public async Task<Task> LoadWebSite(string source)
 		{
-
 			bool isNavigationCompleted = default;
 
 
@@ -43,7 +38,7 @@ namespace Riverside.Graphite.Services
 				WebView.Source = new Uri(TheAddressToGo = source);
 				await WebView.EnsureCoreWebView2Async();
 
-				DispatcherTimer dispatcherTimer = new DispatcherTimer();
+				DispatcherTimer dispatcherTimer = new();
 				dispatcherTimer.Interval = TimeSpan.FromSeconds(60);
 				dispatcherTimer.Start();
 				dispatcherTimer.Tick += (s, e) =>
@@ -65,20 +60,17 @@ namespace Riverside.Graphite.Services
 
 				return Task.CompletedTask;
 			}
-
 			catch (Exception e)
 			{
 				return Task.FromException(e);
 				throw;
 			}
-
 		}
 		internal void SetupWebView()
 		{
-
 			WebView.CoreWebView2.NewWindowRequested += (s, e) =>
 			{
-				var decode = HttpUtility.UrlDecode(e.Uri);
+				string decode = HttpUtility.UrlDecode(e.Uri);
 				Uri decodeUri = default;
 				if (Uri.TryCreate(decode, UriKind.RelativeOrAbsolute, out decodeUri))
 				{
@@ -86,7 +78,7 @@ namespace Riverside.Graphite.Services
 				}
 				else
 				{
-					Messenger.Send(new Message_Settings_Actions("Invalid Url was presented", EnumMessageStatus.XorError));
+					_ = Messenger.Send(new Message_Settings_Actions("Invalid Url was presented", EnumMessageStatus.XorError));
 					e.Handled = false;
 				}
 				e.Handled = true;
@@ -95,7 +87,7 @@ namespace Riverside.Graphite.Services
 		public async Task Intialize(MainWindow.Passer passer)
 		{
 			// any service that needs to tracking...
-			var url = UrlValidater.GetValidateUrl(passer.Param.ToString());
+			Uri url = UrlValidater.GetValidateUrl(passer.Param.ToString());
 			TheAddressToGo = url is null ? "about:blank" : url.ToString();
 
 			try

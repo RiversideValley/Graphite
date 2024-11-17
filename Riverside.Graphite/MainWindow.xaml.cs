@@ -1,22 +1,4 @@
 using CommunityToolkit.WinUI.Behaviors;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Core.Helper;
-using Riverside.Graphite.Runtime.CoreUi;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Runtime.Models;
-using Riverside.Graphite.Runtime.ShareHelper;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Favorites;
-using FireBrowserDatabase;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Notifications;
-using Riverside.Graphite.Services.Notifications.Toasts;
-using Riverside.Graphite.Services.ViewModels;
-using Riverside.Graphite.ViewModels;
-using Riverside.GraphiteQrCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -25,6 +7,22 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Runtime.ShareHelper;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.BarcodeHost;
+using Riverside.Graphite.Services.Notifications.Toasts;
+using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,7 +47,6 @@ namespace Riverside.Graphite;
 
 public sealed partial class MainWindow : Window
 {
-
 	private AppWindow appWindow;
 	public DownloadFlyout DownloadFlyout { get; set; }
 	public ProfileCommander Commander { get; set; }
@@ -72,7 +69,7 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
 
 		Commander = new ProfileCommander(ViewModelMain);
-		
+
 		InitializeComponent();
 
 		ArgsPassed();
@@ -82,22 +79,26 @@ public sealed partial class MainWindow : Window
 
 		try
 		{
-			if (AuthService.CurrentUser is Riverside.Graphite.Core.User user) {
+			if (AuthService.CurrentUser is Riverside.Graphite.Core.User user)
+			{
 				if (user?.Username != "Private")
+				{
 					DownloadFlyout = new DownloadFlyout();
+				}
 			}
-			
 		}
 		catch (Exception ex)
 		{
 			ExceptionLogger.LogException(ex);
 		}
-			
+
 
 		Closed += (s, e) =>
 		{
-			if (AuthService.CurrentUser.Username != "__Admin__" && AuthService.CurrentUser.Username != "Private")
+			if (AuthService.CurrentUser.Username is not "__Admin__" and not "Private")
+			{
 				AppService.Admin_Delete_Account();
+			}
 		};
 		SizeChanged += async (s, e) =>
 		{
@@ -125,7 +126,6 @@ public sealed partial class MainWindow : Window
 					await Task.Delay(60);
 					_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, maxWidth, appWindow.Size.Height, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
 					Windowing.FlashWindow(hWnd);
-
 				}
 				if (appWindow.Size.Height < maxHeight)
 				{
@@ -143,8 +143,6 @@ public sealed partial class MainWindow : Window
 
 	public void LoadDependencies()
 	{
-
-
 	}
 	public async void Init()
 	{
@@ -153,7 +151,6 @@ public sealed partial class MainWindow : Window
 		//string workerProjectName = "FireAuthService";
 		//string workerPath = Path.Combine(solutionDir, workerProjectName, "bin", "Release", "net8.0", "publish", "FireAuthService.exe");
 		//string nameService = nameof(FireAuthService).ToString();
-
 	}
 
 
@@ -185,8 +182,6 @@ public sealed partial class MainWindow : Window
 
 	private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
 	{
-
-
 		if (Tabs.TabItems?.Count > 1)
 		{
 			if (SettingsService.CoreSettings.ConfirmCloseDlg)
@@ -212,7 +207,6 @@ public sealed partial class MainWindow : Window
 						await Task.Delay(250);
 
 						Application.Current.Exit();
-
 					};
 					_ = await quickConfigurationDialog.ShowAsync();
 				}
@@ -311,8 +305,6 @@ public sealed partial class MainWindow : Window
 			.Where(u => u != currentUsername && !u.Contains("__Admin__"))
 			.ToList()
 			.ForEach(UserListView.Items.Add);
-
-
 	}
 
 	public void SmallUpdates()
@@ -804,14 +796,7 @@ public sealed partial class MainWindow : Window
 
 				break;
 			case "Home" when TabContent.Content is WebContent:
-				if (incog == true)
-				{
-					_ = TabContent.Navigate(typeof(InPrivate));
-				}
-				else
-				{
-					_ = TabContent.Navigate(typeof(NewTab));
-				}
+				_ = incog == true ? TabContent.Navigate(typeof(InPrivate)) : TabContent.Navigate(typeof(NewTab));
 				UrlBox.Text = "";
 				passer.Tab.Header = WebContent.IsIncognitoModeEnabled ? "Incognito" : "NewTab";
 				passer.Tab.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource()
@@ -863,7 +848,10 @@ public sealed partial class MainWindow : Window
 				break;
 			case "AddFavorite":
 
-				if (string.IsNullOrEmpty(FavoriteTitle.Text) || string.IsNullOrEmpty(FavoriteUrl.Text)) break;
+				if (string.IsNullOrEmpty(FavoriteTitle.Text) || string.IsNullOrEmpty(FavoriteUrl.Text))
+				{
+					break;
+				}
 
 				FavManager fv = new();
 				fv.SaveFav(FavoriteTitle.Text.ToString(), FavoriteUrl.Text.ToString());
@@ -1038,10 +1026,10 @@ public sealed partial class MainWindow : Window
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "Ratings":
-				_ = ToastRatings.SendToast(); 
+				_ = ToastRatings.SendToast();
 				break;
 			case "Updated":
-				_ = ToastUpdate.SendToast();	
+				_ = ToastUpdate.SendToast();
 				break;
 		}
 
@@ -1063,8 +1051,6 @@ public sealed partial class MainWindow : Window
 		{
 			ExceptionLogger.LogException(ex);
 		}
-
-
 	}
 
 	private ObservableCollection<HistoryItem> browserHistory;
@@ -1082,7 +1068,6 @@ public sealed partial class MainWindow : Window
 		{
 			ExceptionLogger.LogException(ex);
 		}
-
 	}
 
 	#endregion
@@ -1191,7 +1176,6 @@ public sealed partial class MainWindow : Window
 	private void ClearHistoryDataMenuItem_Click(object sender, RoutedEventArgs e) { ClearDb(); }
 	private void SearchHistoryMenuFlyout_Click(object sender, RoutedEventArgs e)
 	{
-
 		HistorySearchMenuItem.Visibility = HistorySearchMenuItem.Visibility == Visibility.Collapsed
 			? Visibility.Visible
 			: Visibility.Collapsed;
@@ -1301,7 +1285,7 @@ public sealed partial class MainWindow : Window
 
 			if (authResult == UserConsentVerificationResult.Verified)
 			{
-				Riverside.Graphite.IdentityClient.ViewModels.TwoFactorsAuthentification.ShowFlyout(Secure);
+				Riverside.Graphite.IdentityClient.Models.MultiFactorAuthentication.ShowFlyout(Secure);
 			}
 			else
 			{
@@ -1393,6 +1377,4 @@ public sealed partial class MainWindow : Window
 	{
 		UrlBox.Text = args.SelectedItem.ToString();
 	}
-
-	
 }

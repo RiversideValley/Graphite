@@ -1,7 +1,7 @@
-using Riverside.Graphite.Assets;
-using Riverside.Graphite.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Assets;
+using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,11 +41,11 @@ namespace Riverside.Graphite
 		private async Task CreateUserAndNavigate()
 		{
 			await CreateUserOnStartup();
-			await InPrivateUser(); 
+			await InPrivateUser();
 			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
-		private  async Task InPrivateUser()
+		private async Task InPrivateUser()
 		{
 			User newUser = new()
 			{

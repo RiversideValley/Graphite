@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Runtime\Riverside.Graphite.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,13 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Models;
-using Microsoft.EntityFrameworkCore;
 using System.IO;
 
 namespace Riverside.Graphite.Data.Core;
 
 public class DownloadContext : DbContext
 {
-
 	public DbSet<DownloadItem> Downloads { get; set; }
 	public string ConnectionPath { get; set; }
 	public DownloadContext(string username)
@@ -16,6 +15,7 @@ public class DownloadContext : DbContext
 	}
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		=> optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
-
+	{
+		_ = optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+	}
 }

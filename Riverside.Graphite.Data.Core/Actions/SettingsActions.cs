@@ -1,7 +1,7 @@
-﻿using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions.Contracts;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -19,7 +19,7 @@ public class SettingsActions : IUISettings
 	{
 		try
 		{
-			var settings = await SettingsContext.Settings.AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync();
+			Settings settings = await SettingsContext.Settings.AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync();
 			return settings;
 		}
 		catch (Exception ex)
@@ -35,10 +35,9 @@ public class SettingsActions : IUISettings
 		try
 		{
 			SettingsContext.ChangeTracker.Clear();
-			SettingsContext.Settings.Update(settings);
-			var result = await SettingsContext.SaveChangesAsync();
-			return result > 0 ? true : false;
-
+			_ = SettingsContext.Settings.Update(settings);
+			int result = await SettingsContext.SaveChangesAsync();
+			return result > 0;
 		}
 		catch (Exception ex)
 		{
@@ -52,10 +51,9 @@ public class SettingsActions : IUISettings
 	{
 		try
 		{
-			SettingsContext.Settings.Add(settings);
-			var result = await SettingsContext.SaveChangesAsync();
-			return result > 0 ? true : false;
-
+			_ = SettingsContext.Settings.Add(settings);
+			int result = await SettingsContext.SaveChangesAsync();
+			return result > 0;
 		}
 		catch (Exception ex)
 		{

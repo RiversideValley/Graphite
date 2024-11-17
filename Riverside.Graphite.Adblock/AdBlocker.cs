@@ -1,4 +1,6 @@
-﻿using Microsoft.Web.WebView2.Core;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,21 +10,23 @@ using System.Threading.Tasks;
 
 namespace WebViewAdBlocker
 {
-	public class AdBlocker
+	public class AdBlockerWrapper : IDisposable
 	{
 		private bool _isEnabled;
 		private HashSet<string> _adDomains;
 		private List<Regex> _adPatterns;
 		private HashSet<string> _whitelist;
-		private CoreWebView2 _webView;
+		private WebView2 _webView;
+		private string _scriptJS = default;
+		private bool disposedValue;
 
-		public AdBlocker()
+		public AdBlockerWrapper()
 		{
 			_isEnabled = false;
 			_adDomains = new HashSet<string>();
 			_adPatterns = new List<Regex>();
 			_whitelist = new HashSet<string>();
-			LoadEasyList();
+			LoadEasyList(); 
 		}
 
 		private void LoadEasyList()
@@ -38,6 +42,20 @@ namespace WebViewAdBlocker
 			else
 			{
 				Console.WriteLine("EasyList.txt not found in Assets folder.");
+			}
+
+			string jsScript = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "adblocker.js");
+			if (File.Exists(jsScript))
+			{
+				foreach (var line in File.ReadLines(jsScript))
+				{
+					_scriptJS += line;
+				}
+				_scriptJS.Trim();
+			}
+			else
+			{
+				Console.WriteLine("Adblocker.js not found in Assets folder.");
 			}
 		}
 
@@ -78,15 +96,54 @@ namespace WebViewAdBlocker
 			}
 		}
 
-		public void Initialize(CoreWebView2 webView)
+		~AdBlockerWrapper()
 		{
-			_webView = webView;
-			_webView.NavigationStarting += WebView_NavigationStarting;
-			_webView.FrameNavigationStarting += WebView_FrameNavigationStarting;
-			_webView.WebResourceRequested += WebView_WebResourceRequested;
+			Dispose(false); 
+		}
 
-			// Enable WebResourceRequested event for all resource types
-			_webView.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+		public void Unregister()
+		{
+			_webView.CoreWebView2.NavigationStarting -= WebView_NavigationStarting;
+			_webView.CoreWebView2.FrameNavigationStarting -= WebView_FrameNavigationStarting;
+			_webView.CoreWebView2.WebResourceRequested -= WebView_WebResourceRequested;
+			_webView.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
+			_webView.CoreWebView2Initialized -= WebView_CoreWebView2Initialized;
+		}
+
+		public async Task Initialize(WebView2 webView)
+		{
+			try
+			{
+				_webView = webView;
+				
+				await _webView.EnsureCoreWebView2Async();
+
+				_webView.CoreWebView2.NavigationStarting += WebView_NavigationStarting;
+				_webView.CoreWebView2.FrameNavigationStarting += WebView_FrameNavigationStarting;
+				_webView.CoreWebView2.WebResourceRequested += WebView_WebResourceRequested;
+				_webView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+				_webView.CoreWebView2Initialized += WebView_CoreWebView2Initialized;
+				_webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				throw;
+			}
+		}
+
+		private async void WebView_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
+		{
+			if (args.Exception is Exception ex) { 
+				ExceptionLogger.LogException(ex);	
+			}
+			await _webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(_scriptJS); 
+		}
+
+		private async void CoreWebView2_NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+		{
+			await Task.Delay(2400);
+			await InjectAdBlockingScript();
 		}
 
 		public void Toggle()
@@ -95,38 +152,38 @@ namespace WebViewAdBlocker
 			Console.WriteLine($"Ad blocker is now {(_isEnabled ? "enabled" : "disabled")}");
 		}
 
-		private void WebView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+		private async void WebView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
 		{
 			if (_isEnabled)
 			{
-				BlockAdsIfNecessary(e.Uri, e);
+				await BlockAdsIfNecessary(e.Uri, e);
 			}
 		}
 
-		private void WebView_FrameNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+		private async void WebView_FrameNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
 		{
 			if (_isEnabled)
 			{
-				BlockAdsIfNecessary(e.Uri, e);
+				await BlockAdsIfNecessary(e.Uri, e);
 			}
 		}
 
-		private void WebView_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
+		private async void WebView_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
 		{
 			if (_isEnabled)
 			{
-				BlockAdsIfNecessary(e.Request.Uri, e);
+				await BlockAdsIfNecessary(e.Request.Uri, e);
 			}
 		}
 
-		private void BlockAdsIfNecessary(string uriString, dynamic e)
+		private Task BlockAdsIfNecessary(string uriString, dynamic e)
 		{
 			Uri uri = new Uri(uriString);
 
 			// Check whitelist first
 			if (_whitelist.Any(rule => Regex.IsMatch(uriString, WildcardToRegex(rule))))
 			{
-				return;
+				return Task.CompletedTask; 
 			}
 
 			if (_adDomains.Contains(uri.Host) || _adPatterns.Any(pattern => pattern.IsMatch(uriString)))
@@ -137,10 +194,11 @@ namespace WebViewAdBlocker
 				}
 				else if (e is CoreWebView2WebResourceRequestedEventArgs resourceEvent)
 				{
-					resourceEvent.Response = _webView.Environment.CreateWebResourceResponse(null, 403, "Blocked", null);
+					resourceEvent.Response = _webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 403, "Blocked", null);
 				}
 				Console.WriteLine($"Blocked ad from: {uri.Host}");
 			}
+			return Task.CompletedTask;
 		}
 
 		private string WildcardToRegex(string pattern)
@@ -153,32 +211,29 @@ namespace WebViewAdBlocker
 
 		public async Task InjectAdBlockingScript()
 		{
-			if (_isEnabled && _webView != null)
+			if (_isEnabled && _scriptJS != null)
 			{
-				string script = @"
-                    (function() {
-                        const adSelectors = [
-                            '.ad', '#ad', '[class*=""ad-""]', '[id*=""ad-""]',
-                            'ins.adsbygoogle', '.advert', '.advertisement'
-                            // Add more selectors as needed
-                        ];
-                        
-                        function removeAds() {
-                            adSelectors.forEach(selector => {
-                                document.querySelectorAll(selector).forEach(el => el.remove());
-                            });
-                        }
-
-                        removeAds();
-                        new MutationObserver(removeAds).observe(document.body, {
-                            childList: true,
-                            subtree: true
-                        });
-                    })();
-                ";
-
-				await _webView.ExecuteScriptAsync(script);
+				await _webView.CoreWebView2.ExecuteScriptAsync(_scriptJS);
 			}
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					Unregister(); 
+				}
+				disposedValue = true;
+			}
+		}
+
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

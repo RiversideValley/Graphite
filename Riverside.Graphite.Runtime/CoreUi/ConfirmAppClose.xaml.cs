@@ -4,5 +4,8 @@ namespace Riverside.Graphite.Runtime.CoreUi;
 
 public sealed partial class ConfirmAppClose : ContentDialog
 {
-	public ConfirmAppClose() => InitializeComponent();
+	public ConfirmAppClose()
+	{
+		InitializeComponent();
+	}
 }

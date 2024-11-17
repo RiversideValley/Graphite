@@ -1,20 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Controls;
-using Riverside.Graphite.Pages;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Services.Notifications;
-using Riverside.Graphite.Services.Notifications.Toasts;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.Notifications.Toasts;
 using System;
 using System.IO;
 using System.Threading;
@@ -54,19 +53,16 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[RelayCommand]
 	public void CloseMoreFlyout()
 	{
-
 		_ = MainView.DispatcherQueue.TryEnqueue(() =>
 		{
 			MainView?.MoreFlyout.Hide();
 		});
-
-
 	}
 	[RelayCommand]
 	public Task GetActiveWebView()
 	{
 		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
-		if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
+		if (currentWindow != null && currentWindow.TabViewContainer.SelectedItem is FireBrowserTabViewItem && currentWindow.TabContent.Content is WebContent web)
 		{
 			WebViewContentPicture = web.PictureWebElement;
 		}
@@ -81,7 +77,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			using Stream stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
 			if (stream == null)
 			{
-				MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Microsoft.png"));
+				MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Icons/Products/MicrosoftOffice.png"));
 				return;
 			}
 
@@ -232,7 +228,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	private void ShowLoginNotification()
 	{
-		ToastRatings.SendToast(); 
+		_ = ToastRatings.SendToast();
 		ShowNotification("Riverside.Graphite", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
 	}
 

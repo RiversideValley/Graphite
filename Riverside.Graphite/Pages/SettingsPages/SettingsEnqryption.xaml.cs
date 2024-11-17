@@ -1,7 +1,7 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Pages.SettingsPages

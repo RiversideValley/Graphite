@@ -1,9 +1,10 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Data.Core.Actions;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class HistoryTimeLine : Page
 {
 	private readonly User _user = AuthService.CurrentUser;
-	private ObservableCollection<FireBrowserDatabase.HistoryItem> _browserHistory;
+	private ObservableCollection<HistoryItem> _browserHistory;
 
 	public HistoryTimeLine()
 	{
@@ -49,7 +50,7 @@ public sealed partial class HistoryTimeLine : Page
 		}
 
 		// Filter and bind the browser history based on the search text
-		BigTemp.ItemsSource = new ObservableCollection<FireBrowserDatabase.HistoryItem>(
+		BigTemp.ItemsSource = new ObservableCollection<HistoryItem>(
 			_browserHistory.Where(item =>
 				item.Url.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
 				item.Title?.Contains(searchText, StringComparison.OrdinalIgnoreCase) == true));
@@ -74,7 +75,7 @@ public sealed partial class HistoryTimeLine : Page
 
 	private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
 	{
-		if (((FrameworkElement)sender).DataContext is FireBrowserDatabase.HistoryItem historyItem)
+		if (((FrameworkElement)sender).DataContext is HistoryItem historyItem)
 		{
 			ShowContextMenu(historyItem.Url, (FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
 		}
@@ -102,9 +103,9 @@ public sealed partial class HistoryTimeLine : Page
 
 	private void RemoveHistoryItem(string selectedHistoryItem)
 	{
-		if (BigTemp.ItemsSource is ObservableCollection<FireBrowserDatabase.HistoryItem> historyItems)
+		if (BigTemp.ItemsSource is ObservableCollection<HistoryItem> historyItems)
 		{
-			FireBrowserDatabase.HistoryItem itemToRemove = historyItems.FirstOrDefault(item => item.Url == selectedHistoryItem);
+			HistoryItem itemToRemove = historyItems.FirstOrDefault(item => item.Url == selectedHistoryItem);
 			if (itemToRemove != null)
 			{
 				_ = historyItems.Remove(itemToRemove);
@@ -118,7 +119,7 @@ public sealed partial class HistoryTimeLine : Page
 		{
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-				if (e.AddedItems.FirstOrDefault() is FireBrowserDatabase.HistoryItem historyItem)
+				if (e.AddedItems.FirstOrDefault() is HistoryItem historyItem)
 				{
 					window.NavigateToUrl(historyItem.Url);
 				}

@@ -1,5 +1,5 @@
-using Riverside.Graphite.Services.ViewModels;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Services.ViewModels;
 
 namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class DownloadsTimeLine : Page
@@ -15,6 +15,5 @@ public sealed partial class DownloadsTimeLine : Page
 
 	private void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 	{
-
 	}
 }

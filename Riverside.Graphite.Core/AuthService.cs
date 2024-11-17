@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -48,9 +49,15 @@ public class AuthService
 
 	public static bool IsUserAuthenticated => CurrentUser != null;
 
-	public static bool SwitchUser(string username) => (CurrentUser = users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase))) != null;
+	public static bool SwitchUser(string username)
+	{
+		return (CurrentUser = users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase))) != null;
+	}
 
-	public static bool Authenticate(string username) => SwitchUser(username);
+	public static bool Authenticate(string username)
+	{
+		return SwitchUser(username);
+	}
 
 	public static void AddUser(User newUser)
 	{
@@ -62,6 +69,8 @@ public class AuthService
 		}
 	}
 
+	[RequiresDynamicCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
+	[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
 	private static void SaveUsers()
 	{
 		try
@@ -74,24 +83,37 @@ public class AuthService
 		}
 	}
 
-	public static List<string> GetAllUsernames() => users.Select(u => u.Username).ToList();
+	public static List<string> GetAllUsernames()
+	{
+		return users.Select(u => u.Username).ToList();
+	}
+
 	public static bool IsUserNameChanging { get; set; }
-	public static void Logout() => CurrentUser = null;
+	public static void Logout()
+	{
+		CurrentUser = null;
+	}
+
 	public static ChangeUsernameData UserWhomIsChanging { get; set; }
 
 	public static User NewCreatedUser { get; set; }
+
 	public static bool ChangeUsername(string oldUsername, string newUsername)
 	{
 		User userToChange = users.FirstOrDefault(u => u.Username.Equals(oldUsername, StringComparison.OrdinalIgnoreCase));
 		if (userToChange == null || users.Any(u => u.Username.Equals(newUsername, StringComparison.OrdinalIgnoreCase)))
+		{
 			return IsUserNameChanging = false;
+		}
 
 		userToChange.Username = newUsername;
 
 		SaveUsers();
 
 		if (CurrentUser != null && CurrentUser.Username.Equals(oldUsername, StringComparison.OrdinalIgnoreCase))
+		{
 			CurrentUser = userToChange;
+		}
 
 		UserWhomIsChanging = new(oldUsername, userToChange.Username);
 		return IsUserNameChanging = true;
@@ -101,6 +123,5 @@ public class AuthService
 	{
 		public FileInfo FileInfo { get; set; }
 		public DirectoryInfo? DirectoryInfo { get; set; }
-
 	}
 }

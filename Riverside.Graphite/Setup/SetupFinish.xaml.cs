@@ -1,7 +1,7 @@
-using Riverside.Graphite.Runtime.Helpers;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Services;
 using System;
 using System.Threading.Tasks;
 using WinRT.Interop;

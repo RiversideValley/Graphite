@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Events;
 using System;
@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 namespace Riverside.Graphite.Services;
 public partial class DownloadService : ObservableObject, IServiceDownloads
 {
-
 	[ObservableProperty]
 	private User _authorizedUser;
 	public ObservableCollection<Riverside.Graphite.Controls.DownloadItem> DownloadItemControls { get; set; }
@@ -65,9 +64,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 					downloadItem.ServiceDownloads = this;
 					uiControl.Insert(0, downloadItem);
 				});
-			};
-
-
+			}
 		}
 		catch (Exception ex)
 		{
@@ -77,7 +74,6 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 		}
 
 		return uiControl;
-
 	}
 
 	#region CRUD 
@@ -102,11 +98,9 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 		catch (Exception ex)
 		{
 			ExceptionLogger.LogException(ex);
-
 		}
 
 		return false;
-
 	}
 
 	public async Task UpdateAsync()
@@ -127,9 +121,7 @@ public partial class DownloadService : ObservableObject, IServiceDownloads
 		catch (Exception ex)
 		{
 			ExceptionLogger.LogException(ex);
-
 		}
-
 	}
 
 	#endregion

@@ -1,12 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Graph.Models;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppNotifications;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Services.Notifications.Interfaces
@@ -20,13 +15,11 @@ namespace Riverside.Graphite.Services.Notifications.Interfaces
 
 		public Task NotificationReceived(AppNotificationActivatedEventArgs notificationActivatedEventArgs);
 
-		
-		public NotificationMessenger NotificationMessenger { get; set;  }
 
-		public DateTimeOffset ExpirationTime { get; set; }	
+		public NotificationMessenger NotificationMessenger { get; set; }
+
+		public DateTimeOffset ExpirationTime { get; set; }
 		public abstract AppNotification Notification { get; set; }
 		public abstract DispatcherQueue DispatcherQueue { get; set; }
-
-
 	}
 }

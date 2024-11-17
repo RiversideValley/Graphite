@@ -1,7 +1,7 @@
-﻿using Riverside.Graphite.Data.Migration.Helpers;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using Riverside.Graphite.Data.Migration.Helpers;
 using System;
 using System.IO;
 
@@ -9,7 +9,7 @@ namespace Riverside.Graphite.Data.Migration.Chromium;
 
 public static class Cookies
 {
-	private static WebView2 manipulationWebView = new();
+	private static readonly WebView2 manipulationWebView = new();
 
 	public static async void Apply(string default_path)
 	{
@@ -27,30 +27,31 @@ public static class Cookies
 				throw new FileNotFoundException($"The database file was not found at the path: {path}");
 			}
 
-			using (SqliteConnection connection = new SqliteConnection($"Filename={path}"))
+			using SqliteConnection connection = new($"Filename={path}");
+			connection.Open();
+
+			SqliteCommand selectHistoryCommand = new("SELECT name, encrypted_value, host_key, path, is_secure, is_httponly, samesite FROM cookies", connection);
+			SqliteDataReader query = selectHistoryCommand.ExecuteReader();
+
+			while (query.Read())
 			{
-				connection.Open();
+				// Decrypt the cookie
+				byte[] encryptedCookie = (byte[])query[1];
+				string decryptedCookieValue = ChromiumDataDecryptionHelpers.Decrypt(encryptedCookie, default_path);
 
-				SqliteCommand selectHistoryCommand = new SqliteCommand("SELECT name, encrypted_value, host_key, path, is_secure, is_httponly, samesite FROM cookies", connection);
-				SqliteDataReader query = selectHistoryCommand.ExecuteReader();
+				// Convert the cookie
+				CoreWebView2Cookie cookie = manager.CreateCookie(query.GetString(0), decryptedCookieValue, query.GetString(2), query.GetString(3));
+				cookie.IsSecure = query.GetInt16(4) == 1;
+				cookie.IsHttpOnly = query.GetInt16(5) == 1;
 
-				while (query.Read())
+				short sameSite = query.GetInt16(6);
+				if (sameSite != -1)
 				{
-					// Decrypt the cookie
-					var encryptedCookie = (byte[])query[1];
-					string decryptedCookieValue = ChromiumDataDecryptionHelpers.Decrypt(encryptedCookie, default_path);
-
-					// Convert the cookie
-					var cookie = manager.CreateCookie(query.GetString(0), decryptedCookieValue, query.GetString(2), query.GetString(3));
-					cookie.IsSecure = query.GetInt16(4) == 1;
-					cookie.IsHttpOnly = query.GetInt16(5) == 1;
-
-					short sameSite = query.GetInt16(6);
-					if (sameSite != -1) cookie.SameSite = (CoreWebView2CookieSameSiteKind)sameSite;
-
-					// Add the cookie
-					manager.AddOrUpdateCookie(cookie);
+					cookie.SameSite = (CoreWebView2CookieSameSiteKind)sameSite;
 				}
+
+				// Add the cookie
+				manager.AddOrUpdateCookie(cookie);
 			}
 		}
 		catch (FileNotFoundException ex)

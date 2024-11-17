@@ -19,7 +19,7 @@ namespace Riverside.Graphite.Data.Core.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
-            modelBuilder.Entity("Riverside.Graphite.Data.Core.Models.HistoryItem", b =>
+            modelBuilder.Entity("Riverside.Graphite.Data.Core.Models.DbHistoryItem", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()

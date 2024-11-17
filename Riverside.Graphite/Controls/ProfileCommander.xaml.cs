@@ -1,13 +1,13 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Runtime.CoreUi;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.ViewModels;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -91,7 +91,6 @@ public sealed partial class ProfileCommander : Flyout
 
 	private async void ChangeUsername_Click(object sender, RoutedEventArgs e)
 	{
-
 		_ = Messenger.Send(new Message_Settings_Actions(EnumMessageStatus.Settings));
 
 		string olduser = UsernameDisplay.Text;
@@ -103,7 +102,6 @@ public sealed partial class ProfileCommander : Flyout
 
 		// must restart due to file locking allocation old user file are in use by webview, and dbservices.
 		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
-
 	}
 
 	private void Button_Click(object sender, RoutedEventArgs e)
@@ -111,7 +109,6 @@ public sealed partial class ProfileCommander : Flyout
 		string site = "google"; // Default site
 		QuickSign win = new(site);
 		win.Activate();
-
 	}
 
 	private void Button_Click_1(object sender, RoutedEventArgs e)

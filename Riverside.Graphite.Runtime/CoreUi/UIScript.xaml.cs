@@ -8,10 +8,10 @@ public sealed partial class UIScript : ContentDialog
 	public UIScript(string title, string content, XamlRoot root)
 	{
 		InitializeComponent();
-		this.Title = title;
-		this.XamlRoot = root;
-		this.Content = content;
-		this.PrimaryButtonText = "Okay";
+		Title = title;
+		XamlRoot = root;
+		Content = content;
+		PrimaryButtonText = "Okay";
 		DefaultButton = ContentDialogButton.Primary;
 	}
 }

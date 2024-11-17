@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -9,12 +9,12 @@ namespace Riverside.Graphite.Runtime.Helpers.JsonReflection
 	{
 		public static List<string> GetJsonPropertyNames<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>()
 		{
-			var jsonPropertyNames = new List<string>();
+			List<string> jsonPropertyNames = new();
 
-			var properties = typeof(T).GetProperties();
-			foreach (var property in properties)
+			PropertyInfo[] properties = typeof(T).GetProperties();
+			foreach (PropertyInfo property in properties)
 			{
-				var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
+				JsonPropertyAttribute jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
 				if (jsonPropertyAttribute != null)
 				{
 					jsonPropertyNames.Add(jsonPropertyAttribute.PropertyName);
@@ -24,6 +24,5 @@ namespace Riverside.Graphite.Runtime.Helpers.JsonReflection
 			return jsonPropertyNames;
 		}
 	}
-
 }
 

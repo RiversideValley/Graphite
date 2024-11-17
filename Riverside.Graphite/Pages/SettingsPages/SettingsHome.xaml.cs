@@ -1,15 +1,15 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Runtime.Licensing;
-using Riverside.Graphite.Runtime.Models;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Messages;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Runtime.Models;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -266,7 +266,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 			finally
 			{
-
 			}
 		}
 	}

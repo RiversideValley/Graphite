@@ -1,13 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.Behaviors;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Pages.Patch;
-using Riverside.Graphite.Services.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -73,17 +73,14 @@ namespace Riverside.Graphite.Services.ViewModels
 				Duration = TimeSpan.FromSeconds(3)
 			};
 			_ = (UpLoadBackup.Instance?.NotificationQueue.Show(note));
-
 		}
 
 		[RelayCommand]
 		private async Task BackUpCore()
 		{
-
 			BackUpDialog dlg = new();
 			dlg.XamlRoot = UpLoadBackup.Instance?.GridMainUploadBackup.XamlRoot;
 			_ = await dlg.ShowAsync();
-
 		}
 		//public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
 		//{
@@ -171,18 +168,6 @@ namespace Riverside.Graphite.Services.ViewModels
 
 			//await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
 			//await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
-
 		}
-
-
 	}
-
-
-	public class EmailUser
-	{
-		public string Name { get; set; }
-		public string Email { get; set; }
-	}
-
-
 }

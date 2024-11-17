@@ -145,13 +145,6 @@
                     ItemsSource="{x:Bind ViewModel.Users, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectedItem="{x:Bind ViewModel.User, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectionChanged="UserListView_SelectionChanged">
-                    <ListView.Background>
-                        <ImageBrush
-                            AlignmentX="Center"
-                            AlignmentY="Bottom"
-                            ImageSource="ms-appx:///Assets/globefire.jfif"
-                            Opacity="1" />
-                    </ListView.Background>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:UserExtend">
                             <Grid Padding="8" ColumnSpacing="12">
@@ -209,7 +202,7 @@
                     <ImageIcon
                         Width="24"
                         Height="24"
-                        Source="ms-appx:///Assets/weatherpic.png" />
+                        Source="ms-appx:///Assets/Icons/Weather.png" />
                 </Button>
             </Grid>
         </Grid>

@@ -13,11 +13,11 @@ namespace Riverside.Graphite.Data.Favorites
 	/// </summary>
 	public sealed partial class ImportBookMarks : ContentDialog
 	{
-		private FavManager _favManager;
+		private readonly FavManager _favManager;
 
 		public ImportBookMarks()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			_favManager = new FavManager();
 		}
 

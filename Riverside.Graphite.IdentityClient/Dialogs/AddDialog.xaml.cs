@@ -1,7 +1,8 @@
-using Riverside.Graphite.IdentityClient.Private;
-using Riverside.Graphite.IdentityClient.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.IdentityClient.Helpers;
+using Riverside.Graphite.IdentityClient.Models;
+using Riverside.Graphite.IdentityClient.Utils;
 using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -31,7 +32,7 @@ namespace Riverside.Graphite.IdentityClient.Dialogs
 
 			if (secretBox.Text.Length > 0) // 0 for testing purposes
 			{
-				TwoFactorsAuthentification.Add(nameBox.Text, secretBox.Text);
+				MultiFactorAuthentication.Add(nameBox.Text, secretBox.Text);
 			}
 
 			Hide();
@@ -51,7 +52,6 @@ namespace Riverside.Graphite.IdentityClient.Dialogs
 				package.SetText(code);
 				Clipboard.SetContent(package);
 			}
-
 		}
 	}
 }

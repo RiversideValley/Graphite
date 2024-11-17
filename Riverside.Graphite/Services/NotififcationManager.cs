@@ -1,17 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Riverside.Graphite.Runtime.Exceptions;
-using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Services.Notifications;
-using Riverside.Graphite.Services.Notifications.Toasts;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Windows.AppNotifications;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.Notifications.Toasts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Azure.Core.HttpHeader;
 
 namespace Riverside.Graphite.Services
 {
@@ -19,9 +13,9 @@ namespace Riverside.Graphite.Services
 	{
 		private bool m_isRegistered;
 
-		private Dictionary<int, Action<AppNotificationActivatedEventArgs>> c_notificationHandlers;
+		private readonly Dictionary<int, Action<AppNotificationActivatedEventArgs>> c_notificationHandlers;
 
-		public NotificationManager() 
+		public NotificationManager()
 		{
 			m_isRegistered = false;
 
@@ -41,7 +35,7 @@ namespace Riverside.Graphite.Services
 
 		public void Init()
 		{
-			var notificationManager = AppNotificationManager.Default;
+			AppNotificationManager notificationManager = AppNotificationManager.Default;
 
 			// To ensure all Notification handling happens in this process instance, register for
 			// NotificationInvoked before calling Register(). Without this a new process will
@@ -63,8 +57,8 @@ namespace Riverside.Graphite.Services
 
 		public void ProcessLaunchActivationArgs(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-			DispatchNotification(notificationActivatedEventArgs);
-			Messenger.Send(new Message_Settings_Actions("Application launched by notification", EnumMessageStatus.Informational));
+			_ = DispatchNotification(notificationActivatedEventArgs);
+			_ = Messenger.Send(new Message_Settings_Actions("Application launched by notification", EnumMessageStatus.Informational));
 		}
 
 		public bool DispatchNotification(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
@@ -76,11 +70,11 @@ namespace Riverside.Graphite.Services
 
 					if (arguments.ContainsKey("action") && arguments["action"] == "UpdateApp")
 					{
-						c_notificationHandlers[((int)(EnumMessageStatus.Updated))](notificationActivatedEventArgs);
+						c_notificationHandlers[(int)EnumMessageStatus.Updated](notificationActivatedEventArgs);
 					}
-					else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp") 
+					else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp")
 					{
-						c_notificationHandlers[((int)(EnumMessageStatus.Informational))](notificationActivatedEventArgs);
+						c_notificationHandlers[(int)EnumMessageStatus.Informational](notificationActivatedEventArgs);
 					}
 
 					return true;
@@ -91,13 +85,10 @@ namespace Riverside.Graphite.Services
 					return false; // Couldn't find a NotificationHandler for scenarioId.
 				}
 			}
-
 		}
 
-		void OnNotificationInvoked(object sender, AppNotificationActivatedEventArgs notificationActivatedEventArgs)
+		private void OnNotificationInvoked(object sender, AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-
-
 			if (!DispatchNotification(notificationActivatedEventArgs))
 			{
 				Console.WriteLine("Unregisterd author of notifications");

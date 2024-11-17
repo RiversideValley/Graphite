@@ -1,29 +1,23 @@
-﻿using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppNotifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Riverside.Graphite.Core;
+using Microsoft.Windows.AppNotifications.Builder;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services.Messages;
+using System;
 using System.Collections.ObjectModel;
 using WinRT.Interop;
-using Microsoft.UI.Xaml;
 
 namespace Riverside.Graphite.Services.Notifications.Toasts
 {
 	public class ToastUpdate
 	{
-	
 		public const string Title = "Fire Browser Notifications";
 
 		public static ObservableCollection<FireNotification> NotificationMessages = new();
 
 		public static bool SendToast()
 		{
-			var appNotification = new AppNotificationBuilder()
+			AppNotification appNotification = new AppNotificationBuilder()
 				.AddArgument("action", "ToastClick")
 				.AddArgument(((int)EnumMessageStatus.Updated).ToString(), "UserStatus")
 				.SetAppLogoOverride(new Uri("file://" + App.GetFullPathToAsset("fire_globe1.png")), AppNotificationImageCrop.Circle)
@@ -42,17 +36,16 @@ namespace Riverside.Graphite.Services.Notifications.Toasts
 
 		public static async void NotificationReceived(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 		{
-			var noteMsg = new NotificationMessenger(ref NotificationMessages);
-			var notification = new FireNotification();
+			NotificationMessenger noteMsg = new(ref NotificationMessages);
+			FireNotification notification = new();
 			notification.Originator = Title;
 			notification.Action = notificationActivatedEventArgs.Arguments["action"];
 			await noteMsg.InstallUpdatesAsync(notification);
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 				nint hWnd = WindowNative.GetWindowHandle(window);
-				Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
+				_ = Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_RESTORE);
 			}
-
 		}
 	}
 }

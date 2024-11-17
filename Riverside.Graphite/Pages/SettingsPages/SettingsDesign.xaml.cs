@@ -1,8 +1,8 @@
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Services;
 
 namespace Riverside.Graphite.Pages.SettingsPages;
 public sealed partial class SettingsDesign : Page
@@ -21,7 +21,6 @@ public sealed partial class SettingsDesign : Page
 	public void Init()
 	{
 		AutoTog.IsOn = SettingsService.CoreSettings.Auto;
-
 	}
 
 	public void Check()
@@ -47,7 +46,6 @@ public sealed partial class SettingsDesign : Page
 
 			// Save the modified settings back to the user's settings file
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
-
 		}
 	}
 
@@ -83,7 +81,6 @@ public sealed partial class SettingsDesign : Page
 			// Save the modified settings back to the user's settings file
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
 		}
-
 	}
 
 	private async void ColorTVPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
@@ -96,7 +93,6 @@ public sealed partial class SettingsDesign : Page
 			// Save the modified settings back to the user's settings file
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
 		}
-
 	}
 
 	private async void ColorNtpPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
@@ -109,7 +105,6 @@ public sealed partial class SettingsDesign : Page
 			// Save the modified settings back to the user's settings file
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
 		}
-
 	}
 
 	private async void ColorBackGroundPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
@@ -121,8 +116,6 @@ public sealed partial class SettingsDesign : Page
 
 			// Save the modified settings back to the user's settings file
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
-
 		}
-
 	}
 }
