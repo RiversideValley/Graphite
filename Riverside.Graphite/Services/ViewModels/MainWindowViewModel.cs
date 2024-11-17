@@ -140,7 +140,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			web.CoreWebView2.NewWindowRequested += (s, e) =>
 			{
 
-				MainView.TabWebView.Source = new(e.Uri);
+				MainView.NavigateToUrl(e.Uri);
 				e.Handled = true;
 
 			};
