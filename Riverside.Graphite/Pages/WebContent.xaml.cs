@@ -185,7 +185,7 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
 
 			
-			AdBlockerService.Toggle();
+			AdBlockerService.Toggle(true);
 			await AdBlockerService.Initialize(WebView);
 
 		}

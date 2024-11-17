@@ -76,9 +76,9 @@ namespace Riverside.Graphite.Services
 			await InjectAdBlockingScript();
 		}
 
-		public void Toggle()
+		public void Toggle(bool onOff)
 		{
-			_isEnabled = !_isEnabled;
+			_isEnabled = onOff;
 			Console.WriteLine($"Ad blocker is now {(_isEnabled ? "enabled" : "disabled")}");
 		}
 
