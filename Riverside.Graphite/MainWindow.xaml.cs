@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Encodings.Web;
 using System.Threading;
@@ -93,14 +94,31 @@ public sealed partial class MainWindow : Window
 		}
 
 
-		Closed += (s, e) =>
+		Closed += async(s, e) =>
 		{
 			if (AuthService.CurrentUser.Username is not "__Admin__" and not "Private")
 			{
 				AppService.Admin_Delete_Account();
 			}
+			
+			string nameof = "Copilot By Graphite";
 
-			_=	ViewModelMain.CopilotExists();
+			if (Windowing.FindWindowsByName(nameof) is List<nint> collection)
+			{
+
+				if (collection.Count > 0)
+				{
+					foreach (nint winId in collection)
+					{
+						if (Windowing.IsWindow(winId))
+						{
+							Windowing.DestroyWindow(winId);
+						}
+						else
+							continue;
+					}
+				}
+			}
 
 		};
 		SizeChanged += async (s, e) =>

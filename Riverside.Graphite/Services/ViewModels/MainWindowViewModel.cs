@@ -103,7 +103,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 
-	const string nameof = "Copilot By Graphite";
+	private const string nameof = "Copilot By Graphite";
 	public Task<bool> CopilotExists() {
 
 		
@@ -116,12 +116,15 @@ public partial class MainWindowViewModel : ObservableRecipient
 				{
 					if (Windowing.IsWindow(winId))
 					{
-						bool success = Windowing.DestroyWindow(winId);
-						if (!success)
+						if (Windowing.IsWindowVisible(winId))
 						{
-							int error = Marshal.GetLastWin32Error();
-							throw new Exception($"DestroyWindow failed with error code {error}");
+							Windowing.ShowWindow(winId, Windowing.WindowShowStyle.SW_HIDE);
 						}
+						else {
+							Windowing.ShowWindow(winId, Windowing.WindowShowStyle.SW_SHOW);
+						}
+						
+						
 					}
 					else
 						continue;

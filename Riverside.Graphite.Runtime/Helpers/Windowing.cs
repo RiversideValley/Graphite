@@ -40,6 +40,15 @@ public class Windowing
 
 
 
+	[DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+	public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+
+	[DllImport("user32.dll", CharSet = CharSet.Auto)]
+	public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+	
+	[DllImport("user32.dll")]
+	public static extern bool CloseWindow(IntPtr hWnd);
+
 	[DllImport("user32.dll")]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	public static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
