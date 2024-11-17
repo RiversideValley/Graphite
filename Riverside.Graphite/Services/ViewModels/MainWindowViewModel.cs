@@ -127,10 +127,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			}
 		}
 
-		if (MainView.DispatcherQueue is null) { MainView?.NotificationQueue.Show("Copilot wasn't able to load", 2000, "Graphite notificatoin");  return; }
-
-
-		
+				
 			SizeInt32? desktop = await Windowing.SizeWindow();
 
 			Window wndCopilot = new Window();
@@ -158,7 +155,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 			if (appWindow != null)
 			{
-				appWindow.MoveAndResize(new RectInt32(0, 0, 600, (int)(desktop.Value.Height * .5)));
+				appWindow.MoveAndResize(new RectInt32(0, 0, 600, (int)(desktop.Value.Height * .75)));
 				appWindow.MoveInZOrderAtTop();
 				appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 				appWindow.Title = nameof;
@@ -173,7 +170,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			}
 
 		wndCopilot.Activate(); 
-		Windowing.AnimateWindow(hWnd, 1500, Windowing.AW_HOR_NEGATIVE | Windowing.AW_SLIDE);
+		Windowing.AnimateWindow(hWnd, 2000, Windowing.AW_HOR_NEGATIVE | Windowing.AW_SLIDE | Windowing.AW_ACTIVATE);
 
 	}
 	[RelayCommand]
