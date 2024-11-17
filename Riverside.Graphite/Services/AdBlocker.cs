@@ -36,8 +36,12 @@ namespace Riverside.Graphite.Services
 		}
 		public void Unregister()
 		{
-			_webView.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
-			_webView.CoreWebView2Initialized -= WebView_CoreWebView2Initialized;
+			if (_webView is not null)
+			{
+				_webView.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
+				_webView.CoreWebView2Initialized -= WebView_CoreWebView2Initialized;
+			}
+			
 		}
 
 		public async Task Initialize(WebView2 webView)

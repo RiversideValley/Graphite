@@ -152,10 +152,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 			web.Source =  new Uri("https://copilot.microsoft.com/?showconv=1&?auth=1");
 			await web.EnsureCoreWebView2Async();
 
-			AdBlockerWrapper blockerWrapper = App.GetService<AdBlockerWrapper>();
-			await blockerWrapper.Initialize(web);
-			blockerWrapper.Toggle(); 
-
 			web.CoreWebView2.NewWindowRequested += (s, e) =>
 			{
 				MainView.NavigateToUrl(e.Uri);

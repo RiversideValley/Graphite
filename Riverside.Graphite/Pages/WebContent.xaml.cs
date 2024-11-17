@@ -159,7 +159,7 @@ namespace Riverside.Graphite.Pages
 			SetupEventHandlers(s);
 		}
 
-		private void SetupEventHandlers(WebView2 s)
+		private async void SetupEventHandlers(WebView2 s)
 		{
 			s.CoreWebView2.ContainsFullScreenElementChanged += (sender, args) =>
 			{
@@ -183,6 +183,11 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceRequested += WebResourceRequested;
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
+
+			
+			AdBlockerService.Toggle();
+			await AdBlockerService.Initialize(WebView);
+
 		}
 
 		private async void ScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
