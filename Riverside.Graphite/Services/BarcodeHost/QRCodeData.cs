@@ -103,7 +103,7 @@ public class QRCodeData : IDisposable
 				dataQueue.Enqueue((bool)module ? 1 : 0);
 			}
 		}
-		for (int i = 0; i < 8 - (ModuleMatrix.Count * ModuleMatrix.Count % 8); i++)
+		for (int i = 0; i < 8 - ((ModuleMatrix.Count * ModuleMatrix.Count) % 8); i++)
 		{
 			dataQueue.Enqueue(0);
 		}

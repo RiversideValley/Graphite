@@ -50,7 +50,6 @@ namespace Riverside.Graphite.Services
 
 				_webView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
 				_webView.CoreWebView2Initialized += WebView_CoreWebView2Initialized;
-				
 			}
 			catch (Exception ex)
 			{
