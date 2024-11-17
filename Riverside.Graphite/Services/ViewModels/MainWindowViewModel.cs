@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
-using Microsoft.Graph.Groups.Item.Team.Channels.Item.DoesUserHaveAccessuserIdUserIdTenantIdTenantIdUserPrincipalNameUserPrincipalName;
 using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -23,10 +22,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
+
 
 namespace Riverside.Graphite.Services.ViewModels;
 
@@ -149,10 +146,16 @@ public partial class MainWindowViewModel : ObservableRecipient
 			Window wndCopilot = new Window();
 		
 			
+			
 			WebView2 web = new WebView2();
 			web.Margin = new Thickness(0, 32, 0, 0); 
 			web.Source =  new Uri("https://copilot.microsoft.com/?showconv=1&?auth=1");
 			await web.EnsureCoreWebView2Async();
+
+			AdBlockerWrapper blockerWrapper = App.GetService<AdBlockerWrapper>();
+			await blockerWrapper.Initialize(web);
+			blockerWrapper.Toggle(); 
+
 			web.CoreWebView2.NewWindowRequested += (s, e) =>
 			{
 
@@ -160,7 +163,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 				e.Handled = true;
 
 			};
-
+			
 			wndCopilot.Content = web; 
 			
 			// window procs
@@ -183,11 +186,10 @@ public partial class MainWindowViewModel : ObservableRecipient
 				titleBar.ButtonInactiveBackgroundColor = btnColor;
 				appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 
-			}
+		}
 
-		wndCopilot.Activate();
-		AppService.FireWindows.Add(wndCopilot); 
-		Windowing.AnimateWindow(hWnd, 2000, Windowing.AW_HOR_NEGATIVE | Windowing.AW_SLIDE | Windowing.AW_ACTIVATE);
+		AppService.FireWindows.Add(wndCopilot);
+		Windowing.AnimateWindow(hWnd, 200, Windowing.AW_HOR_NEGATIVE | Windowing.AW_BLEND | Windowing.AW_ACTIVATE);
 
 	}
 	[RelayCommand]

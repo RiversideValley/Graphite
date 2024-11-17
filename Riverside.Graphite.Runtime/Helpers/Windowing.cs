@@ -13,6 +13,64 @@ using Windows.Graphics;
 using WinRT.Interop;
 
 namespace Riverside.Graphite.Runtime.Helpers;
+public class WindowBounce(Window inWindow) {
+
+	private DispatcherTimer timer;
+	private int bounceCount = 0;
+	private int screenWidth, screenHeight, windowWidth, windowHeight;
+
+	
+	public async Task ShowWindowBounce()
+	{
+
+		IntPtr hWnd = WindowNative.GetWindowHandle(inWindow);
+		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
+
+		Windows.Graphics.SizeInt32? desktop = await Windowing.SizeWindow();
+		// Get screen dimensions
+		screenWidth = desktop.Value.Width;
+		screenHeight = desktop.Value.Height;
+
+		// Get window dimensions
+		windowWidth = appWindow.Size.Width;
+		windowHeight = appWindow.Size.Height;
+
+		timer = new DispatcherTimer();
+		timer.Interval = TimeSpan.FromMilliseconds(40); // Adjust the interval for smoother animation
+		timer.Tick += (s, args) => AnimateWindow(hWnd);
+		timer.Start();
+	}
+
+	private void AnimateWindow(IntPtr hwnd)
+	{
+		bounceCount++;
+
+		// Calculate the center position
+		int centerX = (screenWidth - windowWidth) / 2;
+		int startY = -windowHeight; // Start above the screen
+		int endY = (screenHeight - windowHeight) / 2;
+
+		// Calculate the new Y position
+		int newY = startY + (bounceCount * 50);
+		if (bounceCount > 10) // Bounce effect after sliding in
+		{
+			newY = endY - (int)(Math.Sin((bounceCount - 10) * 0.3) * 50);
+		}
+
+		// Move the window to the new position
+		_ = Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, newY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
+
+		// Stop the animation after a while
+		if (bounceCount > 30)
+		{
+			timer.Stop();
+			// Ensure window ends at the center position
+			_ = Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, endY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
+		}
+	}
+
+}
 public class Windowing
 {
 	public enum Monitor_DPI_Type : int

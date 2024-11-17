@@ -628,7 +628,7 @@
                                         Width="24"
                                         Height="24"
                                         HorizontalAlignment="Left"
-                                        Source="ms-appx:///Assets/Microsoft.png" />
+                                        Source="ms-appx:///Assets/Icons/Products/MicrosoftOffice.png" />
                                     <TextBlock HorizontalAlignment="Right" Text="Office 365" />
                                     <AppBarSeparator />
                                 </StackPanel>
@@ -731,9 +731,9 @@
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72B;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Back" >
+                    Tag="Back">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="B" />
+                        <KeyboardAccelerator Key="B" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
@@ -741,9 +741,9 @@
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72A;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Forward" >
+                    Tag="Forward">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="F" />
+                        <KeyboardAccelerator Key="F" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
@@ -751,9 +751,9 @@
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72C;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Refresh" >
+                    Tag="Refresh">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="R" />
+                        <KeyboardAccelerator Key="R" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
@@ -761,9 +761,9 @@
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE80F;}"
                     Style="{StaticResource QuietButtonStyle}"
-                    Tag="Home" >
+                    Tag="Home">
                     <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="H" />
+                        <KeyboardAccelerator Key="H" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
@@ -773,7 +773,7 @@
                     <Image
                         Width="16"
                         Height="16"
-                        Source="ms-appx:///Assets/MsLogo.png" />
+                        Source="ms-appx:///Assets/Icons/Products/Microsoft.png" />
                 </Button>
             </StackPanel>
             <Grid
