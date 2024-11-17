@@ -720,17 +720,17 @@ public class QRCodeGenerator : IDisposable
 
 			public static bool Pattern6(int x, int y)
 			{
-				return (x * y % 2) + (x * y % 3) == 0;
+				return ((x * y) % 2) + ((x * y) % 3) == 0;
 			}
 
 			public static bool Pattern7(int x, int y)
 			{
-				return ((x * y % 2) + (x * y % 3)) % 2 == 0;
+				return (((x * y) % 2) + ((x * y) % 3)) % 2 == 0;
 			}
 
 			public static bool Pattern8(int x, int y)
 			{
-				return (((x + y) % 2) + (x * y % 3)) % 2 == 0;
+				return (((x + y) % 2) + ((x * y) % 3)) % 2 == 0;
 			}
 
 			public static int Score(ref QRCodeData qrCode)

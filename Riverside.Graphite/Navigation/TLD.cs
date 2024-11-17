@@ -11,7 +11,6 @@ namespace Riverside.Graphite.Navigation;
 
 public class TLD
 {
-
 	public static string KnownDomains { get; set; }
 
 	public static async Task LoadKnownDomainsAsync()
