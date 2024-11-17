@@ -96,7 +96,8 @@ public class Windowing
 	public const int AW_ACTIVATE = 0x20000;
 	public const int AW_BLEND = 0x80000;
 
-
+	[DllImport("user32.dll")] 
+	public static extern bool SetForegroundWindow(IntPtr hWnd);
 
 	[DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
 	public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);

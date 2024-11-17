@@ -148,7 +148,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			
 			
 			WebView2 web = new WebView2();
-			web.Margin = new Thickness(0, 32, 0, 0); 
+			web.Margin = new Thickness(0, 48, 0, 0); 
 			web.Source =  new Uri("https://copilot.microsoft.com/?showconv=1&?auth=1");
 			await web.EnsureCoreWebView2Async();
 
@@ -158,8 +158,16 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 			web.CoreWebView2.NewWindowRequested += (s, e) =>
 			{
-
 				MainView.NavigateToUrl(e.Uri);
+
+				if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
+					if (Windowing.IsWindowVisible(WindowNative.GetWindowHandle(App.Current.m_window)))
+						Windowing.SetForegroundWindow(WindowNative.GetWindowHandle(App.Current.m_window));
+					else
+						Windowing.ShowWindow(WindowNative.GetWindowHandle(App.Current.m_window), Windowing.WindowShowStyle.SW_SHOWNORMAL);
+
+				
+				
 				e.Handled = true;
 
 			};
