@@ -70,8 +70,8 @@ namespace Riverside.Graphite.Pages
 
 			await Task.Delay(500);
 			User username = AuthService.CurrentUser;
-			string source = WebViewElement.CoreWebView2.Source;
-			string title = WebViewElement.CoreWebView2.DocumentTitle;
+			string source = WebViewElement.CoreWebView2?.Source;
+			string title = WebViewElement.CoreWebView2?.DocumentTitle;
 
 		    var dbContext = new HistoryActions(username.Username);
 			await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
@@ -159,7 +159,7 @@ namespace Riverside.Graphite.Pages
 			SetupEventHandlers(s);
 		}
 
-		private async void SetupEventHandlers(WebView2 s)
+		private void SetupEventHandlers(WebView2 s)
 		{
 			s.CoreWebView2.ContainsFullScreenElementChanged += (sender, args) =>
 			{
@@ -185,8 +185,8 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
 
 			
-			AdBlockerService.Toggle(true);
-			await AdBlockerService.Initialize(WebView);
+			//AdBlockerService.Toggle(true);
+			//await AdBlockerService.Initialize(WebView);
 
 		}
 
@@ -286,7 +286,8 @@ namespace Riverside.Graphite.Pages
 
 			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
 			{
-				await AfterComplete();
+				if(WebViewElement.CoreWebView2?.Source is not null)
+					await AfterComplete();
 			}
 		}
 
@@ -317,7 +318,12 @@ namespace Riverside.Graphite.Pages
 			{
 				AppService.IsAppUserAuthenicated = false;
 				Console.WriteLine("User has logged out.");
-				sender.Navigate("https://fireapp.msal/main.html");
+				MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+				window.TabContent.Navigate(typeof(NewTab));
+				window.NotificationQueue.Show("You have been logged out of Microsoft", 2000, "Graphite Authorization");
+				window.ViewModelMain.IsMsLogin = false; 
+				window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));	
+
 				return;
 			}
 

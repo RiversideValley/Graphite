@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Web.WebView2.Core;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
@@ -77,6 +78,7 @@ public sealed partial class MainWindow : Window
 		LoadUserDataAndSettings(); // Load data and settings for the new user
 		_ = LoadUserSettings();
 		Init();
+		
 
 		try
 		{
@@ -779,7 +781,7 @@ public sealed partial class MainWindow : Window
 	#endregion
 
 	#region click
-	private async void ToolbarButtonClick(object sender, RoutedEventArgs e)
+	public async void ToolbarButtonClick(object sender, RoutedEventArgs e)
 	{
 		Passer passer = new()
 		{

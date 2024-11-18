@@ -23,6 +23,8 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
 using System.Collections.Generic;
+using static Riverside.Graphite.MainWindow;
+using System.Runtime.CompilerServices;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -222,7 +224,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		catch (OperationCanceledException)
 		{
 			AppService.IsAppUserAuthenicated = IsMsLogin = false;
-			MainView.NavigateToUrl("https://fireapp.msal/main.html");
+			OnPropertyChanged(nameof(IsMsLogin));	
 			_ = MainView.NotificationQueue.Show("You've been logged out of Microsoft", 15000, "Authorization");
 			Console.WriteLine("The task was canceled due to timeout.");
 		}
@@ -275,7 +277,15 @@ public partial class MainWindowViewModel : ObservableRecipient
 	{
 		if (!AppService.IsAppUserAuthenicated)
 		{
-			MainView.NavigateToUrl("https://fireapp.msal/main.html");
+			var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
+			var frm = new Frame();
+			frm.CanBeScrollAnchor = true;
+			frm.Navigate(typeof(WebContent), MainView.CreatePasser("https://fireapp.msal/main.html"));
+			frm.Height = 512;
+			frm.Width = 400;
+			fly.Content = frm; 	
+			FlyoutBase.SetAttachedFlyout(sender, fly);
+			FlyoutBase.ShowAttachedFlyout(sender);
 		}
 		else
 		{
@@ -345,4 +355,9 @@ public partial class MainWindowViewModel : ObservableRecipient
 		};
 		_ = MainView.NotificationQueue.Show(note);
 	}
+	public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
+	{
+		OnPropertyChanged(propertyName);
+	}
+
 }

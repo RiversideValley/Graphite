@@ -433,6 +433,7 @@
     <Resource Remove="Controls\ResetCore.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\WebView\AppFrontend\src\" />
     <Folder Include="Services\Workers\" />
   </ItemGroup>
   <PropertyGroup>
