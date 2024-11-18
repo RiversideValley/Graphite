@@ -275,6 +275,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[RelayCommand]
 	private void LoginToMicrosoft(Button sender)
 	{
+	
 		if (!AppService.IsAppUserAuthenicated)
 		{
 			var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
@@ -289,7 +290,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 		else
 		{
-			IsMsLogin = true;
 			FlyoutBase.SetAttachedFlyout(sender, MainView.MsLoggedInOptions);
 			FlyoutBase.ShowAttachedFlyout(sender);
 		}
