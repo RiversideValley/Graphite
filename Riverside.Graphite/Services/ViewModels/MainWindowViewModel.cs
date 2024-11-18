@@ -275,7 +275,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[RelayCommand]
 	private void LoginToMicrosoft(Button sender)
 	{
-	
+		IsMsLogin = AppService.IsAppUserAuthenicated; 
+
 		if (!AppService.IsAppUserAuthenicated)
 		{
 			var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
