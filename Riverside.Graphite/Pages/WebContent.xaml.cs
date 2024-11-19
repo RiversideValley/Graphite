@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -481,7 +482,7 @@ namespace Riverside.Graphite.Pages
 
 		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
 		{
-			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize" };
+			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize", "https://login.microsoftonline.com/common/oauth2/v2.0/token" };
 			return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
 		}
 
@@ -489,7 +490,8 @@ namespace Riverside.Graphite.Pages
 		{
 			try
 			{
-				return response.Headers.Any(head => head.Key == "Set-Cookie" );
+				// ignore case some providers use Set-Cookie & others set-cookie capture all 
+				return response.Headers.Any(head => head.Key.ToLower() == "set-cookie" );
 			}
 			catch
 			{
@@ -668,25 +670,40 @@ namespace Riverside.Graphite.Pages
 
 		private async void CheckNetworkStatus()
 		{
-			while (true)
+			// this was freezing up the webview changed / if internet do nothing 
+
+			bool isInternetAvailable = NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
+
+			if (isInternetAvailable)
+				return; 
+
+			using CancellationTokenSource cts = new(TimeSpan.FromSeconds(2));
+			try
 			{
-				bool isInternetAvailable = NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
-				if (isInternetAvailable && isOffline)
+				while (!isInternetAvailable)
 				{
-					WebViewElement.Reload();
-					Grid.Visibility = Visibility.Visible;
-					offlinePage.Visibility = Visibility.Collapsed;
-					isOffline = false;
+					if (isInternetAvailable && isOffline)
+					{
+						WebViewElement.Reload();
+						Grid.Visibility = Visibility.Visible;
+						offlinePage.Visibility = Visibility.Collapsed;
+						isOffline = false;
+					}
+					else if (!isInternetAvailable)
+					{
+						offlinePage.Visibility = Visibility.Visible;
+						Grid.Visibility = Visibility.Collapsed;
+						isOffline = true;
+					}
+					await Task.Delay(100, cts.Token);
 				}
-				else if (!isInternetAvailable)
-				{
-					offlinePage.Visibility = Visibility.Visible;
-					Grid.Visibility = Visibility.Collapsed;
-					isOffline = true;
-					await Task.Delay(1000);
-				}
-				await Task.Delay(1000);
+
 			}
+			catch (OperationCanceledException)
+			{
+				Console.WriteLine("The task was canceled due to timeout.");
+			}
+
 		}
 	}
 }
