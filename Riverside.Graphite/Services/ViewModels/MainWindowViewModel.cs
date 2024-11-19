@@ -35,7 +35,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(ShowOfficeOptionsCommand))]
-	private bool isMsLogin = AppService.IsAppUserAuthenicated;
+	private bool isMsLogin;
 
 	[ObservableProperty]
 	private BitmapImage msProfilePicture;
@@ -290,8 +290,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private void LoginToMicrosoft(Button sender)
 	{
 		IsMsLogin = AppService.IsAppUserAuthenicated;
-		OnPropertyChanged(nameof(IsMsLogin));
-
+	
 		var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
 		
 		fly.AllowFocusOnInteraction = true; 
@@ -306,6 +305,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		FlyoutBase.SetAttachedFlyout(sender, fly);
 		FlyoutBase.ShowAttachedFlyout(sender);
 		
+		OnPropertyChanged(nameof(IsMsLogin));
 	}
 
 	private void ReceivedStatus(Message_Settings_Actions message)

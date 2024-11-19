@@ -253,7 +253,7 @@ namespace Riverside.Graphite.Pages
 
 				try
 				{
-					await DispatcherQueue.EnqueueAsync(async () =>
+					DispatcherQueue.TryEnqueue(async () =>
 					{
 						using MemoryStream memoryStream = new();
 						try

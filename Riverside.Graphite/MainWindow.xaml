@@ -801,7 +801,7 @@
                     Style="{ThemeResource PortalBarStyle}"
                     SuggestionChosen="UrlBox_SuggestionChosen"
                     TabIndex="1"
-                    Text="{x:Bind ViewModel.CurrentAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{x:Bind ViewModel.CurrentAddress, Mode=OneWay}"
                     TextChanged="UrlBox_TextChanged" />
                 <Button
                     x:Name="Secure"
