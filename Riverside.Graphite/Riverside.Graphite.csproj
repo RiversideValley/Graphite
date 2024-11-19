@@ -149,6 +149,7 @@
     <None Remove="Assets\WebView\AppFrontend\notfound.html" />
     <None Remove="ChangeUsernameCore.xaml" />
     <None Remove="Controls\CreateBackup.xaml" />
+    <None Remove="Controls\MsalAuth.xaml" />
     <None Remove="Controls\PopUpView.xaml" />
     <None Remove="Controls\ProfileCommander.xaml" />
     <None Remove="Controls\ResetCore.xaml" />
@@ -327,6 +328,9 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\MsalAuth.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Styles\Thickness.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

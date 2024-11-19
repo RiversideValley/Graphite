@@ -34,7 +34,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 	internal MainWindow MainView { get; set; }
 
 	[ObservableProperty]
-	[NotifyPropertyChangedFor(nameof(IsMsLoginVisibility), nameof(IsMsButtonVisibility))]
+	[NotifyCanExecuteChangedFor(nameof(ShowOfficeOptionsCommand))]
 	private bool isMsLogin = AppService.IsAppUserAuthenicated;
 
 	[ObservableProperty]
@@ -44,8 +44,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[NotifyCanExecuteChangedFor(nameof(MsOptionsWebCommand))]
 	private ListViewItem msOptionSelected;
 
-	public Visibility IsMsLoginVisibility => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
-	public Visibility IsMsButtonVisibility => !IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
+	[ObservableProperty]
+	private Visibility msOptionVisibility;
 
 	[ObservableProperty]
 	private BitmapImage profileImage;
@@ -55,6 +55,13 @@ public partial class MainWindowViewModel : ObservableRecipient
 	public MainWindowViewModel(IMessenger messenger) : base(messenger)
 	{
 		Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
+		MsOptionVisibility = Visibility.Collapsed;
+	}
+
+	partial void OnIsMsLoginChanged(bool value)
+	{
+		MsOptionVisibility = value ? Visibility.Visible : Visibility.Collapsed;	
+		OnPropertyChanged(nameof(MsOptionVisibility));	
 	}
 
 	[RelayCommand]
@@ -206,7 +213,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 			MainView.NavigateToUrl("https://login.microsoftonline.com/common/oauth2/v2.0/logout?client_id=edfc73e2-cac9-4c47-a84c-dedd3561e8b5&post_logout_redirect_uri=https://www.bing.com");
 		}
 
-		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(10));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(5));
 		try
 		{
 			while (AppService.IsAppUserAuthenicated)
@@ -218,7 +225,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 					break;
 				}
 
-				await Task.Delay(400, cts.Token);
+				await Task.Delay(100, cts.Token);
 			}
 		}
 		catch (OperationCanceledException)
@@ -272,28 +279,33 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 
+	[RelayCommand(CanExecute = nameof(IsMsLogin))]
+	private void ShowOfficeOptions(Button sender) {
+
+		FlyoutBase.SetAttachedFlyout(sender, MainView.MsLoggedInOptions);
+		FlyoutBase.ShowAttachedFlyout(sender);
+	}
+
 	[RelayCommand]
 	private void LoginToMicrosoft(Button sender)
 	{
-		IsMsLogin = AppService.IsAppUserAuthenicated; 
+		IsMsLogin = AppService.IsAppUserAuthenicated;
+		OnPropertyChanged(nameof(IsMsLogin));
 
-		if (!AppService.IsAppUserAuthenicated)
-		{
-			var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
-			var frm = new Frame();
-			frm.CanBeScrollAnchor = true;
-			frm.Navigate(typeof(WebContent), MainView.CreatePasser("https://fireapp.msal/main.html"));
-			frm.Height = 512;
-			frm.Width = 400;
-			fly.Content = frm; 	
-			FlyoutBase.SetAttachedFlyout(sender, fly);
-			FlyoutBase.ShowAttachedFlyout(sender);
-		}
-		else
-		{
-			FlyoutBase.SetAttachedFlyout(sender, MainView.MsLoggedInOptions);
-			FlyoutBase.ShowAttachedFlyout(sender);
-		}
+		var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
+		
+		fly.AllowFocusOnInteraction = true; 
+		var frm = new Frame();
+		frm.Width = 424;
+		frm.Height = 500; 
+		frm.CanBeScrollAnchor = true;
+		frm.Navigate(typeof(WebContent), MainView.CreatePasser("https://fireapp.msal/main.html"));
+		frm.Padding = new Thickness(1,0,1,0);
+		fly.Content = frm; 	
+		
+		FlyoutBase.SetAttachedFlyout(sender, fly);
+		FlyoutBase.ShowAttachedFlyout(sender);
+		
 	}
 
 	private void ReceivedStatus(Message_Settings_Actions message)

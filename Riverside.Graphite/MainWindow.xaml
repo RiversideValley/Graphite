@@ -599,8 +599,7 @@
                 <Grid
                     Width="200"
                     Height="500"
-                    Margin="0,0,10,0"
-                    Visibility="{x:Bind ViewModelMain.IsMsLoginVisibility, Mode=OneWay}">
+                    Margin="0,0,10,0">
                     <StackPanel>
                         <StackPanel Padding="4" Orientation="Vertical">
                             <TextBlock
@@ -634,12 +633,12 @@
                                 </StackPanel>
                             </ListViewItem>
                             <ListViewItem Content="Apps" Tag="https://myapps.microsoft.com/" />
-                            <ListViewItem Content="Copilot (AI)" Tag="https://copilot.microsoft.com/?auth=1" />
-                            <ListViewItem Content="Excel" Tag="https://www.office.com/launch/Excel?auth=1" />
-                            <ListViewItem Content="Outlook" Tag="https://outlook.live.com/mail/?auth=1" />
+                            <ListViewItem Content="Copilot (AI)" Tag="https://copilot.microsoft.com" />
+                            <ListViewItem Content="Excel" Tag="https://www.microsoft365.com/launch/excel/?auth=1" />
+                            <ListViewItem Content="Outlook" Tag="https://outlook.office.com/mail/?auth=1" />
                             <ListViewItem Content="OneDrive" Tag="https://onedrive.live.com/?auth=1" />
-                            <ListViewItem Content="PowerPoint" Tag="https://www.office.com/launch/PowerPoint/?auth=1" />
-                            <ListViewItem Content="Word" Tag="https://www.office.com/launch/Word/?auth=1" />
+                            <ListViewItem Content="PowerPoint" Tag="https://www.microsoft365.com/launch/powerpoint/?auth=1" />
+                            <ListViewItem Content="Word" Tag="https://www.microsoft365.com/launch/word/?auth=1" />
                         </ListView>
                         <Line />
                         <StackPanel Orientation="Horizontal">
@@ -774,6 +773,16 @@
                         Width="16"
                         Height="16"
                         Source="ms-appx:///Assets/Icons/Products/Microsoft.png" />
+                </Button>
+                <Button
+                    Command="{x:Bind ViewModelMain.ShowOfficeOptionsCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                    ToolTipService.ToolTip="Office 365"
+                    Visibility="{x:Bind ViewModelMain.MsOptionVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="ms-appx:///Assets/Icons/Products/MicrosoftOffice.png" />
                 </Button>
             </StackPanel>
             <Grid

@@ -70,13 +70,14 @@ namespace Riverside.Graphite.Pages
 
 			await Task.Delay(500);
 			User username = AuthService.CurrentUser;
-			string source = WebViewElement.CoreWebView2?.Source;
+			string source = WebViewElement.Source.ToString();
 			string title = WebViewElement.CoreWebView2?.DocumentTitle;
 
 		    var dbContext = new HistoryActions(username.Username);
 			await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
 
-			UpdateSecurityInfo(source);
+			if (source is not null)
+				UpdateSecurityInfo(source);
 		}
 
 		private void UpdateSecurityInfo(string source)
@@ -130,7 +131,7 @@ namespace Riverside.Graphite.Pages
 
 		protected override void OnNavigatedFrom(NavigationEventArgs e)
 		{
-			AdBlockerService.Dispose();
+			AdBlockerService.Unregister();
 		}
 
 		protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -156,10 +157,10 @@ namespace Riverside.Graphite.Pages
 				s.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
 			}
 
-			SetupEventHandlers(s);
+			await SetupEventHandlersAsync(s);
 		}
 
-		private void SetupEventHandlers(WebView2 s)
+		private async Task SetupEventHandlersAsync(WebView2 s)
 		{
 			s.CoreWebView2.ContainsFullScreenElementChanged += (sender, args) =>
 			{
@@ -184,9 +185,9 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
 
-			
-			//AdBlockerService.Toggle(true);
-			//await AdBlockerService.Initialize(WebView);
+
+			AdBlockerService.Toggle(true);
+			await AdBlockerService.Initialize(WebView);
 
 		}
 
@@ -341,10 +342,14 @@ namespace Riverside.Graphite.Pages
 			if (IsLoginRequest(e.Request))
 			{
 				CoreWebView2WebResourceResponseView response = e.Response;
-				if (response.StatusCode == 200 && IsLoginSuccessful(response))
+				if (response.StatusCode == 200 && IsLoginSuccessful(e.Response))
 				{
 					AppService.IsAppUserAuthenicated = true;
+					MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+					window.ViewModelMain.IsMsLogin = true;
+					window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));
 					Console.WriteLine("Login successful.");
+					
 				}
 			}
 
@@ -484,7 +489,7 @@ namespace Riverside.Graphite.Pages
 		{
 			try
 			{
-				return response.Headers.Any(head => head.Key == "Set-Cookie");
+				return response.Headers.Any(head => head.Key == "Set-Cookie" );
 			}
 			catch
 			{

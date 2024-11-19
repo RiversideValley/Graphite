@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Riverside.Graphite.Services
 {
-	public partial class AdBlockerWrapper : IDisposable
+	public sealed class AdBlockerWrapper 
 	{
 		private bool _isEnabled;
 		private WebView2 _webView;
@@ -26,17 +26,12 @@ namespace Riverside.Graphite.Services
 			LoadScript().GetAwaiter(); 
 		}
 
-		~AdBlockerWrapper()
-		{
-			Dispose(false);
-		}
-
 		private async Task  LoadScript() {
 			GraphiteBlocker = await LoadFileHelper.LoadFileAsync(new Uri("ms-appx:///Assets/WebView/AdBlock/adblocker.js")); 
 		}
 		public void Unregister()
 		{
-			if (_webView is not null)
+			if (_webView is not null && _webView.CoreWebView2 is not null)
 			{
 				_webView.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
 				_webView.CoreWebView2Initialized -= WebView_CoreWebView2Initialized;
@@ -86,36 +81,18 @@ namespace Riverside.Graphite.Services
 		{
 			try
 			{
-				await _webView.EnsureCoreWebView2Async();
+				await _webView?.EnsureCoreWebView2Async(); 
 
 				if (_isEnabled)
 				{
-					_ = await _webView.CoreWebView2.ExecuteScriptAsync(GraphiteBlocker);
+					_ = await _webView?.CoreWebView2.ExecuteScriptAsync(GraphiteBlocker);
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				throw;
+				ExceptionLogger.LogException(e); 
 			}
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!disposedValue)
-			{
-				if (disposing)
-				{
-					Unregister();
-				}
-				disposedValue = true;
-			}
-		}
-
-		public void Dispose()
-		{
-			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-			Dispose(disposing: true);
-			GC.SuppressFinalize(this);
-		}
 	}
 }

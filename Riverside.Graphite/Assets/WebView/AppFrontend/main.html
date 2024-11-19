@@ -10,9 +10,49 @@
 	<script src="https://alcdn.msauth.net/browser/2.16.1/js/msal-browser.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@microsoft/mgt"></script>
 	<script type="module">
-		import { registerMgtComponents, Providers, Msal2Provider } from 'https://unpkg.com/@microsoft/mgt@4';
-		Providers.globalProvider = new Msal2Provider({ clientId: 'edfc73e2-cac9-4c47-a84c-dedd3561e8b5' });
+
+		import {
+			registerMgtComponents, Providers, Msal2Provider, registerMgtLoginComponent,
+			registerMgtAgendaComponent, isSignedIn 
+		} from 'https://unpkg.com/@microsoft/mgt@4';
+
+		Providers.globalProvider = new Msal2Provider({
+			clientId: 'edfc73e2-cac9-4c47-a84c-dedd3561e8b5',
+			scopes: [
+				"email",
+				"profile",
+				"User.Read",
+				"Directory.Read.All",
+			]});
 		registerMgtComponents();
+		registerMgtLoginComponent(); 
+
+		const loadProfile = () => {
+			if (isSignedIn()) {
+				const profileRow = document.getElementById('profile-row');
+
+				if (profileRow.style.display === 'none' || profileRow.style.display === '') {
+					profileRow.style.display = 'block';
+					setTimeout(() => {
+						profileRow.style.opacity = '1';
+						profileRow.style.transform = 'translateY(0)';
+					}, 10);
+				} else {
+					profileRow.style.opacity = '0';
+					profileRow.style.transform = 'translateY(-10px)';
+					setTimeout(() => {
+						profileRow.style.display = 'none';
+					}, 300);
+				}
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', () => {
+
+			Providers.onProviderUpdated(loadProfile);
+			
+		});
+
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 	<style>
@@ -25,9 +65,10 @@
 		body {
 			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 			min-height: 100vh;
-			margin: 0;
+			min-width: 90vw;
+			margin:  2px 2px 2px 4px ;
 			font-family: 'Roboto', sans-serif;
-			display: flex;
+			display: inline-block;
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
@@ -39,7 +80,7 @@
 			border-radius: 10px;
 			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 			padding: 2rem;
-			max-width: 500px;
+			max-width: 768px;
 			width: 90%;
 			transition: all 0.3s ease;
 		}
@@ -85,10 +126,20 @@
 </head>
 <body>
 	<main>
-		<section class="container-fluid my-3 mx-3">
+		<section class="container-fluid my-2 mx-2 gap-2">
 			<h3>Graphite Authorization Portal</h3>
 			<div>
-				<div class="row"><mgt-login id="loginButton"></mgt-login></div>
+				<div class="row">
+					<div>
+						<mgt-login show-presence login-view="compact">
+							<template data-type="flyout-commands">
+								<div>
+									<button data-props="@click: handleSignOut">Sign Out</button>
+								</div>
+							</template>
+						</mgt-login>
+					</div>
+				</div>
 				<div class="row" id="profile-row">
 					<mgt-person-card person-query="me" id="online" show-presence></mgt-person-card>
 				</div>
@@ -102,6 +153,7 @@
 	</footer>
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
+
 			const container = document.querySelector('.container-fluid');
 			container.style.opacity = '0';
 			container.style.transform = 'translateY(20px)';
@@ -112,24 +164,7 @@
 				container.style.transform = 'translateY(0)';
 			}, 100);
 
-			const profileButton = document.getElementById('loginButton');
-			const profileRow = document.getElementById('profile-row');
-
-			profileButton.addEventListener('click', function () {
-				if (profileRow.style.display === 'none' || profileRow.style.display === '') {
-					profileRow.style.display = 'block';
-					setTimeout(() => {
-						profileRow.style.opacity = '1';
-						profileRow.style.transform = 'translateY(0)';
-					}, 10);
-				} else {
-					profileRow.style.opacity = '0';
-					profileRow.style.transform = 'translateY(-10px)';
-					setTimeout(() => {
-						profileRow.style.display = 'none';
-					}, 300);
-				}
-			});
+			
 		});
 	</script>
 </body>
