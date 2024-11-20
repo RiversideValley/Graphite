@@ -283,14 +283,17 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private void AlphaSearch(Button btn) {
 
 		var win = new AlphaFilter();
-		// window procs
+// window procs
 		IntPtr hWnd = WindowNative.GetWindowHandle(win);
 		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
+		appWindow.Resize(new SizeInt32(400, 400));
 		appWindow.SetIcon("ms-appx:///Assets/AppTiles/Square44x44Logo.scale-100.png");
+		win.ExtendsContentIntoTitleBar = true;
+		appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 		Point position = btn.TransformToVisual(null).TransformPoint(new Point(0, 0));
 
-		Windowing.SetWindowPos(hWnd, IntPtr.Zero, (int)(position.X - 20), (int)(position.Y - 20), 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
+		Windowing.SetWindowPos(hWnd, IntPtr.Zero, (int)(position.X + 20), (int)(position.Y + 20), 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
 		Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
 
 		Windowing.MSG msg;
