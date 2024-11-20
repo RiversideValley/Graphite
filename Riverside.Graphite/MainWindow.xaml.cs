@@ -608,7 +608,7 @@ public sealed partial class MainWindow : Window
 		_ = TabWebView.Focus(FocusState.Programmatic);
 	}
 
-	public void NavigateToUrl(string uri)
+	public async void NavigateToUrl(string uri)
 	{
 		try
 		{
@@ -621,8 +621,11 @@ public sealed partial class MainWindow : Window
 
 				return;
 			}
-
-			webContent.WebViewElement.CoreWebView2.Navigate(uri.ToString());
+			
+			// calls from outside of mainwindow, and there has never been a CoreWebView2 
+			webContent.WebView.Source = new(uri);
+			await webContent.WebView.EnsureCoreWebView2Async();
+			//webContent.WebViewElement.CoreWebView2.Navigate(uri.ToString());
 		}
 		catch (Exception ex)
 		{

@@ -501,7 +501,7 @@ namespace Riverside.Graphite.Pages
 
 		private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
 		{
-			string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?" };
+			string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?", "https://login.microsoftonline.com/common/oauth2/logoutsession" };
 			return logoutUrls.Any(logoutUrl => request.Uri.StartsWith(logoutUrl, StringComparison.OrdinalIgnoreCase));
 		}
 

@@ -295,10 +295,10 @@ public partial class MainWindowViewModel : ObservableRecipient
 		
 		fly.AllowFocusOnInteraction = true; 
 		var frm = new Frame();
-		frm.Width = 424;
-		frm.Height = 500; 
+		frm.Width = 420;
+		frm.Height = 525; 
 		frm.CanBeScrollAnchor = true;
-		frm.Navigate(typeof(WebContent), MainView.CreatePasser("https://fireapp.msal/main.html"));
+		frm.Navigate(typeof(MsalAuth), this);
 		frm.Padding = new Thickness(1,0,1,0);
 		fly.Content = frm; 	
 		

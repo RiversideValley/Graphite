@@ -50,7 +50,7 @@ namespace Riverside.Graphite.Controls
 			SetWebViewHandler(webView);
 			webView.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/WebView/AppFrontend", CoreWebView2HostResourceAccessKind.Allow);
 			webView.CoreWebView2.Navigate("https://fireapp.msal/main.html");
-			await Task.Delay(200);			
+					
 
 		}
 
@@ -86,7 +86,7 @@ namespace Riverside.Graphite.Controls
 		{
 			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 			window?.NavigateToUrl(args.Uri);
-			
+			args.Handled = true; 
 		}
 
 		private void WebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
@@ -209,7 +209,8 @@ namespace Riverside.Graphite.Controls
 
 		private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
 		{
-			string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?" };
+		
+			string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?", "https://login.microsoftonline.com/common/oauth2/logoutsession" };
 			return logoutUrls.Any(logoutUrl => request.Uri.StartsWith(logoutUrl, StringComparison.OrdinalIgnoreCase));
 		}
 
