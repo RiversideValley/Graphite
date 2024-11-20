@@ -288,8 +288,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 		// in eley
 		GeneralTransform transform = btn.TransformToVisual(null);
 		Point position = transform.TransformPoint(new Point(0, 0));
-		var adjustY = ((int)(position.Y + 350));
-		var adjustX = ((int)(position.X + 350));
+		var adjustY = ((int)(position.Y + 280));
+		var adjustX = ((int)(position.X + 280));
 		var desktop = await Windowing.SizeWindow();
 
 		var win = new AlphaFilter();
@@ -307,23 +307,16 @@ public partial class MainWindowViewModel : ObservableRecipient
 		compactOverlayPresenter.SetBorderAndTitleBar(true, false);
 
 		Windowing.SetWindowPos(hWnd, IntPtr.Zero, adjustX, adjustY, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
-		
+		Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
+		MainView.HistoryFlyoutMenu.AllowFocusOnInteraction = true; 
+
 		win.Closed += (s, e) =>
 		{
 			MainView.FilterBrowserHistory(win.SelectedLetter.Key.ToString());
 
 		};
 		
-		var fly = new Flyout(); 
-		fly.Content = (UIElement)win;	
-		FlyoutBase.SetAttachedFlyout(btn, fly);
-		FlyoutBase.ShowAttachedFlyout(btn); 
-
-		//Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
-		//MainView.HistoryFlyoutMenu.Hide();
-
-		//MainView.HistoryFlyoutMenu.ShowAt((FrameworkElement)btn);
-
+		
 		//Windowing.MSG msg;
 		//while (Windowing.GetMessage(out msg, hWnd, 0, 0) != IntPtr.Zero)
 		//{
