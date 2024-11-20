@@ -1217,6 +1217,21 @@ public sealed partial class MainWindow : Window
 		HistoryTemp.ItemsSource = filteredHistory;
 	}
 
+	public void FilterBrowserHistoryTitle(string searchText)
+	{
+		if (browserHistory == null)
+		{
+			return;
+		}
+
+		HistoryTemp.ItemsSource = null;
+
+		ObservableCollection<HistoryItem> filteredHistory = new(browserHistory
+			.Where(item => item.Title?.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) == true));
+
+		HistoryTemp.ItemsSource = filteredHistory;
+	}
+
 	private void HistorySearchMenuItem_TextChanged(object sender, TextChangedEventArgs e)
 	{
 		string searchText = HistorySearchMenuItem.Text;

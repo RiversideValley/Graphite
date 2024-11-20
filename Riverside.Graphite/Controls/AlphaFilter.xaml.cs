@@ -34,7 +34,7 @@ public sealed partial class AlphaFilter : Flyout
 	{
 		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
 		if (currentWindow != null && e.AddedItems.Count>0) {
-			currentWindow.FilterBrowserHistory(e.AddedItems.FirstOrDefault().ToString());
+			currentWindow.FilterBrowserHistoryTitle(e.AddedItems.FirstOrDefault().ToString());
 		}
 		this.Hide(); 
 	}
