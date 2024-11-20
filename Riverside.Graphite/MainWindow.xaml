@@ -365,7 +365,10 @@
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;" />
                     </MenuFlyoutItem.Icon>
                     <MenuFlyoutItem.ContextFlyout>
-                        <Flyout x:Name="HistoryFlyoutMenu" Placement="Bottom">
+                        <Flyout
+                            x:Name="HistoryFlyoutMenu"
+                            x:FieldModifier="Public"
+                            Placement="Bottom">
                             <Grid
                                 Width="360"
                                 Height="500"
@@ -966,6 +969,7 @@
                     Style="{ThemeResource QuietButtonStyle}" />
                 <Button
                     x:Name="History"
+                    x:FieldModifier="Public"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE81C;}"
                     Flyout="{x:Bind HistoryFlyoutMenu}"

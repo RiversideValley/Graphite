@@ -26,6 +26,8 @@ using System.Collections.Generic;
 using static Riverside.Graphite.MainWindow;
 using System.Runtime.CompilerServices;
 using Windows.Foundation;
+using Microsoft.UI.Xaml.Media;
+using System.Net.NetworkInformation;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -86,6 +88,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 	}
 	private async Task ValidateMicrosoft()
 	{
+	    
 		IsMsLogin = true; // AppService.MsalService.IsSignedIn;
 		if (IsMsLogin && AppService.GraphService.ProfileMicrosoft is null)
 		{
@@ -280,27 +283,47 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 	[RelayCommand]
-	private void AlphaSearch(Button btn) {
+	private async Task AlphaSearchAsync(Button btn) {
+
+		// in eley
+		GeneralTransform transform = btn.TransformToVisual(null);
+		Point position = transform.TransformPoint(new Point(0, 0));
+		var adjustY = ((int)(position.Y + 350));
+		var adjustX = ((int)(position.X + 350));
+		var desktop = await Windowing.SizeWindow();
 
 		var win = new AlphaFilter();
-// window procs
+		win.ExtendsContentIntoTitleBar = true;
+		
+		// window procs
 		IntPtr hWnd = WindowNative.GetWindowHandle(win);
 		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
-		appWindow.Resize(new SizeInt32(400, 400));
+		appWindow.Title = "Filtering History"; 
+		appWindow.Resize(new SizeInt32(600, 300));
 		appWindow.SetIcon("ms-appx:///Assets/AppTiles/Square44x44Logo.scale-100.png");
-		win.ExtendsContentIntoTitleBar = true;
-		appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
-		Point position = btn.TransformToVisual(null).TransformPoint(new Point(0, 0));
+		appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+		OverlappedPresenter compactOverlayPresenter = appWindow.Presenter as OverlappedPresenter;
+		compactOverlayPresenter.SetBorderAndTitleBar(true, false);
 
-		Windowing.SetWindowPos(hWnd, IntPtr.Zero, (int)(position.X + 20), (int)(position.Y + 20), 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
-		Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
+		Windowing.SetWindowPos(hWnd, IntPtr.Zero, adjustX, adjustY, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
+		
 		win.Closed += (s, e) =>
 		{
-
-			MainView.FilterBrowserHistory(win.SelectedLetter);
+			MainView.FilterBrowserHistory(win.SelectedLetter.Key.ToString());
 
 		};
+		
+		var fly = new Flyout(); 
+		fly.Content = (UIElement)win;	
+		FlyoutBase.SetAttachedFlyout(btn, fly);
+		FlyoutBase.ShowAttachedFlyout(btn); 
+
+		//Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
+		//MainView.HistoryFlyoutMenu.Hide();
+
+		//MainView.HistoryFlyoutMenu.ShowAt((FrameworkElement)btn);
+
 		//Windowing.MSG msg;
 		//while (Windowing.GetMessage(out msg, hWnd, 0, 0) != IntPtr.Zero)
 		//{
@@ -308,7 +331,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		//	Windowing.DispatchMessage(ref msg);
 		//}
 
-		
+
 
 	}
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]

@@ -7,78 +7,32 @@
     xmlns:local="using:Riverside.Graphite.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <!--<Grid>
-        <Grid.Resources>
-            <DataTemplate x:Key="LetterTemplate">
-                <Grid
-            Width="100"
-            Height="100"
-            Margin="10">
-                    <Border
-                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
-                BorderBrush="{ThemeResource AccentAAFillColorSecondaryBrush}"
-                BorderThickness="1">
-                        <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="24"
-                    Text="{Binding}" />
-                    </Border>
-                </Grid>
-            </DataTemplate>
-        </Grid.Resources>
-        <GridView
-            Grid.ColumnSpan="100"
-            IsItemClickEnabled="False"
-            ItemTemplate="{StaticResource LetterTemplate}"
-            ItemsSource="{Binding Letters}"
-            SelectionChanged="
-            SelectedItem="{x:Bind SelectedLetter, Mode=OneTime}">
-        </GridView>
-    </Grid>-->
 
-    <GridView IsItemClickEnabled="False">
+    <GridView
+        Margin="4,32,4,8"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Stretch"
+        Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+        IsItemClickEnabled="False"
+        ItemsSource="{x:Bind Letters}"
+        SelectedItem="{x:Bind SelectedLetter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        SelectionChanged="GridView_SelectionChanged">
         <GridView.ItemTemplate>
             <DataTemplate>
-                <Grid Width="100" Height="100" Margin="10">
-                    <Border BorderThickness="1" BorderBrush="Gray" Background="White">
-                        <TextBlock Text="{Binding}" FontFamily="Segoe MDL2 Assets" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
+                <Grid>
+                    <TextBlock
+                        FontSize="20"
+                        Foreground="BlueViolet"
+                        Text="{Binding Key}" />
                 </Grid>
             </DataTemplate>
         </GridView.ItemTemplate>
         <GridView.ItemsPanel>
             <ItemsPanelTemplate>
-                <ItemsWrapGrid Orientation="Horizontal"/>
+                <ItemsWrapGrid Orientation="Horizontal" />
             </ItemsPanelTemplate>
         </GridView.ItemsPanel>
-        <!-- Adding letters A-Z -->
-        <x:String>A</x:String>
-        <x:String>B</x:String>
-        <x:String>C</x:String>
-        <x:String>D</x:String>
-        <x:String>E</x:String>
-        <x:String>F</x:String>
-        <x:String>G</x:String>
-        <x:String>H</x:String>
-        <x:String>I</x:String>
-        <x:String>J</x:String>
-        <x:String>K</x:String>
-        <x:String>L</x:String>
-        <x:String>M</x:String>
-        <x:String>N</x:String>
-        <x:String>O</x:String>
-        <x:String>P</x:String>
-        <x:String>Q</x:String>
-        <x:String>R</x:String>
-        <x:String>S</x:String>
-        <x:String>T</x:String>
-        <x:String>U</x:String>
-        <x:String>V</x:String>
-        <x:String>W</x:String>
-        <x:String>X</x:String>
-        <x:String>Y</x:String>
-        <x:String>Z</x:String>
     </GridView>
+
 
 </Window>

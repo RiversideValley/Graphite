@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Display;
 using Windows.Devices.Enumeration;
 using Windows.Graphics;
+using Windows.Web.Syndication;
 using WinRT.Interop;
 
 namespace Riverside.Graphite.Runtime.Helpers;
@@ -197,6 +198,8 @@ public class Windowing
 	[DllImport("user32.dll", SetLastError = true)]
 	public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
+
+	static int PositionOfNewWindow = 0;
 	public static void Center(Window window)
 	{
 		IntPtr hWnd = WindowNative.GetWindowHandle(window);
@@ -224,6 +227,133 @@ public class Windowing
 			appWindow.Move(CenteredPosition);
 		}
 	}
+	public struct WindowInfo
+	{
+		public IntPtr hWnd;          // Handle to the window
+		public IntPtr ParentWinId;   // Handle to the parent window
+		public string Tracker;       // Tracker string to identify or track the window
+
+		public WindowInfo(IntPtr windowHandle, IntPtr parentWindowHandle, string tracker)
+		{
+			hWnd = windowHandle;
+			ParentWinId = parentWindowHandle;
+			Tracker = tracker;
+		}
+
+		public (int Width, int Height) Size => GetWindowSize(hWnd);
+
+		private (int Width, int Height) GetWindowSize(IntPtr hWnd)
+		{
+			RECT rect;
+			if (GetWindowRect(hWnd, out rect))
+			{
+				int width = rect.right - rect.left;
+				int height = rect.bottom - rect.top;
+				return (width, height);
+			}
+			else
+			{
+				throw new InvalidOperationException("Failed to get window size.");
+			}
+		}
+
+		public override string ToString()
+		{
+			var size = Size;
+			return $"Window Handle: {hWnd}, Parent Window ID: {ParentWinId}, Tracker: {Tracker}, Size: Width={size.Width}, Height={size.Height}";
+		}
+	}
+
+
+	public static SizeInt32 GetTheSizeofWindow(IntPtr hWnd) {
+
+		SizeInt32 size = new SizeInt32();	
+			
+		RECT rect;
+		if (GetWindowRect(hWnd, out rect))
+		{
+			size.Width = rect.right - rect.left;	
+			size.Height = rect.bottom - rect.top;	
+			
+		}
+		
+		return size;
+
+	}
+
+	public static WindowInfo Commander {  get; private set; }	
+	public static async void AllowNonOverlappingWindow(Window inWindow) {
+
+		var dlg = GetAppWindow(inWindow);
+		var winSize = await SizeWindow();
+		var hWnd = WindowNative.GetWindowHandle(inWindow);
+		var parent = GetForegroundWindow();
+
+
+		if (dlg is not null)
+		{
+
+			var winParentId = Win32Interop.GetWindowIdFromWindow(parent); 
+			
+			Microsoft.UI.Windowing.DisplayArea displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(winParentId, Microsoft.UI.Windowing.DisplayAreaFallback.Nearest);
+
+			if (displayArea is not null)
+			{
+				var CenteredPosition = dlg.Position;
+				CenteredPosition.X = ((displayArea.WorkArea.Width - dlg.Size.Width - PositionOfNewWindow));
+				// allow for the titlebar.
+				CenteredPosition.Y = ((displayArea.WorkArea.Height - dlg.Size.Height + 55));
+				dlg.Move(CenteredPosition);
+				
+				Commander = new WindowInfo(hWnd, parent, GetWindowTitle(parent)); 
+				var parentSize = GetTheSizeofWindow(parent);
+				
+				RECT rect;
+				var parentPosition = GetWindowRect(parent, out rect);
+
+				if (((rect.left) + (CenteredPosition.X + dlg.Size.Width)) >= (displayArea.WorkArea.Width - dlg.Size.Width))
+				{
+					ChangeWindowPosition(parent, -4, 0);
+					
+					var newSize = new SizeInt32((int)displayArea.WorkArea.Width - dlg.Size.Width - PositionOfNewWindow, parentSize.Height);
+
+					ChangeWindowSize(parent, newSize.Width, newSize.Height); 
+					
+
+				}
+
+			}
+
+		}
+		PositionOfNewWindow += 15;
+	}
+
+	public static bool ChangeWindowPosition(IntPtr hWnd, int x, int y) 
+	{ 
+		return SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER); 
+	} 
+	public static bool ChangeWindowSize(IntPtr hWnd, int width, int height)
+	{
+		return SetWindowPos(hWnd,HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW); 
+	}
+	public static string GetWindowTitle(IntPtr hWnd)
+	{
+		int length = GetWindowTextLength(hWnd);
+		if (length == 0)
+		{
+			return string.Empty; 
+		}
+
+		StringBuilder title = new StringBuilder(length + 1);
+		GetWindowText(hWnd, title, title.Capacity);
+		return title.ToString();
+	}
+
+	[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+	public static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder lpString, int nMaxCount);
+
+	[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+	public static extern int GetWindowTextLength(IntPtr hWnd);
 
 	[DllImport("user32.dll", SetLastError = true)]
 	public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -315,8 +445,6 @@ public class Windowing
 		_ = EnumChildWindows(hwndParent, callback, IntPtr.Zero);
 		return childWindows.ToArray();
 	}
-	[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-	public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 	[DllImport("user32.dll", SetLastError = true)]
 	public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
