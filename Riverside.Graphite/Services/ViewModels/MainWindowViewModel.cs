@@ -295,17 +295,20 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 		Windowing.SetWindowPos(hWnd, IntPtr.Zero, (int)(position.X + 20), (int)(position.Y + 20), 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
 		Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
-
-		Windowing.MSG msg;
-		while (Windowing.GetMessage(out msg, hWnd, 0, 0) != IntPtr.Zero)
+		win.Closed += (s, e) =>
 		{
-			Windowing.TranslateMessage(ref msg);
-			Windowing.DispatchMessage(ref msg);
-		}
 
-		Windowing.DestroyWindow(hWnd);
-		MainView.FilterBrowserHistory(win.SelectedLetter);
+			MainView.FilterBrowserHistory(win.SelectedLetter);
 
+		};
+		//Windowing.MSG msg;
+		//while (Windowing.GetMessage(out msg, hWnd, 0, 0) != IntPtr.Zero)
+		//{
+		//	Windowing.TranslateMessage(ref msg);
+		//	Windowing.DispatchMessage(ref msg);
+		//}
+
+		
 
 	}
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]
