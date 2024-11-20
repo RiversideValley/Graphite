@@ -25,6 +25,7 @@ using WinRT.Interop;
 using System.Collections.Generic;
 using static Riverside.Graphite.MainWindow;
 using System.Runtime.CompilerServices;
+using Windows.Foundation;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -278,7 +279,32 @@ public partial class MainWindowViewModel : ObservableRecipient
 			_ = Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
 		}
 	}
+	[RelayCommand]
+	private void AlphaSearch(Button btn) {
 
+		var win = new AlphaFilter();
+		// window procs
+		IntPtr hWnd = WindowNative.GetWindowHandle(win);
+		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
+		appWindow.SetIcon("ms-appx:///Assets/AppTiles/Square44x44Logo.scale-100.png");
+		Point position = btn.TransformToVisual(null).TransformPoint(new Point(0, 0));
+
+		Windowing.SetWindowPos(hWnd, IntPtr.Zero, (int)(position.X - 20), (int)(position.Y - 20), 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
+		Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
+
+		Windowing.MSG msg;
+		while (Windowing.GetMessage(out msg, hWnd, 0, 0) != IntPtr.Zero)
+		{
+			Windowing.TranslateMessage(ref msg);
+			Windowing.DispatchMessage(ref msg);
+		}
+
+		Windowing.DestroyWindow(hWnd);
+		MainView.FilterBrowserHistory(win.SelectedLetter);
+
+
+	}
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]
 	private void ShowOfficeOptions(Button sender) {
 

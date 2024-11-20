@@ -148,6 +148,7 @@
     <None Remove="Assets\WebView\AppFrontend\main.html" />
     <None Remove="Assets\WebView\AppFrontend\notfound.html" />
     <None Remove="ChangeUsernameCore.xaml" />
+    <None Remove="Controls\AlphaFilter.xaml" />
     <None Remove="Controls\CreateBackup.xaml" />
     <None Remove="Controls\MsalAuth.xaml" />
     <None Remove="Controls\PopUpView.xaml" />
@@ -328,6 +329,9 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\AlphaFilter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\MsalAuth.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -439,6 +443,7 @@
   <ItemGroup>
     <Folder Include="Assets\WebView\AppFrontend\src\" />
     <Folder Include="Services\Workers\" />
+    <Folder Include="Themes\" />
   </ItemGroup>
   <PropertyGroup>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>

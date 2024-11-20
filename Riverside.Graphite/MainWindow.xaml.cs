@@ -1201,7 +1201,7 @@ public sealed partial class MainWindow : Window
 			_ = HistorySearchMenuItem.Focus(FocusState.Programmatic);
 		}
 	}
-	private void FilterBrowserHistory(string searchText)
+	public void FilterBrowserHistory(string searchText)
 	{
 		if (browserHistory == null)
 		{

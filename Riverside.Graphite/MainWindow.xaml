@@ -356,7 +356,10 @@
                     </StackPanel>
                 </StackPanel>
             </Flyout>
-            <Flyout x:Name="HistoryFly" Placement="Bottom">
+            <Flyout
+                x:Name="HistoryFly"
+                x:FieldModifier="Public"
+                Placement="Bottom">
                 <MenuFlyoutItem x:Name="HistoryMenuItem" Text="History">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;" />
@@ -364,7 +367,7 @@
                     <MenuFlyoutItem.ContextFlyout>
                         <Flyout x:Name="HistoryFlyoutMenu" Placement="Bottom">
                             <Grid
-                                Width="300"
+                                Width="360"
                                 Height="500"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch">
@@ -374,7 +377,7 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="150" />
                                 </Grid.ColumnDefinitions>
                                 <!--  Buttons  -->
                                 <TextBlock
@@ -410,6 +413,24 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center">
                                             <SymbolIcon Symbol="Find" />
+                                        </Viewbox>
+                                    </Button>
+                                    <Button
+                                        x:Name="SearchHistoryAlpha"
+                                        Width="32"
+                                        Height="32"
+                                        Margin="0,0,10,0"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Command="{x:Bind ViewModelMain.AlphaSearchCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
+                                        <Viewbox
+                                            Width="20"
+                                            Height="20"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                            <SymbolIcon Symbol="Font" />
                                         </Viewbox>
                                     </Button>
                                     <Button

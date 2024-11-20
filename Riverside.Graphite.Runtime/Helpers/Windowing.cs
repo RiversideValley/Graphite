@@ -96,6 +96,58 @@ public class Windowing
 	public const int AW_ACTIVATE = 0x20000;
 	public const int AW_BLEND = 0x80000;
 
+	[DllImport("user32.dll", SetLastError = true)]
+	public static extern IntPtr CreateWindowEx(
+		int dwExStyle,
+		string lpClassName,
+		string lpWindowName,
+		int dwStyle,
+		int x,
+		int y,
+		int nWidth,
+		int nHeight,
+		IntPtr hWndParent,
+		IntPtr hMenu,
+		IntPtr hInstance,
+		IntPtr lpParam);
+
+	[DllImport("user32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool DestroyWindow(IntPtr hWnd);
+
+	[DllImport("user32.dll", SetLastError = true)]
+	public static extern IntPtr GetMessage([Out] out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+	[DllImport("user32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool TranslateMessage([In] ref MSG lpMsg);
+
+	[DllImport("user32.dll", SetLastError = true)]
+	public static extern IntPtr DispatchMessage([In] ref MSG lpMsg);
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct MSG
+	{
+		public IntPtr hwnd;
+		public uint message;
+		public UIntPtr wParam;
+		public IntPtr lParam;
+		public uint time;
+		public POINT pt;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct POINT
+	{
+		public int x;
+		public int y;
+	}
+
+	public const int WS_OVERLAPPEDWINDOW = 0x00CF0000;
+	public const int CW_USEDEFAULT = unchecked((int)0x80000000);
+	
+
+
 	[DllImport("user32.dll")] 
 	public static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -120,8 +172,7 @@ public class Windowing
 	{
 		return AnimateWindow(hwnd, 200, AW_SLIDE | AW_ACTIVATE | AW_BLEND);
 	}
-	[DllImport("user32.dll", SetLastError = true)]
-	public static extern bool DestroyWindow(IntPtr hWnd);
+	
 	[DllImport("user32.dll", SetLastError = true)]
 	public static extern IntPtr GetForegroundWindow();
 
