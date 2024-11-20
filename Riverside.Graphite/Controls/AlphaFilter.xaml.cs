@@ -33,8 +33,8 @@ public sealed partial class AlphaFilter : Flyout
 	private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
-		if (currentWindow != null) {
-			currentWindow.FilterBrowserHistory(e.AddedItems[0].ToString());
+		if (currentWindow != null && e.AddedItems.Count>0) {
+			currentWindow.FilterBrowserHistory(e.AddedItems.FirstOrDefault().ToString());
 		}
 		this.Hide(); 
 	}
