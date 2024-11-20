@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Window
+<Flyout
     x:Class="Riverside.Graphite.Controls.AlphaFilter"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,31 +8,36 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <GridView
-        Margin="4,32,4,8"
-        HorizontalContentAlignment="Center"
-        VerticalContentAlignment="Stretch"
-        Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-        IsItemClickEnabled="False"
-        ItemsSource="{x:Bind Letters}"
-        SelectedItem="{x:Bind SelectedLetter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        SelectionChanged="GridView_SelectionChanged">
-        <GridView.ItemTemplate>
-            <DataTemplate>
-                <Grid>
-                    <TextBlock
-                        FontSize="20"
-                        Foreground="BlueViolet"
-                        Text="{Binding Key}" />
-                </Grid>
-            </DataTemplate>
-        </GridView.ItemTemplate>
-        <GridView.ItemsPanel>
-            <ItemsPanelTemplate>
-                <ItemsWrapGrid Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-        </GridView.ItemsPanel>
-    </GridView>
+    <VariableSizedWrapGrid>
+        <GridView
+            x:Name="GridMain"
+            Width="250"
+            Margin="4,32,4,8"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Stretch"
+            x:FieldModifier="Public"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
+            Header="History Filtering"
+            IsItemClickEnabled="False"
+            SelectedItem="{Binding SelectedLetter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectionChanged="GridView_SelectionChanged">
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock
+                            FontSize="24"
+                            Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                            Text="{Binding}" />
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </GridView>
+    </VariableSizedWrapGrid>
 
 
-</Window>
+</Flyout>

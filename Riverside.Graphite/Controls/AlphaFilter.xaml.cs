@@ -17,40 +17,27 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 
 namespace Riverside.Graphite.Controls;
-public sealed partial class AlphaFilter : Window
+public sealed partial class AlphaFilter : Flyout
 {
-	public Dictionary<char, string> Letters { get; set; }
-	public KeyValuePair<char, string> SelectedLetter { get; set; }
+	public ObservableCollection<string> Letters { get; set; }
+	public string SelectedLetter { get; set; }
 
 	public AlphaFilter()
 	{
 		this.InitializeComponent();
 
-		Letters = new  Dictionary<char, string>(Enumerable.Range('A', 26).ToDictionary(i => (char)i, i => $"\\uE8{(i - 'A'):00}"));
-
+		Letters =  new ObservableCollection<string>(Enumerable.Range('A', 26).Select(i => ((char)i).ToString()).ToList());
+		GridMain.ItemsSource = Letters;
 	}
 
 	private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		this.Close();
+		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
+		if (currentWindow != null) {
+			currentWindow.FilterBrowserHistory(e.AddedItems[0].ToString());
+		}
+		this.Hide(); 
 	}
-	public class IconConverter
-	{
-		public static ObservableCollection<FontIcon> Icons = new ObservableCollection<FontIcon>
-		(Enumerable.Range('A', 26).Select(i => new FontIcon
-		{
-			Glyph = char.ConvertFromUtf32(i),
-			FontFamily = new FontFamily("Segoe UI Symbol"),
-			FontSize = 32
-		}));
-
-		
-		
-	}
-
-	public static implicit operator UIElement(AlphaFilter v)
-	{
-		throw new NotImplementedException();
-	}
+	
 }
 

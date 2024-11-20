@@ -286,35 +286,39 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private async Task AlphaSearchAsync(Button btn) {
 
 		// in eley
-		GeneralTransform transform = btn.TransformToVisual(null);
-		Point position = transform.TransformPoint(new Point(0, 0));
-		var adjustY = ((int)(position.Y + 280));
-		var adjustX = ((int)(position.X + 280));
-		var desktop = await Windowing.SizeWindow();
+		//GeneralTransform transform = btn.TransformToVisual(null);
+		//Point position = transform.TransformPoint(new Point(0, 0));
+		//var adjustY = ((int)(position.Y + 280));
+		//var adjustX = ((int)(position.X + 280));
+		//var desktop = await Windowing.SizeWindow();
 
 		var win = new AlphaFilter();
-		win.ExtendsContentIntoTitleBar = true;
+		FlyoutBase.SetAttachedFlyout(btn, win);
+		FlyoutBase.ShowAttachedFlyout(btn);  
+		 
+
+		//win.ExtendsContentIntoTitleBar = true;
 		
-		// window procs
-		IntPtr hWnd = WindowNative.GetWindowHandle(win);
-		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
-		appWindow.Title = "Filtering History"; 
-		appWindow.Resize(new SizeInt32(600, 300));
-		appWindow.SetIcon("ms-appx:///Assets/AppTiles/Square44x44Logo.scale-100.png");
-		appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-		OverlappedPresenter compactOverlayPresenter = appWindow.Presenter as OverlappedPresenter;
-		compactOverlayPresenter.SetBorderAndTitleBar(true, false);
+		//// window procs
+		//IntPtr hWnd = WindowNative.GetWindowHandle(win);
+		//WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		//AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
+		//appWindow.Title = "Filtering History"; 
+		//appWindow.Resize(new SizeInt32(600, 300));
+		//appWindow.SetIcon("ms-appx:///Assets/AppTiles/Square44x44Logo.scale-100.png");
+		//appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+		//OverlappedPresenter compactOverlayPresenter = appWindow.Presenter as OverlappedPresenter;
+		//compactOverlayPresenter.SetBorderAndTitleBar(true, false);
 
-		Windowing.SetWindowPos(hWnd, IntPtr.Zero, adjustX, adjustY, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
-		Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
-		MainView.HistoryFlyoutMenu.AllowFocusOnInteraction = true; 
+		//Windowing.SetWindowPos(hWnd, IntPtr.Zero, adjustX, adjustY, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
+		//Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
+		//MainView.HistoryFlyoutMenu.AllowFocusOnInteraction = true; 
 
-		win.Closed += (s, e) =>
-		{
-			MainView.FilterBrowserHistory(win.SelectedLetter.Key.ToString());
+		//win.Closed += (s, e) =>
+		//{
+		//	MainView.FilterBrowserHistory(win.SelectedLetter.Key.ToString());
 
-		};
+		//};
 		
 		
 		//Windowing.MSG msg;
