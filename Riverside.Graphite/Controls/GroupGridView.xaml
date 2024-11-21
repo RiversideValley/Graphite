@@ -58,7 +58,8 @@
                                         IsChecked="False" />
                                     <ListView
                                         x:Name="GroupItemsPanel"
-                                        ItemsSource="{Binding Items}"
+                                        x:FieldModifier="Public"
+                                        ItemsSource="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         SelectionChanged="GridView_SelectionChanged"
                                         Visibility="Collapsed">
                                         <ListView.ItemTemplate>

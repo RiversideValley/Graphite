@@ -12,13 +12,14 @@
         <GridView
             x:Name="GridMain"
             Width="250"
-            Padding="2"
+            Padding="4"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Stretch"
             x:FieldModifier="Public"
             Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
             BorderBrush="{ThemeResource AccentAAFillColorSecondaryBrush}"
             BorderThickness=".5"
+            CornerRadius="4"
             IsItemClickEnabled="False"
             SelectedItem="{Binding SelectedLetter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             SelectionChanged="GridView_SelectionChanged">

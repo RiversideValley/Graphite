@@ -33,6 +33,7 @@ namespace Riverside.Graphite.Controls
 	/// </summary>
 	public sealed partial class GroupGridView : Page
 	{
+		private string selectedHistoryItem;
 		public GroupedViewModel ViewModelGrouped { get; }
 		public SourceViewModel ViewModelSourced { get; }
 
@@ -47,6 +48,7 @@ namespace Riverside.Graphite.Controls
 
 		}
 
+		
 		private void GroupHeader_Click(object sender, RoutedEventArgs e)
 		{
 			var toggleButton = sender as ToggleButton;
@@ -117,6 +119,11 @@ namespace Riverside.Graphite.Controls
 				if(e.AddedItems.FirstOrDefault() is ItemGrouped history) 
 					currentWindow.NavigateToUrl(history.Self.Url);
 			}
+		}
+
+		private void GroupItemsPanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
+		{
+
 		}
 	}
 	public class ItemGrouped : HistoryItem
