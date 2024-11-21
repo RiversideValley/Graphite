@@ -150,6 +150,7 @@
     <None Remove="ChangeUsernameCore.xaml" />
     <None Remove="Controls\AlphaFilter.xaml" />
     <None Remove="Controls\CreateBackup.xaml" />
+    <None Remove="Controls\GroupGridView.xaml" />
     <None Remove="Controls\MsalAuth.xaml" />
     <None Remove="Controls\PopUpView.xaml" />
     <None Remove="Controls\ProfileCommander.xaml" />
@@ -329,6 +330,9 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\GroupGridView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\AlphaFilter.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

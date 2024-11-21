@@ -1066,7 +1066,7 @@ public sealed partial class MainWindow : Window
 
 	private ObservableCollection<HistoryItem> browserHistory;
 
-	private async void FetchBrowserHistory()
+	public async void FetchBrowserHistory()
 	{
 		//Riverside.Graphite.Core.User user = AuthService.CurrentUser;
 		try
@@ -1227,7 +1227,8 @@ public sealed partial class MainWindow : Window
 		HistoryTemp.ItemsSource = null;
 
 		ObservableCollection<HistoryItem> filteredHistory = new(browserHistory
-			.Where(item => item.Title?.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) == true));
+			.Where(item => new Uri(item.Url).Host.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) || 
+						   item.Title?.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) == true));
 
 		HistoryTemp.ItemsSource = filteredHistory;
 	}

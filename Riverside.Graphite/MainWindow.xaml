@@ -380,7 +380,7 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="200" />
                                 </Grid.ColumnDefinitions>
                                 <!--  Buttons  -->
                                 <TextBlock
@@ -419,6 +419,23 @@
                                         </Viewbox>
                                     </Button>
                                     <Button
+                                        x:Name="SearchHistoryRefresh"
+                                        Width="32"
+                                        Height="32"
+                                        Margin="0,0,10,0"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Command="{x:Bind ViewModelMain.RefreshHistoryCommand}">
+                                        <Viewbox
+                                            Width="20"
+                                            Height="20"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                            <SymbolIcon Symbol="Refresh" />
+                                        </Viewbox>
+                                    </Button>
+                                    <Button
                                         x:Name="SearchHistoryAlpha"
                                         Width="32"
                                         Height="32"
@@ -426,7 +443,7 @@
                                         Padding="0"
                                         Background="Transparent"
                                         BorderThickness="0"
-                                        Command="{x:Bind ViewModelMain.AlphaSearchCommand}"
+                                        Command="{x:Bind ViewModelMain.AlphaSearchAsyncCommand}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
                                         <Viewbox
                                             Width="20"
@@ -434,6 +451,24 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center">
                                             <SymbolIcon Symbol="Font" />
+                                        </Viewbox>
+                                    </Button>
+                                    <Button
+                                        x:Name="SearchHistoryDate"
+                                        Width="32"
+                                        Height="32"
+                                        Margin="0,0,10,0"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Command="{x:Bind ViewModelMain.HistoryDateSearchAsyncCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
+                                        <Viewbox
+                                            Width="20"
+                                            Height="20"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                            <SymbolIcon Symbol="Calendar" />
                                         </Viewbox>
                                     </Button>
                                     <Button
@@ -499,7 +534,10 @@
                                                         Margin="5,0,0,0"
                                                         FontWeight="Bold"
                                                         Text="{Binding Title}" />
-                                                    <TextBlock Margin="5,0,0,0" Text="{Binding Url}" />
+                                                    <TextBlock
+                                                        Margin="5,0,0,0"
+                                                        Text="{Binding Url}"
+                                                        TextTrimming="WordEllipsis" />
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>

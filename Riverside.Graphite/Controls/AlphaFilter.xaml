@@ -12,15 +12,26 @@
         <GridView
             x:Name="GridMain"
             Width="250"
-            Margin="4,32,4,8"
+            Padding="2"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Stretch"
             x:FieldModifier="Public"
             Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
-            Header="History Filtering"
+            BorderBrush="{ThemeResource AccentAAFillColorSecondaryBrush}"
+            BorderThickness=".5"
             IsItemClickEnabled="False"
             SelectedItem="{Binding SelectedLetter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             SelectionChanged="GridView_SelectionChanged">
+            <GridView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock
+                        Margin="0,2,0,2"
+                        HorizontalAlignment="Center"
+                        FontSize="16"
+                        FontWeight="ExtraBold"
+                        Text="History Filtering.." />
+                </DataTemplate>
+            </GridView.HeaderTemplate>
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid>

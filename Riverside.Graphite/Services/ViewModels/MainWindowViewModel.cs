@@ -283,52 +283,33 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 	[RelayCommand]
-	private async Task AlphaSearchAsync(Button btn) {
+	private void RefreshHistory() {
 
-		// in eley
-		//GeneralTransform transform = btn.TransformToVisual(null);
-		//Point position = transform.TransformPoint(new Point(0, 0));
-		//var adjustY = ((int)(position.Y + 280));
-		//var adjustX = ((int)(position.X + 280));
-		//var desktop = await Windowing.SizeWindow();
+		MainView.FetchBrowserHistory(); 
+	}
+	[RelayCommand]
+	private void HistoryDateSearchAsync(Button btn) {
+
+		var frm = new Frame();
+		var fly = new Flyout() { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft };
+		fly.AllowFocusOnInteraction = true;
+		frm.Navigate(typeof(GroupGridView), null);
+		frm.BorderBrush = new SolidColorBrush(Colors.Purple);
+		frm.BorderThickness = new Thickness(.5);
+		frm.Background = new AcrylicBrush();
+		frm.Width = 360;
+		frm.Height = 480;
+		fly.Content = frm;
+
+		FlyoutBase.SetAttachedFlyout(btn, fly);
+		FlyoutBase.ShowAttachedFlyout(btn); 
+	}
+	[RelayCommand]
+	private  void AlphaSearchAsync(Button btn) {
 
 		var win = new AlphaFilter();
 		FlyoutBase.SetAttachedFlyout(btn, win);
 		FlyoutBase.ShowAttachedFlyout(btn);  
-		 
-
-		//win.ExtendsContentIntoTitleBar = true;
-		
-		//// window procs
-		//IntPtr hWnd = WindowNative.GetWindowHandle(win);
-		//WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		//AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
-		//appWindow.Title = "Filtering History"; 
-		//appWindow.Resize(new SizeInt32(600, 300));
-		//appWindow.SetIcon("ms-appx:///Assets/AppTiles/Square44x44Logo.scale-100.png");
-		//appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-		//OverlappedPresenter compactOverlayPresenter = appWindow.Presenter as OverlappedPresenter;
-		//compactOverlayPresenter.SetBorderAndTitleBar(true, false);
-
-		//Windowing.SetWindowPos(hWnd, IntPtr.Zero, adjustX, adjustY, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER);
-		//Windowing.ShowWindow(hWnd, Windowing.WindowShowStyle.SW_SHOW);
-		//MainView.HistoryFlyoutMenu.AllowFocusOnInteraction = true; 
-
-		//win.Closed += (s, e) =>
-		//{
-		//	MainView.FilterBrowserHistory(win.SelectedLetter.Key.ToString());
-
-		//};
-		
-		
-		//Windowing.MSG msg;
-		//while (Windowing.GetMessage(out msg, hWnd, 0, 0) != IntPtr.Zero)
-		//{
-		//	Windowing.TranslateMessage(ref msg);
-		//	Windowing.DispatchMessage(ref msg);
-		//}
-
-
 
 	}
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]
@@ -348,7 +329,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		fly.AllowFocusOnInteraction = true; 
 		var frm = new Frame();
 		frm.Width = 420;
-		frm.Height = 525; 
+		frm.Height = 480; 
 		frm.CanBeScrollAnchor = true;
 		frm.Navigate(typeof(MsalAuth), this);
 		frm.Padding = new Thickness(1,0,1,0);

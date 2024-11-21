@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="Riverside.Graphite.Controls.GroupGridView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Riverside.Graphite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer>
+            <GridView IsItemClickEnabled="True" ItemsSource="{x:Bind ViewModelGrouped.GroupedItems.View}">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="controls:ItemGrouped">
+                        <StackPanel>
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Grid.Column="0"
+                                    Width="24"
+                                    Height="24"
+                                    Source="{x:Bind Self.ImageSource}" />
+                                <StackPanel Grid.Column="1">
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            FontSize="14"
+                                            FontWeight="Bold"
+                                            MaxLines="1"
+                                            Text="{Binding Self.Title}"
+                                            TextWrapping="WrapWholeWords" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            FontSize="12"
+                                            MaxLines="3"
+                                            Text="{Binding Self.Url}"
+                                            TextTrimming="WordEllipsis"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+                <GridView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <ToggleButton
+                                        Click="GroupHeader_Click"
+                                        Content="{Binding Key}"
+                                        IsChecked="False" />
+                                    <ListView
+                                        x:Name="GroupItemsPanel"
+                                        ItemsSource="{Binding Items}"
+                                        SelectionChanged="GridView_SelectionChanged"
+                                        Visibility="Collapsed">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:DataType="controls:ItemGrouped">
+                                                <StackPanel>
+                                                    <Grid Margin="5">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Image
+                                                            Grid.Column="0"
+                                                            Width="24"
+                                                            Height="24"
+                                                            Source="{x:Bind Self.ImageSource}" />
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock
+                                                                Margin="5,0,0,0"
+                                                                FontSize="14"
+                                                                FontWeight="Bold"
+                                                                MaxLines="1"
+                                                                Text="{Binding Self.Title}"
+                                                                TextWrapping="WrapWholeWords" />
+                                                            <TextBlock
+                                                                Margin="5,0,0,0"
+                                                                FontSize="12"
+                                                                MaxLines="3"
+                                                                Text="{Binding Self.Url}"
+                                                                TextTrimming="WordEllipsis"
+                                                                TextWrapping="Wrap" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <VariableSizedWrapGrid Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </GridView.GroupStyle>
+            </GridView>
+        </ScrollViewer>
+    </Grid>
+
+
+
+
+
+</Page>
