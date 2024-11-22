@@ -178,7 +178,7 @@
                             Click="TabMenuClick"
                             IsEnabled="True"
                             Tag="SplitTab"
-                            Visibility="Collapsed">
+                            Visibility="Visible">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"

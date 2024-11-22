@@ -714,6 +714,8 @@ public sealed partial class MainWindow : Window
 		NavigateToUrl(fullSearchUrl);
 	}
 
+
+
 	#region cangochecks
 
 	private bool CanNavigate(bool isBack)
