@@ -1367,7 +1367,7 @@ public sealed partial class MainWindow : Window
 		await new Shortcut().CreateShortcut(clickedUserName);
 	}
 
-	private void Profile_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+	public void Profile_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
 	{
 		Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions options = new()
 		{ Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom };

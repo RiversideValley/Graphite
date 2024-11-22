@@ -192,6 +192,16 @@ public partial class HomeViewModel : ObservableRecipient
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
+	[RelayCommand]
+	private void Logins(Button btn) {
+
+		if (Application.Current is App app && app.m_window is MainWindow window)
+		{
+			window.DispatcherQueue?.TryEnqueue(() => {
+				window.Profile_Tapped(btn, new Microsoft.UI.Xaml.Input.TappedRoutedEventArgs());
+			});
+		} 
+	}
 
 	[RelayCommand]
 	private void ProtocolHandler(object sender)

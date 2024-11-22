@@ -522,6 +522,24 @@
                             </StackPanel>
                         </Button>
                     </SelectorBarItem>
+                    <SelectorBarItem>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.LoginsCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                            Tag="Settings">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xEC25;" />
+                                <TextBlock Margin="10,0,0,0" Text="Logins" />
+                            </StackPanel>
+                        </Button>
+                    </SelectorBarItem>
                 </SelectorBar>
             </StackPanel>
             <labs:SettingsCard
