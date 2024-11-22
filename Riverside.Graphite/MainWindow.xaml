@@ -876,15 +876,6 @@
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
-                    Command="{x:Bind ViewModelMain.LoginToMicrosoftCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
-                    ToolTipService.ToolTip="Microsoft Sign-In">
-                    <Image
-                        Width="16"
-                        Height="16"
-                        Source="ms-appx:///Assets/Icons/Products/Microsoft.png" />
-                </Button>
-                <Button
                     Command="{x:Bind ViewModelMain.ShowOfficeOptionsCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                     ToolTipService.ToolTip="Office 365"
@@ -1076,17 +1067,6 @@
                     Content="{firebrowser:FluentIcon Glyph=&#xE712;}"
                     Flyout="{StaticResource MoreFlyout}"
                     Style="{ThemeResource QuietButtonStyle}" />
-                <Button
-                    x:Name="toolbtnCopilot"
-                    VerticalAlignment="Center"
-                    Command="{x:Bind ViewModelMain.GoCopilotOpenCommand}"
-                    Style="{ThemeResource QuietButtonStyle}">
-                    <Image
-                        Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                        Height="{Binding Path=Height, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                        Source="ms-appx:///Assets/Icons/copilot.png" />
-                </Button>
-
             </StackPanel>
         </Grid>
         <InfoBar

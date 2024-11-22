@@ -63,18 +63,31 @@
                     <Image
                         Width="14"
                         Height="14"
-                        Source="ms-appx:///Assets//Google.png" />
+                        Source="ms-appx:///Assets//Icons/Products/Google.png" />
                 </Button>
                 <Button
-                    Width="48"
-                    Height="32"
-                    Margin="5,0,0,0"
-                    Click="Button_Click_1"
-                    ToolTipService.ToolTip="Microsoft Sign-In">
+                     Width="48"
+ Height="32"
+ Margin="5,0,0,0"
+     Click="Button_Click_2"
+      CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+      ToolTipService.ToolTip="Microsoft Sign-In">
                     <Image
-                        Width="14"
-                        Height="14"
-                        Source="ms-appx:///Assets/Icons/Products/MicrosoftOffice.png" />
+          Width="16"
+          Height="16"
+          Source="ms-appx:///Assets/Icons/Products/Microsoft.png" />
+                </Button>
+                <Button
+                    x:Name="toolbtnCopilot"
+                     Width="48"
+                     Height="32"
+                     Margin="5,0,0,0"
+                    Click="toolbtnCopilot_Click"
+                    VerticalAlignment="Center">
+                    <Image
+                        Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        Height="{Binding Path=Height, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        Source="ms-appx:///Assets/Icons/copilot.png" />
                 </Button>
             </StackPanel>
             <Expander

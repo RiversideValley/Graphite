@@ -111,10 +111,13 @@ public sealed partial class ProfileCommander : Flyout
 		win.Activate();
 	}
 
-	private void Button_Click_1(object sender, RoutedEventArgs e)
+	private void toolbtnCopilot_Click(object sender, RoutedEventArgs e)
 	{
-		string site = "microsoft"; // Default site
-		QuickSign win = new(site);
-		win.Activate();
+		MainWindowViewModel.GoCopilotOpenCommand.Execute(this);
+	}
+
+	private void Button_Click_2(object sender, RoutedEventArgs e)
+	{
+		MainWindowViewModel.LoginToMicrosoftCommand.Execute(sender);
 	}
 }
