@@ -15,7 +15,7 @@ namespace Riverside.Graphite.Services.Notifications
 		private StoreContext _storeContext;
 		public ObservableCollection<FireNotification> PublicMessages => messages;
 
-		public NotificationMessenger() { }
+		public NotificationMessenger() { messages = new();  }
 		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage)
 		{
 			messages = messagesPage;
@@ -43,41 +43,29 @@ namespace Riverside.Graphite.Services.Notifications
 			}
 
 			IReadOnlyList<StorePackageUpdate> updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
-
-			if (updates.Count > 0)
+			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-				StorePackageUpdateResult updateResult = await _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
-
-				if (updateResult.OverallState == StorePackageUpdateState.Completed)
+				if (updates.Count > 0)
 				{
-					// Inform the user that the update was successful
-					AppNotificationBuilder toastContentBuilder = new AppNotificationBuilder()
-						.AddText("Update Complete!")
-						.AddText("The app has been updated successfully.");
+					StorePackageUpdateResult updateResult = await _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
 
-					AppNotification toast = toastContentBuilder.BuildNotification();
-					AppNotificationManager.Default.Show(toast);
+					if (updateResult.OverallState == StorePackageUpdateState.Completed)
+					{
+						// Inform the user that the update was successful
+						window.NotificationQueue.Show("Update is Complete", 2000, "Fire Browser");
+					}
+					else
+					{
+						// Inform the user that the update failed
+						window.NotificationQueue.Show("Update Failed\nThe app could not be updated. Please visit Microsoft Store Updates", 2000, "Fire Browser");
+					}
 				}
 				else
 				{
-					// Inform the user that the update failed
-					AppNotificationBuilder toastContentBuilder = new AppNotificationBuilder()
-						.AddText("Update Failed")
-						.AddText("The app could not be updated. Please try again later.");
+					// Inform the user that no updates are available
+					window.NotificationQueue.Show("No Updates Available\nYou already have the lastest version of the App", 2000, "Fire Browser");
 
-					AppNotification toast = toastContentBuilder.BuildNotification();
-					AppNotificationManager.Default.Show(toast);
 				}
-			}
-			else
-			{
-				// Inform the user that no updates are available
-				AppNotificationBuilder toastContentBuilder = new AppNotificationBuilder()
-					.AddText("No Updates Available")
-					.AddText("You already have the latest version of the app.");
-
-				AppNotification toast = toastContentBuilder.BuildNotification();
-				AppNotificationManager.Default.Show(toast);
 			}
 
 			NotificationReceived(notification);

@@ -79,7 +79,7 @@
                         VerticalAlignment="Center"
                         Command="{x:Bind ViewModel.LoginToMicrosoftCommand}"
                         Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
-                        Icon="Account"
+                        Icon="People"
                         Label="Sign In Microsoft" />
                 </StackPanel>
                 <StackPanel

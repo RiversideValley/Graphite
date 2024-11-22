@@ -995,7 +995,9 @@ public sealed partial class MainWindow : Window
 
 	private void TabMenuClick(object sender, RoutedEventArgs e)
 	{
-		switch ((sender as Button).Tag)
+		var messenger = new NotificationMessenger();
+
+				switch ((sender as Button).Tag)
 		{
 			case "NewTab":
 				Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
@@ -1039,16 +1041,20 @@ public sealed partial class MainWindow : Window
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "Ratings":
-				var messenger = new NotificationMessenger();
 				try
 				{
 					messenger.PromptUserToRateApp().ConfigureAwait(false);
 				}
 				catch {;}
-				
 				break;
 			case "Updated":
-				_ = ToastUpdate.SendToast();
+				try
+				{
+					messenger.InstallUpdatesAsync(new FireNotification() { HasInput = false, Originator = "ToolBar"}).ConfigureAwait(false);
+				}
+				catch {; }
+
+
 				break;
 		}
 
