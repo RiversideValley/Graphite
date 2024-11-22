@@ -9,6 +9,7 @@
     xmlns:firebrowser="using:Riverside.Graphite.Controls"
     xmlns:firebrowserfavorites="using:Riverside.Graphite.Data.Favorites"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:Riverside.Graphite"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
     mc:Ignorable="d">
@@ -28,6 +29,42 @@
         BorderThickness=".4"
         CornerRadius="4">
         <Grid.Resources>
+            <VisualTransition x:Key="FlyoutOpenTransition" To="Open">
+                <Storyboard>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                        From="100"
+                        To="0"
+                        Duration="0:0:0.5">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.5" />
+                </Storyboard>
+            </VisualTransition>
+            <VisualTransition x:Key="FlyoutCloseTransition" To="Closed">
+                <Storyboard>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                        From="0"
+                        To="100"
+                        Duration="0:0:0.5">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="Opacity"
+                        From="1"
+                        To="0"
+                        Duration="0:0:0.5" />
+                </Storyboard>
+            </VisualTransition>
             <Flyout
                 x:Name="MoreFlyout"
                 x:FieldModifier="Public"
@@ -360,6 +397,16 @@
                 x:Name="HistoryFly"
                 x:FieldModifier="Public"
                 Placement="Bottom">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5" />
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <CompositeTransform TranslateY="100" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
                 <MenuFlyoutItem x:Name="HistoryMenuItem" Text="History">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE81C;" />
@@ -370,6 +417,7 @@
                             x:FieldModifier="Public"
                             Placement="Bottom">
                             <Grid
+                                x:Name="HistoryflyGrid"
                                 Width="360"
                                 Height="500"
                                 HorizontalAlignment="Stretch"

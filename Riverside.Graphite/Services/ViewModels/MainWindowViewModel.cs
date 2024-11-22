@@ -28,6 +28,7 @@ using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Media;
 using System.Net.NetworkInformation;
+using Microsoft.UI.Composition.SystemBackdrops;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -287,6 +288,25 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 		MainView.FetchBrowserHistory(); 
 	}
+
+	private LinearGradientBrush CreateAndApplyGradientBrush()
+	{
+		// Create the LinearGradientBrush
+		var gradientBrush = new LinearGradientBrush
+		{
+			StartPoint = new Point(0, 0),
+			EndPoint = new Point(1, 1),
+			GradientStops = new GradientStopCollection
+			{
+				new GradientStop { Color = Colors.Blue, Offset = 0.0 },
+				new GradientStop { Color = Colors.Green, Offset = 0.5 },
+				new GradientStop { Color = Colors.Red, Offset = 1.0 }
+			}
+		};
+
+		// Apply the brush to the Grid's background
+		return gradientBrush;
+	}
 	[RelayCommand]
 	private void HistoryDateSearchAsync(Button btn) {
 
@@ -294,9 +314,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 		var fly = new Flyout() { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft };
 		fly.AllowFocusOnInteraction = true;
 		frm.Navigate(typeof(GroupGridView), null);
-		frm.BorderBrush = new SolidColorBrush(Colors.Purple);
+		frm.BorderBrush = new SolidColorBrush(Colors.WhiteSmoke);
 		frm.BorderThickness = new Thickness(.5);
-		frm.Background = new AcrylicBrush();
 		frm.Width = 360;
 		frm.Height = 480;
 		fly.Content = frm;

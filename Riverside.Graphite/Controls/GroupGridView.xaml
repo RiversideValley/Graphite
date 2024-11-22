@@ -9,9 +9,32 @@
     mc:Ignorable="d">
 
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Padding="4">
         <ScrollViewer>
-            <GridView IsItemClickEnabled="True" ItemsSource="{x:Bind ViewModelGrouped.GroupedItems.View}">
+            <GridView
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
+                IsItemClickEnabled="True"
+                ItemsSource="{x:Bind ViewModelGrouped.GroupedItems.View}">
+                <GridView.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel
+                            Padding="2"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Text="Past 7 Days and Monthly" />
+                            <Image
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Right"
+                                Source="ms-appx:///Assets/AppTiles/Logo.ico" />
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.HeaderTemplate>
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="controls:ItemGrouped">
                         <StackPanel>
@@ -53,19 +76,25 @@
                             <DataTemplate>
                                 <StackPanel>
                                     <ToggleButton
+                                        Width="340"
+                                        HorizontalAlignment="Center"
                                         Click="GroupHeader_Click"
                                         Content="{Binding Key}"
                                         IsChecked="False" />
                                     <ListView
                                         x:Name="GroupItemsPanel"
+                                        Margin="0,20,0,0"
                                         x:FieldModifier="Public"
                                         ItemsSource="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         SelectionChanged="GridView_SelectionChanged"
                                         Visibility="Collapsed">
                                         <ListView.ItemTemplate>
                                             <DataTemplate x:DataType="controls:ItemGrouped">
-                                                <StackPanel>
-                                                    <Grid Margin="5">
+                                                <StackPanel Padding="2">
+                                                    <Grid
+                                                        Margin="5"
+                                                        Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                                                        RightTapped="Grid_RightTapped">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="*" />

@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -49,6 +52,48 @@ namespace Riverside.Graphite.Controls
 		}
 
 		
+		private void Grid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+		{
+			if (((FrameworkElement)sender).DataContext is not HistoryItem historyItem)
+			{
+				return;
+			}
+
+			selectedHistoryItem = historyItem.Self.Url;
+
+			MenuFlyout flyout = new();
+
+			MenuFlyoutItem deleteMenuItem = new()
+			{
+				Text = "Delete This Record",
+				Icon = new FontIcon { Glyph = "\uE74D" }
+			};
+
+			deleteMenuItem.Click += async (s, args) =>
+			{
+				if (AuthService.CurrentUser is not Riverside.Graphite.Core.User user)
+				{
+					return;
+				}
+
+				HistoryActions historyActions = new(AuthService.CurrentUser.Username);
+				await historyActions.DeleteHistoryItem(selectedHistoryItem);
+				
+				ViewModelSourced.Items = null;
+				ViewModelGrouped.GroupedItems = null; 
+
+				await ViewModelSourced.GetHistoryItems();
+				ViewModelGrouped.GroupedItems =	await ViewModelGrouped.GetGroupedData(ViewModelSourced);
+				ViewModelGrouped.RaisePropertyChanges(nameof(ViewModelGrouped.GroupedItems));
+				
+			};
+
+			flyout.Items.Add(deleteMenuItem);
+
+			flyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+
+
+		}
 		private void GroupHeader_Click(object sender, RoutedEventArgs e)
 		{
 			var toggleButton = sender as ToggleButton;
@@ -113,18 +158,18 @@ namespace Riverside.Graphite.Controls
 
 		private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
-			if (currentWindow != null && e.AddedItems.Count > 0)
+			MainWindow win = (Application.Current as App)?.m_window as MainWindow;
+			if (win != null && e.AddedItems.Count > 0)
 			{
 				if(e.AddedItems.FirstOrDefault() is ItemGrouped history) 
-					currentWindow.NavigateToUrl(history.Self.Url);
+					win.NavigateToUrl(history.Self.Url);
+
+				if (win.HistoryFlyoutMenu.IsOpen == true)
+					win.HistoryFlyoutMenu.Hide(); 
 			}
 		}
 
-		private void GroupItemsPanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
-		{
-
-		}
+		
 	}
 	public class ItemGrouped : HistoryItem
 	{
@@ -137,30 +182,49 @@ namespace Riverside.Graphite.Controls
 		public string Description { get; set; }
 		public BitmapImage UrlIcon { get; set; } 
 	}
-	public class SourceViewModel
+	public partial class SourceViewModel : ObservableObject
 	{
 		private ObservableCollection<HistoryItem> HistoryItems { get; set; }
 
-		public ObservableCollection<ItemGrouped> Items { get; }
+		public ObservableCollection<ItemGrouped> Items { get; set; }
 
 		public SourceViewModel()
 		{
-			ObservableCollection<HistoryItem>	HistoryItems = FetchBrowserHistoryItems().GetAwaiter().GetResult();
-			Items = new ObservableCollection<ItemGrouped>();
+			_ = GetHistoryItems().ConfigureAwait(false);
+		}
 
-			
-			DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
-			
+		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
+		{
+			OnPropertyChanged(propertyName);
+		}
 
-			foreach (var item in HistoryItems.GroupBy(i => DateTime.Parse(i.LastVisitTime) >= sevenDaysAgo 
-			? DateTime.Parse(i.LastVisitTime).ToString("MMMM dd, yyyy") 
-			: DateTime.Parse(i.LastVisitTime).ToString("MMMM yyyy")))
+		public async Task GetHistoryItems() {
+
+
+			try
 			{
-				foreach(var data in item)
-				{
-					Items.Add(new ItemGrouped(data));
+				ObservableCollection<HistoryItem> HistoryItems = await FetchBrowserHistoryItems();
+				Items = new ObservableCollection<ItemGrouped>();
 
+
+				DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
+
+
+				foreach (var item in HistoryItems.GroupBy(i => DateTime.Parse(i.LastVisitTime) >= sevenDaysAgo
+				? DateTime.Parse(i.LastVisitTime).ToString("MMMM dd, yyyy")
+				: DateTime.Parse(i.LastVisitTime).ToString("MMMM yyyy")))
+				{
+					foreach (var data in item)
+					{
+						Items.Add(new ItemGrouped(data));
+
+					}
 				}
+				OnPropertyChanged(nameof(Items));
+			}
+			catch (Exception e)
+			{
+				ExceptionLogger.LogException(e);
 			}
 
 		}
@@ -185,15 +249,22 @@ namespace Riverside.Graphite.Controls
 		}
 	}
 
-	public class GroupedViewModel
+	public class GroupedViewModel : ObservableObject
 	{
-		public CollectionViewSource GroupedItems { get; }
+		public CollectionViewSource GroupedItems { get; set; }
 
 		public GroupedViewModel(SourceViewModel viewModel)
 		{
-			DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
+			
+			GetGroupedData(viewModel).ConfigureAwait(false);
+			GroupedItems = GetGroupedData(viewModel).GetAwaiter().GetResult();
+		}
 
-			GroupedItems = new CollectionViewSource
+		public Task<CollectionViewSource> GetGroupedData(SourceViewModel viewModel) {
+
+			DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
+			
+			var collection = new CollectionViewSource
 			{
 				IsSourceGrouped = true,
 				Source = viewModel.Items.GroupBy(i => i.Date >= sevenDaysAgo
@@ -201,6 +272,13 @@ namespace Riverside.Graphite.Controls
 						: i.Date.ToString("MMMM yyyy"))
 				.Select(group => new { Key = group.Key, Items = group.ToList() })
 			};
+
+			OnPropertyChanged(nameof(GroupedItems));
+			return Task.FromResult(collection); 
+		}
+		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
+		{
+			OnPropertyChanged(propertyName);
 		}
 	}
 
