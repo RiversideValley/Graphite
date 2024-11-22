@@ -15,6 +15,7 @@ namespace Riverside.Graphite.Services.Notifications
 		private StoreContext _storeContext;
 		public ObservableCollection<FireNotification> PublicMessages => messages;
 
+		public NotificationMessenger() { }
 		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage)
 		{
 			messages = messagesPage;
@@ -104,7 +105,7 @@ namespace Riverside.Graphite.Services.Notifications
 
 			return products;
 		}
-		public async Task PromptUserToRateApp(FireNotification notification)
+		public async Task PromptUserToRateApp()
 		{
 			await InitializeStoreContext();
 

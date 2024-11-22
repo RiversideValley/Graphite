@@ -21,6 +21,7 @@ using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.BarcodeHost;
+using Riverside.Graphite.Services.Notifications;
 using Riverside.Graphite.Services.Notifications.Toasts;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
@@ -1038,7 +1039,13 @@ public sealed partial class MainWindow : Window
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
 			case "Ratings":
-				_ = ToastRatings.SendToast();
+				var messenger = new NotificationMessenger();
+				try
+				{
+					messenger.PromptUserToRateApp().ConfigureAwait(false);
+				}
+				catch {;}
+				
 				break;
 			case "Updated":
 				_ = ToastUpdate.SendToast();

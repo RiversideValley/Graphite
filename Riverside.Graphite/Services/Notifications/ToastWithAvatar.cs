@@ -41,7 +41,7 @@ public sealed class ToastRatings
 		FireNotification notification = new();
 		notification.Originator = Title;
 		notification.Action = notificationActivatedEventArgs.Arguments["action"];
-		await noteMsg.PromptUserToRateApp(notification);
+		await noteMsg.PromptUserToRateApp();
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			nint hWnd = WindowNative.GetWindowHandle(window);
