@@ -52,18 +52,21 @@ namespace Riverside.Graphite.Services.Notifications
 					if (updateResult.OverallState == StorePackageUpdateState.Completed)
 					{
 						// Inform the user that the update was successful
-						window.NotificationQueue.Show("Update is Complete", 2000, "Fire Browser");
+						window.DispatcherQueue.TryEnqueue(()=>
+							window.NotificationQueue.Show("Update is Complete", 2000, "Fire Browser"));
 					}
 					else
 					{
 						// Inform the user that the update failed
-						window.NotificationQueue.Show("Update Failed\nThe app could not be updated. Please visit Microsoft Store Updates", 2000, "Fire Browser");
+						window.DispatcherQueue.TryEnqueue(() =>
+							window.NotificationQueue.Show("Update Failed\nThe app could not be updated. Please visit Microsoft Store Updates", 2000, "Fire Browser"));
 					}
 				}
 				else
 				{
 					// Inform the user that no updates are available
-					window.NotificationQueue.Show("No Updates Available\nYou already have the lastest version of the App", 2000, "Fire Browser");
+					window.DispatcherQueue.TryEnqueue(() =>
+						window.NotificationQueue.Show("No Updates Available\nYou already have the lastest version of the App", 2000, "Fire Browser"));
 
 				}
 			}
