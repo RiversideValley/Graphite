@@ -12,7 +12,7 @@ namespace Riverside.Graphite.Services.Notifications.Toasts;
 
 public sealed class ToastRatings
 {
-	public const string Title = "Fire Browser Notifications";
+	public const string Title = "Graphite Browser Notifications";
 
 	public static ObservableCollection<FireNotification> NotificationMessages = new();
 
@@ -23,7 +23,7 @@ public sealed class ToastRatings
 			.AddArgument(((int)EnumMessageStatus.Informational).ToString(), "UserStatus")
 			.SetAppLogoOverride(new Uri("file://" + App.GetFullPathToAsset("fire_globe3.png")), AppNotificationImageCrop.Circle)
 			.AddText(Title)
-			.AddText($"Welcome to your Fire Browser \r\n{AuthService.CurrentUser.Username ?? "?"}")
+			.AddText($"Welcome to your Graphite Browser \r\n{AuthService.CurrentUser.Username ?? "?"}")
 			.AddButton(new AppNotificationButton("Rate Us")
 				.AddArgument("action", "RateApp")
 				.SetButtonStyle(AppNotificationButtonStyle.Default)

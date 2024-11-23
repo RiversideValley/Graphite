@@ -8,7 +8,7 @@ namespace Riverside.Graphite.Services.Notifications.Interfaces
 {
 	public interface IToast
 	{
-		public string Title => "Fire Browser Notifications";
+		public string Title => "Graphite Browser Notifications";
 		public static ObservableCollection<string> NotificationMessages { get; }
 		public Task InitializeAsync(DispatcherQueue dispatcher);
 		public Task<bool> SendToast();

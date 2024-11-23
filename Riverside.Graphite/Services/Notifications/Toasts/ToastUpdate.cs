@@ -11,7 +11,7 @@ namespace Riverside.Graphite.Services.Notifications.Toasts
 {
 	public class ToastUpdate
 	{
-		public const string Title = "Fire Browser Notifications";
+		public const string Title = "Graphite Browser Notifications";
 
 		public static ObservableCollection<FireNotification> NotificationMessages = new();
 

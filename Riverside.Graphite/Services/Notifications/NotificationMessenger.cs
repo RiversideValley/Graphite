@@ -53,20 +53,20 @@ namespace Riverside.Graphite.Services.Notifications
 					{
 						// Inform the user that the update was successful
 						window.DispatcherQueue.TryEnqueue(()=>
-							window.NotificationQueue.Show("Update is Complete", 2000, "Fire Browser"));
+							window.NotificationQueue.Show("Update is Complete", 2000, "Graphite Browser"));
 					}
 					else
 					{
 						// Inform the user that the update failed
 						window.DispatcherQueue.TryEnqueue(() =>
-							window.NotificationQueue.Show("Update Failed\nThe app could not be updated. Please visit Microsoft Store Updates", 2000, "Fire Browser"));
+							window.NotificationQueue.Show("Update Failed\nThe app could not be updated. Please visit Microsoft Store Updates", 2000, "Graphite Browser"));
 					}
 				}
 				else
 				{
 					// Inform the user that no updates are available
 					window.DispatcherQueue.TryEnqueue(() =>
-						window.NotificationQueue.Show("No Updates Available\nYou already have the lastest version of the App", 2000, "Fire Browser"));
+						window.NotificationQueue.Show("No Updates Available\nYou already have the lastest version of the App", 2000, "Graphite Browser"));
 
 				}
 			}
@@ -116,20 +116,20 @@ namespace Riverside.Graphite.Services.Notifications
 					{
 						// User has already rated the app
 						_ = window.DispatcherQueue.TryEnqueue(() =>
-						window.NotificationQueue.Show("Thanks for raing our Application", 2000, "Fire Browser"));
+						window.NotificationQueue.Show("Thanks for raing our Application", 2000, "Graphite Browser"));
 					}
 					else
 					{
 						// User has rated the app for the first time
 						_ = window.DispatcherQueue.TryEnqueue(() =>
-						window.NotificationQueue.Show("Login to Microsoft and have ability to backup data to the cloud", 2000, "Fire Browser"));
+						window.NotificationQueue.Show("Login to Microsoft and have ability to backup data to the cloud", 2000, "Graphite Browser"));
 					}
 				}
 				else if (result.Status == StoreRateAndReviewStatus.CanceledByUser)
 				{
 					// User canceled the rating request
 					_ = window.DispatcherQueue.TryEnqueue(() =>
-							window.NotificationQueue.Show("Operation was cancelled", 2000, "Fire Browser"));
+							window.NotificationQueue.Show("Operation was cancelled", 2000, "Graphite Browser"));
 				}
 			}
 		}
