@@ -617,9 +617,13 @@ public sealed partial class MainWindow : Window
 				launchurl ??= uri;
 				_ = TabContent.Navigate(typeof(WebContent), CreatePasser(uri));
 				// newTab is not browsing to new site.
-				_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
 
-				return;
+				if (SettingsService.CoreSettings.ResourceSave == true)
+				{
+					_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
+				}
+
+					return;
 			}
 			
 			// calls from outside of mainwindow, and there has never been a CoreWebView2 
