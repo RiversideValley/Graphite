@@ -925,13 +925,12 @@ public sealed partial class MainWindow : Window
 			{
 				if (frame?.Content is WebContent web)
 				{
-					if (SettingsService.CoreSettings.ResourceSave == true)
+					// webview needs a source to have a CoreWebView 
+					if (web.WebView?.Source is not null)
 					{
-						if (web.WebView?.Source is not null)
-						{
-							await web.WebView.EnsureCoreWebView2Async();
-							_ = await web.WebView.CoreWebView2!.ExecuteScriptAsync(
-											@"(function() { 
+						await web.WebView.EnsureCoreWebView2Async();
+						_ = await web.WebView.CoreWebView2!.ExecuteScriptAsync(
+										@"(function() { 
                                 try
                                 {
                                     const videos = document.querySelectorAll('video');
@@ -945,9 +944,7 @@ public sealed partial class MainWindow : Window
                                     return error.message; 
                                 }
                             })();");
-						}
 					}
-						// webview needs a source to have a CoreWebView 						
 				}
 			}
 		});

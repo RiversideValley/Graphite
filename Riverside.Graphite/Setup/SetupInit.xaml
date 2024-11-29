@@ -42,7 +42,7 @@
                 Margin="10"
                 CornerRadius="10">
                 <Border.Background>
-                    <ImageBrush ImageSource="ms-appx:///Assets/Experience/OOBE/setup_image.png" />
+                    <ImageBrush ImageSource="ms-appx:///Assets/setup_image.png" />
                 </Border.Background>
             </Border>
 
