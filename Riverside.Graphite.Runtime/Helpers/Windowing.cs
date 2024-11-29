@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 using Windows.Devices.Display;
 using Windows.Devices.Enumeration;
 using Windows.Graphics;
-using Windows.Web.Syndication;
 using WinRT.Interop;
 
 namespace Riverside.Graphite.Runtime.Helpers;
-public class WindowBounce(Window inWindow) {
+public class WindowBounce(Window inWindow)
+{
 
 	private DispatcherTimer timer;
 	private int bounceCount = 0;
 	private int screenWidth, screenHeight, windowWidth, windowHeight;
 
-	
+
 	public async Task ShowWindowBounce()
 	{
 
@@ -146,10 +146,10 @@ public class Windowing
 
 	public const int WS_OVERLAPPEDWINDOW = 0x00CF0000;
 	public const int CW_USEDEFAULT = unchecked((int)0x80000000);
-	
 
 
-	[DllImport("user32.dll")] 
+
+	[DllImport("user32.dll")]
 	public static extern bool SetForegroundWindow(IntPtr hWnd);
 
 	[DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
@@ -157,7 +157,7 @@ public class Windowing
 
 	[DllImport("user32.dll", CharSet = CharSet.Auto)]
 	public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-	
+
 	[DllImport("user32.dll")]
 	public static extern bool CloseWindow(IntPtr hWnd);
 
@@ -173,7 +173,7 @@ public class Windowing
 	{
 		return AnimateWindow(hwnd, 200, AW_SLIDE | AW_ACTIVATE | AW_BLEND);
 	}
-	
+
 	[DllImport("user32.dll", SetLastError = true)]
 	public static extern IntPtr GetForegroundWindow();
 
@@ -265,24 +265,26 @@ public class Windowing
 	}
 
 
-	public static SizeInt32 GetTheSizeofWindow(IntPtr hWnd) {
+	public static SizeInt32 GetTheSizeofWindow(IntPtr hWnd)
+	{
 
-		SizeInt32 size = new SizeInt32();	
-			
+		SizeInt32 size = new SizeInt32();
+
 		RECT rect;
 		if (GetWindowRect(hWnd, out rect))
 		{
-			size.Width = rect.right - rect.left;	
-			size.Height = rect.bottom - rect.top;	
-			
+			size.Width = rect.right - rect.left;
+			size.Height = rect.bottom - rect.top;
+
 		}
-		
+
 		return size;
 
 	}
 
-	public static WindowInfo Commander {  get; private set; }	
-	public static async void AllowNonOverlappingWindow(Window inWindow) {
+	public static WindowInfo Commander { get; private set; }
+	public static async void AllowNonOverlappingWindow(Window inWindow)
+	{
 
 		var dlg = GetAppWindow(inWindow);
 		var winSize = await SizeWindow();
@@ -293,8 +295,8 @@ public class Windowing
 		if (dlg is not null)
 		{
 
-			var winParentId = Win32Interop.GetWindowIdFromWindow(parent); 
-			
+			var winParentId = Win32Interop.GetWindowIdFromWindow(parent);
+
 			Microsoft.UI.Windowing.DisplayArea displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(winParentId, Microsoft.UI.Windowing.DisplayAreaFallback.Nearest);
 
 			if (displayArea is not null)
@@ -304,21 +306,21 @@ public class Windowing
 				// allow for the titlebar.
 				CenteredPosition.Y = ((displayArea.WorkArea.Height - dlg.Size.Height + 55));
 				dlg.Move(CenteredPosition);
-				
-				Commander = new WindowInfo(hWnd, parent, GetWindowTitle(parent)); 
+
+				Commander = new WindowInfo(hWnd, parent, GetWindowTitle(parent));
 				var parentSize = GetTheSizeofWindow(parent);
-				
+
 				RECT rect;
 				var parentPosition = GetWindowRect(parent, out rect);
 
 				if (((rect.left) + (CenteredPosition.X + dlg.Size.Width)) >= (displayArea.WorkArea.Width - dlg.Size.Width))
 				{
 					ChangeWindowPosition(parent, -4, 0);
-					
+
 					var newSize = new SizeInt32((int)displayArea.WorkArea.Width - dlg.Size.Width - PositionOfNewWindow, parentSize.Height);
 
-					ChangeWindowSize(parent, newSize.Width, newSize.Height); 
-					
+					ChangeWindowSize(parent, newSize.Width, newSize.Height);
+
 
 				}
 
@@ -328,20 +330,20 @@ public class Windowing
 		PositionOfNewWindow += 15;
 	}
 
-	public static bool ChangeWindowPosition(IntPtr hWnd, int x, int y) 
-	{ 
-		return SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER); 
-	} 
+	public static bool ChangeWindowPosition(IntPtr hWnd, int x, int y)
+	{
+		return SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	}
 	public static bool ChangeWindowSize(IntPtr hWnd, int width, int height)
 	{
-		return SetWindowPos(hWnd,HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW); 
+		return SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
 	}
 	public static string GetWindowTitle(IntPtr hWnd)
 	{
 		int length = GetWindowTextLength(hWnd);
 		if (length == 0)
 		{
-			return string.Empty; 
+			return string.Empty;
 		}
 
 		StringBuilder title = new StringBuilder(length + 1);
