@@ -48,8 +48,8 @@
     <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.66.2" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.66.2" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.241114004-experimental1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.0" />
