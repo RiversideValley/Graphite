@@ -51,4 +51,10 @@
     <Folder Include="Migrations\Settings\" />
     <Folder Include="Migrations\Settings\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="update.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

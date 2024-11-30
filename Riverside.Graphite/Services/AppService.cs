@@ -67,7 +67,7 @@ public static class AppService
 
 			if (File.Exists(restoreFilePath))
 			{
-				AuthService.Logout();
+				AuthService.Logout(); 
 				ActiveWindow = new RestoreBackUp();
 				ActiveWindow.Closed += (s, e) =>
 				{

@@ -677,10 +677,10 @@ public sealed partial class MainWindow : Window
 				SelectNewTab();
 				break;
 			// Uncomment these cases if needed in the future
-			// case "firebrowser://vault":
-			//     Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
-			//     SelectNewTab();
-			//     break;
+			 case "firebrowser://vault":
+			     Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
+			     SelectNewTab();
+		        break;
 			// case "firebrowser://api-route":
 			//     Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
 			//     SelectNewTab();
@@ -972,8 +972,11 @@ public sealed partial class MainWindow : Window
 				{
 					if (tab is FireBrowserTabViewItem viewedItem)
 					{
-						//need pip mode automaticcly open en close 
-						_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
+						if (SettingsService.CoreSettings.ResourceSave == true)
+						{
+							//need pip mode automaticcly open en close 
+							_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
+						}
 					}
 					return false;
 				});

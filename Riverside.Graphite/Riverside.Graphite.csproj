@@ -177,6 +177,7 @@
     <None Remove="Setup\SetupUser.xaml" />
     <None Remove="Setup\SetupWebView.xaml" />
     <None Remove="Styles\Thickness.xaml" />
+    <None Remove="UpdateChecker.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\AppTiles\Logo.ico">
@@ -331,6 +332,9 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UpdateChecker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\ContentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

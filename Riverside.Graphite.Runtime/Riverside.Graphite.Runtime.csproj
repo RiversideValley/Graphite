@@ -26,6 +26,8 @@
     <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="CoreUi\CreditCardDialog.xaml" />
+    <None Remove="CoreUi\PasswordDialog.xaml" />
     <None Remove="CoreUi\PermissionDialog.xaml" />
     <None Remove="CoreUi\QuickSign.xaml" />
   </ItemGroup>
@@ -61,6 +63,12 @@
 
   <ItemGroup>
     <Page Update="CoreUi\PermissionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="CoreUi\PasswordDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="CoreUi\CreditCardDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="LogoCore.ico">
