@@ -58,43 +58,38 @@
                 Toggled="ToggleSetting_Toggled" />
         </labs:SettingsCard>
 
-        <labs:SettingsCard IsEnabled="False">
+        <labs:SettingsCard IsEnabled="True">
             <labs:SettingsCard.Header>
                 <TextBlock Text="Site Permissions" Style="{ThemeResource SubtitleTextBlockStyle}"/>
             </labs:SettingsCard.Header>
-            <labs:SettingsCard.Content>
-                <StackPanel>
-                    <TextBlock Text="Debug: HasPermissions" />
-                    <TextBlock Text="{x:Bind ViewModel.HasPermissions, Mode=OneWay}" />
-                    <TextBlock Text="Debug: Permissions Count" />
-                    <TextBlock Text="{x:Bind ViewModel.Permissions.Count, Mode=OneWay}" />
-
-                    <TextBlock Text="No permissions found" 
-                       Visibility="{x:Bind ViewModel.HasNoPermissions, Mode=OneWay}" />
-                    <ListView ItemsSource="{x:Bind ViewModel.Permissions, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="local:PermissionItem">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon}" Margin="0,0,12,0"/>
-                                    <TextBlock Grid.Column="1" Text="{x:Bind Url}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="{x:Bind PermissionType}" VerticalAlignment="Center" Margin="0,0,12,0"/>
-                                    <ToggleSwitch Grid.Column="3" 
-                                          IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
-                                          Toggled="Permission_Toggled"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
-            </labs:SettingsCard.Content>
         </labs:SettingsCard>
+
+        <InfoBar Severity="Warning"
+ IsOpen="True" Content="Is In Beta Deny Permissions Will Keep Deny If Try To Change Back to Allow"/>
+
+        <StackPanel>
+            <ListView ItemsSource="{x:Bind ViewModel.Permissions, Mode=OneWay}"
+      Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:PermissionItem">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Grid.Column="0" Glyph="{x:Bind Icon}" Margin="0,0,12,0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Url}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind PermissionType}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <ToggleSwitch Grid.Column="3" 
+                          IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
+                          Toggled="Permission_Toggled"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
 
     </StackPanel>
 </Page>
