@@ -468,6 +468,7 @@ public static class AppService
 	{
 		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
 
+		// folders might exist but user of "Private" doesn't validate & create
 		if (Directory.Exists(userFolderPath))
 		{
 			string username = GetUsernameFromCoreFolderPath(userFolderPath, "Private");
@@ -475,16 +476,22 @@ public static class AppService
 				return;
 		}
 
-		User newUser = new()
+		 
+		if (AuthService.UserExists("Private") is null)
 		{
-			Id = Guid.NewGuid(),
-			Username = "Private",
-			IsFirstLaunch = true,
-			UserSettings = null
-		};
+			User newUser = new()
+			{
+				Id = Guid.NewGuid(),
+				Username = "Private",
+				IsFirstLaunch = true,
+				UserSettings = null
+			};
+		
+			AuthService.AddUser(newUser);
+			UserFolderManager.CreateUserFolders(newUser);
+		}
 
-		AuthService.AddUser(newUser);
-		UserFolderManager.CreateUserFolders(newUser);
+		
 	}
 
 	private static void HideDirectory(string directoryPath)
