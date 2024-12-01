@@ -16,7 +16,8 @@ namespace Riverside.Graphite.IdentityClient.Models
 		private string _code;
 		private int _progressValue;
 		private string _name;
-		private readonly DispatcherTimer _codeRegenerationTimer;
+		private readonly DispatcherTimer _updateTimer;
+		private DateTime _lastCodeUpdateTime;
 
 		public TwoFactorAuthItem Item { get; }
 
@@ -65,26 +66,38 @@ namespace Riverside.Graphite.IdentityClient.Models
 		public TwoFactorAuthViewModel(TwoFactorAuthItem item, TwoFactorAuthService authService)
 		{
 			Item = item;
+			Item.Step = 60; // Set the step to 60 seconds
 			_authService = authService;
 			Name = item.Name;
 			CopyCodeCommand = new RelayCommand(CopyCode);
 			RemoveItemCommand = new RelayCommand(RemoveItem);
 
-			_codeRegenerationTimer = new DispatcherTimer
+			_updateTimer = new DispatcherTimer
 			{
-				Interval = TimeSpan.FromSeconds(60)
+				Interval = TimeSpan.FromSeconds(1)
 			};
-			_codeRegenerationTimer.Tick += (s, e) => UpdateCode();
-			_codeRegenerationTimer.Start();
+			_updateTimer.Tick += UpdateCodeAndProgress;
+			_updateTimer.Start();
 
-			UpdateCode();
+			UpdateCodeAndProgress(null, null);
 		}
 
-		public void UpdateCode()
+		public void UpdateCodeAndProgress(object sender, object e)
 		{
-			var totp = new Totp(Item.Secret, Item.Step, (OtpHashMode)Item.OtpHashMode, Item.Size);
-			Code = totp.ComputeTotp();
-			ProgressValue = 100 * totp.RemainingSeconds() / Item.Step;
+			var totp = new Totp(Item.Secret, 60, (OtpHashMode)Item.OtpHashMode, Item.Size);
+
+			DateTime now = DateTime.Now;
+			TimeSpan elapsed = now - _lastCodeUpdateTime;
+
+			if (elapsed.TotalSeconds >= 60 || string.IsNullOrEmpty(Code))
+			{
+				string newCode = totp.ComputeTotp();
+				Code = newCode;
+				_lastCodeUpdateTime = now;
+			}
+
+			int remainingSeconds = 60 - (int)elapsed.TotalSeconds;
+			ProgressValue = remainingSeconds;
 		}
 
 		private async void CopyCode()

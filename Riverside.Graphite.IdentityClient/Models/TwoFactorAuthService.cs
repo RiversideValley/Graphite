@@ -62,7 +62,7 @@ namespace Riverside.Graphite.IdentityClient.Services
 		{
 			foreach (var item in AuthItems)
 			{
-				item.UpdateCode();
+				item.UpdateCodeAndProgress(null, null);
 			}
 		}
 
