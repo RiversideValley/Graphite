@@ -1,14 +1,18 @@
-﻿using Microsoft.Web.WebView2.Core;
-using Newtonsoft.Json;
-using Riverside.Graphite.Core;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Web.WebView2.Core;
+using Newtonsoft.Json;
+using System.Diagnostics;
+using Riverside.Graphite.Core;
+using System.Collections.Concurrent;
+using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Runtime.CoreUi;
+using System.Runtime.CompilerServices;
+using Microsoft.UI.Xaml;
 
-namespace Riverside.Graphite.Services
+namespace Riverside.Graphite.Helpers
 {
 	public class PermissionManager
 	{
@@ -160,6 +164,43 @@ namespace Riverside.Graphite.Services
 			return (null, false);
 		}
 
+		public static async Task<CoreWebView2PermissionState> HandlePermissionRequest(
+	   string username,
+	   string url,
+	   CoreWebView2PermissionKind kind)
+		{
+			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
+			{
+				Debug.WriteLine("HandlePermissionRequest: Username or URL is null or empty");
+				return CoreWebView2PermissionState.Deny;
+			}
+
+			try
+			{
+				await LoadPermissionsAsync(username);
+				var (storedPermission, _) = GetStoredPermission(username, url, kind);
+
+				string permissionKind = kind.ToString();
+				string formattedPermission = FormatPermissionKind(permissionKind);
+
+				// Always show the dialog, regardless of stored permission
+				CoreWebView2PermissionState permissionState = await ShowAndHandlePermissionDialogAsync(formattedPermission, storedPermission, url);
+
+				// Update and save the permission based on the dialog result
+				bool allowed = permissionState == CoreWebView2PermissionState.Allow;
+				await UpdatePermission(username, url, kind, allowed);
+				await SavePermissionsAsync(username);
+
+				Debug.WriteLine($"Permission {kind} for {url} set to {permissionState} after showing dialog");
+				return permissionState;
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Error in HandlePermissionRequest: {ex}");
+				return CoreWebView2PermissionState.Deny;
+			}
+		}
+
 		public static async Task UpdatePermission(
 			string username,
 			string url,
@@ -232,33 +273,6 @@ namespace Riverside.Graphite.Services
 			}
 		}
 
-		public static async Task ClearPermissionsAsync(string username)
-		{
-			if (string.IsNullOrEmpty(username))
-			{
-				return;
-			}
-
-			try
-			{
-				_userPermissions.TryRemove(username, out _);
-				string filePath = GetPermissionsFilePath(username);
-
-				if (File.Exists(filePath))
-				{
-					File.Delete(filePath);
-				}
-
-				await LoadPermissionsAsync(username);
-				NotifyPermissionsChanged(username);
-				Debug.WriteLine($"Cleared permissions for user {username}");
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Error clearing permissions: {ex}");
-			}
-		}
-
 		public static async Task MarkPermissionChanged(
 			string username,
 			string url,
@@ -288,33 +302,60 @@ namespace Riverside.Graphite.Services
 			}
 		}
 
-		public static async Task<Dictionary<string, PermissionItem>> GetAllPermissionsAsync(string username)
+		private static string FormatPermissionKind(string permissionKind)
 		{
-			if (string.IsNullOrEmpty(username))
-			{
-				Debug.WriteLine("GetAllPermissionsAsync: Username is null or empty");
-				return new Dictionary<string, PermissionItem>();
-			}
+			return permissionKind.Replace("CoreWebView2PermissionKind", "").ToLower();
+		}
 
+		private static async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(
+		string formattedPermission,
+		CoreWebView2PermissionState? storedPermission,
+		string url)
+		{
 			try
 			{
-				await LoadPermissionsAsync(username);
+				string dialogTitle = $"Allow {formattedPermission}?";
+				string manageText = $"The website at {url} wants to use {formattedPermission}.";
 
-				if (_userPermissions.TryGetValue(username, out var permissions))
+				var dialog = new PermissionDialog(dialogTitle, manageText);
+
+				// Create a TaskCompletionSource to wait for user interaction
+				var tcs = new TaskCompletionSource<CoreWebView2PermissionState>();
+
+				dialog.AllowClicked += (sender, args) =>
 				{
-					Debug.WriteLine($"GetAllPermissionsAsync: Retrieved {permissions.Count} permissions for user {username}");
-					return new Dictionary<string, PermissionItem>(permissions);
-				}
-				else
+					Debug.WriteLine($"User allowed {formattedPermission} for {url}");
+					tcs.SetResult(CoreWebView2PermissionState.Allow);
+				};
+
+				dialog.DenyClicked += (sender, args) =>
 				{
-					Debug.WriteLine($"GetAllPermissionsAsync: No permissions found for user {username}");
-					return new Dictionary<string, PermissionItem>();
-				}
+					Debug.WriteLine($"User denied {formattedPermission} for {url}");
+					tcs.SetResult(CoreWebView2PermissionState.Deny);
+				};
+
+				dialog.CancelClicked += (sender, args) =>
+				{
+					Debug.WriteLine($"User cancelled permission request for {formattedPermission} on {url}");
+					tcs.SetResult(CoreWebView2PermissionState.Default);
+				};
+
+				// Set the XAML root for the dialog
+				dialog.XamlRoot = (Application.Current as App)?.m_window.Content.XamlRoot;
+
+
+				// Show the dialog
+				_ = dialog.ShowAsync();
+
+				// Wait for the user to click a button
+				var result = await tcs.Task;
+
+				return result;
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"GetAllPermissionsAsync: Error retrieving permissions for user {username}: {ex}");
-				return new Dictionary<string, PermissionItem>();
+				Debug.WriteLine($"Error showing permission dialog: {ex}");
+				return CoreWebView2PermissionState.Deny;
 			}
 		}
 

@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.CoreUi;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -422,33 +423,9 @@ namespace Riverside.Graphite.Pages
 					string url = WebViewElement.CoreWebView2.Source;
 					string username = AuthService.CurrentUser?.Username ?? "default";
 
-					await PermissionManager.LoadPermissionsAsync(username);
-					var (storedPermission, changed) = PermissionManager.GetStoredPermission(username, url, args.PermissionKind);
+					CoreWebView2PermissionState permissionState = await PermissionManager.HandlePermissionRequest(username, url, args.PermissionKind);
 
-					if (storedPermission.HasValue && !changed)
-					{
-						args.State = storedPermission.Value;
-						Debug.WriteLine($"Using stored permission {args.PermissionKind} for {url}: {storedPermission.Value}");
-					}
-					else
-					{
-						string permissionKind = args.PermissionKind.ToString();
-						string formattedPermission = FormatPermissionKind(permissionKind);
-
-						CoreWebView2PermissionState permissionState = await ShowAndHandlePermissionDialogAsync(formattedPermission, storedPermission, url);
-
-						bool allowed = permissionState == CoreWebView2PermissionState.Allow;
-
-						await PermissionManager.UpdatePermission(username, url, args.PermissionKind, allowed);
-
-						if (permissionState != storedPermission)
-						{
-							await PermissionManager.MarkPermissionChanged(username, url, args.PermissionKind);
-						}
-
-						args.State = permissionState;
-						Debug.WriteLine($"Permission {args.PermissionKind} for {url} set to {permissionState}");
-					}
+					args.State = permissionState;
 				});
 			}
 			catch (Exception ex)
@@ -461,48 +438,6 @@ namespace Riverside.Graphite.Pages
 				deferral.Complete();
 			}
 		}
-
-		private string FormatPermissionKind(string permissionKind)
-		{
-			return string.Join(" ", System.Text.RegularExpressions.Regex.Split(permissionKind, @"(?<!^)(?=[A-Z])"));
-		}
-
-		private async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(string permission, CoreWebView2PermissionState? currentState, string url)
-		{
-			string rootUrl = new Uri(url).GetLeftPart(UriPartial.Authority);
-			string title = currentState.HasValue
-				? $"Update {permission} access for {rootUrl}?"
-				: $"Allow {rootUrl} to access {permission}?";
-
-			string content = currentState.HasValue
-				? $"Current setting: {(currentState == CoreWebView2PermissionState.Allow ? "Allowed" : "Denied")}\nDo you want to change this setting?"
-				: $"The website is requesting access to your {permission.ToLower()}. Do you want to allow this?";
-
-			ContentDialog dialog = new ContentDialog
-			{
-				Title = title,
-				PrimaryButtonText = "Allow",
-				SecondaryButtonText = "Deny",
-				CloseButtonText = "Cancel",
-				DefaultButton = ContentDialogButton.Primary,
-				Content = content,
-				XamlRoot = this.XamlRoot
-			};
-
-			ContentDialogResult result = await dialog.ShowAsync();
-
-			var permissionState = result switch
-			{
-				ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
-				ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
-				_ => currentState ?? CoreWebView2PermissionState.Default
-			};
-
-			Debug.WriteLine($"User chose {permissionState} for {permission} on {rootUrl}");
-			return permissionState;
-		}
-
-
 		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
 		{
 			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize", "https://login.microsoftonline.com/common/oauth2/v2.0/token" };
