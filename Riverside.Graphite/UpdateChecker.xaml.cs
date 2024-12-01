@@ -7,6 +7,9 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Microsoft.Data.Sqlite;
+using System.Reflection;
+using Riverside.Graphite.Core;
 
 namespace Riverside.Graphite
 {
@@ -106,6 +109,10 @@ namespace Riverside.Graphite
 
 				await Task.Delay(1000);
 				StatusMessage.Text = "Applying patch...";
+				await SimulateProgressBar(50);
+
+				// Execute SQL update
+				await ExecuteSqlUpdate();
 				await SimulateProgressBar(70);
 
 				await Task.Delay(1000);
@@ -125,6 +132,84 @@ namespace Riverside.Graphite
 			catch (Exception ex)
 			{
 				StatusMessage.Text = $"Error during patching: {ex.Message}";
+			}
+		}
+
+		private async Task ExecuteSqlUpdate()
+		{
+			try
+			{
+				// Get the SQL update file content
+				string sqlUpdateContent = await GetSqlUpdateContent();
+
+				// Execute SQL update on all user databases
+				string fireBrowserUserCorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
+				string[] userFolders = Directory.GetDirectories(Path.Combine(fireBrowserUserCorePath, "Users", AuthService.CurrentUser.Username, "Settings"));
+
+				foreach (string userFolder in userFolders)
+				{
+					string dbPath = Path.Combine(userFolder, "settings.db");
+					await ExecuteSqlCommandsOnDatabase(dbPath, sqlUpdateContent);
+				}
+
+				// Execute SQL update on settings.db
+				string settingsDbPath = Path.Combine(fireBrowserUserCorePath, "settings.db");
+				await ExecuteSqlCommandsOnDatabase(settingsDbPath, sqlUpdateContent);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to execute SQL update: {ex.Message}");
+			}
+		}
+
+		private async Task<string> GetSqlUpdateContent()
+		{
+			try
+			{
+				var assembly = Assembly.GetExecutingAssembly();
+				var resourceName = "Riverside.Graphite.Data.Core.update.sql";
+
+				using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+				using (StreamReader reader = new StreamReader(stream))
+				{
+					return await reader.ReadToEndAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to read SQL update file: {ex.Message}");
+			}
+		}
+
+		private async Task ExecuteSqlCommandsOnDatabase(string dbPath, string sqlCommands)
+		{
+			if (!File.Exists(dbPath))
+			{
+				return; // Skip if database doesn't exist
+			}
+
+			using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+			{
+				await connection.OpenAsync();
+
+				using (var transaction = connection.BeginTransaction())
+				{
+					try
+					{
+						using (var command = connection.CreateCommand())
+						{
+							command.CommandText = sqlCommands;
+							await command.ExecuteNonQueryAsync();
+						}
+
+						transaction.Commit();
+					}
+					catch
+					{
+						transaction.Rollback();
+						throw;
+					}
+				}
 			}
 		}
 
