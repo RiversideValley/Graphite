@@ -17,6 +17,7 @@ using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -74,7 +75,7 @@ namespace Riverside.Graphite.Pages
 			string source = WebViewElement.Source.ToString();
 			string title = WebViewElement.CoreWebView2?.DocumentTitle;
 
-		    var dbContext = new HistoryActions(username.Username);
+			var dbContext = new HistoryActions(username.Username);
 			await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
 
 			if (source is not null)
@@ -186,10 +187,8 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
 
-
 			AdBlockerService.Toggle(false);
 			await AdBlockerService.Initialize(WebView);
-
 		}
 
 		private async void ScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
@@ -288,7 +287,7 @@ namespace Riverside.Graphite.Pages
 
 			if ((TabViewItem)param.TabView.SelectedItem == param.Tab)
 			{
-				if(WebViewElement.CoreWebView2?.Source is not null)
+				if (WebViewElement.CoreWebView2?.Source is not null)
 					await AfterComplete();
 			}
 		}
@@ -323,8 +322,8 @@ namespace Riverside.Graphite.Pages
 				MainWindow window = (Application.Current as App)?.m_window as MainWindow;
 				window.TabContent.Navigate(typeof(NewTab));
 				window.NotificationQueue.Show("You have been logged out of Microsoft", 2000, "Graphite Authorization");
-				window.ViewModelMain.IsMsLogin = false; 
-				window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));	
+				window.ViewModelMain.IsMsLogin = false;
+				window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));
 
 				return;
 			}
@@ -350,7 +349,6 @@ namespace Riverside.Graphite.Pages
 					window.ViewModelMain.IsMsLogin = true;
 					window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));
 					Console.WriteLine("Login successful.");
-					
 				}
 			}
 
@@ -422,28 +420,46 @@ namespace Riverside.Graphite.Pages
 				await DispatcherQueue.EnqueueAsync(async () =>
 				{
 					string url = WebViewElement.CoreWebView2.Source;
-					CoreWebView2PermissionState? storedPermission = PermissionManager.GetStoredPermission(AuthService.CurrentUser.Username, url, args.PermissionKind);
+					string username = AuthService.CurrentUser?.Username ?? "default";
 
-					if (storedPermission.HasValue)
+					await PermissionManager.LoadPermissionsAsync(username);
+					var (storedPermission, changed) = PermissionManager.GetStoredPermission(username, url, args.PermissionKind);
+
+					bool shouldShowDialog = !storedPermission.HasValue ||
+											changed ||
+											storedPermission == CoreWebView2PermissionState.Deny ||
+											storedPermission == CoreWebView2PermissionState.Default;
+
+					if (shouldShowDialog)
+					{
+						string permissionKind = args.PermissionKind.ToString();
+						string formattedPermission = FormatPermissionKind(permissionKind);
+
+						CoreWebView2PermissionState permissionState = await ShowAndHandlePermissionDialogAsync(formattedPermission, storedPermission, url);
+
+						bool allowed = permissionState == CoreWebView2PermissionState.Allow;
+
+						await PermissionManager.UpdatePermission(username, url, args.PermissionKind, allowed);
+
+						if (permissionState != storedPermission)
+						{
+							await PermissionManager.MarkPermissionChanged(username, url, args.PermissionKind);
+						}
+
+						args.State = permissionState;
+						Debug.WriteLine($"Permission {args.PermissionKind} for {url} set to {permissionState}");
+					}
+					else
 					{
 						args.State = storedPermission.Value;
-						return;
+						Debug.WriteLine($"Using stored permission {args.PermissionKind} for {url}: {storedPermission.Value}");
 					}
-
-					string permissionKind = args.PermissionKind.ToString();
-					string formattedPermission = FormatPermissionKind(permissionKind);
-
-					CoreWebView2PermissionState permissionState = await ShowAndHandlePermissionDialogAsync(formattedPermission);
-
-					bool? allowed = permissionState == CoreWebView2PermissionState.Allow ? true :
-									permissionState == CoreWebView2PermissionState.Deny ? false :
-									null;
-
-					PermissionManager.StorePermission(AuthService.CurrentUser.Username, url, args.PermissionKind, allowed);
-					await PermissionManager.SavePermissionsAsync(AuthService.CurrentUser.Username);
-
-					args.State = permissionState;
 				});
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Error in PermissionRequested: {ex}");
+				args.State = CoreWebView2PermissionState.Deny;
 			}
 			finally
 			{
@@ -456,29 +472,42 @@ namespace Riverside.Graphite.Pages
 			return string.Join(" ", System.Text.RegularExpressions.Regex.Split(permissionKind, @"(?<!^)(?=[A-Z])"));
 		}
 
-		private async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(string permission)
+		private async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(string permission, CoreWebView2PermissionState? currentState, string url)
 		{
-			string rootUrl = new Uri(WebViewElement.CoreWebView2.Source).GetLeftPart(UriPartial.Authority);
+			string rootUrl = new Uri(url).GetLeftPart(UriPartial.Authority);
+			string title = currentState.HasValue
+				? $"Update {permission} access for {rootUrl}?"
+				: $"Allow {rootUrl} to access {permission}?";
+
+			string content = currentState.HasValue
+				? $"Current setting: {(currentState == CoreWebView2PermissionState.Allow ? "Allowed" : "Denied")}\nDo you want to change this setting?"
+				: $"The website is requesting access to your {permission.ToLower()}. Do you want to allow this?";
+
 			ContentDialog dialog = new ContentDialog
 			{
-				Title = $"Allow {rootUrl} to access {permission}?",
+				Title = title,
 				PrimaryButtonText = "Allow",
 				SecondaryButtonText = "Deny",
 				CloseButtonText = "Cancel",
 				DefaultButton = ContentDialogButton.Primary,
-				Content = "Managed in firebrowser://privacy",
+				Content = content,
 				XamlRoot = this.XamlRoot
 			};
 
 			ContentDialogResult result = await dialog.ShowAsync();
 
-			return result switch
+			var permissionState = result switch
 			{
 				ContentDialogResult.Primary => CoreWebView2PermissionState.Allow,
 				ContentDialogResult.Secondary => CoreWebView2PermissionState.Deny,
-				_ => CoreWebView2PermissionState.Default
+				_ => currentState ?? CoreWebView2PermissionState.Default
 			};
+
+			Debug.WriteLine($"User chose {permissionState} for {permission} on {rootUrl}");
+			return permissionState;
 		}
+
+
 
 		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
 		{
@@ -491,7 +520,7 @@ namespace Riverside.Graphite.Pages
 			try
 			{
 				// ignore case some providers use Set-Cookie & others set-cookie capture all 
-				return response.Headers.Any(head => head.Key.ToLower() == "set-cookie" );
+				return response.Headers.Any(head => head.Key.ToLower() == "set-cookie");
 			}
 			catch
 			{
@@ -675,7 +704,7 @@ namespace Riverside.Graphite.Pages
 			bool isInternetAvailable = NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
 
 			if (isInternetAvailable)
-				return; 
+				return;
 
 			using CancellationTokenSource cts = new(TimeSpan.FromSeconds(2));
 			try
@@ -697,13 +726,12 @@ namespace Riverside.Graphite.Pages
 					}
 					await Task.Delay(100, cts.Token);
 				}
-
 			}
 			catch (OperationCanceledException)
 			{
 				Console.WriteLine("The task was canceled due to timeout.");
 			}
-
 		}
 	}
 }
+
