@@ -47,8 +47,20 @@ namespace Riverside.Graphite.Helpers
 			return Path.Combine(permissionsFolderPath, "sitepermissions.json");
 		}
 
+		private static void EnsureDirectoryExists(string path)
+		{
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+				Debug.WriteLine($"Created directory: {path}");
+			}
+		}
+
 		public static async Task LoadPermissionsAsync(string username)
 		{
+			string path = Path.Combine(UserDataManager.CoreFolderPath, "Users", username.ToString(), "Permissions");
+			EnsureDirectoryExists(path);
+
 			if (string.IsNullOrEmpty(username))
 			{
 				Debug.WriteLine("LoadPermissionsAsync: Username is null or empty");
