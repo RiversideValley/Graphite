@@ -107,6 +107,35 @@
                     Icon="{firebrowser:FluentIcon Glyph=&#xF259;}"
                     Label="TaskManager"
                     Tag="Taskmgr" />
+                <AppBarButton
+            Icon="{firebrowser:FluentIcon Glyph=&#xE72E;}"
+            Label="Site Permissions">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <ToggleMenuFlyoutItem
+                        Text="Camera"
+                        Icon="{firebrowser:FluentIcon Glyph=&#xE714;}"
+                        Click="PermissionToggle_Click"
+                        Tag="Camera"/>
+                            <ToggleMenuFlyoutItem
+                        Text="Microphone"
+                        Icon="{firebrowser:FluentIcon Glyph=&#xE720;}"
+                        Click="PermissionToggle_Click"
+                        Tag="Microphone"/>
+                            <ToggleMenuFlyoutItem
+                        Text="Geolocation"
+                        Icon="{firebrowser:FluentIcon Glyph=&#xE81D;}"
+                        Click="PermissionToggle_Click"
+                        Tag="Geolocation"/>
+                            <ToggleMenuFlyoutItem
+                        Text="Notifications"
+                        Icon="{firebrowser:FluentIcon Glyph=&#xE91C;}"
+                        Click="PermissionToggle_Click"
+                        Tag="Notifications"/>
+                            <!-- Add more ToggleMenuFlyoutItems for other permission types as needed -->
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
             </CommandBarFlyout.SecondaryCommands>
         </CommandBarFlyout>
     </Page.Resources>

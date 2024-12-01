@@ -480,6 +480,33 @@ namespace Riverside.Graphite.Pages
 		}
 
 		private string SelectionText;
+
+		private void GetCurrentPermissionStatus(string url, Action<Dictionary<string, bool>> callback)
+		{
+			string username = AuthService.CurrentUser?.Username ?? "default";
+			var permissionStatus = new Dictionary<string, bool>();
+			int totalPermissions = Enum.GetValues(typeof(CoreWebView2PermissionKind)).Length;
+			int processedPermissions = 0;
+
+			foreach (CoreWebView2PermissionKind kind in Enum.GetValues(typeof(CoreWebView2PermissionKind)))
+			{
+				PermissionManager.GetEffectivePermissionState(username, url, kind)
+					.ContinueWith(task =>
+					{
+						var state = task.Result;
+						lock (permissionStatus)
+						{
+							permissionStatus[kind.ToString()] = (state == CoreWebView2PermissionState.Allow);
+							processedPermissions++;
+
+							if (processedPermissions == totalPermissions)
+							{
+								callback(permissionStatus);
+							}
+						}
+					}, TaskScheduler.Default);
+			}
+		}
 		private void CoreWebView2_ContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
 		{
 			var ctx = (Microsoft.UI.Xaml.Controls.CommandBarFlyout)Resources["Ctx"];
@@ -501,6 +528,34 @@ namespace Riverside.Graphite.Pages
 				SelectionText = args.ContextMenuTarget.LinkUri;
 				OpenLinks.Visibility = Visibility.Visible;
 			}
+
+			GetCurrentPermissionStatus(sender.Source, permissionStatus =>
+			{
+				DispatcherQueue.TryEnqueue(() =>
+				{
+					// Update the state of permission toggles
+					foreach (var item in ctx.SecondaryCommands)
+					{
+						if (item is AppBarButton permissionsButton && permissionsButton.Label == "Site Permissions")
+						{
+							if (permissionsButton.Flyout is MenuFlyout menuFlyout)
+							{
+								foreach (var subItem in menuFlyout.Items)
+								{
+									if (subItem is ToggleMenuFlyoutItem toggleItem && permissionStatus.TryGetValue(toggleItem.Tag.ToString(), out bool isAllowed))
+									{
+										toggleItem.IsChecked = isAllowed;
+									}
+								}
+							}
+							break;
+						}
+					}
+
+					flyout ??= ctx;
+					flyout.ShowAt(WebViewElement, options);
+				});
+			});
 
 			flyout ??= ctx;
 			flyout.ShowAt(WebViewElement, options);
@@ -617,6 +672,24 @@ namespace Riverside.Graphite.Pages
 			Ctx.Hide();
 		}
 
+		private async void PermissionToggle_Click(object sender, RoutedEventArgs e)
+		{
+			if (sender is ToggleMenuFlyoutItem toggleItem)
+			{
+				string permissionType = toggleItem.Tag.ToString();
+				bool isAllowed = toggleItem.IsChecked;
+
+				string username = AuthService.CurrentUser?.Username ?? "default";
+				string url = WebViewElement.Source.ToString();
+
+				CoreWebView2PermissionKind kind = Enum.Parse<CoreWebView2PermissionKind>(permissionType);
+
+				await PermissionManager.UpdatePermission(username, url, kind, isAllowed);
+
+				// Refresh the page to apply the new permission settings
+				WebViewElement.Reload();
+			}
+		}
 		private void OpenPopUpView(Uri uri)
 		{
 			PopUpView popUpView = new();
