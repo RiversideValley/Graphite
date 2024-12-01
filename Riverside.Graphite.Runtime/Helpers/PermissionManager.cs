@@ -17,6 +17,8 @@ namespace Riverside.Graphite.Services
 		private const string PERMISSIONS_FOLDER = "Permissions";
 		private const string SETTINGS_FOLDER = "Settings";
 
+		public static event EventHandler<string> PermissionsChanged;
+
 		public class PermissionItem
 		{
 			public CoreWebView2PermissionState State { get; set; }
@@ -104,8 +106,8 @@ namespace Riverside.Graphite.Services
 				var permissions = JsonConvert.DeserializeObject<Dictionary<string, PermissionItem>>(json)
 								?? new Dictionary<string, PermissionItem>();
 
-				_userPermissions.TryAdd(username, permissions);
-				Debug.WriteLine($"Loaded permissions for user {username}");
+				_userPermissions.TryUpdate(username, permissions, _userPermissions.GetValueOrDefault(username));
+				NotifyPermissionsChanged(username);
 			}
 			catch (Exception ex)
 			{
@@ -193,6 +195,7 @@ namespace Riverside.Graphite.Services
 					permissions[key] = permissionItem;
 					await SavePermissionsAsync(username);
 					Debug.WriteLine($"Updated permission for {key} to {(allowed ? "Allow" : "Deny")}");
+					NotifyPermissionsChanged(username);
 				}
 			}
 			catch (Exception ex)
@@ -247,6 +250,7 @@ namespace Riverside.Graphite.Services
 				}
 
 				await LoadPermissionsAsync(username);
+				NotifyPermissionsChanged(username);
 				Debug.WriteLine($"Cleared permissions for user {username}");
 			}
 			catch (Exception ex)
@@ -312,6 +316,11 @@ namespace Riverside.Graphite.Services
 				Debug.WriteLine($"GetAllPermissionsAsync: Error retrieving permissions for user {username}: {ex}");
 				return new Dictionary<string, PermissionItem>();
 			}
+		}
+
+		private static void NotifyPermissionsChanged(string username)
+		{
+			PermissionsChanged?.Invoke(null, username);
 		}
 	}
 }

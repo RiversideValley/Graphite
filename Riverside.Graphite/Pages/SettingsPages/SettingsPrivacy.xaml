@@ -4,11 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Riverside.Graphite.Pages.SettingsPages"
     xmlns:helper="using:Riverside.Graphite.Helpers"
+    xmlns:perms="using:Riverside.Graphite.Controls"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls">
 
-    <Page.Resources>
-        <helper:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
-    </Page.Resources>
     
     <StackPanel Spacing="1">
         <labs:SettingsCard
@@ -60,34 +58,43 @@
                 Toggled="ToggleSetting_Toggled" />
         </labs:SettingsCard>
 
-        <labs:SettingsCard>
+        <labs:SettingsCard IsEnabled="False">
             <labs:SettingsCard.Header>
                 <TextBlock Text="Site Permissions" Style="{ThemeResource SubtitleTextBlockStyle}"/>
             </labs:SettingsCard.Header>
             <labs:SettingsCard.Content>
                 <StackPanel>
-                    <TextBlock Text="No permissions have been set." 
-                                   Visibility="{x:Bind ViewModel.HasNoPermissions, Mode=OneWay}" 
-                                   Style="{ThemeResource BodyTextBlockStyle}"/>
+                    <TextBlock Text="Debug: HasPermissions" />
+                    <TextBlock Text="{x:Bind ViewModel.HasPermissions, Mode=OneWay}" />
+                    <TextBlock Text="Debug: Permissions Count" />
+                    <TextBlock Text="{x:Bind ViewModel.Permissions.Count, Mode=OneWay}" />
 
-                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.Permissions}" 
-                                       Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
-                        <ItemsRepeater.ItemTemplate>
+                    <TextBlock Text="No permissions found" 
+                       Visibility="{x:Bind ViewModel.HasNoPermissions, Mode=OneWay}" />
+                    <ListView ItemsSource="{x:Bind ViewModel.Permissions, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
+                        <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local:PermissionItem">
-                                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5">
-                                    <FontIcon Glyph="{x:Bind Icon}" FontSize="20"/>
-                                    <TextBlock Text="{x:Bind Url}" VerticalAlignment="Center" Width="200"/>
-                                    <TextBlock Text="{x:Bind PermissionType}" VerticalAlignment="Center" Width="150"/>
-                                    <ToggleSwitch IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
-                                                      OnContent="Allow" 
-                                                      OffContent="Block"
-                                                      Toggled="Permission_Toggled"/>
-                                </StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon}" Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Url}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{x:Bind PermissionType}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                    <ToggleSwitch Grid.Column="3" 
+                                          IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
+                                          Toggled="Permission_Toggled"/>
+                                </Grid>
                             </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackPanel>
             </labs:SettingsCard.Content>
         </labs:SettingsCard>
+
     </StackPanel>
 </Page>

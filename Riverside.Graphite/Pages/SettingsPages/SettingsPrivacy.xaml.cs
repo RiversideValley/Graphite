@@ -11,6 +11,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Riverside.Graphite.Pages.SettingsPages
 {
@@ -28,13 +31,20 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				ViewModel = new SettingsPrivacyViewModel();
 				InitializeComponent();
 				LoadSettings();
-				LoadPermissions();
+				_ = InitializeAsync(); // Call asynchronously
 				Debug.WriteLine("SettingsPrivacy page initialized successfully");
 			}
 			catch (Exception ex)
 			{
 				Debug.WriteLine($"Error initializing SettingsPrivacy page: {ex.Message}");
 			}
+		}
+
+		private async Task InitializeAsync()
+		{
+			await LoadPermissionsFromJsonAsync();
+			// Force UI update
+			ViewModel.UpdatePermissionVisibility();
 		}
 
 		private void LoadSettings()
@@ -54,31 +64,52 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 		}
 
-		private async void LoadPermissions()
+		private async Task LoadPermissionsFromJsonAsync()
 		{
 			try
 			{
-				Debug.WriteLine("Loading permissions");
-				string username = AuthService.CurrentUser?.Username ?? "default";
-				await PermissionManager.LoadPermissionsAsync(username);
-				var permissions = await PermissionManager.GetAllPermissionsAsync(username);
+				Debug.WriteLine("Loading permissions from JSON");
+				string filePath = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser.Username, "Permissions", "sitepermissions.json");
 
-				foreach (var permission in permissions)
+				Debug.WriteLine($"Attempting to load file from: {filePath}");
+
+				if (File.Exists(filePath))
 				{
-					ViewModel.Permissions.Add(new PermissionItem
-					{
-						Url = permission.Key.Split(':')[0],
-						PermissionType = permission.Key.Split(':')[1],
-						IsAllowed = permission.Value.State == CoreWebView2PermissionState.Allow
-					});
-				}
+					string json = await File.ReadAllTextAsync(filePath);
+					Debug.WriteLine($"JSON content: {json}");
 
-				ViewModel.UpdatePermissionVisibility();
-				Debug.WriteLine($"Loaded {ViewModel.Permissions.Count} permissions");
+					var jsonObject = JObject.Parse(json);
+					Debug.WriteLine($"Parsed JSON object with {jsonObject.Count} items");
+
+					ViewModel.Permissions.Clear();
+					foreach (var property in jsonObject.Properties())
+					{
+						var parts = property.Name.Split(':');
+						if (parts.Length == 2)
+						{
+							var permissionData = property.Value.ToObject<PermissionManager.PermissionItem>();
+							ViewModel.Permissions.Add(new PermissionItem
+							{
+								Url = parts[0],
+								PermissionType = parts[1],
+								IsAllowed = permissionData.State == CoreWebView2PermissionState.Allow
+							});
+							Debug.WriteLine($"Added permission: {parts[0]} - {parts[1]} - {permissionData.State}");
+						}
+					}
+
+					ViewModel.UpdatePermissionVisibility();
+					Debug.WriteLine($"Loaded {ViewModel.Permissions.Count} permissions from JSON");
+				}
+				else
+				{
+					Debug.WriteLine("sitepermissions.json file not found");
+				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error loading permissions: {ex.Message}");
+				Debug.WriteLine($"Error loading permissions from JSON: {ex.Message}");
+				Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 			}
 		}
 
@@ -131,12 +162,19 @@ namespace Riverside.Graphite.Pages.SettingsPages
 					if (Enum.TryParse(permission.PermissionType, out CoreWebView2PermissionKind permissionKind))
 					{
 						var username = AuthService.CurrentUser?.Username ?? "default";
+						bool isAllowed = toggleSwitch.IsOn;
 						await PermissionManager.UpdatePermission(
 							username,
 							permission.Url,
 							permissionKind,
-							toggleSwitch.IsOn);
-						Debug.WriteLine("Permission updated successfully");
+							isAllowed);
+
+						permission.IsAllowed = isAllowed;
+
+						Debug.WriteLine($"Permission updated successfully. New state: {(isAllowed ? "Allowed" : "Denied")}");
+
+						// Save updated permissions to JSON file
+						await SavePermissionsToJsonAsync();
 					}
 					else
 					{
@@ -147,6 +185,39 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			catch (Exception ex)
 			{
 				Debug.WriteLine($"Error toggling permission: {ex.Message}");
+			}
+		}
+
+		private async Task SavePermissionsToJsonAsync()
+		{
+			try
+			{
+				Debug.WriteLine("Saving permissions to JSON");
+				string filePath = Path.Combine(UserDataManager.CoreFolderPath, "permission", "sitepermissions.json");
+
+				var permissions = ViewModel.Permissions.ToDictionary(
+					p => $"{p.Url}:{p.PermissionType}",
+					p => new PermissionManager.PermissionItem
+					{
+						State = p.IsAllowed ? CoreWebView2PermissionState.Allow : CoreWebView2PermissionState.Deny,
+						Kind = Enum.Parse<CoreWebView2PermissionKind>(p.PermissionType),
+						Changed = true,
+						LastUpdated = DateTime.UtcNow
+					}
+				);
+
+				string json = JsonConvert.SerializeObject(permissions, Formatting.Indented);
+
+				// Ensure the directory exists
+				Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+				await File.WriteAllTextAsync(filePath, json);
+
+				Debug.WriteLine($"Saved {permissions.Count} permissions to JSON");
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Error saving permissions to JSON: {ex.Message}");
 			}
 		}
 	}
@@ -168,13 +239,26 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 		}
 
-		public bool HasNoPermissions => !HasPermissions;
+		private ObservableCollection<PermissionItem> _permissions;
+		public ObservableCollection<PermissionItem> Permissions
+		{
+			get => _permissions ?? (_permissions = new ObservableCollection<PermissionItem>());
+			set
+			{
+				if (_permissions != value)
+				{
+					_permissions = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-		public ObservableCollection<PermissionItem> Permissions { get; } = new ObservableCollection<PermissionItem>();
+		public bool HasNoPermissions => !HasPermissions;
 
 		public void UpdatePermissionVisibility()
 		{
 			HasPermissions = Permissions.Any();
+			OnPropertyChanged(nameof(Permissions));
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -255,3 +339,4 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		}
 	}
 }
+

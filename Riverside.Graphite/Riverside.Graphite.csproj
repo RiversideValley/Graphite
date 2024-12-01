@@ -455,7 +455,6 @@
   <ItemGroup>
     <Folder Include="Assets\WebView\AppFrontend\src\" />
     <Folder Include="Services\Workers\" />
-    <Folder Include="Themes\" />
   </ItemGroup>
   <PropertyGroup>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
