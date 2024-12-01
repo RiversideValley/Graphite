@@ -425,12 +425,12 @@ namespace Riverside.Graphite.Pages
 					await PermissionManager.LoadPermissionsAsync(username);
 					var (storedPermission, changed) = PermissionManager.GetStoredPermission(username, url, args.PermissionKind);
 
-					bool shouldShowDialog = !storedPermission.HasValue ||
-											changed ||
-											storedPermission == CoreWebView2PermissionState.Deny ||
-											storedPermission == CoreWebView2PermissionState.Default;
-
-					if (shouldShowDialog)
+					if (storedPermission.HasValue && !changed)
+					{
+						args.State = storedPermission.Value;
+						Debug.WriteLine($"Using stored permission {args.PermissionKind} for {url}: {storedPermission.Value}");
+					}
+					else
 					{
 						string permissionKind = args.PermissionKind.ToString();
 						string formattedPermission = FormatPermissionKind(permissionKind);
@@ -448,11 +448,6 @@ namespace Riverside.Graphite.Pages
 
 						args.State = permissionState;
 						Debug.WriteLine($"Permission {args.PermissionKind} for {url} set to {permissionState}");
-					}
-					else
-					{
-						args.State = storedPermission.Value;
-						Debug.WriteLine($"Using stored permission {args.PermissionKind} for {url}: {storedPermission.Value}");
 					}
 				});
 			}
@@ -506,7 +501,6 @@ namespace Riverside.Graphite.Pages
 			Debug.WriteLine($"User chose {permissionState} for {permission} on {rootUrl}");
 			return permissionState;
 		}
-
 
 
 		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)

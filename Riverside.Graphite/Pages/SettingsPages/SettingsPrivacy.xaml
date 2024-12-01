@@ -60,53 +60,34 @@
                 Toggled="ToggleSetting_Toggled" />
         </labs:SettingsCard>
 
-        <labs:SettingsCard
-            Description="Manage permissions for different websites"
-            Header="Site Permissions">
-            <labs:SettingsCard.HeaderIcon>
-                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEA18;" />
-            </labs:SettingsCard.HeaderIcon>
-            <StackPanel Spacing="8">
-                <TextBlock 
-                    Text="No permissions have been set for any websites yet."
-                    Visibility="{x:Bind ViewModel.HasNoPermissions, Mode=OneWay}"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    TextWrapping="Wrap"
-                    Margin="0,8,0,0"/>
+        <labs:SettingsCard>
+            <labs:SettingsCard.Header>
+                <TextBlock Text="Site Permissions" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            </labs:SettingsCard.Header>
+            <labs:SettingsCard.Content>
+                <StackPanel>
+                    <TextBlock Text="No permissions have been set." 
+                                   Visibility="{x:Bind ViewModel.HasNoPermissions, Mode=OneWay}" 
+                                   Style="{ThemeResource BodyTextBlockStyle}"/>
 
-                <ListView 
-                    x:Name="PermissionsList"
-                    SelectionMode="None"
-                    ItemsSource="{x:Bind ViewModel.Permissions, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="local:PermissionItem">
-                            <labs:SettingsCard Margin="0,4">
-                                <labs:SettingsCard.HeaderIcon>
-                                    <FontIcon FontFamily="{StaticResource FluentIcons}" 
-                                             Glyph="{x:Bind Icon, Mode=OneWay}" />
-                                </labs:SettingsCard.HeaderIcon>
-                                <labs:SettingsCard.Header>
-                                    <TextBlock Text="{x:Bind Url, Mode=OneWay}" />
-                                </labs:SettingsCard.Header>
-                                <labs:SettingsCard.Description>
-                                    <TextBlock Text="{x:Bind PermissionType, Mode=OneWay}" />
-                                </labs:SettingsCard.Description>
-                                <ToggleSwitch 
-                                    IsOn="{x:Bind IsAllowed, Mode=TwoWay}"
-                                    Toggled="Permission_Toggled"/>
-                            </labs:SettingsCard>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
-            </StackPanel>
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.Permissions}" 
+                                       Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="local:PermissionItem">
+                                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5">
+                                    <FontIcon Glyph="{x:Bind Icon}" FontSize="20"/>
+                                    <TextBlock Text="{x:Bind Url}" VerticalAlignment="Center" Width="200"/>
+                                    <TextBlock Text="{x:Bind PermissionType}" VerticalAlignment="Center" Width="150"/>
+                                    <ToggleSwitch IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
+                                                      OnContent="Allow" 
+                                                      OffContent="Block"
+                                                      Toggled="Permission_Toggled"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </StackPanel>
+            </labs:SettingsCard.Content>
         </labs:SettingsCard>
     </StackPanel>
 </Page>

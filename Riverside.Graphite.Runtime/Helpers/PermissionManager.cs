@@ -283,6 +283,36 @@ namespace Riverside.Graphite.Services
 				Debug.WriteLine($"Error marking permission as changed: {ex}");
 			}
 		}
+
+		public static async Task<Dictionary<string, PermissionItem>> GetAllPermissionsAsync(string username)
+		{
+			if (string.IsNullOrEmpty(username))
+			{
+				Debug.WriteLine("GetAllPermissionsAsync: Username is null or empty");
+				return new Dictionary<string, PermissionItem>();
+			}
+
+			try
+			{
+				await LoadPermissionsAsync(username);
+
+				if (_userPermissions.TryGetValue(username, out var permissions))
+				{
+					Debug.WriteLine($"GetAllPermissionsAsync: Retrieved {permissions.Count} permissions for user {username}");
+					return new Dictionary<string, PermissionItem>(permissions);
+				}
+				else
+				{
+					Debug.WriteLine($"GetAllPermissionsAsync: No permissions found for user {username}");
+					return new Dictionary<string, PermissionItem>();
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"GetAllPermissionsAsync: Error retrieving permissions for user {username}: {ex}");
+				return new Dictionary<string, PermissionItem>();
+			}
+		}
 	}
 }
 

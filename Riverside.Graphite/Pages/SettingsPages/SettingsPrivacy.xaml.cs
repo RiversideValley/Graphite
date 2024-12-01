@@ -10,6 +10,7 @@ using Microsoft.Web.WebView2.Core;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Pages.SettingsPages
 {
@@ -27,7 +28,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				ViewModel = new SettingsPrivacyViewModel();
 				InitializeComponent();
 				LoadSettings();
-			//	LoadPermissions();
+				LoadPermissions();
 				Debug.WriteLine("SettingsPrivacy page initialized successfully");
 			}
 			catch (Exception ex)
@@ -53,7 +54,33 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 		}
 
-	
+		private async void LoadPermissions()
+		{
+			try
+			{
+				Debug.WriteLine("Loading permissions");
+				string username = AuthService.CurrentUser?.Username ?? "default";
+				await PermissionManager.LoadPermissionsAsync(username);
+				var permissions = await PermissionManager.GetAllPermissionsAsync(username);
+
+				foreach (var permission in permissions)
+				{
+					ViewModel.Permissions.Add(new PermissionItem
+					{
+						Url = permission.Key.Split(':')[0],
+						PermissionType = permission.Key.Split(':')[1],
+						IsAllowed = permission.Value.State == CoreWebView2PermissionState.Allow
+					});
+				}
+
+				ViewModel.UpdatePermissionVisibility();
+				Debug.WriteLine($"Loaded {ViewModel.Permissions.Count} permissions");
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Error loading permissions: {ex.Message}");
+			}
+		}
 
 		private async void ToggleSetting_Toggled(object sender, RoutedEventArgs e)
 		{
@@ -228,4 +255,3 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		}
 	}
 }
-
