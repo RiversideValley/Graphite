@@ -414,7 +414,9 @@ namespace Riverside.Graphite.Pages
 		private async void PermissionRequested(CoreWebView2 sender, CoreWebView2PermissionRequestedEventArgs args)
 		{
 			args.Handled = true;
+			args.SavesInProfile = false;
 			var deferral = args.GetDeferral();
+
 
 			try
 			{

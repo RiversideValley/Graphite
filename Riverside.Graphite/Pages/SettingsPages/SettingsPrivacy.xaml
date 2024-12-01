@@ -64,8 +64,6 @@
             </labs:SettingsCard.Header>
         </labs:SettingsCard>
 
-        <InfoBar Severity="Warning"
- IsOpen="True" Content="Is In Beta Deny Permissions Will Keep Deny If Try To Change Back to Allow"/>
 
         <StackPanel>
             <ListView ItemsSource="{x:Bind ViewModel.Permissions, Mode=OneWay}"
