@@ -423,7 +423,13 @@ namespace Riverside.Graphite.Pages
 					string url = WebViewElement.CoreWebView2.Source;
 					string username = AuthService.CurrentUser?.Username ?? "default";
 
-					CoreWebView2PermissionState permissionState = await PermissionManager.HandlePermissionRequest(username, url, args.PermissionKind);
+					CoreWebView2PermissionState permissionState = await PermissionManager.GetEffectivePermissionState(username, url, args.PermissionKind);
+
+					if (permissionState == CoreWebView2PermissionState.Default)
+					{
+						// Only show the dialog if there's no stored permission
+						permissionState = await PermissionManager.HandlePermissionRequest(username, url, args.PermissionKind);
+					}
 
 					args.State = permissionState;
 				});

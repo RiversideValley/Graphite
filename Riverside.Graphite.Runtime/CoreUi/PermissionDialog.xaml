@@ -12,7 +12,6 @@
     SecondaryButtonText="Deny"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
-    Background="{ThemeResource LayerFillColorDefaultBrush}"
     Foreground="{ThemeResource TextFillColorPrimaryBrush}"
     CornerRadius="8">
 

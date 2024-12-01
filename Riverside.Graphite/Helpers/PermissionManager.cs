@@ -19,7 +19,6 @@ namespace Riverside.Graphite.Helpers
 		private static readonly ConcurrentDictionary<string, Dictionary<string, PermissionItem>> _userPermissions = new();
 		private static readonly object _fileLock = new();
 		private const string PERMISSIONS_FOLDER = "Permissions";
-		private const string SETTINGS_FOLDER = "Settings";
 
 		public static event EventHandler<string> PermissionsChanged;
 
@@ -42,76 +41,47 @@ namespace Riverside.Graphite.Helpers
 			return Path.Combine(userFolderPath, PERMISSIONS_FOLDER);
 		}
 
-		private static string GetSettingsFolderPath(string username)
-		{
-			string userFolderPath = GetUserFolderPath(username);
-			return Path.Combine(userFolderPath, SETTINGS_FOLDER);
-		}
-
 		private static string GetPermissionsFilePath(string username)
 		{
 			string permissionsFolderPath = GetPermissionsFolderPath(username);
 			return Path.Combine(permissionsFolderPath, "sitepermissions.json");
 		}
 
-		public static void CreateUserFolders(string username)
-		{
-			if (string.IsNullOrEmpty(username))
-			{
-				Debug.WriteLine("Username is null or empty. Cannot create user folders.");
-				return;
-			}
-
-			try
-			{
-				string userFolderPath = GetUserFolderPath(username);
-				string permissionsFolderPath = GetPermissionsFolderPath(username);
-				string settingsFolderPath = GetSettingsFolderPath(username);
-
-				Directory.CreateDirectory(userFolderPath);
-				Directory.CreateDirectory(permissionsFolderPath);
-				Directory.CreateDirectory(settingsFolderPath);
-
-				Debug.WriteLine($"Created folders for user {username}:");
-				Debug.WriteLine($"User folder: {userFolderPath}");
-				Debug.WriteLine($"Permissions folder: {permissionsFolderPath}");
-				Debug.WriteLine($"Settings folder: {settingsFolderPath}");
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Error creating folders for user {username}: {ex}");
-			}
-		}
-
 		public static async Task LoadPermissionsAsync(string username)
 		{
 			if (string.IsNullOrEmpty(username))
 			{
-				Debug.WriteLine("Username is null or empty");
-				return;
-			}
-
-			if (_userPermissions.ContainsKey(username))
-			{
+				Debug.WriteLine("LoadPermissionsAsync: Username is null or empty");
 				return;
 			}
 
 			try
 			{
-				CreateUserFolders(username);
 				string filePath = GetPermissionsFilePath(username);
+				Debug.WriteLine($"Attempting to load permissions from file: {filePath}");
+
 				if (!File.Exists(filePath))
 				{
+					Debug.WriteLine($"Permissions file does not exist for user: {username}");
 					_userPermissions.TryAdd(username, new Dictionary<string, PermissionItem>());
 					return;
 				}
 
 				string json = await File.ReadAllTextAsync(filePath);
+				Debug.WriteLine($"Loaded JSON content: {json}");
+
 				var permissions = JsonConvert.DeserializeObject<Dictionary<string, PermissionItem>>(json)
 								?? new Dictionary<string, PermissionItem>();
 
-				_userPermissions.TryUpdate(username, permissions, _userPermissions.GetValueOrDefault(username));
+				Debug.WriteLine($"Deserialized {permissions.Count} permissions for user: {username}");
+
+				_userPermissions.AddOrUpdate(username, permissions, (_, __) => permissions);
 				NotifyPermissionsChanged(username);
+
+				foreach (var kvp in permissions)
+				{
+					Debug.WriteLine($"Loaded permission: Key={kvp.Key}, State={kvp.Value.State}, Kind={kvp.Value.Kind}");
+				}
 			}
 			catch (Exception ex)
 			{
@@ -125,8 +95,13 @@ namespace Riverside.Graphite.Helpers
 			try
 			{
 				var uri = new Uri(url);
-				string domain = uri.GetLeftPart(UriPartial.Authority);
-				return $"{domain}:{kind}";
+				string domain = uri.Host.Replace("www.", "");
+				Debug.WriteLine($"Creating permission key for URL: {url}");
+				Debug.WriteLine($"Extracted domain: {domain}");
+				Debug.WriteLine($"Permission kind: {kind}");
+				string key = $"{domain}:{kind}";
+				Debug.WriteLine($"Generated permission key: {key}");
+				return key;
 			}
 			catch (Exception ex)
 			{
@@ -142,18 +117,29 @@ namespace Riverside.Graphite.Helpers
 		{
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
 			{
+				Debug.WriteLine("GetStoredPermission: Username or URL is null or empty");
 				return (null, false);
 			}
 
 			try
 			{
+				Debug.WriteLine($"Looking up permission for user: {username}");
 				if (_userPermissions.TryGetValue(username, out var permissions))
 				{
 					string key = GetPermissionKey(url, kind);
+					Debug.WriteLine($"Checking for permission with key: {key}");
+					Debug.WriteLine($"Available permission keys: {string.Join(", ", permissions.Keys)}");
+
 					if (permissions.TryGetValue(key, out var permission))
 					{
+						Debug.WriteLine($"Found stored permission: State={permission.State}, Changed={permission.Changed}");
 						return (permission.State, permission.Changed);
 					}
+					Debug.WriteLine("No stored permission found for key");
+				}
+				else
+				{
+					Debug.WriteLine("No permissions found for user");
 				}
 			}
 			catch (Exception ex)
@@ -165,10 +151,12 @@ namespace Riverside.Graphite.Helpers
 		}
 
 		public static async Task<CoreWebView2PermissionState> HandlePermissionRequest(
-	   string username,
-	   string url,
-	   CoreWebView2PermissionKind kind)
+			string username,
+			string url,
+			CoreWebView2PermissionKind kind)
 		{
+			Debug.WriteLine($"HandlePermissionRequest called for user: {username}, URL: {url}, Kind: {kind}");
+
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
 			{
 				Debug.WriteLine("HandlePermissionRequest: Username or URL is null or empty");
@@ -180,16 +168,23 @@ namespace Riverside.Graphite.Helpers
 				await LoadPermissionsAsync(username);
 				var (storedPermission, _) = GetStoredPermission(username, url, kind);
 
+				if (storedPermission.HasValue)
+				{
+					Debug.WriteLine($"Using stored permission for {kind} on {url}: {storedPermission.Value}");
+					return storedPermission.Value;
+				}
+
 				string permissionKind = kind.ToString();
 				string formattedPermission = FormatPermissionKind(permissionKind);
 
-				// Always show the dialog, regardless of stored permission
 				CoreWebView2PermissionState permissionState = await ShowAndHandlePermissionDialogAsync(formattedPermission, storedPermission, url);
 
-				// Update and save the permission based on the dialog result
-				bool allowed = permissionState == CoreWebView2PermissionState.Allow;
-				await UpdatePermission(username, url, kind, allowed);
-				await SavePermissionsAsync(username);
+				if (permissionState != CoreWebView2PermissionState.Default)
+				{
+					bool allowed = permissionState == CoreWebView2PermissionState.Allow;
+					await UpdatePermission(username, url, kind, allowed);
+					await SavePermissionsAsync(username);
+				}
 
 				Debug.WriteLine($"Permission {kind} for {url} set to {permissionState} after showing dialog");
 				return permissionState;
@@ -199,6 +194,26 @@ namespace Riverside.Graphite.Helpers
 				Debug.WriteLine($"Error in HandlePermissionRequest: {ex}");
 				return CoreWebView2PermissionState.Deny;
 			}
+		}
+
+		public static async Task<CoreWebView2PermissionState> GetEffectivePermissionState(
+			string username,
+			string url,
+			CoreWebView2PermissionKind kind)
+		{
+			Debug.WriteLine($"GetEffectivePermissionState called for user: {username}, URL: {url}, Kind: {kind}");
+
+			await LoadPermissionsAsync(username);
+			var (storedPermission, _) = GetStoredPermission(username, url, kind);
+
+			if (storedPermission.HasValue)
+			{
+				Debug.WriteLine($"Using stored permission for {kind} on {url}: {storedPermission.Value}");
+				return storedPermission.Value;
+			}
+
+			Debug.WriteLine($"No stored permission found for {kind} on {url}. Returning Default.");
+			return CoreWebView2PermissionState.Default;
 		}
 
 		public static async Task UpdatePermission(
@@ -308,9 +323,9 @@ namespace Riverside.Graphite.Helpers
 		}
 
 		private static async Task<CoreWebView2PermissionState> ShowAndHandlePermissionDialogAsync(
-		string formattedPermission,
-		CoreWebView2PermissionState? storedPermission,
-		string url)
+			string formattedPermission,
+			CoreWebView2PermissionState? storedPermission,
+			string url)
 		{
 			try
 			{
@@ -319,7 +334,6 @@ namespace Riverside.Graphite.Helpers
 
 				var dialog = new PermissionDialog(dialogTitle, manageText);
 
-				// Create a TaskCompletionSource to wait for user interaction
 				var tcs = new TaskCompletionSource<CoreWebView2PermissionState>();
 
 				dialog.AllowClicked += (sender, args) =>
@@ -340,14 +354,10 @@ namespace Riverside.Graphite.Helpers
 					tcs.SetResult(CoreWebView2PermissionState.Default);
 				};
 
-				// Set the XAML root for the dialog
 				dialog.XamlRoot = (Application.Current as App)?.m_window.Content.XamlRoot;
 
-
-				// Show the dialog
 				_ = dialog.ShowAsync();
 
-				// Wait for the user to click a button
 				var result = await tcs.Task;
 
 				return result;
