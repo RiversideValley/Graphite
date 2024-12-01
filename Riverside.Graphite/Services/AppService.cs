@@ -470,7 +470,9 @@ public static class AppService
 
 		if (Directory.Exists(userFolderPath))
 		{
-			return;
+			string username = GetUsernameFromCoreFolderPath(userFolderPath, "Private");
+			if (username is not null) 
+				return;
 		}
 
 		User newUser = new()
