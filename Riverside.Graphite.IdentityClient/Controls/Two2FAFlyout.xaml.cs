@@ -6,43 +6,44 @@ using Riverside.Graphite.IdentityClient.Models;
 using System;
 using Windows.ApplicationModel.DataTransfer;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Riverside.Graphite.IdentityClient.Controls
 {
-	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
-	/// </summary>
 	public sealed partial class Two2FAFlyout : Flyout
 	{
-		public Two2FAFlyout()
+		private readonly Riverside.Graphite.IdentityClient.Services.TwoFactorAuthService _authService;
+
+		public Two2FAFlyout(Riverside.Graphite.IdentityClient.Services.TwoFactorAuthService authService)
 		{
 			InitializeComponent();
-			list.ItemsSource = null;
-			list.ItemsSource = MultiFactorAuthentication.Items;
+			_authService = authService;
+			list.ItemsSource = _authService.AuthItems;
 		}
 
 		private async void Button_Click(object sender, RoutedEventArgs e)
 		{
-			AddDialog addDialog = new();
+			AddDialog addDialog = new AddDialog(_authService);
 			addDialog.XamlRoot = XamlRoot;
-			_ = await addDialog.ShowAsync();
+			ContentDialogResult result = await addDialog.ShowAsync();
+
+			if (result == ContentDialogResult.Primary)
+			{
+				string name = addDialog.ItemName;
+				string secret = addDialog.ItemSecret;
+				string issuer = addDialog.ItemIssuer;
+
+				await _authService.AddItemAsync(name, secret, issuer);
+			}
 		}
 
 		private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
 		{
-			ListViewItem item = sender as ListViewItem;
-			TwoFactorAuthentication twoFactAuth = item.DataContext as TwoFactorAuthentication;
-
-			DataPackage package = new();
-			package.SetText(twoFactAuth.Code);
-			Clipboard.SetContent(package);
-		}
-
-		private async void Repair_Click(object sender, RoutedEventArgs e)
-		{
-			await Riverside.Graphite.Runtime.Helpers.TwoFactorAuthentication.Repair();
+			if (sender is ListViewItem item && item.DataContext is TwoFactorAuthViewModel twoFactAuth)
+			{
+				DataPackage package = new DataPackage();
+				package.SetText(twoFactAuth.Code);
+				Clipboard.SetContent(package);
+			}
 		}
 	}
 }
+

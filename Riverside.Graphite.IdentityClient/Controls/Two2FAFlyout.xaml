@@ -50,7 +50,6 @@
                     x:Name="Repair"
                     Background="Transparent"
                     BorderThickness="0"
-                    Click="Repair_Click"
                     Content="&#xE90F;"
                     FontFamily="Segoe Fluent Icons"
                     ToolTipService.ToolTip="If 2Fa fails repair it (In Testing)" />

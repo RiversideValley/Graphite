@@ -31,7 +31,7 @@
             Grid.Row="0"
             Margin="15"
             Style="{ThemeResource TitleTextBlockStyle}"
-            Text="Add Key For 2Fa" />
+            Text="Add Key For 2FA" />
 
         <Grid
             Grid.Row="1"
@@ -43,6 +43,10 @@
                     x:Name="nameBox"
                     Margin="0,10,0,0"
                     PlaceholderText="Name Of Site" />
+                <TextBox
+                    x:Name="issuerBox"
+                    Margin="0,10,0,0"
+                    PlaceholderText="Issuer (Optional)" />
                 <TextBlock x:Name="codeBlock" IsTextSelectionEnabled="True" />
             </StackPanel>
         </Grid>
@@ -55,17 +59,19 @@
             BorderThickness="0,1,0,0">
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button
+                    x:Name="CloseButton"
                     Margin="6,0"
                     Padding="20,15"
-                    Click="Button_Click"
+                    Click="CloseButton_Click"
                     Content="Close" />
                 <Button
+                    x:Name="SaveButton"
                     Padding="20,15"
-                    Click="Button_Click_1"
+                    Click="SaveButton_Click"
                     Content="Save"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
-            <HyperlinkButton Click="HyperlinkButton_Click" Content="Copy Code" />
+            <HyperlinkButton x:Name="CopyCodeButton" Click="CopyCodeButton_Click" Content="Copy Code" />
         </Grid>
     </Grid>
 </ContentDialog>

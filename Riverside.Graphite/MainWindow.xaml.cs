@@ -14,6 +14,7 @@ using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.IdentityClient.Models;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -1336,7 +1337,11 @@ public sealed partial class MainWindow : Window
 
 			if (authResult == UserConsentVerificationResult.Verified)
 			{
-				Riverside.Graphite.IdentityClient.Models.MultiFactorAuthentication.ShowFlyout(Secure);
+				string userDataPath = Path.Combine(UserDataManager.CoreFolderPath);
+				IdentityClient.Services.TwoFactorAuthService authService = new IdentityClient.Services.TwoFactorAuthService(userDataPath, AuthService.CurrentUser.Username);
+				await authService.InitializeAsync();
+				// ...
+				authService.ShowFlyout(Secure);
 			}
 			else
 			{

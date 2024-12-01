@@ -2,50 +2,52 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.IdentityClient.Helpers;
 using Riverside.Graphite.IdentityClient.Models;
+using Riverside.Graphite.IdentityClient.Services;
 using Riverside.Graphite.IdentityClient.Utils;
 using Windows.ApplicationModel.DataTransfer;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Riverside.Graphite.IdentityClient.Dialogs
 {
-	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
-	/// </summary>
 	public sealed partial class AddDialog : ContentDialog
 	{
-		public AddDialog()
+		private readonly TwoFactorAuthService _authService;
+
+		public string ItemName { get; private set; }
+		public string ItemSecret { get; private set; }
+		public string ItemIssuer { get; private set; }
+
+		public AddDialog(TwoFactorAuthService authService)
 		{
 			InitializeComponent();
+			_authService = authService;
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
 			Hide();
 		}
 
-		private void Button_Click_1(object sender, RoutedEventArgs e)
+		private async void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			secretBox.Text = secretBox.Text.Replace(" ", "");
-			secretBox.Text = secretBox.Text.Replace("-", "");
+			ItemSecret = secretBox.Text.Replace(" ", "").Replace("-", "");
+			ItemName = nameBox.Text;
+			ItemIssuer = issuerBox.Text;
 
-			if (secretBox.Text.Length > 0) // 0 for testing purposes
+			if (!string.IsNullOrEmpty(ItemSecret))
 			{
-				MultiFactorAuthentication.Add(nameBox.Text, secretBox.Text);
+				await _authService.AddItemAsync(ItemName, ItemSecret, ItemIssuer);
 			}
 
 			Hide();
 		}
 
-		private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+		private void CopyCodeButton_Click(object sender, RoutedEventArgs e)
 		{
-			secretBox.Text = secretBox.Text.Replace(" ", "");
-			secretBox.Text = secretBox.Text.Replace("-", "");
+			string secret = secretBox.Text.Replace(" ", "").Replace("-", "");
 
-			if (secretBox.Text.Length > 0) // For testing purpose (the normal min value should be 16)
+			if (!string.IsNullOrEmpty(secret))
 			{
-				Totp totp = new(Base32Encoding.ToBytes(secretBox.Text));
+				Totp totp = new(Base32Encoding.ToBytes(secret));
 				string code = totp.ComputeTotp();
 
 				DataPackage package = new();
@@ -55,3 +57,4 @@ namespace Riverside.Graphite.IdentityClient.Dialogs
 		}
 	}
 }
+
