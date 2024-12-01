@@ -16,8 +16,9 @@ namespace Riverside.Graphite.IdentityClient.Models
 		private string _code;
 		private int _progressValue;
 		private string _name;
-		private readonly DispatcherTimer _updateTimer;
-		private DateTime _lastCodeUpdateTime;
+		private Totp _totp;
+		private int _remainingSeconds;
+		private DispatcherTimer _timer;
 
 		public TwoFactorAuthItem Item { get; }
 
@@ -66,38 +67,50 @@ namespace Riverside.Graphite.IdentityClient.Models
 		public TwoFactorAuthViewModel(TwoFactorAuthItem item, TwoFactorAuthService authService)
 		{
 			Item = item;
-			Item.Step = 60; // Set the step to 60 seconds
 			_authService = authService;
 			Name = item.Name;
 			CopyCodeCommand = new RelayCommand(CopyCode);
 			RemoveItemCommand = new RelayCommand(RemoveItem);
 
-			_updateTimer = new DispatcherTimer
-			{
-				Interval = TimeSpan.FromSeconds(1)
-			};
-			_updateTimer.Tick += UpdateCodeAndProgress;
-			_updateTimer.Start();
+			_totp = new Totp(Item.Secret, 30, (OtpHashMode)Item.OtpHashMode, Item.Size);
 
-			UpdateCodeAndProgress(null, null);
+			// Generate initial code and set initial remaining seconds
+			GenerateNewCode();
+
+			_timer = new DispatcherTimer();
+			_timer.Interval = TimeSpan.FromSeconds(1);
+			_timer.Tick += Timer_Tick;
+			_timer.Start();
+
+			UpdateProgressValue();
 		}
 
-		public void UpdateCodeAndProgress(object sender, object e)
+		private void Timer_Tick(object sender, object e)
 		{
-			var totp = new Totp(Item.Secret, 60, (OtpHashMode)Item.OtpHashMode, Item.Size);
+			UpdateCodeAndProgress();
+		}
 
-			DateTime now = DateTime.Now;
-			TimeSpan elapsed = now - _lastCodeUpdateTime;
+		public void UpdateCodeAndProgress()
+		{
+			_remainingSeconds--;
 
-			if (elapsed.TotalSeconds >= 60 || string.IsNullOrEmpty(Code))
+			if (_remainingSeconds <= 0)
 			{
-				string newCode = totp.ComputeTotp();
-				Code = newCode;
-				_lastCodeUpdateTime = now;
+				GenerateNewCode();
 			}
 
-			int remainingSeconds = 60 - (int)elapsed.TotalSeconds;
-			ProgressValue = remainingSeconds;
+			UpdateProgressValue();
+		}
+
+		private void GenerateNewCode()
+		{
+			Code = _totp.ComputeTotp();
+			_remainingSeconds = 30;
+		}
+
+		private void UpdateProgressValue()
+		{
+			ProgressValue = _remainingSeconds;
 		}
 
 		private async void CopyCode()
@@ -111,6 +124,7 @@ namespace Riverside.Graphite.IdentityClient.Models
 
 		private async void RemoveItem()
 		{
+			_timer.Stop();
 			await _authService.RemoveItemAsync(this);
 		}
 
