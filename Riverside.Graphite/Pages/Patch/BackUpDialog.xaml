@@ -49,14 +49,7 @@
                 OnContent="Cloud"
                 Toggled="BackupLocationToggle_Toggled" />
         </StackPanel>
-        <InfoBar
-            x:Name="EntraInfo"
-            Title="Login Required"
-            IsClosable="False"
-            IsOpen="True"
-            Message="FireBrowser is able to store you backups to the cloud now. Please log in with a Microsoft Account when prompted."
-            Severity="Warning" />
-        <!--  hide premuim icon until premium is available browser  -->
+
     </StackPanel>
 
     <ContentDialog.PrimaryButtonStyle>
