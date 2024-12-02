@@ -52,7 +52,6 @@ namespace Riverside.Graphite.Helpers
 			if (!Directory.Exists(path))
 			{
 				Directory.CreateDirectory(path);
-				Debug.WriteLine($"Created directory: {path}");
 			}
 		}
 
@@ -63,14 +62,12 @@ namespace Riverside.Graphite.Helpers
 
 			if (string.IsNullOrEmpty(username))
 			{
-				Debug.WriteLine("LoadPermissionsAsync: Username is null or empty");
 				return;
 			}
 
 			try
 			{
 				string filePath = GetPermissionsFilePath(username);
-				Debug.WriteLine($"Attempting to load permissions from file: {filePath}");
 
 				if (!File.Exists(filePath))
 				{
@@ -80,24 +77,16 @@ namespace Riverside.Graphite.Helpers
 				}
 
 				string json = await File.ReadAllTextAsync(filePath);
-				Debug.WriteLine($"Loaded JSON content: {json}");
 
 				var permissions = JsonConvert.DeserializeObject<Dictionary<string, PermissionItem>>(json)
 								?? new Dictionary<string, PermissionItem>();
 
-				Debug.WriteLine($"Deserialized {permissions.Count} permissions for user: {username}");
 
 				_userPermissions.AddOrUpdate(username, permissions, (_, __) => permissions);
-				NotifyPermissionsChanged(username);
-
-				foreach (var kvp in permissions)
-				{
-					Debug.WriteLine($"Loaded permission: Key={kvp.Key}, State={kvp.Value.State}, Kind={kvp.Value.Kind}");
-				}
+				NotifyPermissionsChanged(username);			
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error loading permissions for user {username}: {ex}");
 				_userPermissions.TryAdd(username, new Dictionary<string, PermissionItem>());
 			}
 		}
@@ -108,16 +97,12 @@ namespace Riverside.Graphite.Helpers
 			{
 				var uri = new Uri(url);
 				string domain = uri.Host.Replace("www.", "");
-				Debug.WriteLine($"Creating permission key for URL: {url}");
-				Debug.WriteLine($"Extracted domain: {domain}");
-				Debug.WriteLine($"Permission kind: {kind}");
+			
 				string key = $"{domain}:{kind}";
-				Debug.WriteLine($"Generated permission key: {key}");
 				return key;
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error creating permission key for URL {url}: {ex}");
 				return $"{url}:{kind}";
 			}
 		}
@@ -129,34 +114,26 @@ namespace Riverside.Graphite.Helpers
 		{
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
 			{
-				Debug.WriteLine("GetStoredPermission: Username or URL is null or empty");
 				return (null, false);
 			}
 
 			try
 			{
-				Debug.WriteLine($"Looking up permission for user: {username}");
 				if (_userPermissions.TryGetValue(username, out var permissions))
 				{
 					string key = GetPermissionKey(url, kind);
-					Debug.WriteLine($"Checking for permission with key: {key}");
-					Debug.WriteLine($"Available permission keys: {string.Join(", ", permissions.Keys)}");
 
 					if (permissions.TryGetValue(key, out var permission))
 					{
-						Debug.WriteLine($"Found stored permission: State={permission.State}, Changed={permission.Changed}");
 						return (permission.State, permission.Changed);
 					}
-					Debug.WriteLine("No stored permission found for key");
 				}
 				else
 				{
-					Debug.WriteLine("No permissions found for user");
 				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error getting stored permission: {ex}");
 			}
 
 			return (null, false);
@@ -167,11 +144,9 @@ namespace Riverside.Graphite.Helpers
 			string url,
 			CoreWebView2PermissionKind kind)
 		{
-			Debug.WriteLine($"HandlePermissionRequest called for user: {username}, URL: {url}, Kind: {kind}");
 
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
 			{
-				Debug.WriteLine("HandlePermissionRequest: Username or URL is null or empty");
 				return CoreWebView2PermissionState.Deny;
 			}
 
@@ -182,7 +157,6 @@ namespace Riverside.Graphite.Helpers
 
 				if (storedPermission.HasValue)
 				{
-					Debug.WriteLine($"Using stored permission for {kind} on {url}: {storedPermission.Value}");
 					return storedPermission.Value;
 				}
 
@@ -198,12 +172,10 @@ namespace Riverside.Graphite.Helpers
 					await SavePermissionsAsync(username);
 				}
 
-				Debug.WriteLine($"Permission {kind} for {url} set to {permissionState} after showing dialog");
 				return permissionState;
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error in HandlePermissionRequest: {ex}");
 				return CoreWebView2PermissionState.Deny;
 			}
 		}
@@ -213,18 +185,15 @@ namespace Riverside.Graphite.Helpers
 			string url,
 			CoreWebView2PermissionKind kind)
 		{
-			Debug.WriteLine($"GetEffectivePermissionState called for user: {username}, URL: {url}, Kind: {kind}");
 
 			await LoadPermissionsAsync(username);
 			var (storedPermission, _) = GetStoredPermission(username, url, kind);
 
 			if (storedPermission.HasValue)
 			{
-				Debug.WriteLine($"Using stored permission for {kind} on {url}: {storedPermission.Value}");
 				return storedPermission.Value;
 			}
 
-			Debug.WriteLine($"No stored permission found for {kind} on {url}. Returning Default.");
 			return CoreWebView2PermissionState.Default;
 		}
 
@@ -262,13 +231,11 @@ namespace Riverside.Graphite.Helpers
 
 					permissions[key] = permissionItem;
 					await SavePermissionsAsync(username);
-					Debug.WriteLine($"Updated permission for {key} to {(allowed ? "Allow" : "Deny")}");
 					NotifyPermissionsChanged(username);
 				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error updating permission: {ex}");
 			}
 		}
 
@@ -291,12 +258,10 @@ namespace Riverside.Graphite.Helpers
 						File.WriteAllText(filePath, json);
 					}
 
-					Debug.WriteLine($"Saved permissions for user {username}");
 				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error saving permissions: {ex}");
 			}
 		}
 
@@ -319,13 +284,11 @@ namespace Riverside.Graphite.Helpers
 					{
 						permission.Changed = true;
 						await SavePermissionsAsync(username);
-						Debug.WriteLine($"Marked permission as changed for {key}");
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error marking permission as changed: {ex}");
 			}
 		}
 
@@ -350,19 +313,16 @@ namespace Riverside.Graphite.Helpers
 
 				dialog.AllowClicked += (sender, args) =>
 				{
-					Debug.WriteLine($"User allowed {formattedPermission} for {url}");
 					tcs.SetResult(CoreWebView2PermissionState.Allow);
 				};
 
 				dialog.DenyClicked += (sender, args) =>
 				{
-					Debug.WriteLine($"User denied {formattedPermission} for {url}");
 					tcs.SetResult(CoreWebView2PermissionState.Deny);
 				};
 
 				dialog.CancelClicked += (sender, args) =>
 				{
-					Debug.WriteLine($"User cancelled permission request for {formattedPermission} on {url}");
 					tcs.SetResult(CoreWebView2PermissionState.Default);
 				};
 
@@ -376,7 +336,6 @@ namespace Riverside.Graphite.Helpers
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error showing permission dialog: {ex}");
 				return CoreWebView2PermissionState.Deny;
 			}
 		}

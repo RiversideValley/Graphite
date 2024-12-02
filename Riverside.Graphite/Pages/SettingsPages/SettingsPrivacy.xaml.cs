@@ -27,13 +27,11 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		{
 			try
 			{
-				Debug.WriteLine("Initializing SettingsPrivacy page");
 				SettingsService = App.GetService<SettingsService>();
 				ViewModel = new SettingsPrivacyViewModel();
 				InitializeComponent();
 				LoadSettings();
 				_ = InitializeAsync(); // Call asynchronously
-				Debug.WriteLine("SettingsPrivacy page initialized successfully");
 			}
 			catch (Exception ex)
 			{
@@ -52,12 +50,10 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		{
 			try
 			{
-				Debug.WriteLine("Loading settings");
 				DisableJavaScriptToggle.IsOn = SettingsService.CoreSettings.DisableJavaScript;
 				DisablWebMessFillToggle.IsOn = SettingsService.CoreSettings.DisableWebMess;
 				DisableGenaralAutoFillToggle.IsOn = SettingsService.CoreSettings.DisableGenAutoFill;
 				PasswordWebMessFillToggle.IsOn = SettingsService.CoreSettings.DisablePassSave;
-				Debug.WriteLine("Settings loaded successfully");
 			}
 			catch (Exception ex)
 			{
@@ -69,18 +65,14 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		{
 			try
 			{
-				Debug.WriteLine("Loading permissions from JSON");
 				string filePath = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser.Username, "Permissions", "sitepermissions.json");
 
-				Debug.WriteLine($"Attempting to load file from: {filePath}");
 
 				if (File.Exists(filePath))
 				{
 					string json = await File.ReadAllTextAsync(filePath);
-					Debug.WriteLine($"JSON content: {json}");
 
 					var jsonObject = JObject.Parse(json);
-					Debug.WriteLine($"Parsed JSON object with {jsonObject.Count} items");
 
 					ViewModel.Permissions.Clear();
 					foreach (var property in jsonObject.Properties())
@@ -95,12 +87,10 @@ namespace Riverside.Graphite.Pages.SettingsPages
 								PermissionType = parts[1],
 								IsAllowed = permissionData.State == CoreWebView2PermissionState.Allow
 							});
-							Debug.WriteLine($"Added permission: {parts[0]} - {parts[1]} - {permissionData.State}");
 						}
 					}
 
 					ViewModel.UpdatePermissionVisibility();
-					Debug.WriteLine($"Loaded {ViewModel.Permissions.Count} permissions from JSON");
 				}
 				else
 				{
@@ -122,7 +112,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				{
 					bool value = toggleSwitch.IsOn;
 					string settingName = toggleSwitch.Name;
-					Debug.WriteLine($"Toggling setting: {settingName} to {value}");
 
 					switch (settingName)
 					{
@@ -144,7 +133,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 					}
 
 					await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
-					Debug.WriteLine("Settings saved successfully");
 				}
 			}
 			catch (Exception ex)
@@ -172,7 +160,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 
 						permission.IsAllowed = isAllowed;
 
-						Debug.WriteLine($"Permission updated successfully. New state: {(isAllowed ? "Allowed" : "Denied")}");
 
 						// Save updated permissions to JSON file
 						await SavePermissionsToJsonAsync();
@@ -193,7 +180,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		{
 			try
 			{
-				Debug.WriteLine("Saving permissions to JSON");
 				string filePath = Path.Combine(UserDataManager.CoreFolderPath, "permission", "sitepermissions.json");
 
 				var permissions = ViewModel.Permissions.ToDictionary(
@@ -214,7 +200,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 
 				await File.WriteAllTextAsync(filePath, json);
 
-				Debug.WriteLine($"Saved {permissions.Count} permissions to JSON");
 			}
 			catch (Exception ex)
 			{
