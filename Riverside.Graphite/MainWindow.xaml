@@ -879,6 +879,7 @@
                     Command="{x:Bind ViewModelMain.ShowOfficeOptionsCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                     ToolTipService.ToolTip="Office 365"
+                    Style="{StaticResource QuietButtonStyle}"
                     Visibility="{x:Bind ViewModelMain.MsOptionVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <Image
                         Width="16"

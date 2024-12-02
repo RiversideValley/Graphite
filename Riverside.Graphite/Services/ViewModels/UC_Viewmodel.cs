@@ -35,6 +35,8 @@ namespace Riverside.Graphite
 
 		//public Visibility _IsMsLoginVisible  => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
 		public Visibility IsMsLoginVisibility => IsMsLogin ? Visibility.Visible : Visibility.Collapsed;
+		public Visibility IsLoggedIn => IsMsLogin ? Visibility.Collapsed : Visibility.Visible;
+
 
 		private readonly Func<bool> _IsCoreFolder = () =>
 		{
@@ -60,6 +62,7 @@ namespace Riverside.Graphite
 				await AppService.MsalService?.SignOutAsync();
 				IsMsLogin = AppService.MsalService.IsSignedIn;
 				RaisePropertyChanges(nameof(IsMsLoginVisibility));
+				RaisePropertyChanges(nameof(IsLoggedIn));
 			}
 		}
 
@@ -90,6 +93,8 @@ namespace Riverside.Graphite
 					await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
 					MsProfilePicture = bitmapImage;
 					RaisePropertyChanges(nameof(MsProfilePicture));
+					RaisePropertyChanges(nameof(IsLoggedIn));
+
 				}
 				else
 				{

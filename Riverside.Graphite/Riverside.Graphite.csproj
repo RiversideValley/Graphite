@@ -198,6 +198,15 @@
     <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Assets\Experience\OOBE\Costume.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Experience\OOBE\Default.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Experience\OOBE\Featured.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\Icons\copilot.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -272,6 +281,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Assets\Experience\OOBE\Hero.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Icons\Accounts.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

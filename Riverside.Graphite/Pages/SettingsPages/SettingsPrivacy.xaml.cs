@@ -147,7 +147,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			{
 				if (sender is ToggleSwitch toggleSwitch && toggleSwitch.DataContext is PermissionItem permission)
 				{
-					Debug.WriteLine($"Toggling permission: {permission.PermissionType} for {permission.Url}");
 					if (Enum.TryParse(permission.PermissionType, out CoreWebView2PermissionKind permissionKind))
 					{
 						var username = AuthService.CurrentUser?.Username ?? "default";
@@ -312,6 +311,12 @@ namespace Riverside.Graphite.Pages.SettingsPages
 					nameof(CoreWebView2PermissionKind.Notifications) => "\uE91C",
 					nameof(CoreWebView2PermissionKind.OtherSensors) => "\uE7F8",
 					nameof(CoreWebView2PermissionKind.ClipboardRead) => "\uE8C8",
+					nameof(CoreWebView2PermissionKind.MultipleAutomaticDownloads) => "\uE896",
+					nameof(CoreWebView2PermissionKind.Autoplay) => "\uE768",
+					nameof(CoreWebView2PermissionKind.WindowManagement) => "\uE87B",
+
+
+
 					_ => "\uE783",
 				};
 			}

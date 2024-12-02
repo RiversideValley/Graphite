@@ -13,7 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="Base" />
+        <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
     <Grid x:Name="GridMainUploadBackup" x:FieldModifier="Public">
         <TextBlock
@@ -25,124 +25,121 @@
             FontWeight="SemiBold"
             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
             Text="Backup File Request" />
-        <ScrollViewer Margin="2,72,2,2" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+        <ScrollViewer Margin="0" Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
             <Grid
-                x:Name="MainGrid"
-                Margin="{ThemeResource ContentDialogBorderWidth}"
-                Padding="10">
+        x:Name="MainGrid"
+        Margin="{ThemeResource ContentDialogBorderWidth}"
+        Padding="24">
 
                 <StackPanel
-                    Padding="2"
-                    Orientation="Vertical"
-                    Spacing="12">
-                    <TextBlock
-                        Margin="0,0,10,0"
-                        HorizontalAlignment="Right"
-                        FontSize="24"
-                        FontStyle="Italic"
-                        FontWeight="ExtraBold"
-                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                        Text="{x:Bind ViewModel.SelectedUser.Email, Mode=OneWay}" />
+            Orientation="Vertical"
+            Spacing="24">
+                    <TextBlock Margin="10"/>
+
                     <TextBox
-                        x:Name="OutFile"
-                        FontSize="14"
-                        FontStyle="Italic"
-                        IsEnabled="False"
-                        PlaceholderText="File Selected..."
-                        Text="{x:Bind ViewModel.FileSelected.BlobName, Mode=OneWay}" />
+                x:Name="OutFile"
+                
+                IsEnabled="False"
+                PlaceholderText="File Selected..."
+                Text="{x:Bind ViewModel.FileSelected.BlobName, Mode=OneWay}" />
+
                     <ListView
-                        x:Name="FileUploaded"
-                        MaxHeight="250"
-                        Margin="4,0,0,4"
-                        BorderBrush="{ThemeResource AccentAAFillColorTertiaryBrush}"
-                        BorderThickness=".5"
-                        CornerRadius="4"
-                        ItemsSource="{x:Bind ViewModel.FilesUpload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{x:Bind ViewModel.FileSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                x:Name="FileUploaded"
+                MaxHeight="300"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                ItemsSource="{x:Bind ViewModel.FilesUpload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{x:Bind ViewModel.FileSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="data:UserEntity">
-                                <Grid>
-                                    <StackPanel
-                                        Margin="2"
-                                        BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                                        BorderThickness=".5"
-                                        Orientation="Vertical"
-                                        Spacing="8">
-                                        <TextBlock Foreground="MediumPurple" Text="{Binding Timestamp}" />
-                                        <TextBlock Foreground="LimeGreen" Text="{Binding BlobName}" />
-                                        <TextBlock Text="{Binding Email}" />
-                                        <StackPanel.ContextFlyout>
-                                            <Flyout>
-                                                <MenuFlyoutItem Click="MenuFlyoutItem_Click" Text="Copy" />
-                                            </Flyout>
-                                        </StackPanel.ContextFlyout>
+                                <Grid Padding="12,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Grid.Column="0" Glyph="&#xF012;" Margin="0,0,12,0"/>
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="{Binding Timestamp}" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
+                                        <TextBlock Text="{Binding BlobName}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding Email}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
+                                    <Grid.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Click="MenuFlyoutItem_Click" Text="Copy">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE8C8;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Grid.ContextFlyout>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+
                     <StackPanel
-                        HorizontalAlignment="Center"
-                        Orientation="Horizontal"
-                        Spacing="10">
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="16">
                         <Button
-                            Command="{x:Bind ViewModel.SelectFileCommand}"
-                            Content="Download Backup"
-                            RequestedTheme="Light" />
+                    Command="{x:Bind ViewModel.SelectFileCommand}"
+                    Content="Download Backup"
+                    Style="{StaticResource AccentButtonStyle}"/>
                         <Button
-                            Command="{x:Bind ViewModel.GenerateAndSendCommand}"
-                            CommandParameter="{x:Bind ViewModel.FileSelected, Mode=OneTime}"
-                            Content="Generate SAS Token and Share Url"
-                            RequestedTheme="Light" />
+                    Command="{x:Bind ViewModel.GenerateAndSendCommand}"
+                    CommandParameter="{x:Bind ViewModel.FileSelected, Mode=OneTime}"
+                    Content="Generate SAS Token"/>
                         <Button
-                            Command="{x:Bind ViewModel.BackUpCoreCommand}"
-                            Content="Create Backup"
-                            RequestedTheme="Light" />
+                    Command="{x:Bind ViewModel.BackUpCoreCommand}"
+                    Content="Create Backup"/>
                     </StackPanel>
+
                     <StackPanel
-                        x:Name="FileNewSas"
-                        Margin="6"
-                        Padding="4"
-                        VerticalAlignment="Bottom"
-                        BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
-                        BorderThickness=".5"
-                        Orientation="Vertical"
-                        Spacing="10"
-                        Visibility="{x:Bind ViewModel.IsFileNewSas, Mode=OneWay}">
-                        <TextBlock FontFamily="Arial Times New Roman" FontSize="23">Copy and Paste Into Browser ( Urls are valid for 1 hour. )</TextBlock>
+                x:Name="FileNewSas"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Visibility="{x:Bind ViewModel.IsFileNewSas, Mode=OneWay}">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,8">
+                    Copy and Paste Into Browser (URLs are valid for 1 hour)
+                        </TextBlock>
                         <TextBox
-                            x:Name="FileNewSasText"
-                            Height="100"
-                            Text="{x:Bind ViewModel.FileNewSas.BlobUrl, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                    x:Name="FileNewSasText"
+                    MinHeight="70"
+                    Text="{x:Bind ViewModel.FileNewSas.BlobUrl, Mode=OneWay}"
+                    TextWrapping="Wrap"
+                    IsReadOnly="True"/>
                     </StackPanel>
                 </StackPanel>
+
                 <InfoBar
-                    MaxWidth="480"
-                    Margin="5,0,25,5"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource AppBarBorderThemeBrush}"
-                    BorderThickness="1.5"
-                    Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
+            MaxWidth="480"
+            Margin="0,0,0,24"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
                     </interactivity:Interaction.Behaviors>
                 </InfoBar>
             </Grid>
-
         </ScrollViewer>
+
+
         <StackPanel
-            Margin="{ThemeResource XXSmallTopMargin}"
             VerticalAlignment="Bottom"
             Orientation="Horizontal"
-            Spacing="8">
+            HorizontalAlignment="Stretch"
+            Margin="10,10,10,10"
+            Spacing="6">
             <Image
                 Width="24"
                 Height="24"
+                Margin="-2"
                 Source="{dllimg:ImageLoader ImageName=LogoApp.png}" />
             <TextBlock x:Uid="AppName" Style="{ThemeResource NavigationViewItemHeaderTextStyle}" />
+
         </StackPanel>
     </Grid>
 
