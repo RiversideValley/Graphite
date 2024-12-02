@@ -22,7 +22,7 @@ namespace Riverside.Graphite.Channels
 				if (_logger.IsEnabled(LogLevel.Information))
 				{
 					await sigMsgContext!.MessageHubContext.Clients.All.SendAsync("sendNotify", "Message from worker " + DateTime.Now.ToString(), stoppingToken);
-					
+				
 					_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 				}
 				await Task.Delay(10000, stoppingToken);

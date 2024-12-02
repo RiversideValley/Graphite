@@ -109,18 +109,18 @@ namespace Riverside.Graphite.Core
 				string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				string restorePath = Path.Combine(documentsPath, "FireBrowserUserCore");
 
-				// If FireBrowserUserCore exists, delete it
-				if (Directory.Exists(restorePath))
+				// If FireBrowserUserCore exists, delete it 
+				// this cause an error because EBwebview Folder was locked, so overwrite existing.. user already knows this.. 
+				if (!Directory.Exists(restorePath))
 				{
-					Directory.Delete(restorePath, true);
+					// Create the FireBrowserUserCore folder
+					_ = Directory.CreateDirectory(restorePath);
+
 					Console.WriteLine("Existing FireBrowserUserCore folder deleted.");
 				}
-
-				// Create the FireBrowserUserCore folder
-				_ = Directory.CreateDirectory(restorePath);
-
+				
 				// Extract the backup file to FireBrowserUserCore
-				ZipFile.ExtractToDirectory(restorefile, restorePath);
+				ZipFile.ExtractToDirectory(restorefile, restorePath, true);
 
 				Console.WriteLine($"Backup restored successfully to: {restorePath}");
 				return Task.FromResult(true);

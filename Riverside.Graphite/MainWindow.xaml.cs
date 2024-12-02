@@ -24,6 +24,7 @@ using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.BarcodeHost;
 using Riverside.Graphite.Services.Notifications;
 using Riverside.Graphite.Services.Notifications.Toasts;
+using Riverside.Graphite.Services.Signalr;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
 using System;
@@ -56,13 +57,15 @@ public sealed partial class MainWindow : Window
 	public DownloadService ServiceDownloads { get; set; }
 	public SettingsService SettingsService { get; set; }
 	public MainWindowViewModel ViewModelMain { get; set; }
+
+	//public HubService HubService { get; set; }	
 	public string PicturePath { get; set; }
 
 	public string BackDropType = "Base";
 	public MainWindow()
 	{
 		appWindow = AppWindow;
-
+		//HubService = App.GetService<HubService>();	
 		ServiceDownloads = App.GetService<DownloadService>();
 		SettingsService = App.GetService<SettingsService>();
 		SettingsService.Initialize();

@@ -5,12 +5,14 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Signalr;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +56,21 @@ public partial class App : Application
 		_ = services.AddTransient<SettingsService>();
 		_ = services.AddTransient<MainWindowViewModel>();
 		_ = services.AddTransient<UploadBackupViewModel>();
-
+		//_ = services.AddSignalR(options =>
+		//{
+		//	options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(120000);
+		//	options.KeepAliveInterval = TimeSpan.FromMilliseconds(840000);
+		//}).AddAzureSignalR(conn =>
+		//{
+		//	conn.ConnectionString = "Endpoint=https://energy.service.signalr.net;AccessKey=HEJiDy8KLt4s8ixioCIWTCczqHAVzzZ9WXpJUQzzpyc=;Version=1.0;";
+		//	conn.ServerStickyMode = Microsoft.Azure.SignalR.ServerStickyMode.Preferred;
+		//	conn.ClaimsProvider = context =>
+		//	[
+		//		new Claim(ClaimTypes.NameIdentifier, context?.Request?.Query["username"]!)
+		//	];
+		//});
+		//_ = services.AddSingleton<HubService>();
+		
 		return services.BuildServiceProvider();
 	}
 
