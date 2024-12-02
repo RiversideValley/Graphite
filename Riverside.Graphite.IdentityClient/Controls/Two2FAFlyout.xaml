@@ -93,13 +93,13 @@
                                    Style="{StaticResource BodyTextBlockStyle}"/>
 
                             <TextBlock Grid.Row="1" 
-                                   Text="{x:Bind Code}" 
+                                   Text="{x:Bind Code, Mode=OneWay}" 
                                    Style="{StaticResource TitleTextBlockStyle}"
                                    Margin="0,4,0,0"/>
 
                             <ProgressBar Grid.Row="2" 
                                      Value="{x:Bind ProgressValue, Mode=OneWay}" 
-                                     Maximum="60" 
+                                     Maximum="30" 
                                      Height="4" 
                                      Margin="0,4,0,0"/>
 
