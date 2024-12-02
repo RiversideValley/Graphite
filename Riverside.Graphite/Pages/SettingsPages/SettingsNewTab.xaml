@@ -229,6 +229,28 @@
                             Tag="HomeTrending"
                             Toggled="TrendingHome_Toggled" />
                     </labs:SettingsCard>
+                    <labs:SettingsCard Description="Show Logo On Home Page" Header="Logo Visible">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEDE5;" />
+                        </labs:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+         x:Name="LogoHome"
+         IsOn="True"
+         Tag="LogoHome"
+                            Toggled="LogoHome_Toggled"
+        />
+                    </labs:SettingsCard>
+                    <labs:SettingsCard Description="Show Select Bar On Home Page" Header="Select Bar Visible">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEE64;" />
+                        </labs:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+ x:Name="SelectbarHome"
+ IsOn="True"
+ Tag="SelectbarHome"
+                            Toggled="SelectbarHome_Toggled"
+/>
+                    </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
 

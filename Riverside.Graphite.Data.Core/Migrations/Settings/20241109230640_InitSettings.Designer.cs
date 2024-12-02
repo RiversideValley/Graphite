@@ -201,7 +201,10 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
                     b.Property<int>("TrackPrevention")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Translate")
+					b.Property<int>("NewTabSelectorBarVisible")
+						.HasColumnType("INTEGER");
+
+					b.Property<bool>("Translate")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Useragent")

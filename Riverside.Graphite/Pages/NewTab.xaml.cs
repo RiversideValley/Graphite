@@ -637,4 +637,16 @@ public sealed partial class NewTab : Page
 			}
 		}
 	}
+
+	private void SelectBar_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.NewTabSelectorBarVisible = SelectBar.IsOn);
+
+	}
+
+	private void LogoToggle_Toggled(object sender, RoutedEventArgs e)
+	{
+		UpdateUserSettings(userSettings => userSettings.IsLogoVisible = LogoToggle.IsOn);
+
+	}
 }

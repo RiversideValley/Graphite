@@ -112,6 +112,18 @@
                             Toggled="TrendingVisible_Toggled">
                             Show Trending
                         </ToggleSwitch>
+                        <ToggleSwitch
+      x:Name="SelectBar"
+     IsOn="{x:Bind ViewModel.IsSelectBarEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+      Toggled="SelectBar_Toggled">
+                            Show Select Bar
+                        </ToggleSwitch>
+                        <ToggleSwitch
+ x:Name="LogoToggle"
+IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+ Toggled="LogoToggle_Toggled">
+                            Show Logo
+                        </ToggleSwitch>
                     </StackPanel>
                 </Flyout>
             </Button.Flyout>
@@ -443,7 +455,7 @@
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
-                <SelectorBar>
+                <SelectorBar  Visibility="{x:Bind ViewModel.IsselectBarVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <SelectorBarItem>
                         <Button
                             x:Name="His"

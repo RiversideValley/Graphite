@@ -73,7 +73,8 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 					NewTabHistoryQuick = table.Column<bool>(type: "INTEGER", nullable: false),
 					NewTabHistoryDownloads = table.Column<bool>(type: "INTEGER", nullable: false),
 					NewTabHistoryFavorites = table.Column<bool>(type: "INTEGER", nullable: false),
-					NewTabHistoryHistory = table.Column<bool>(type: "INTEGER", nullable: false)
+					NewTabHistoryHistory = table.Column<bool>(type: "INTEGER", nullable: false),
+					NewTabSelectorBarVisible = table.Column<bool>(type: "INTEGER", nullable: false)
 				},
 				constraints: table =>
 				{

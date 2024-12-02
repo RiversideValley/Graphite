@@ -71,6 +71,7 @@ public class Settings
 		self.NewTabHistoryFavorites = false;
 		self.NewTabHistoryHistory = false;
 		self.NewTabHistoryQuick = false;
+		self.NewTabSelectorBarVisible = true;
 		//self.WelcomeMsg = true;
 	}
 
@@ -107,6 +108,8 @@ public class Settings
 	public bool StatusBar { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserKeys { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserScripts { get; set; } // Use "0" for false, "1" for true
+	public bool NewTabSelectorBarVisible { get; set; } // Use "0" for false, "1" for true
+
 	public string Useragent { get; set; }
 	public bool LightMode { get; set; } // Use "0" for false, "1" for true
 	public bool OpSw { get; set; } // Use "0" for false, "1" for true

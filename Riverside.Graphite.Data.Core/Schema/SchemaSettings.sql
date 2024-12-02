@@ -69,6 +69,7 @@ CREATE TABLE "IntialSettings" (
     "NewTabHistoryDownloads" INTEGER NOT NULL,
     "NewTabHistoryFavorites" INTEGER NOT NULL,
     "NewTabHistoryHistory" INTEGER NOT NULL,
+	"NewTabSelectorBarVisible" INTEGER NOT NULL,
 
 );
 

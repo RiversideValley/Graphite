@@ -71,6 +71,8 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			ReloadSettings.IsOn = SettingsService.CoreSettings.RefreshButton;
 			HomeSettings.IsOn = SettingsService.CoreSettings.HomeButton;
 			Confirm.IsOn = SettingsService.CoreSettings.ConfirmCloseDlg;
+			LogoHome.IsOn = SettingsService.CoreSettings.IsLogoVisible;
+			SelectbarHome.IsOn = SettingsService.CoreSettings.NewTabSelectorBarVisible;
 		}
 
 		private async void SearchengineSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -133,6 +135,18 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		private Task SaveSettingsAsync()
 		{
 			return SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
+		}
+
+		private void SelectbarHome_Toggled(object sender, RoutedEventArgs e)
+		{
+			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.NewTabSelectorBarVisible = value);
+
+		}
+
+		private void LogoHome_Toggled(object sender, RoutedEventArgs e)
+		{
+			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsLogoVisible = value);
+
 		}
 	}
 }

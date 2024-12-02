@@ -55,11 +55,15 @@ public partial class HomeViewModel : ObservableRecipient
 	[ObservableProperty]
 	private bool _istrendingEnabled;
 	[ObservableProperty]
+	private bool _IsSelectBarEnabled;
+	[ObservableProperty]
 	private Visibility _isFavoritesVisible;
 	[ObservableProperty]
 	private Visibility _isHistoryVisible;
 	[ObservableProperty]
 	private Visibility _IsSearchVisible;
+	[ObservableProperty]
+	private Visibility _IsselectBarVisible;
 	[ObservableProperty]
 	private Visibility _IsTrendingVisible;
 	[ObservableProperty]
@@ -94,6 +98,9 @@ public partial class HomeViewModel : ObservableRecipient
 		IsHistoryVisible = SettingsService.CoreSettings.IsHistoryVisible ? Visibility.Visible : Visibility.Collapsed;
 		IsHistoryCardEnabled = SettingsService.CoreSettings.IsHistoryVisible;
 		IsSearchVisible = SettingsService.CoreSettings.IsSearchVisible ? Visibility.Visible : Visibility.Collapsed;
+		IsSelectBarEnabled = SettingsService.CoreSettings.NewTabSelectorBarVisible;
+		IsselectBarVisible = SettingsService.CoreSettings.NewTabSelectorBarVisible ? Visibility.Visible : Visibility.Collapsed;
+
 		IsSearchBoxEnabled = SettingsService.CoreSettings.IsSearchVisible;
 		IsTrendingVisible = SettingsService.CoreSettings.IsTrendingVisible ? Visibility.Visible : Visibility.Collapsed;
 		IslogoEnabled = SettingsService.CoreSettings.IsLogoVisible;
@@ -116,6 +123,9 @@ public partial class HomeViewModel : ObservableRecipient
 		OnPropertyChanged(nameof(IsSearchVisible));
 		OnPropertyChanged(nameof(IsTrendingVisible));
 		OnPropertyChanged(nameof(IstrendingEnabled));
+
+		OnPropertyChanged(nameof(IsSelectBarEnabled));
+		OnPropertyChanged(nameof(IsselectBarVisible));
 
 		OnPropertyChanged(nameof(IslogoEnabled));
 		OnPropertyChanged(nameof(IsLogoVisible));
@@ -143,7 +153,8 @@ public partial class HomeViewModel : ObservableRecipient
 		IsTrendingVisible = IstrendingEnabled ? Visibility.Visible : Visibility.Collapsed;
 		IslogoEnabled = SettingsService.CoreSettings.IsLogoVisible;
 		IsLogoVisible = IslogoEnabled ? Visibility.Visible : Visibility.Collapsed;
-
+		IsSelectBarEnabled = SettingsService.CoreSettings.NewTabSelectorBarVisible;
+		IsselectBarVisible = IsSelectBarEnabled ? Visibility.Visible : Visibility.Collapsed; 
 		IsFavoriteExpanded = SettingsService.CoreSettings.IsFavoritesToggled;
 		IsHistoryExpanded = SettingsService.CoreSettings.IsHistoryToggled;
 
