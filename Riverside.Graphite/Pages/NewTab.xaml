@@ -382,7 +382,7 @@ IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=Property
             <StackPanel
                 Grid.Row="0"
                 Orientation="Vertical"
-                Spacing="5">
+                Spacing="2">
                 <TextBlock
                     FontSize="{ThemeResource TextStyleLargeFontSize}"
                     Text="Search or enter an address"
@@ -556,9 +556,9 @@ IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=Property
             </StackPanel>
             <labs:SettingsCard
                 Grid.Row="2"
+                Margin="1"
                 Width="Auto"
-                MinWidth="350"
-                Margin="2"
+                MinWidth="500"
                 HorizontalAlignment="Center"
                 Background="{ThemeResource DesktopAcrylicTransparentBrush}"
                 BorderBrush="Black"

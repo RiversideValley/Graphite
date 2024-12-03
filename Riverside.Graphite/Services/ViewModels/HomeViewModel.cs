@@ -154,7 +154,7 @@ public partial class HomeViewModel : ObservableRecipient
 		IslogoEnabled = SettingsService.CoreSettings.IsLogoVisible;
 		IsLogoVisible = IslogoEnabled ? Visibility.Visible : Visibility.Collapsed;
 		IsSelectBarEnabled = SettingsService.CoreSettings.NewTabSelectorBarVisible;
-		IsselectBarVisible = IsSelectBarEnabled ? Visibility.Visible : Visibility.Collapsed; 
+		IsselectBarVisible = IsSelectBarEnabled ? Visibility.Visible : Visibility.Collapsed;
 		IsFavoriteExpanded = SettingsService.CoreSettings.IsFavoritesToggled;
 		IsHistoryExpanded = SettingsService.CoreSettings.IsHistoryToggled;
 
@@ -166,7 +166,30 @@ public partial class HomeViewModel : ObservableRecipient
 	}
 	public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
 	{
-		OnPropertyChanged(propertyName);
+		if (propertyName == null)
+		{
+			OnPropertyChanged(nameof(NtpCoreVisibility));
+			OnPropertyChanged(nameof(IsNtpTimeVisible));
+			OnPropertyChanged(nameof(NtpTimeEnabled));
+			OnPropertyChanged(nameof(IsFavoritesVisible));
+			OnPropertyChanged(nameof(IsHistoryVisible));
+			OnPropertyChanged(nameof(IsSearchVisible));
+			OnPropertyChanged(nameof(IsTrendingVisible));
+			OnPropertyChanged(nameof(IstrendingEnabled));
+			OnPropertyChanged(nameof(IsSelectBarEnabled));
+			OnPropertyChanged(nameof(IsselectBarVisible));
+			OnPropertyChanged(nameof(IslogoEnabled));
+			OnPropertyChanged(nameof(IsLogoVisible));
+			OnPropertyChanged(nameof(IsSearchBoxEnabled));
+			OnPropertyChanged(nameof(IsFavoriteCardEnabled));
+			OnPropertyChanged(nameof(IsHistoryCardEnabled));
+			OnPropertyChanged(nameof(IsFavoriteExpanded));
+			OnPropertyChanged(nameof(IsHistoryExpanded));
+		}
+		else
+		{
+			OnPropertyChanged(propertyName);
+		}
 	}
 
 
@@ -204,14 +227,15 @@ public partial class HomeViewModel : ObservableRecipient
 		LoadUISettings();
 	}
 	[RelayCommand]
-	private void Logins(Button btn) {
+	private void Logins(Button btn)
+	{
 
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			window.DispatcherQueue?.TryEnqueue(() => {
 				window.Profile_Tapped(btn, new Microsoft.UI.Xaml.Input.TappedRoutedEventArgs());
 			});
-		} 
+		}
 	}
 
 	[RelayCommand]
@@ -364,3 +388,4 @@ public partial class HomeViewModel : ObservableRecipient
 		set => SetProperty(ref _imageCopyrightLink, value);
 	}
 }
+

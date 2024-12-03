@@ -31,17 +31,22 @@ namespace Riverside.Graphite.Services.Models
 			new SearchProviders(new BitmapImage(new Uri("https://www.ecosia.org/favicon.ico")), "https://www.ecosia.org/search?q=", "Ecosia", 6),
 			new SearchProviders(new BitmapImage(new Uri("https://www.startpage.com/favicon.ico")), "https://www.startpage.com/search?q=", "Startpage", 7),
 			new SearchProviders(new BitmapImage(new Uri("https://www.qwant.com/favicon.ico")), "https://www.qwant.com/?q=", "Qwant", 8),
-			new SearchProviders(new BitmapImage(new Uri("https://lite.qwant.com/favicon.ico")), "https://lite.qwant.com/?q=", "Qwant Lite", 9),
+
+			new SearchProviders(new BitmapImage(new Uri("https://www.google.com/s2/favicons?sz=64&domain=https://lite.qwant.com")), "https://lite.qwant.com/?q=", "Qwant Lite", 9),
+
 			new SearchProviders(new BitmapImage(new Uri("https://presearch.com/favicon.ico")), "https://presearch.com/search?q=", "Presearch", 10),
 			new SearchProviders(new BitmapImage(new Uri("https://swisscows.com/favicon.ico")), "https://swisscows.com/web?query=", "Swisscows", 11),
-			new SearchProviders(new BitmapImage(new Uri("https://www.dogpile.com/favicon.ico")), "https://www.dogpile.com/serp?q=", "Dogpile", 12),
-			new SearchProviders(new BitmapImage(new Uri("https://www.webcrawler.com/favicon.ico")), "https://www.webcrawler.com/serp?q=", "Webcrawler", 13),
-			new SearchProviders(new BitmapImage(new Uri("https://you.com/favicon.ico")), "https://you.com/search?q=", "You", 14),
-			new SearchProviders(new BitmapImage(new Uri("https://results.excite.com/favicon.ico")), "https://results.excite.com/serp?q=", "Excite", 15),
+
+			new SearchProviders(new BitmapImage(new Uri("https://www.dogpile.com/static/info.dogpile.com/favicon.ico")), "https://www.dogpile.com/serp?q=", "Dogpile", 12),
+			new SearchProviders(new BitmapImage(new Uri("https://www.webcrawler.com/static/www.webcrawler.com/favicon.ico")), "https://www.webcrawler.com/serp?q=", "Webcrawler", 13),
+			new SearchProviders(new BitmapImage(new Uri("https://you.com/favicon/favicon-32x32.png?v=2")), "https://you.com/search?q=", "You", 14),
+			new SearchProviders(new BitmapImage(new Uri("https://results.excite.com/static/excite/455/favicon.ico")), "https://results.excite.com/serp?q=", "Excite", 15),
+
 			new SearchProviders(new BitmapImage(new Uri("https://search20.lycos.com/favicon.ico")), "https://search20.lycos.com/web/?q=", "Lycos", 16),
-			new SearchProviders(new BitmapImage(new Uri("https://www.metacrawler.com/favicon.ico")), "https://www.metacrawler.com/serp?q=", "Metacrawler", 17),
+			new SearchProviders(new BitmapImage(new Uri("https://www.metacrawler.com/static/www.metacrawler.com/favicon.ico")), "https://www.metacrawler.com/serp?q=", "Metacrawler", 17),
 			new SearchProviders(new BitmapImage(new Uri("https://www.mojeek.com/favicon.ico")), "https://www.mojeek.com/search?q=", "Mojeek", 18),
-			new SearchProviders(new BitmapImage(new Uri("https://search.brave.com/favicon.ico")), "https://search.brave.com/search?q=", "BraveSearch", 19)
+
+			new SearchProviders(new BitmapImage(new Uri("https://cdn.search.brave.com/serp/v2/_app/immutable/assets/favicon.acxxetWH.ico")), "https://search.brave.com/search?q=", "BraveSearch", 19)
 		};
 
 

@@ -5,6 +5,7 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Models;
 using Riverside.Graphite.Services.Signalr;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
@@ -89,8 +90,7 @@ public partial class App : Application
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
-		AppService.FireWindows = new HashSet<Window>(); 
-
+		AppService.FireWindows = new HashSet<Window>();
 	}
 	public static string GetFullPathToExe()
 	{

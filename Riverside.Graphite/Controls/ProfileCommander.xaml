@@ -109,6 +109,10 @@
                     <x:String>ball</x:String>
                     <x:String>bot</x:String>
                     <x:String>starfish</x:String>
+                    <x:String>car</x:String>
+                    <x:String>music</x:String>
+                    <x:String>duckcool</x:String>
+                    <x:String>stairs</x:String>
                 </ComboBox>
             </Expander>
             <Expander
