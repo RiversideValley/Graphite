@@ -2,15 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Azure;
-using FireCore.Services.Contracts.SessionHandler;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+using Azure.Data.Tables;
 
 namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 {
 
-    public class SQL_SESSION_ENTITY : Azure.Data.Tables.ITableEntity
+    public class SQL_SESSION_ENTITY : ITableEntity
     {
         public string RowKey { get; set; } = default!;
 
@@ -41,8 +38,7 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
             return new Session(SessionId!);
         }
     }
-    public class SessionEntity : TableEntity
-    {
+    public class SessionEntity : SQL_SESSION_ENTITY { 
         public string? SessionId { get; set; }
 
         public SessionEntity() { }

@@ -104,8 +104,8 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
                 }
                 else
                 {
-                    var userNameisAuth = _commander?.MsalCurrentUsers!.Where(x => x.UserPrincipalName == userName).FirstOrDefault();
-                    var partnernameisAuth = _commander?.MsalCurrentUsers!.Where(y => y.UserPrincipalName == partnerName).FirstOrDefault();
+                    var userNameisAuth = _commander?.MsalCurrentUsers!.Where(x => x == userName).FirstOrDefault();
+                    var partnernameisAuth = _commander?.MsalCurrentUsers!.Where(y => y == partnerName).FirstOrDefault();
                     if (userNameisAuth is not null && partnernameisAuth is not null)
                     {
                         var session = new Session(Guid.NewGuid().ToString());

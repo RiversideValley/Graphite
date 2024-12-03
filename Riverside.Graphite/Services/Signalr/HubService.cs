@@ -24,7 +24,8 @@ namespace Riverside.Graphite.Services.Signalr
 			try
 			{
 				_hubConnection = new HubConnectionBuilder()
-					.WithUrl(@"https://energy.service.signalr.net/azurechat")
+					//.WithUrl(@"https://energy.service.signalr.net/azurechat")
+					.WithUrl("http://localhost:5000/message")
 					.WithAutomaticReconnect()
 					.ConfigureLogging(logging => logging.AddConsole())
 					.Build();

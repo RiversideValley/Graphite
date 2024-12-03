@@ -2,16 +2,20 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Azure;
-using FireCore.Services.Contracts.MessageHandler;
-using Microsoft.WindowsAzure.Storage.Table;
-using System;
 
 namespace FireCore.Services.Contracts.MessageHandler.AzureTableMessageStorage
 {
 
-    public class MessageEntity : TableEntity
-    {
-        public string? SenderName { get; set; }
+    public class MessageEntity : Azure.Data.Tables.ITableEntity
+	{
+		public string RowKey { get; set; } = default!;
+
+		public string PartitionKey { get; set; } = default!;
+		
+		public ETag ETag { get; set; } = default!;
+
+		public DateTimeOffset? Timestamp { get; set; } = default!;
+		public string? SenderName { get; set; }
 
         public DateTimeOffset SendTime { get; set; }
 

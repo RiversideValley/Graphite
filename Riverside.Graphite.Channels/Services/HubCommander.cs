@@ -1,13 +1,6 @@
 ﻿
-using FireCore.Data.Database;
 using FireCore.Data.Models;
-using Microsoft.Data.Sqlite;
-using System.Linq;
-
 using System.Collections.Concurrent;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
-using Microsoft.Graph.Models;
 
 namespace FireCore.Services
 {
@@ -19,7 +12,7 @@ namespace FireCore.Services
 
         Task<bool> DeleteAllSessionsByUser(string connectionId); 
         ConcurrentDictionary<Tuple<string, string>, string> ActiveGroups { get; }
-        List<User>? MsalCurrentUsers { get; set; }
+        List<string>? MsalCurrentUsers { get; set; }
 
     }
     public sealed class HubCommander : IHubCommander
@@ -27,14 +20,14 @@ namespace FireCore.Services
         private readonly ConcurrentDictionary<Tuple<string, string>, string>? _inMemoryStorage;
         public ConcurrentDictionary<Tuple<string, string>, string>? ActiveGroups { get; }
 
-        public List<User>? MsalCurrentUsers { get; set; }
+        public List<string>? MsalCurrentUsers { get; set; }
 
         public HubCommander()
         {
             ActiveGroups = _inMemoryStorage = new();
         }
 
-        public HubCommander(List<User> msalCurrentUsers)
+        public HubCommander(List<string> msalCurrentUsers)
         {
             MsalCurrentUsers = msalCurrentUsers;
         }
