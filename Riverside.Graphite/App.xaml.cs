@@ -1,18 +1,19 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
-using Riverside.Graphite.Services.Models;
-using Riverside.Graphite.Services.Signalr;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
@@ -25,6 +26,7 @@ public partial class App : Application
 	private readonly string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");
 	public static new App Current => (App)Application.Current;
 
+	private Process _webAppProcess;
 	public NotificationManager NotificationManager { get; set; }
 
 	private string AzureStorage { get; } = "DefaultEndpointsProtocol=https;AccountName=strorelearn;AccountKey=0pt8CYqrqXUluQE3/60q8wobkmYznb9ovHIzztGVOzNxlSa+U8NlY74uwfggd5DfTmGORBLtXpeKEvDYh2ynfQ==;EndpointSuffix=core.windows.net";
@@ -91,6 +93,51 @@ public partial class App : Application
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
 		AppService.FireWindows = new HashSet<Window>();
+		
+		//try
+		//{
+		//	StartChannels();
+		//}
+		//catch (Exception)
+		//{
+		//	throw;
+		//}
+			
+	}
+
+	private void StartChannels()
+	{
+		string publishDirectory = Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly); 
+		string webAppPath = Path.Combine(publishDirectory, "RiverSide.Graphite.Channels.exe");
+		try
+		{
+			if (!File.Exists(webAppPath))
+				return; 
+
+			var startInfo = new ProcessStartInfo
+			{
+				FileName = webAppPath,
+				UseShellExecute = true,
+				CreateNoWindow = false
+			};
+
+			_webAppProcess =  Process.Start(startInfo);
+		}
+		catch (Exception e)
+		{
+			ExceptionLogger.LogException(e);
+			throw; 
+		}
+
+	}
+
+	public static string Get_Appx_AssemblyDirectory(Assembly assembly)
+	{
+			string assemblyLocation = assembly.Location;
+			string directoryPath = Path.GetDirectoryName(assemblyLocation);
+	
+			return directoryPath ?? throw new DirectoryNotFoundException("Publish directory not found");
+
 	}
 	public static string GetFullPathToExe()
 	{
@@ -106,6 +153,10 @@ public partial class App : Application
 
 	private void OnProcessExit(object sender, EventArgs e)
 	{
+		if (_webAppProcess != null && !_webAppProcess.HasExited)
+		{
+			_webAppProcess.Kill();
+		}
 		NotificationManager.Unregister();
 	}
 	private void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)

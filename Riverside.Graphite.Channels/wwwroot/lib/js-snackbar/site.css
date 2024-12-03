@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.nav {
+    min-width: 300px;
+    background-color: #2196f3;
+    padding: 0;
+    margin: 0;
+    font-size: 105%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    max-width: 90vw;
+    transform: translateX(-100%);
+    transition: .2s ease-out all;
+    z-index: 10;
+}
+
+.nav.nav--shown {
+    transform: translateX(0);
+}
+
+.nav-title {
+    font-size: 20px;
+    word-break: break-all;
+    border-bottom: 1px inset white;
+    padding: .5rem 0;
+    margin: .5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.nav-close {
+    margin-left: auto;
+    background: none;
+    color: #EEE;
+    border: none;
+    font-size: 110%;
+}
+
+.nav-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-li {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-a {
+    padding: .5rem;
+    text-decoration: none;
+    display: block;
+    color: white;
+}
+
+.nav-a:hover,
+.nav-a.nav-a--active {
+    color: #2196f3;
+    background-color: white;
+}
+
+.nav-footer {
+    margin-top: auto;
+    padding: .5rem;
+    font-size: 75%;
+}
+
+.nav-footer a {
+    color: white;
+}
+
+.content {
+    overflow: auto;
+    flex-grow: 1;
+    max-height: 100%;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    border-bottom: 2px solid #2196f3;
+    padding: 1rem;
+    margin: 0;
+    background-color: #fff;
+}
+
+header {
+    padding: 1rem;
+}
+
+header #header-button {
+    margin-right: 1rem;
+}
+
+header h1 {
+    color: #2196f3;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    font-size: 30px;
+}
+
+.display {
+    font-size: 3rem;
+    color: #2196f3;
+    border: 3px solid #2196f3;
+    background-color: white;
+    text-align: center;
+    padding: 1em 0; 
+    white-space: nowrap;
+    min-width: auto;
+    overflow: hidden;
+    margin: 1rem 0;
+    display: none;
+}
+
+.section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid black;
+    width: 100%;
+    padding: 1em;
+}
+
+
+.button {
+    padding: 0.5rem 1rem;
+    background-color: #2196f3;
+    border: 2px solid #FFF;
+    color: white;
+    font-size: 102%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin: 0.2rem;
+    border-radius: 5px;
+}
+
+.button > .material-icons {
+    margin-right: 0.2rem;
+}
+
+.button--inverse {
+    background-color: white;
+    border: 2px solid #2196f3;
+    color: #2196f3;
+}
+
+.button:active {
+    background-color: #5fb3f8;
+}
+
+.field {
+    display: block;
+    max-width: 400px;
+}
+
+.field label {
+    font-size: 90%;
+    display: block;
+    text-align: left;
+}
+
+.field input[type=text],
+.field input[type=number],
+.field select {
+    padding: 0.5rem 1rem;
+    font-size: 102%;
+    border-radius: 3px;
+    border: 1px solid #111;
+    width: 100%;
+}
+
+.box {
+    height: 300px;
+    max-height: 100%;
+    border: 1px solid blue;
+    position: relative;
+    overflow: hidden;
+    margin: 1rem auto;
+}
+
+code {
+    background-color: #eee;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+}
+
+code[block] {
+    display: block;
+    white-space: pre;
+}
+
+table {
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    margin-bottom: 1rem;
+}
+
+table thead {
+    font-weight: 600;
+    background-color:  #75b3e6;
+    color: #eee;
+}
+
+table td {
+    padding: 0.25rem 0.5rem;
+}
+
+table tr:nth-child(even) {
+    background-color: #90bfe6;
+}
+
+.demo-message {
+    position: relative;
+}
+
+@media (min-width: 1000px) {
+    #header-button {
+        display: none;
+    }
+
+    .main-body {
+        display: flex;
+    }
+    
+    .nav {
+        position: relative;
+        transform: translateX(0);
+    }
+
+    .nav-title {
+        display: none;
+    }
+
+    .section {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+}

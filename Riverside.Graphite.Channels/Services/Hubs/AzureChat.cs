@@ -4,7 +4,6 @@ using System.Data;
 
 using Microsoft.AspNetCore.SignalR;
 using FireCore.Services.Contracts.MessageHandler;
-using Microsoft.AspNetCore.Authorization;
 using FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage;
 
 
@@ -14,24 +13,22 @@ using FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage;
 namespace FireCore.Services.Hubs
 {
 
-	[Authorize]
+
     public class AzureChat : Hub
     {
         private readonly IMessageHandler _messageHandler;
-
-        //private readonly ISessionHandler _sessionHandler;
         private readonly SignalRService _signalRService;
         private readonly IHubCommander _commander;
-        private readonly Microsoft.Graph.GraphServiceClient _graphServiceClient;
         private readonly HttpClient? _httpClient;
         private readonly IAzureDataTableSessionStorage _azureDataTableSessionStorage;
 
-        static HashSet<KeyValuePair<string, string>> ConnectedIds = new HashSet<KeyValuePair<string, string>>();
+        public static HashSet<KeyValuePair<string, string>> ConnectedIds { get; set;  } 
 
 
         public AzureChat(IMessageHandler messageHandler, SignalRService rService, IHubCommander hubCommander,  HttpClient httpClient, IAzureDataTableSessionStorage azureDataTable)
         {
             _messageHandler = messageHandler;
+			ConnectedIds = new HashSet<KeyValuePair<string, string>>();	
             //_sessionHandler = sessionHandler;
             _signalRService = rService;
             _commander = (IHubCommander)hubCommander;
@@ -186,7 +183,7 @@ namespace FireCore.Services.Hubs
             var hubUsers = _commander.MsalCurrentUsers!.ToList();
 
             // this means that the Room is actually a private chat - "An Auth User", so roll 
-            var twins = (from v in hubUsers where v.UserPrincipalName == roomName select v.UserPrincipalName).Distinct();
+            var twins = (from v in hubUsers where v == roomName select v).Distinct();
 
             // 1. send update to group or private chat.  2. send owner update
 

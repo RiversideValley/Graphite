@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+@{
+
+    string? UserName = Environment.UserDomainName + "@" + Environment.UserName + ".graphite.net";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome, @UserName</h1>
+</div>
+
+<div class="rounded-3 shadow-lg text-black-50">
+    <div class="dotwrapper mt-lg-5">
+        <div class="dot d-inline-flex shadow-lg p-lg-4 position-relative bg-gradient mt-4 bs-popover-bottom  "
+            style="background-color: lightsteelblue;  ">
+
+            @{
+                for (int i = 1; i <= 8; i++)
+                {
+                    var path = string.Format("~/images/uifaces-popular-image-{0}.jpg", i);
+                    <img src="@Url.Content(path)" class="img-thumbnail rounded-circle" width="150" height="150" />
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="nav nav-pills justify-content-center m-lg-5">
+    <a class="animate-text" style="font-weight:500; font-size: 4rem; " asp-area="" asp-controller="MessageBoard"
+        asp-action="Index">Message Board</a>
+</div>
