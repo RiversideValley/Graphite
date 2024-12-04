@@ -18,6 +18,12 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Services.Cortana;
 
+///<summary>
+/// 1. Database must exist.
+/// 2. Table in db must be nameof(ClassIncoming)
+/// 3. Vaidation if same nothing happens.
+///</summary>
+	
 namespace Riverside.Graphite.Data.Core.Update
 {
 	public class SchemaExtractor
