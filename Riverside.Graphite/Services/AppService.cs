@@ -384,8 +384,8 @@ public static class AppService
 
 				// 1. run this hence we've change the Setting Class alot.. LOL.. amazing... 
 				// 2. gather class & db action-> 2g schema of db linked to a class(Setting, Download, Etc..)
-				var context = new SettingsActions(AuthService.CurrentUser.Username);
-				var schema = new SchemaExtractor(context.SettingsContext.ConnectionPath, context.SettingsContext, typeof(Settings));
+				var connectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
+				var schema = new SchemaExtractor(connectionPath, typeof(Settings));
 				
 				await schema.HandleExtractionSchemaChanges(); 
 							

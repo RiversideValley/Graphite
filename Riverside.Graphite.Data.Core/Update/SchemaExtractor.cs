@@ -23,26 +23,21 @@ namespace Riverside.Graphite.Data.Core.Update
 	public class SchemaExtractor
 	{
 		private readonly string connectionString;
-		private readonly DbContext dbContext;
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
 		private readonly Type classIn;
 
-		public SchemaExtractor(string connectionString, DbContext dbContext, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type classIn)
+		public SchemaExtractor(string connectionString, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type classIn)
 		{
 
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException(nameof(connectionString));
 
-			if (dbContext is DbContext db)
-				if(db is null)
-					throw new ArgumentNullException(nameof(dbContext));
-
+			
 			if (classIn is Type type)
 				if (type is null)
 					throw new ArgumentNullException(nameof(type));	
 
 			this.connectionString = connectionString;
-			this.dbContext = dbContext;
 			this.classIn = classIn;
 		}
 
