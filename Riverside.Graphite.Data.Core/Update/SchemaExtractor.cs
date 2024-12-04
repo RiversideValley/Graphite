@@ -32,7 +32,7 @@ namespace Riverside.Graphite.Data.Core.Update
 			this.classIn = classIn;
 		}
 
-		public Task CompareAndExtractSchema() {
+		public async Task CompareAndExtractSchema() {
 
 			
 			var oldSchemaJson = GetDatabaseSchemaAsJson(connectionString, classIn.Name);
@@ -52,40 +52,57 @@ namespace Riverside.Graphite.Data.Core.Update
 					if (prop is not null)
 						properties.Add(prop);
 				}
+
+				if (properties.Count > 0)
+				{
+					foreach (var prop in properties) {
+						await AddNameColumnsFromProperties(connectionString, classIn.Name, prop); 
+					}
+				}
 			}
 			else
 			{
 				Console.WriteLine("No schema differences detected.");
 			}
-
-			return Task.CompletedTask;	
-
 		}
 
-		public static Task AddNameColumnsFromProperties(string connectionString, string strTableName, PropertyInfo property) {
+		public static async Task AddNameColumnsFromProperties(string connectionString, string strTableName, PropertyInfo property) {
 
 			using (var connection = new SqliteConnection($"Data Source={connectionString}"))
 			{
 				connection.Open();
+				var action = connection.BeginTransaction(); 
 
 				var type = property.PropertyType switch
 				{
 					Type t when t == typeof(int) => "INTEGER",
 					Type t when t == typeof(string) => "TEXT",
 					Type t when t == typeof(DateTime) => "DATETIME",
-					Type t when t == typeof(bool) => "BOOLEAN",
-					Type t when t == typeof(double) => "REAL", // Add more type mappings as needed _ => "UNKNOWN" // Default case if type is not handled };
 					Type t when t == typeof(bool) => "INTEGER",
+					Type t when t == typeof(double) => "REAL", // Add more type mappings as needed _ => "UNKNOWN" // Default case if type is not handled };
 					_ => "TEXT"
-				}; 
+				};
+				object value = type switch
+				{
+					string t when t == "INTEGER" => 0,
+					string t when t == "TEXT" => "",
+					string t when t == "DATETIME" => DateTime.Now,
+					string t when t == "REAL" => 0.0,
+					_ => throw new NotImplementedException(),
+				};
 
-				var command = new SqliteCommand($"ALTER TABLE {strTableName} ADD {property.Name} {type} NOT NULL;", connection);
-				command.ExecuteNonQuery();
+				var command = new SqliteCommand($"ALTER TABLE {strTableName} ADD {property.Name} {type} NOT NULL DEFAULT {value};", connection);
+				command.Transaction = action;
+
+				var result = command.ExecuteNonQuery();
+				if (result >= 0)
+					action.Commit(); 
+					
 				
 			}
 
-
-			return Task.CompletedTask;	
+			await Task.Delay(100); 
+			
 
 		
 		}

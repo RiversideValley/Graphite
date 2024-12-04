@@ -366,8 +366,15 @@ public static class AppService
 
 			try
 			{
-				var version = GetVersionDescription();
-				Application.Current.Resources.TryGetValue("Version", out object _version);
+				/* we need to store the version number as a tuple<int,int,int,int> so we can serialize it ;
+					var version = GetVersionDescription();
+					Application.Current.Resources.TryGetValue("Version", out object _version);
+				
+					only due when there is a version change.. 
+				 */
+
+				// run this hence we've change the Setting Class alot.. LOL.. amazing... 
+
 				var context = new SettingsActions(AuthService.CurrentUser.Username);
 				var schema = new SchemaExtractor(context.SettingsContext.ConnectionPath, context.SettingsContext, typeof(Settings));
 				await schema.CompareAndExtractSchema(); 
