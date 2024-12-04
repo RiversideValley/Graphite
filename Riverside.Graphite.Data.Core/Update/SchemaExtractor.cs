@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.CodeDom;
 using System.Collections;
@@ -15,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Services.Cortana;
 
 namespace Riverside.Graphite.Data.Core.Update
 {
@@ -27,6 +29,18 @@ namespace Riverside.Graphite.Data.Core.Update
 
 		public SchemaExtractor(string connectionString, DbContext dbContext, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type classIn)
 		{
+
+			if (string.IsNullOrWhiteSpace(connectionString))
+				throw new ArgumentNullException(nameof(connectionString));
+
+			if (dbContext is DbContext db)
+				if(db is null)
+					throw new ArgumentNullException(nameof(dbContext));
+
+			if (classIn is Type type)
+				if (type is null)
+					throw new ArgumentNullException(nameof(type));	
+
 			this.connectionString = connectionString;
 			this.dbContext = dbContext;
 			this.classIn = classIn;
@@ -55,50 +69,74 @@ namespace Riverside.Graphite.Data.Core.Update
 
 				if (properties.Count > 0)
 				{
-					foreach (var prop in properties) {
+					foreach (var prop in properties.Distinct().ToList()) {
 						await AddNameColumnsFromProperties(connectionString, classIn.Name, prop); 
 					}
 				}
 			}
 			else
 			{
+				// set something hear when all is indeed the same..
 				Console.WriteLine("No schema differences detected.");
 			}
 		}
 
 		public static async Task AddNameColumnsFromProperties(string connectionString, string strTableName, PropertyInfo property) {
 
-			using (var connection = new SqliteConnection($"Data Source={connectionString}"))
+			try
 			{
-				connection.Open();
-				var action = connection.BeginTransaction(); 
+				// capture db, datatype, defaults->go;
 
-				var type = property.PropertyType switch
+				using (var connection = new SqliteConnection($"Data Source={connectionString}"))
 				{
-					Type t when t == typeof(int) => "INTEGER",
-					Type t when t == typeof(string) => "TEXT",
-					Type t when t == typeof(DateTime) => "DATETIME",
-					Type t when t == typeof(bool) => "INTEGER",
-					Type t when t == typeof(double) => "REAL", // Add more type mappings as needed _ => "UNKNOWN" // Default case if type is not handled };
-					_ => "TEXT"
-				};
-				object value = type switch
-				{
-					string t when t == "INTEGER" => 0,
-					string t when t == "TEXT" => "",
-					string t when t == "DATETIME" => DateTime.Now,
-					string t when t == "REAL" => 0.0,
-					_ => throw new NotImplementedException(),
-				};
+					connection.Open();
+					using (var action = connection.BeginTransaction())
+					{
+						try
+						{
+							var type = property.PropertyType switch
+							{
+								Type t when t == typeof(int) => "INTEGER",
+								Type t when t == typeof(string) => "TEXT",
+								Type t when t == typeof(DateTime) => "DATETIME",
+								Type t when t == typeof(bool) => "INTEGER",
+								Type t when t == typeof(double) => "REAL", // Add more type mappings as needed _ => "UNKNOWN" // Default case if type is not handled };
+								_ => "TEXT"
+							};
+							object value = type switch
+							{
+								string t when t == "INTEGER" => 0,
+								string t when t == "TEXT" => "",
+								string t when t == "DATETIME" => DateTime.Now,
+								string t when t == "REAL" => 0.0,
+								_ => throw new NotImplementedException(),
+							};
 
-				var command = new SqliteCommand($"ALTER TABLE {strTableName} ADD {property.Name} {type} NOT NULL DEFAULT {value};", connection);
-				command.Transaction = action;
+							var command = new SqliteCommand($"ALTER TABLE {strTableName} ADD {property.Name} {type} NOT NULL DEFAULT {value};", connection);
+							command.Transaction = action;
 
-				var result = command.ExecuteNonQuery();
-				if (result >= 0)
-					action.Commit(); 
-					
-				
+							var result = command.ExecuteNonQuery();
+							if (result >= 0)
+								action.Commit();
+						}
+						catch (Exception ex)
+						{
+							action.Rollback();
+							ExceptionLogger.LogException(ex);
+							Console.WriteLine($"Update {strTableName} failed at reconstruction.");
+						}
+					}
+				}
+			}
+			catch (ArgumentNullException ex)
+			{
+				Console.WriteLine($"Error: {ex.Message}");
+				ExceptionLogger.LogException(ex);
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				Console.WriteLine($"An error occurred: {ex.Message}");
 			}
 
 			await Task.Delay(100); 
@@ -168,15 +206,7 @@ namespace Riverside.Graphite.Data.Core.Update
 
 		}
 
-	public class YourClass
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public DateTime DateOfBirth { get; set; }
-	}
-
-
-	public string SerializeModelSchema(Type classIn) {
+		public string SerializeModelSchema(Type classIn) {
 			var json = JsonConvert.SerializeObject(classIn); 
 			return json; 
 		} 
@@ -184,8 +214,11 @@ namespace Riverside.Graphite.Data.Core.Update
 		public string CompareSchemas(string oldSchemaJson, string newSchemaJson) 
 		{ 
 			var jdp = new JsonDiffPatch(); 
-			var patch = jdp.Diff(oldSchemaJson, newSchemaJson); 
-			return patch.ToString();	
+			var patch = jdp.Diff(oldSchemaJson, newSchemaJson);
+			if (patch != null)
+				return patch.ToString();
+			else
+				return null; 
 		} 
 			
 	}
