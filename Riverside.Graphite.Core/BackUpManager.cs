@@ -110,9 +110,9 @@ namespace Riverside.Graphite.Core
 				string restorePath = Path.Combine(documentsPath, "FireBrowserUserCore");
 
 				// If FireBrowserUserCore exists, delete it 
-				// this cause an error because EBwebview Folder was locked, so overwrite existing.. user already knows this.. 
-				if (!Directory.Exists(restorePath))
+				if (Directory.Exists(restorePath))
 				{
+					Directory.Delete(restorePath, true);
 					// Create the FireBrowserUserCore folder
 					_ = Directory.CreateDirectory(restorePath);
 
