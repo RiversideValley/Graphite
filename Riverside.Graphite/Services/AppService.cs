@@ -368,6 +368,8 @@ public static class AppService
 				// DATABASE EXISTS && CONNECTS. 
 				_ = await dbServer.DatabaseCreationValidation();
 
+				_ = await dbServer.InsertUserSettings(); // new user add default from class
+
 				#region NEED HELP
 				/* 1. only do! when there is a version change.. 		
 				// 2. we need to store the version number as a tuple<int,int,int,int> so we can serialize it ;
@@ -389,7 +391,6 @@ public static class AppService
 				
 				await schema.HandleExtractionSchemaChanges(); 
 							
-				_ = await dbServer.InsertUserSettings(); // new user add default from class
 				
 				// if we get to here than all is validated and open Browser->go; 
 			}

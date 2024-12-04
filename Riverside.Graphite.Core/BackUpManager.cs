@@ -118,7 +118,10 @@ namespace Riverside.Graphite.Core
 
 					Console.WriteLine("Existing FireBrowserUserCore folder deleted.");
 				}
-				
+				else {
+					_ = Directory.CreateDirectory(restorePath);
+				}
+
 				// Extract the backup file to FireBrowserUserCore
 				ZipFile.ExtractToDirectory(restorefile, restorePath, true);
 
