@@ -387,7 +387,7 @@ public static class AppService
 				var context = new SettingsActions(AuthService.CurrentUser.Username);
 				var schema = new SchemaExtractor(context.SettingsContext.ConnectionPath, context.SettingsContext, typeof(Settings));
 				
-				await schema.CompareAndExtractSchema(); 
+				await schema.HandleExtractionSchemaChanges(); 
 							
 				_ = await dbServer.InsertUserSettings(); // new user add default from class
 				

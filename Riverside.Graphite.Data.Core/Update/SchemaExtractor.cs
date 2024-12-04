@@ -46,7 +46,7 @@ namespace Riverside.Graphite.Data.Core.Update
 			this.classIn = classIn;
 		}
 
-		public async Task CompareAndExtractSchema() {
+		public async Task HandleExtractionSchemaChanges() {
 
 			
 			var oldSchemaJson = GetDatabaseSchemaAsJson(connectionString, classIn.Name);
