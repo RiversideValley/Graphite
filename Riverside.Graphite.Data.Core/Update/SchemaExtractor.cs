@@ -135,8 +135,6 @@ namespace Riverside.Graphite.Data.Core.Update
 			}
 
 			await Task.Delay(100); 
-			
-
 		
 		}
 		public static string GetDatabaseSchemaAsJson(string connectionString, string strTableName)
