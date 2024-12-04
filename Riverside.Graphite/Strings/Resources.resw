@@ -643,9 +643,6 @@ You can use the dividers shown between the views to manage and resize them as ne
   <data name="SplitBrowsingTutorialTitle.Text" xml:space="preserve">
     <value>Split your screen for effortless multitasking</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="TabMenuClose.Text" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -741,5 +738,8 @@ You can use the dividers shown between the views to manage and resize them as ne
   <data name="WebAppInstallTitle" xml:space="preserve">
     <value>Install {0}?</value>
     <comment>{0} is the app name</comment>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>1,3,1,0</value>
   </data>
 </root>

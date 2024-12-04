@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -7,6 +8,7 @@ using Microsoft.UI.Xaml;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Update;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
@@ -364,6 +366,12 @@ public static class AppService
 
 			try
 			{
+				var version = GetVersionDescription();
+				Application.Current.Resources.TryGetValue("Version", out object _version);
+				var context = new SettingsActions(AuthService.CurrentUser.Username);
+				var schema = new SchemaExtractor(context.SettingsContext.ConnectionPath, context.SettingsContext, typeof(Settings));
+				await schema.CompareAndExtractSchema(); 
+
 				_ = await dbServer.DatabaseCreationValidation();
 				_ = await dbServer.InsertUserSettings();
 				// if we get to here than all is validated and open Browser. 
@@ -376,6 +384,14 @@ public static class AppService
 		}
 	}
 
+	private static Tuple<int, int, int, int> GetVersionDescription()
+	{
+		string appName = "AppDisplayName".GetLocalized();
+		Package package = Package.Current;
+		PackageId packageId = package.Id;
+		PackageVersion version = packageId.Version;
+		return new Tuple<int,int,int,int>(version.Major,version.Minor,version.Build,version.Revision);
+	}
 	public static async void CreateNewUsersSettings()
 	{
 		ActiveWindow = new UserSettings();
