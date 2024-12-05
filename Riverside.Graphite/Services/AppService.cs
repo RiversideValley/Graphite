@@ -334,9 +334,8 @@ public static class AppService
         2. How we push new queries / maybe in cloud for new sql or need function to update 
         3. Migrations are for new and then Update with this new procedure for existing data... 
         Need function after injection, before use logins, and when use authorized */
-		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
-
-
+		
+		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql"); /* we will eventually not use this unless development */
 
 		_ = AuthService.Authenticate(username);
 
@@ -366,22 +365,34 @@ public static class AppService
 
 			try
 			{
-				/* we need to store the version number as a tuple<int,int,int,int> so we can serialize it ;
-					var version = GetVersionDescription();
-					Application.Current.Resources.TryGetValue("Version", out object _version);
-				
-					only due when there is a version change.. 
-				 */
-
-				// run this hence we've change the Setting Class alot.. LOL.. amazing... 
-
-				var context = new SettingsActions(AuthService.CurrentUser.Username);
-				var schema = new SchemaExtractor(context.SettingsContext.ConnectionPath, context.SettingsContext, typeof(Settings));
-				await schema.CompareAndExtractSchema(); 
-
+				// DATABASE EXISTS && CONNECTS. 
 				_ = await dbServer.DatabaseCreationValidation();
-				_ = await dbServer.InsertUserSettings();
-				// if we get to here than all is validated and open Browser. 
+
+				_ = await dbServer.InsertUserSettings(); // new user add default from class
+
+				#region NEED HELP
+				/* 1. only do! when there is a version change.. 		
+				// 2. we need to store the version number as a tuple<int,int,int,int> so we can serialize it ;
+
+				var version = GetVersionDescription();
+				Application.Current.Resources.TryGetValue("Version", out object _version);
+				if (_version is not null)
+					if (version != (Tuple<int, int, int, int>)_version) {
+						// should be change in version->go.
+					}
+				*/
+				#endregion
+
+
+				// 1. run this hence we've change the Setting Class alot.. LOL.. amazing... 
+				// 2. gather class & db action-> 2g schema of db linked to a class(Setting, Download, Etc..)
+				var connectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
+				var schema = new SchemaExtractor(connectionPath, typeof(Settings));
+				
+				await schema.HandleExtractionSchemaChanges(); 
+							
+				
+				// if we get to here than all is validated and open Browser->go; 
 			}
 			catch (Exception ex)
 			{

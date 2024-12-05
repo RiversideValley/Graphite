@@ -101,15 +101,10 @@ public class Settings
 	public bool DisableWebMess { get; set; } // Use "0" for false, "1" for true
 	public bool DisableGenAutoFill { get; set; } // Use "0" for false, "1" for true
 	public string ColorBackground { get; set; }
-
 	public string Gender { get; set; }
-
-
 	public bool StatusBar { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserKeys { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserScripts { get; set; } // Use "0" for false, "1" for true
-	public bool NewTabSelectorBarVisible { get; set; } // Use "0" for false, "1" for true
-
 	public string Useragent { get; set; }
 	public bool LightMode { get; set; } // Use "0" for false, "1" for true
 	public bool OpSw { get; set; } // Use "0" for false, "1" for true
@@ -147,7 +142,6 @@ public class Settings
 	public bool Eqfav { get; set; }
 	public bool EqHis { get; set; }
 	public bool Eqsets { get; set; }
-
 	public int TrackPrevention { get; set; }
 	public bool ResourceSave { get; set; }
 	public bool ConfirmCloseDlg { get; set; }
@@ -159,14 +153,11 @@ public class Settings
 	public bool IsSearchVisible { get; set; }
 	public bool IsTrendingVisible { get; set; }
 	public bool NtpCoreVisibility { get; set; }
-
 	public bool NewTabHistoryQuick { get; set; }
-
 	public bool NewTabHistoryDownloads { get; set; }
-
 	public bool NewTabHistoryFavorites { get; set; }
-
 	public bool NewTabHistoryHistory { get; set; }
+	public bool NewTabSelectorBarVisible { get; set; } // Use "0" for false, "1" for true
 
 	// public bool WelcomeMsg { get; set; }
 
