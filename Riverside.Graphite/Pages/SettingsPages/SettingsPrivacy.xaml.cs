@@ -205,7 +205,16 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				Debug.WriteLine($"Error saving permissions to JSON: {ex.Message}");
 			}
 		}
-	}
+
+		private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+		{
+			if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is PermissionItem selectedItem)
+			{
+			     //PermissionManager.DeletePermission(AuthService.CurrentUser.Username, selectedItem.Url, selectedItem.Kind);
+				 //PermissionManager.LoadPermissionsAsync(AuthService.CurrentUser.Username); // Refresh the permissions list
+			}
+		}
+    }
 
 	public class SettingsPrivacyViewModel : INotifyPropertyChanged
 	{

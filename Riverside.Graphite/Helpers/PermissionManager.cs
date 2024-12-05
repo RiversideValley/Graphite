@@ -292,6 +292,40 @@ namespace Riverside.Graphite.Helpers
 			}
 		}
 
+		public static Dictionary<string, PermissionItem> GetUserPermissions(string username)
+		{
+			if (_userPermissions.TryGetValue(username, out var permissions))
+			{
+				return permissions;
+			}
+			return new Dictionary<string, PermissionItem>();
+		}
+
+		public static async Task DeletePermission(string username, string url, CoreWebView2PermissionKind kind)
+		{
+			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
+			{
+				return;
+			}
+
+			try
+			{
+				if (_userPermissions.TryGetValue(username, out var permissions))
+				{
+					string key = GetPermissionKey(url, kind);
+					if (permissions.Remove(key))
+					{
+						await SavePermissionsAsync(username);
+						NotifyPermissionsChanged(username);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Error deleting permission: {ex.Message}");
+			}
+		}
+
 		private static string FormatPermissionKind(string permissionKind)
 		{
 			return permissionKind.Replace("CoreWebView2PermissionKind", "").ToLower();

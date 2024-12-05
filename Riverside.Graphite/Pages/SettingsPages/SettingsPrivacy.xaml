@@ -67,7 +67,7 @@
 
         <StackPanel>
             <ListView ItemsSource="{x:Bind ViewModel.Permissions, Mode=OneWay}"
-      Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
+              Visibility="{x:Bind ViewModel.HasPermissions, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:PermissionItem">
                         <Grid>
@@ -81,13 +81,19 @@
                             <TextBlock Grid.Column="1" Text="{x:Bind Url}" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind PermissionType}" VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <ToggleSwitch Grid.Column="3" 
-                          IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
-                          Toggled="Permission_Toggled"/>
+                                  IsOn="{x:Bind IsAllowed, Mode=TwoWay}" 
+                                  Toggled="Permission_Toggled"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem IsEnabled="False" Text="Delete Permission" Click="MenuFlyoutItem_Click"/>
+                    </MenuFlyout>
+                </ListView.ContextFlyout>
             </ListView>
         </StackPanel>
+
 
     </StackPanel>
 </Page>

@@ -51,7 +51,7 @@
                                 Click="Prm_Click"
                                 Text="Add Premium">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem
@@ -136,8 +136,7 @@
                 <Button
                     x:Name="Add"
                     Click="Add_Click"
-                    Content="Add"
-                    ToolTipService.ToolTip="Add User ( Temp Disabled Reworking Feature )" />
+                    Content="Add"/>
             </labs:SettingsExpander>
 
             <labs:SettingsExpander Header="BackUp - Data Or Restore">
