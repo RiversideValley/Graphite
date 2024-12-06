@@ -100,7 +100,61 @@ html, body {
     padding-left: 0px;
     overflow-y: auto;
 }
+.chat-container {
+	width: 80%;
+	max-width: 600px;
+	margin: 20px auto;
+	font-family: Arial, sans-serif;
+}
 
+.message {
+	padding: 4px 8px;
+	margin: 10px 0;
+	border-radius: 20px;
+	position: relative;
+	color: #fff;
+	font-size: 16px;
+	font-size: large; 
+	font-weight: 600; 
+	backdrop-filter: blur(10px);
+}
+
+	.message.left {
+		background: linear-gradient(to right, rgba(58, 123, 213, 0.1), rgba(58, 123, 213, 0.3));
+		align-self: flex-start;
+	}
+
+	.message.right {
+		background: linear-gradient(to left, rgba(84, 199, 252, 0.1), rgba(84, 199, 252, 0.3));
+		align-self: flex-end;
+	}
+
+	.message::after {
+		content: "";
+		position: absolute;
+		width: 0;
+		height: 0;
+		border-style: solid;
+	}
+
+	.message.left::after {
+		top: 0;
+		left: -10px;
+		border-width: 10px 10px 0 0;
+		border-color: rgba(58, 123, 213, 0.7) transparent transparent transparent;
+	}
+
+	.message.right::after {
+		top: 0;
+		right: -10px;
+		border-width: 10px 0 0 10px;
+		border-color: rgba(84, 199, 252, 0.7) transparent transparent transparent;
+	}
+
+.chat-box {
+	display: flex;
+	flex-direction: column;
+}
 #userlist {
     border: 1px solid #ccc;
     background-color: #e0e0e0;

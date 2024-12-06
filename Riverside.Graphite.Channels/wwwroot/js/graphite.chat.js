@@ -220,7 +220,8 @@
                 now = now || new Date().toLocaleTimeString('en-US');
                 messageId = messageId || new Date().toLocaleTimeString('en-US');
 
-                const entry = document.createElement('li');
+				const entry = document.createElement('li');
+				
                 entry.classList.add("d-flex", "mx-2", 'py-2');
                 entry.id = `messageId-${messageId}`;
                 if (sender === "Public") {
@@ -231,7 +232,7 @@
 				} else if (sender.toLowerCase() === authUser.toLowerCase()) {
                     entry.classList.add("justify-content-start", "gap-2", "rounded")
                     entry.innerHTML =
-                        `<div class="card border border-success flex-row-reverse" >
+                        `<fluent-card class="message left border border-success flex-row-reverse">
                                 <div class="card-header p-3 d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-between">
                                         <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
@@ -239,18 +240,18 @@
                                     </div>
                                 </div>
                                 <div class="card-body gap-1">
-                                    <p class="mb-2 limited-text shadow-sm rounded">
+                                    <p class="mb-2 limited-text shadow-sm rounded form-control rounded px-2">
                                         ${message}
                                     </p>
                                     <p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
-									<p class="fw-bold mb-0 ms-3 fs-6">${sender.toLowerCase()}</p>
+									<p class="fw-bold mb-0 ms-3 fs-6 text-success">${sender.toLowerCase()}</p>
                                 </div>
                             </div>
-                        </div>`
+                        </fluent-card>`
                 } else {
                 entry.classList.add("justify-content-end", "gap-2", "rounded")
                     entry.innerHTML =
-                    `<div class="card border border-primary flex-row" >
+                    `<fluent-card class="message right border border-primary flex-row" >
                             <div class="card-header p-3 d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-between">
                                     <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-4.webp" alt="avatar"
@@ -259,14 +260,14 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                               <p class="mb-2 limited-text shadow-sm rounded">
+                               <p class="mb-2 limited-text shadow-sm rounded form-control gap-4 rounded px-2">
                                     ${message}
                                 </p>
                                <p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
-							   <p class="fw-bold mb-0 ms-3 fs-6">${sender.toLowerCase()}</p>
+							   <p class="fw-bold mb-0 ms-3 fs-6 text-success">${sender.toLowerCase()}</p>
                             </div>
                         </div>
-                    </div>`
+                    </fluent-card>`
 
                 }
 

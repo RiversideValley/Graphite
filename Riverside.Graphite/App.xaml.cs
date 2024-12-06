@@ -93,17 +93,51 @@ public partial class App : Application
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
 		AppService.FireWindows = new HashSet<Window>();
-
+		
+		
+		
 		try
 		{
+			//kill any hanging instance of channels, especially in debugging..
+			KillProcessByName("dotnet");
+
 			Task.Run(() => StartChannels());
 		}
-		catch (Exception)
+		catch (Exception e)
 		{
+			ExceptionLogger.LogException(e);
 			throw;
 		}
-
+		
 	}
+	
+	static void KillProcessByName(string processName)
+	{
+		try
+		{
+			var processes = Process.GetProcessesByName(processName);
+
+			if (processes.Length == 0)
+			{
+				Console.WriteLine($"No processes found with the name: {processName}");
+				return;
+			}
+
+			foreach (var process in processes)
+			{
+				Console.WriteLine($"Killing process: {process.ProcessName} (ID: {process.Id})");
+				process.Kill();
+				process.WaitForExit(); // Optional: wait for the process to exit
+				Console.WriteLine($"Process {process.ProcessName} (ID: {process.Id}) terminated.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"An error occurred: {ex.Message}");
+		}
+	}
+
+
 
 	private void StartChannels()
 	{
@@ -125,7 +159,7 @@ public partial class App : Application
 			}; 
 
 			_webAppProcess =  Process.Start(startInfo);
-			_webAppProcess.WaitForExitAsync(); 
+			_webAppProcess.WaitForExit(); 
 		}
 		catch (Exception e)
 		{
@@ -169,6 +203,8 @@ public partial class App : Application
 		{
 			ExceptionLogger.LogException(e.Exception);
 		}
+		
+		_webAppProcess.Kill();
 	}
 
 	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
