@@ -89,7 +89,7 @@
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             };
 
-            let authUser = UserName;
+			let authUser = UserName.toLowerCase(); 
             let sessionMap = new Map([
                 ['Public', 'Public']
             ]);
@@ -197,7 +197,7 @@
                 }
 
 
-                document.getElementById('sessionLabel').innerText = String(targetName).split(`@@`, 1).toString();;
+                document.getElementById('sessionLabel').innerText = String(targetName).split(`@`, 1).toString();;
 
                 const elementId = 'message-' + newSession;
                 const sessionCardElement = document.getElementById(elementId);
@@ -228,7 +228,7 @@
                     entry.classList.add("text-center");
                     entry.classList.add("system-message");
                     entry.classList.add("float-none");
-                } else if (sender === authUser) {
+				} else if (sender.toLowerCase() === authUser.toLowerCase()) {
                     entry.classList.add("justify-content-start", "gap-2", "rounded")
                     entry.innerHTML =
                         `<div class="card border border-success flex-row-reverse" >
@@ -236,14 +236,14 @@
                                     <div class="d-flex align-items-between">
                                         <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
                                                 class="rounded-circle shadow-1-strong" width="48"/>
-                                        <p class="fw-bold mb-0 ms-3">${String(sender).split('@@', 1).toString()}</p>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <p class="mb-0 limited-text">
+                                <div class="card-body gap-1">
+                                    <p class="mb-2 limited-text shadow-sm rounded">
                                         ${message}
                                     </p>
                                     <p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
+									<p class="fw-bold mb-0 ms-3 fs-6">${sender.toLowerCase()}</p>
                                 </div>
                             </div>
                         </div>`
@@ -255,14 +255,15 @@
                                 <div class="d-flex align-items-between">
                                     <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-4.webp" alt="avatar"
                                             class="rounded-circle shadow-1-strong" width="48"/>
-                                    <p class="fw-bold mb-0 ms-3">${String(sender).split('@@', 1).toString()}</p>
+                                    
                                 </div>
                             </div>
                             <div class="card-body">
-                               <p class="mb-0 limited-text">
+                               <p class="mb-2 limited-text shadow-sm rounded">
                                     ${message}
                                 </p>
                                <p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
+							   <p class="fw-bold mb-0 ms-3 fs-6">${sender.toLowerCase()}</p>
                             </div>
                         </div>
                     </div>`
@@ -453,7 +454,7 @@
                     // parent meymyself and I. 
                     const myself = document.createElement('li');
 
-                    myself.innerHTML = `<div class="shadow-sm border-1 p-2"><h4>Me</h4><div>${authUser.split("@@", 1).toString()}</div><hr/></div>`;
+                    myself.innerHTML = `<div class="shadow-sm border-1 p-2"><h4>Me</h4><div>${authUser.split("@", 1).toString()}</div><hr/></div>`;
                     list.append(myself);
                     myself.classList.add('disabled');
 
@@ -481,7 +482,7 @@
                                                 <div class="card-body d-flex">
                                                         <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-${getRandomInt(1, 16)}.webp" alt="avatar"
                                                                     class="rounded-circle d-flex align-self-start shadow-1-strong" width="40">
-                                                    <div class="m-2">${u.split("@@", 1).toString()}</div>
+                                                    <div class="m-2">${u.split("@", 1).toString()}</div>
                                                 </div>
                                             </a>
                                         </div>`
@@ -624,14 +625,14 @@
             function onConnected(connection) {
                 Notification.requestPermission(function (status) {
                     if (status === 'granted') {
-                        let n = new Notification('Dear ' + authUser +
+						let n = new Notification('Dear ' +  authUser.split("@", 1).toString()  +
                             ': \nYour new messages will be displayed here');
                     }
                 });
                 addNewSessionCard('Public', 'Public', '');
                 changeSession('Public', connection);
 
-                document.getElementById('userName').innerText = String(authUser).split(`@@`, 1).toString();
+                document.getElementById('userName').innerText = String(authUser).split(`@`, 1).toString();
 
                 document.getElementById('sendmessage').addEventListener('click', (event) => sendUserMessage(connection));
 

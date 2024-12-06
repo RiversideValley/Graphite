@@ -15,6 +15,7 @@ using FireCore.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Riverside.Graphite.Channels
 {
@@ -23,23 +24,18 @@ namespace Riverside.Graphite.Channels
 		public static void Main(string[] args)
 		{
 			var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
+			builder.WebHost.UseKestrel(x => x.ListenAnyIP(5000));  
 			Startup(builder);
 			
 		}
 
 		public static void Startup(WebApplicationBuilder builder) {
-
+			
 			_ = builder.Services.AddHttpClient();
-			_ = builder.Services.AddAuthorization();
-			_ = builder.Services.AddAuthentication(options =>
-			{
-				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-			});
-			_ = builder.Services.AddControllers();
-			_ = builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();	
+			_ = builder.Services.AddRouting();
+			_ = builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); 
 			_ = builder.Services.AddDistributedMemoryCache();
+			_ = builder.Services.AddRazorPages(); 
 			_ = builder.Services.AddCors(options => { options.AddDefaultPolicy(builder => { builder.WithOrigins().AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); }); });
 			_ = builder.Services.AddSignalR(options =>
 			{
@@ -91,13 +87,12 @@ namespace Riverside.Graphite.Channels
 
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
-			app.UseAuthentication(); 
 			app.UseCors();
 			app.UseRouting()
-				.UseAuthorization()
 				.UseEndpoints(endpoints =>
 				{
 					endpoints.MapControllers();
+					endpoints.MapRazorPages(); 
 					endpoints.MapHub<AzureChat>("/chat");
 
 				});

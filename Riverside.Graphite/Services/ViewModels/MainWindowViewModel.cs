@@ -359,7 +359,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		
 		OnPropertyChanged(nameof(IsMsLogin));
 	}
-
+	
 	private void ReceivedStatus(Message_Settings_Actions message)
 	{
 		if (message is null)

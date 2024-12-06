@@ -30,6 +30,7 @@ using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -159,6 +160,7 @@ public sealed partial class MainWindow : Window
 		appWindow.Closing += AppWindow_Closing;
 	}
 
+	
 	public async void Init()
 	{
 		await Riverside.Graphite.Runtime.Models.Data.Init();

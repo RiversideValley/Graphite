@@ -22,35 +22,32 @@ namespace FireCore.Services.Hubs
         private readonly HttpClient? _httpClient;
         private readonly IAzureDataTableSessionStorage _azureDataTableSessionStorage;
 
-        public static HashSet<KeyValuePair<string, string>> ConnectedIds { get; set;  } 
+        public static HashSet<KeyValuePair<string, string>>? ConnectedIds { get; set;  } 
 
 
         public AzureChat(IMessageHandler messageHandler, SignalRService rService, IHubCommander hubCommander,  HttpClient httpClient, IAzureDataTableSessionStorage azureDataTable)
         {
             _messageHandler = messageHandler;
 			ConnectedIds = new HashSet<KeyValuePair<string, string>>();	
-            //_sessionHandler = sessionHandler;
             _signalRService = rService;
             _commander = (IHubCommander)hubCommander;
-            //_graphServiceClient = graphServiceClient;
             _httpClient = httpClient;
             _azureDataTableSessionStorage = azureDataTable;
         }
 
         public override async Task OnConnectedAsync()
         {
-            var sender = Context.UserIdentifier;
+            var sender = Context.UserIdentifier?.ToLowerInvariant();
             var lockit = new object();
             lock (lockit)
             {
                 if (Context.UserIdentifier != null)
-                    ConnectedIds.Add(new KeyValuePair<string, string>(Context.ConnectionId, Context.UserIdentifier));
+                    ConnectedIds?.Add(new KeyValuePair<string, string>(Context.ConnectionId, Context.UserIdentifier));
             }
-            await Clients!.All.SendAsync("showLoginUsers", ConnectedIds.Select(x => x.Value).ToArray());
+            await Clients!.All.SendAsync("showLoginUsers", ConnectedIds?.Select(x => x.Value).ToArray());
 
 
             // Gather user session from database
-            //var userSessions = await _sessionHandler.GetLatestSessionsAsync(sender!);
             var userSessions = await _azureDataTableSessionStorage.GetLatestSessionsAsync(sender!);
 
             //  Push the latest session information to the commander.
@@ -74,9 +71,9 @@ namespace FireCore.Services.Hubs
             lock (lockit)
             {
                 if (Context.UserIdentifier != null)
-                    ConnectedIds.Remove(new KeyValuePair<string, string>(Context.ConnectionId, Context.UserIdentifier));
+                    ConnectedIds?.Remove(new KeyValuePair<string, string>(Context.ConnectionId, Context.UserIdentifier));
             }
-            await Clients!.All.SendAsync("showLoginUsers", ConnectedIds.Select(x => x.Value).ToArray());
+            await Clients!.All.SendAsync("showLoginUsers", ConnectedIds?.Select(x => x.Value).ToArray());
 
             var listofActive = _commander.ActiveGroups;
 
@@ -121,7 +118,7 @@ namespace FireCore.Services.Hubs
 
         public async Task<string> BroadcastMessage(string messageContent)
         {
-            var sender = Context.UserIdentifier;
+            var sender = Context.UserIdentifier!;
             var message = new Message(sender, DateTime.Now, messageContent, "Sent");
             var sequenceId = await _messageHandler.AddNewMessageAsync("Public", message);
 
@@ -133,8 +130,6 @@ namespace FireCore.Services.Hubs
         public async Task<string> GetOrCreateSession(string receiver)
         {
             var sender = Context.UserIdentifier;
-            //var session = await _sessionHandler.GetOrCreateSessionAsync(sender!, receiver);
-            //var isSession = await _sessionHandler.GetSessionBySessionId(session.SessionId);
             var session = await _azureDataTableSessionStorage.GetOrCreateSessionAsync(sender!, receiver);
             var isSession = await _azureDataTableSessionStorage.GetSessionBySessionId(session.SessionId);
 
@@ -142,7 +137,6 @@ namespace FireCore.Services.Hubs
 
             if (await _signalRService.MessageHubContext!.ClientManager.UserExistsAsync(receiver))
             {
-                //var userSessions = await _sessionHandler.GetLatestSessionsAsync(receiver);
                 var userSessions = await _azureDataTableSessionStorage.GetLatestSessionsAsync(sender!);
                 await Clients!.User(receiver).SendAsync("updateSessions", userSessions!);
                 await AddSessionsToCommander(userSessions);
@@ -150,9 +144,7 @@ namespace FireCore.Services.Hubs
             else
             {
 
-                //var userSessions = await _sessionHandler.GetLatestSessionsAsync(sender!);
                 var userSessions = await _azureDataTableSessionStorage.GetLatestSessionsAsync(sender!);
-                //await Clients!.User(sender!).SendAsync("updateSessions", userSessions!);
                 await AddSessionsToCommander(userSessions);
             }
 
@@ -168,8 +160,6 @@ namespace FireCore.Services.Hubs
             var sequenceId = await _messageHandler.AddNewMessageAsync(sessionId, message);
 
             // see if there are any sessions
-            //var listOfSessions = await _sessionHandler.GetSessionBySessionId(sessionId) ?? null;
-
             var listOfSessions = await _azureDataTableSessionStorage.GetSessionBySessionId(sessionId) ?? null;
 
             if (listOfSessions is null)
@@ -186,7 +176,6 @@ namespace FireCore.Services.Hubs
             var twins = (from v in hubUsers where v == roomName select v).Distinct();
 
             // 1. send update to group or private chat.  2. send owner update
-
             if (twins.Count() > 0)
             {    // private chat
                 await Clients!.User(roomName).SendAsync("displayUserMessage", sessionId, sequenceId, Context.UserIdentifier!, messageContent);
@@ -198,7 +187,6 @@ namespace FireCore.Services.Hubs
             {
                 // group message 
                 await Clients!.GroupExcept(roomName, Context.ConnectionId).SendAsync("displayUserMessage", sessionId, sequenceId, sender!, messageContent);
-                //await Clients!.Caller.SendAsync("displayResponseMessage", sessionId, sequenceId, "Sent");
             }
 
             return sessionId;
@@ -219,11 +207,9 @@ namespace FireCore.Services.Hubs
         public async Task<Task> DeleteUserSession(string userName, string partnerName)
         {
             var sender = Context.UserIdentifier;
-            //var items = await _sessionHandler.GetLatestSessionsAsync(userName);
             var items = await _azureDataTableSessionStorage.GetLatestSessionsAsync(userName);
             var Removed = (from kv in items where kv.Key == partnerName select kv);
             // delete session from table 
-            //await _sessionHandler.DeleteUserSession(userName, partnerName);
             await _azureDataTableSessionStorage.DeleteUserSession(userName, partnerName);
 
             await Task.Delay(400);
@@ -234,10 +220,8 @@ namespace FireCore.Services.Hubs
             // remove from siganlr groups 
             await RemoveFromGroup(partnerName);
             //  get latest session information to the user.
-            //var userSessions = await _sessionHandler.GetLatestSessionsAsync(userName);
             var userSessions = await _azureDataTableSessionStorage.GetLatestSessionsAsync(userName);
             //  Send to latest session list to user.
-            //await Clients!.User(userName).SendAsync("deletedRoom", Removed.FirstOrDefault());
             await Task.Delay(400);
             if (userSessions.Count() > 0)
                 await Clients!.User(userName).SendAsync("updateSessions", userSessions);

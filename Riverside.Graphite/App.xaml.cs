@@ -93,35 +93,39 @@ public partial class App : Application
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
 		AppService.FireWindows = new HashSet<Window>();
-		
-		//try
-		//{
-		//	StartChannels();
-		//}
-		//catch (Exception)
-		//{
-		//	throw;
-		//}
-			
+
+		try
+		{
+			Task.Run(() => StartChannels());
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+
 	}
 
 	private void StartChannels()
 	{
 		string publishDirectory = Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly); 
-		string webAppPath = Path.Combine(publishDirectory, "RiverSide.Graphite.Channels.exe");
+		string webAppPath = Path.Combine(publishDirectory, "RiverSide.Graphite.Channels.dll");
 		try
 		{
 			if (!File.Exists(webAppPath))
-				return; 
+				return;
 
 			var startInfo = new ProcessStartInfo
 			{
-				FileName = webAppPath,
-				UseShellExecute = true,
-				CreateNoWindow = false
-			};
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				WindowStyle = ProcessWindowStyle.Hidden, 
+				FileName = "dotnet.exe",
+				Arguments = webAppPath,
+				WorkingDirectory = publishDirectory
+			}; 
 
 			_webAppProcess =  Process.Start(startInfo);
+			_webAppProcess.WaitForExitAsync(); 
 		}
 		catch (Exception e)
 		{

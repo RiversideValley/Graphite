@@ -113,15 +113,15 @@
                             Show Trending
                         </ToggleSwitch>
                         <ToggleSwitch
-      x:Name="SelectBar"
-     IsOn="{x:Bind ViewModel.IsSelectBarEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-      Toggled="SelectBar_Toggled">
+                            x:Name="SelectBar"
+                            IsOn="{x:Bind ViewModel.IsSelectBarEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Toggled="SelectBar_Toggled">
                             Show Select Bar
                         </ToggleSwitch>
                         <ToggleSwitch
- x:Name="LogoToggle"
-IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
- Toggled="LogoToggle_Toggled">
+                            x:Name="LogoToggle"
+                            IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Toggled="LogoToggle_Toggled">
                             Show Logo
                         </ToggleSwitch>
                     </StackPanel>
@@ -455,7 +455,7 @@ IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=Property
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
-                <SelectorBar  Visibility="{x:Bind ViewModel.IsselectBarVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <SelectorBar Visibility="{x:Bind ViewModel.IsselectBarVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <SelectorBarItem>
                         <Button
                             x:Name="His"
@@ -552,13 +552,30 @@ IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=Property
                             </StackPanel>
                         </Button>
                     </SelectorBarItem>
+                    <SelectorBarItem>
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.ChatCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="18"
+                                    Glyph="&#xe8f2;" />
+                                <TextBlock Margin="10,0,0,0" Text="Chat" />
+                            </StackPanel>
+                        </Button>
+                    </SelectorBarItem>
                 </SelectorBar>
             </StackPanel>
             <labs:SettingsCard
                 Grid.Row="2"
-                Margin="1"
                 Width="Auto"
                 MinWidth="500"
+                Margin="1"
                 HorizontalAlignment="Center"
                 Background="{ThemeResource DesktopAcrylicTransparentBrush}"
                 BorderBrush="Black"

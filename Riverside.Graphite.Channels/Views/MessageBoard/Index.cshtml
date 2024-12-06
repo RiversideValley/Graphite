@@ -10,7 +10,7 @@
 
 @{
 
-    string? UserName =  Environment.UserDomainName + "@" + Environment.UserName ;
+    string? UserName =  Environment.UserDomainName + "@" + Environment.UserName + ".graphite.net";
 
 }
 <!DOCTYPE html>
@@ -76,12 +76,30 @@
         
         <div class="col-md-8 col-lg-8 col-xl-8 mt-1" id="messageColumn">
             <div class="flex-row">
-            <div class="m-2 p-2">
-                <button class="float-start navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMax" aria-controls="collapseMax" aria-expanded="true" aria-label="Toggle navigation">
-                    <span id="btnCollapseRooms" class="fas fa-caret-left"></span>
-                    Rooms
-                </button>
-            </div>
+                <div class="m-2 p-2">
+                    <button class="float-start navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMax" aria-controls="collapseMax" aria-expanded="true" aria-label="Toggle navigation">
+                        <span id="btnCollapseRooms" class="fas fa-caret-left"></span>
+                        Rooms
+                    </button>
+
+                        <a href="#" type="button" class="float-end" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg"><i class="fa fa-question-circle"></i></a>
+
+                        <div class="modal fade bd-example-modal-lg rounded-2" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content p-2">
+                                    <ul>
+                                        <li>1. Public room is for all to chat. </li>
+                                        <li>2. Any room that is created is owned by that user.</li>
+                                        <li>3. Anyone can subscribe to a room with the name of the room.</li>
+                                        <br />
+                                        <li><em>Please understand that there is a privacy policy to the rooms.</em> <img width="32" height="32" src="~/logo.png" alt="favicon" class="img-thumbnail gap-4 my-2 mx-2 float-end" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                </div>
+                </div>
                 <h1 id="sessionLabel" class="sessionlabel text-uppercase">Public</h1>
                 <div class="flex-column">
 
@@ -96,7 +114,6 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
             <div id="statusBar" class="text-primary fw-bold mt-lg-2">
                 
@@ -133,9 +150,11 @@
 
 </html>
 
-  
+
     <script src="~/microsoft-signalr@8.0.0/signalr.min.js"></script>
+
     <script>
-        var UserName = "@UserName.ToString()"; 
+        var UserName = "@UserName.ToString().ToLowerInvariant()";
+      
     </script>
     <script src="~/js/graphite.chat.js"></script>

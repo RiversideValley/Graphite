@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Data.Mig
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.IdentityClient.Kernel", "Riverside.Graphite.IdentityClient.Kernel\Riverside.Graphite.IdentityClient.Kernel.csproj", "{43F65BC0-305F-44EB-9B3F-1F462B4C71B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riverside.Graphite.Channels", "Riverside.Graphite.Channels\Riverside.Graphite.Channels.csproj", "{1CC27BED-D9E7-4879-AFE8-BBBB883D0DE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riverside.Graphite.Channels", "Riverside.Graphite.Channels\Riverside.Graphite.Channels.csproj", "{1CC27BED-D9E7-4879-AFE8-BBBB883D0DE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

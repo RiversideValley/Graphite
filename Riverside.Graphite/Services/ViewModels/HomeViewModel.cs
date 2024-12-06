@@ -15,6 +15,7 @@ using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
@@ -225,6 +226,26 @@ public partial class HomeViewModel : ObservableRecipient
 		SettingsService.Initialize();
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
+	}
+	
+	[RelayCommand]
+	private void Chat(Button sender)
+	{
+
+		try
+		{
+			if (Application.Current is App app && app.m_window is MainWindow window)
+			{
+				window?.NavigateToUrl("http://localhost:5000/");
+			}
+			
+		}
+		catch (Exception e)
+		{
+			ExceptionLogger.LogException(e);
+			_ = Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
+		}
+
 	}
 	[RelayCommand]
 	private void Logins(Button btn)
