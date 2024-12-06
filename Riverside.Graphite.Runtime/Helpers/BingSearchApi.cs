@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,88 +13,52 @@ namespace Riverside.Graphite.Runtime.Helpers
 {
 	public partial class BingSearchApi : ObservableObject
 	{
-		/*  TODO: 
-            //2024-02-20
-            //TODO: add bing search api for trending to newTab.  
-            // I've addes  a free bing search api subscription to my azure account 
-            // key:  29948d69f0294a5a9b8b75831dd06c8a
-            // curl -H "Ocp-Apim-Subscription-Key: 29948d69f0294a5a9b8b75831dd06c8a" https://api.bing.microsoft.com/v7.0/news/trendingtopics
-            // make a variable $get
-            // 1. $get = (Invoke-WebRequest -Uri "https://api.bing.microsoft.com/v7.0/news/trendingtopics?mkt=en-us" -Method Get -Headers @{ 'Ocp-Apim-Subscription-Key' = '29948d69f0294a5a9b8b75831dd06c8a' })
-            // 2. $get is JsonObject 
-            // 3. echo $get.Content 
-            // 4. now lets parse it 
-            // 5. $array = ($get.Content | ConvertFrom-Json) 
-            // parse it by a pipe |=> convertfrom-json
-            // 6. let see echo $array.value
-            // 7. now what ok, lets convet to html 
-            // 8. $array.value | ConvertTo-Html 
-            // 9. save to a file 
-            // 10. New-Item -Type File -Name "trending.html"
-            // 11. Add-Content "trending.html" -Value ($array.value | ConvertTo-Html)
-            // 12. Notepad .\trending.html 
-
-            //<summary>
-            //https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/tutorial/csharp-ranking-tutorial
-            //https://learn.microsoft.com/en-us/bing/search-apis/bing-news-search/overview
-            //https://stackoverflow.com/questions/70669970/how-to-hand-headers-in-curl-request-in-powershell-windows
-            //https://stackoverflow.com/questions/50860411/read-array-from-json-and-pass-to-variable-in-powershell 
-        */
 		[ObservableProperty]
 		private string _SearchQuery;
 		private string _trendlist;
 		public string TrendingList { get => _trendlist; set => SetProperty(ref _trendlist, value); }
 
-
 		public BingSearchApi()
 		{
-			// result Jobject 
-			// todo parse and return to HomeViewModel to add to newTab.. 
-			//TrendingList = [.. RunQueryAndDisplayResults(null).GetAwaiter().GetResult()];
+			// TODO: Initialize TrendingList if needed
 		}
 
 		public async Task<string> TrendingListTask(string userQuery)
 		{
 			return TrendingList = await RunQueryAndDisplayResults(userQuery);
 		}
-		public Task<string> RunQueryAndDisplayResults(string userQuery)
+
+		public async Task<string> RunQueryAndDisplayResults(string userQuery)
 		{
 			try
 			{
-				// Create a query
-				HttpClient client = new();
+				using HttpClient client = new();
 				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "29948d69f0294a5a9b8b75831dd06c8a");
-				//<summary>
-				System.Collections.Specialized.NameValueCollection queryString = HttpUtility.ParseQueryString(string.Empty);
-				queryString["q"] = userQuery;
-				//var query = "https://api.bing.microsoft.com/v7.0/search?" + queryString;
-				//</summary> user for a bing search 
 
 				string query = $"https://api.bing.microsoft.com/v7.0/news/trendingtopics?mkt=nl-nl";
-				// Run the query
-				HttpResponseMessage httpResponseMessage = client.GetAsync(query).Result;
+				HttpResponseMessage httpResponseMessage = await client.GetAsync(query);
 
-				// Deserialize the response content
-				string responseContentString = httpResponseMessage.Content.ReadAsStringAsync().Result;
-				JObject responseObjects = JObject.Parse(responseContentString);
+				string responseContentString = await httpResponseMessage.Content.ReadAsStringAsync();
+				using JsonDocument responseObjects = JsonDocument.Parse(responseContentString);
 
-				return responseObjects.SelectToken("value") != null
-					? Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(responseObjects.SelectToken("value").ToList()))
-					: Task.FromResult(Newtonsoft.Json.JsonConvert.SerializeObject(new List<string>()));
+				if (responseObjects.RootElement.TryGetProperty("value", out JsonElement valueElement))
+				{
+					return JsonSerializer.Serialize(valueElement);
+				}
+				return JsonSerializer.Serialize(new List<string>());
 			}
 			catch (Exception e)
 			{
 				ExceptionLogger.LogException(e);
 			}
 
-			return Task.FromResult<string>(null);
+			return null;
 		}
 
 		private static void DisplayAllRankedResults(JsonElement responseObjects)
 		{
 			string[] rankingGroups = new string[] { "pole", "mainline", "sidebar", "_type", "TrendingTopics" };
 
-			// Loop through the ranking groups in priority order
 			foreach (string rankingName in rankingGroups)
 			{
 				if (responseObjects.TryGetProperty("rankingResponse", out JsonElement rankingResponse) &&

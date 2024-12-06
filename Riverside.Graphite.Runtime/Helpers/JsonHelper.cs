@@ -1,28 +1,27 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Riverside.Graphite.Core.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Riverside.Graphite.Core.Helper;
 
 namespace Riverside.Graphite.Runtime.Helpers
 {
-	public delegate Task SaveToFileDelegate(JArray newArray);
+	public delegate Task SaveToFileDelegate(JsonElement newArray);
 
 	public class JsonHelper
 	{
 		public string FileBeingUsed { get; set; }
 		public SaveToFileDelegate SaveToFile { get; set; }
+
 		public JsonHelper(string fileBeingUsed)
 		{
 			FileBeingUsed = fileBeingUsed;
-			SaveToFile = SaveJArrayAsync;
+			SaveToFile = SaveJsonElementAsync;
 		}
 
-
-		protected internal async Task SaveJArrayAsync(JArray newArray)
+		protected internal async Task SaveJsonElementAsync(JsonElement newArray)
 		{
 			AsyncLockObject lockObject = new();
 
@@ -33,7 +32,7 @@ namespace Riverside.Graphite.Runtime.Helpers
 
 			using (await lockObject.LockAsync())
 			{
-				List<JArray> existingArrays = new();
+				List<JsonElement> existingArrays = new();
 
 				if (File.Exists(FileBeingUsed))
 				{
@@ -41,17 +40,17 @@ namespace Riverside.Graphite.Runtime.Helpers
 
 					if (!string.IsNullOrWhiteSpace(existingContent))
 					{
-						JArray existingEntries = JArray.Parse(existingContent);
+						using JsonDocument existingDoc = JsonDocument.Parse(existingContent);
+						JsonElement existingEntries = existingDoc.RootElement;
 
-						foreach (JToken entry in existingEntries)
+						foreach (JsonElement entry in existingEntries.EnumerateArray())
 						{
-							existingArrays.Add((JArray)entry);
+							existingArrays.Add(entry);
 						}
 					}
 				}
 
-
-				bool isDuplicate = existingArrays.Any(existingArray => JToken.DeepEquals(existingArray, newArray));
+				bool isDuplicate = existingArrays.Any(existingArray => JsonElementEquals(existingArray, newArray));
 
 				if (isDuplicate)
 				{
@@ -60,12 +59,17 @@ namespace Riverside.Graphite.Runtime.Helpers
 				else
 				{
 					existingArrays.Add(newArray);
-					string newContent = JsonConvert.SerializeObject(existingArrays, Formatting.Indented);
+					string newContent = JsonSerializer.Serialize(existingArrays, new JsonSerializerOptions { WriteIndented = true });
 					await File.WriteAllTextAsync(FileBeingUsed, newContent);
-					Console.WriteLine("JArray saved to file.");
+					Console.WriteLine("JsonElement saved to file.");
 				}
 				await Task.Delay(360);
 			}
+		}
+
+		private bool JsonElementEquals(JsonElement left, JsonElement right)
+		{
+			return JsonSerializer.Serialize(left) == JsonSerializer.Serialize(right);
 		}
 	}
 }

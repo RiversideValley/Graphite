@@ -110,7 +110,7 @@
                             x:Name="TrendingVisible"
                             IsOn="{x:Bind ViewModel.IstrendingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="TrendingVisible_Toggled">
-                            Show Trending
+                            Show Trending 
                         </ToggleSwitch>
                         <ToggleSwitch
                             x:Name="SelectBar"
@@ -289,7 +289,7 @@
                 FontWeight="SemiBold"
                 Foreground="Black"
                 Style="{ThemeResource SubtitleTextBlockStyle}">
-                Trending Now
+                Trending Now ( Unavailable Temperoraily Until Next Update )
             </TextBlock>
 
             <ListView
