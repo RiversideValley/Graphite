@@ -233,18 +233,17 @@
                     entry.classList.add("justify-content-start", "gap-2", "rounded")
                     entry.innerHTML =
 						`<fluent-card class="message left border border-success flex-row-reverse">
-							<div class="card-header p-1 d-flex align-items-center justify-content-between">
-								<div class="d-flex align-items-between">
+							<div class="card-header p-1 d-flex flex-row gap-2">
 									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
 										 class="rounded-circle shadow-1-strong" width="32"/>
-								</div>
+										<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
+										<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
 							</div>
 							<div class="card-body gap-1">
 								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
 									${message}
 								</p>
-								<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
-								<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
+								
 							</div>
 						</fluent-card>
 						`
@@ -252,18 +251,17 @@
                 entry.classList.add("justify-content-end", "gap-2", "rounded")
                     entry.innerHTML =
 						`<fluent-card class="message right border border-success flex-row-reverse">
-							<div class="card-header p-1 d-flex align-items-center justify-content-between">
-								<div class="d-flex align-items-between">
+							<div class="card-header p-1 d-flex flex-row gap-2">
 									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
 										 class="rounded-circle shadow-1-strong" width="32"/>
-								</div>
+									<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
+									<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
 							</div>
 							<div class="card-body gap-1">
 								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
 									${message}
 								</p>
-								<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
-								<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
+								
 							</div>
 						</fluent-card>
 						`
