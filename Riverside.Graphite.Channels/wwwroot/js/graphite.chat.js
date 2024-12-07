@@ -240,7 +240,7 @@
 								</div>
 							</div>
 							<div class="card-body gap-1">
-								<p class="mb-1 limited-text shadow-sm rounded form-control rounded px-1">
+								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
 									${message}
 								</p>
 								<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
@@ -259,7 +259,7 @@
 								</div>
 							</div>
 							<div class="card-body gap-1">
-								<p class="mb-1 limited-text shadow-sm rounded form-control rounded px-1">
+								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
 									${message}
 								</p>
 								<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>

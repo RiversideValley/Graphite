@@ -20,15 +20,19 @@
     <meta name="viewport" content="width=device-width" initial-scale="1.0" />
     <title>Mesage Board</title>
     <style>
-        
         .limited-text {
-            max-height: 5.4em; /* Approximate height for 4 lines of text */
-            overflow-y: auto;
-            line-height: 1.2em;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow-y: scroll;
+            overflow-x: clip; 
+            text-overflow: ellipsis;
+            line-height: 1.5; 
         }
+
+            .limited-text:empty {
+                display: none; 
+            }
       </style>
   
 </head>

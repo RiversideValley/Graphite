@@ -115,7 +115,7 @@ html, body {
 	color: CaptionText;
 	font-size: 16px;
 	font-size: large;
-	height: max-content;
+	height: min-content;
 	font-weight: 600;
 	width:  fit-content;	
 	overflow:inherit;
@@ -287,7 +287,7 @@ textarea:focus {
     display: inline-block;
     padding: 10px;
 	margin-block-start: 10px;
-    max-width: 8em;
+    max-width: 10em;
     word-wrap: break-word;
 }
 
