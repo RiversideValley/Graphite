@@ -233,7 +233,7 @@
                     entry.classList.add("justify-content-start", "gap-2", "rounded")
                     entry.innerHTML =
 						`<fluent-card class="message left border border-success flex-row-reverse">
-							<div class="card-header p-1 d-flex flex-row gap-2">
+							<div class="card-header p-1 d-flex flex-row justify-content-between gap-2">
 									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
 										 class="rounded-circle shadow-1-strong" width="32"/>
 										<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
@@ -251,7 +251,7 @@
                 entry.classList.add("justify-content-end", "gap-2", "rounded")
                     entry.innerHTML =
 						`<fluent-card class="message right border border-primary">
-							<div class="card-header p-1 d-flex flex-row gap-2">
+							<div class="card-header p-1 d-flex flex-row justify-content-between gap-2">
 									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
 										 class="rounded-circle shadow-1-strong" width="32"/>
 									<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>

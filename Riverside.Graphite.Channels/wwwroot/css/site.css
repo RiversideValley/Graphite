@@ -433,7 +433,6 @@ textarea:focus {
         padding-left: 160px;
     }
 
-     On using dropdown menu (To right shift popuped) 
     .navbar-fixed-left .navbar-nav > li > .dropdown-menu {
         margin-top: -50px;
         margin-left: 140px;
@@ -552,6 +551,13 @@ textarea:focus {
     -webkit-transition-timing-function: ease;
     transition-timing-function: ease;
     
+}
+
+
+@media (max-width: 767px) {
+	#collapseMax ul {
+		display: inline-table ;
+	}
 }
 .chatMsg {
     padding-left: 0;
