@@ -43,46 +43,44 @@
     <div class="row shadow-lg rounded-top rounded-bottom">
         
         <div class="col-md-4 col-lg-4 col-xl-4 mb-4 mb-2 mt-2 rounded-2 collapseMessage show"  id="collapseMax">
-            <fluent-card>
-                    <div class="flex-row card-header shadow-sm rounded-bottom">
-                            <div class="float-center">
-                                <div class="dropdown border-top">
-                                    <a href="#"
-                                       class="d-flex align-items-center justify-content-center p-2 my-2 link-dark text-decoration-none dropdown-toggle"
-                                       id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <h4 class="font-weight-bold m-2 text-center text-lg-start text-primary">Members</h4>
-                                        <img src="~/images/3d-avatar-metaverse-download-3D-Avatar-Metaverse.jpg" alt="mdo"
-                                             width="48" height="48" class="rounded-circle">
-                                    </a>
-                                    <ul id="principalList" class="dropdown-menu" style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
-                                    </ul>
-                                </div>
+            <div class="flex-column">
+                <div class="flex-row card-header shadow-sm rounded-bottom">
+                        <div class="float-center">
+                            <div class="dropdown border-top">
+                                <a href="#"
+                                    class="d-flex align-items-center justify-content-center p-2 my-2 link-dark text-decoration-none dropdown-toggle"
+                                    id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <h4 class="font-weight-bold m-2 text-center text-lg-start text-primary">Members</h4>
+                                    <img src="~/images/3d-avatar-metaverse-download-3D-Avatar-Metaverse.jpg" alt="mdo"
+                                            width="48" height="48" class="rounded-circle">
+                                </a>
+                                <ul id="principalList" class="dropdown-menu" style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
+                                </ul>
                             </div>
                         </div>
-                    
-                        <fluent-card>
-                            <div class="flex-none" id="userInformation">
-                                <h2 id="userName" class="mb-3 px-3 py-2 text-dark align-items-center fw-bolder shadow"
-                                    style="font-size: 24px; font-weight:600; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif: 100%;text-align:justify">
-                                </h2>
-                                <div class="flex-row m-2 border-0 bg-transparent shadow-sm">
-                                    <input id="receiverName" title="Search for rooms or add rooms"
-                                           placeholder="Search for room (Add Room)" type="text"
-                                           class="form-control flex-sm-column p-2 mb-2 my-0 " />
-                                    <select required class="form-select flex-sm-column p-2 mb-2 my-0" id="rcNameOptions"
-                                            title="RoomsList">
-                                        <option value="Public" disabled hidden selected>Public</option>
-                                    </select>
-                                </div>
-                            <fluent-skeleton class="chat-container">
-                                <ul id="userlist" class="gy-2 chat-box  gx-3 shadow-lg list-group"
-                                    style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
-                                </ul>
-                            </fluent-skeleton>
-                            </div>
-                        </fluent-card>
-                    
-            </fluent-card>
+                    </div>
+                    <div>
+                        <div class="flex-none" id="userInformation">
+                            <h2 id="userName" class="mb-3 px-3 py-2 text-dark align-items-center fw-bolder shadow"
+                                style="font-size: 24px; font-weight:600; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif: 100%;text-align:justify">
+                            </h2>
+                            <div class="flex-row m-2 border-0 bg-transparent shadow-sm">
+                                <input id="receiverName" title="Search for rooms or add rooms"
+                                        placeholder="Search for room (Add Room)" type="text"
+                                        class="form-control flex-sm-column p-2 mb-2 my-0 " />
+                                <select required class="form-select flex-sm-column p-2 mb-2 my-0" id="rcNameOptions"
+                                        title="RoomsList">
+                                    <option value="Public" disabled hidden selected>Public</option>
+                                </select>
+                        </div>
+                    </div>
+                        <div class="flex-row">
+                            <ul id="userlist" class="gy-2 chat-box  gx-3 shadow-lg list-group"
+                                style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
+                            </ul>
+                        </div>
+                    </div>
+            </div>
             
         </div>
         
