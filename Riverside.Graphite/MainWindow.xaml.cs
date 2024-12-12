@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
@@ -15,7 +14,6 @@ using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
-using Riverside.Graphite.IdentityClient.Models;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -24,14 +22,11 @@ using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.BarcodeHost;
 using Riverside.Graphite.Services.Notifications;
-using Riverside.Graphite.Services.Notifications.Toasts;
-using Riverside.Graphite.Services.Signalr;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -46,7 +41,6 @@ using Windows.Storage.Streams;
 using Windows.System;
 using WinRT.Interop;
 using Settings = Riverside.Graphite.Core.Settings;
-using User = Riverside.Graphite.Core.User;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
 
 namespace Riverside.Graphite;
@@ -286,23 +280,6 @@ public sealed partial class MainWindow : Window
 		}
 
 		Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
-	}
-
-
-	private void InPrivateUser()
-	{
-		User newUser = new()
-		{
-			Id = Guid.NewGuid(),
-			Username = "Private",
-			IsFirstLaunch = true,
-			UserSettings = null
-		};
-
-		AuthService.AddUser(newUser);
-		UserFolderManager.CreateUserFolders(newUser);
-		AuthService.CurrentUser.Username = newUser.Username;
-		_ = AuthService.Authenticate(newUser.Username);
 	}
 
 	public void LoadUsernames()
