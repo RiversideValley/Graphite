@@ -1261,11 +1261,31 @@ public sealed partial class MainWindow : Window
 		HistoryTemp.ItemsSource = null;
 
 		ObservableCollection<HistoryItem> filteredHistory = new(browserHistory
-			.Where(item => new Uri(item.Url).Host.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) || 
-						   item.Title?.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) == true));
+			.Where(item =>
+			{
+				bool urlMatch = false;
+				if (!string.IsNullOrEmpty(item.Url))
+				{
+					try
+					{
+						var uri = new Uri(item.Url);
+						urlMatch = uri.Host.StartsWith(searchText, StringComparison.OrdinalIgnoreCase);
+					}
+					catch (UriFormatException)
+					{
+						// If URL is invalid, just check if it starts with the search text
+						urlMatch = item.Url.StartsWith(searchText, StringComparison.OrdinalIgnoreCase);
+					}
+				}
+
+				bool titleMatch = item.Title?.StartsWith(searchText, StringComparison.OrdinalIgnoreCase) == true;
+
+				return urlMatch || titleMatch;
+			}));
 
 		HistoryTemp.ItemsSource = filteredHistory;
 	}
+
 
 	private void HistorySearchMenuItem_TextChanged(object sender, TextChangedEventArgs e)
 	{
