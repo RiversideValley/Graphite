@@ -3,17 +3,19 @@
 	document.addEventListener('DOMContentLoaded', function () {
 
         
-            $('#collapseMax').on('shown.bs.collapse', function () {
+            $('#collapseMax').on('shown.bs.collapse', function (e) {
                 setTimeout(() => {
                     $('#messageColumn').removeClass('w-100');
-                    $('#btnCollapseRooms').removeClass('fa-caret-up');
+					$('#btnCollapseRooms').removeClass('fa-caret-up');
+					e.stopPropagation();
                     messageInput.focus();
                 }, 300)
             })
-            $('#collapseMax').on('hidden.bs.collapse', function () {
+            $('#collapseMax').on('hidden.bs.collapse', function (e) {
                 setTimeout(() => {
                     $('#messageColumn').addClass('w-100');
-                    $('#btnCollapseRooms').addClass('fa-caret-up');
+					$('#btnCollapseRooms').addClass('fa-caret-up');
+					e.stopPropagation();
                     messageInput.focus();
                 }, 300)
             })
@@ -233,17 +235,16 @@
                     entry.classList.add("justify-content-start", "gap-2", "rounded")
                     entry.innerHTML =
 						`<fluent-card class="message left border border-success flex-row-reverse">
-							<div class="card-header p-1 d-flex flex-row justify-content-between gap-2">
+							<div class="p-1 d-flex flex-row gap-4">
 									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
 										 class="rounded-circle shadow-1-strong" width="32"/>
 										<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
 										<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
 							</div>
-							<div class="card-body gap-1">
+							<div class="gap-1 chatMsg">
 								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
 									${message}
 								</p>
-								
 							</div>
 						</fluent-card>
 						`
@@ -251,17 +252,16 @@
                 entry.classList.add("justify-content-end", "gap-2", "rounded")
                     entry.innerHTML =
 						`<fluent-card class="message right border border-primary">
-							<div class="card-header p-1 d-flex flex-row justify-content-between gap-2">
+							<div class="p-1 d-flex flex-row gap-4">
 									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
 										 class="rounded-circle shadow-1-strong" width="32"/>
 									<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
 									<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
 							</div>
-							<div class="card-body gap-1">
+							<div class="gap-1 chatMsg">
 								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
 									${message}
 								</p>
-								
 							</div>
 						</fluent-card>
 						`
