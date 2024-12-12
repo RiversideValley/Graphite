@@ -33,6 +33,13 @@
             <ToggleSwitch x:Name="WelcomeMesg" Toggled="WelcomeMesg_Toggled" />
         </labs:SettingsCard>
 
+        <labs:SettingsCard Description="This Will Bypass The Confirm Dialog If On" Header="Confirm Dialog To Close App">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8BD;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ToggleSwitch x:Name="ConfirmDialog" Toggled="ConfirmDialog_Toggled" />
+        </labs:SettingsCard>
+
         <labs:SettingsExpander Description="Change the language of the speech engine" Header="FireBrowser - Speech Engine">
             <labs:SettingsExpander.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEFA9;" />

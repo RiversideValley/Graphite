@@ -15,6 +15,7 @@ namespace Riverside.Graphite.Pages.SettingsPages;
 public sealed partial class SettingsAccess : Page
 {
 	private bool _isMode;
+	private bool _isConfirm;
 	private SettingsService SettingsService { get; }
 
 	public SettingsAccess()
@@ -45,6 +46,7 @@ public sealed partial class SettingsAccess : Page
 		Langue.SelectedValue = SettingsService.CoreSettings.Lang;
 		Logger.SelectedValue = SettingsService.CoreSettings.ExceptionLog;
 		LiteMode.IsOn = SettingsService.CoreSettings.LightMode;
+		ConfirmDialog.IsOn = SettingsService.CoreSettings.ConfirmCloseDlg;
 	}
 
 	private async void LiteMode_Toggled(object sender, RoutedEventArgs e)
@@ -157,6 +159,16 @@ public sealed partial class SettingsAccess : Page
 		catch (Exception ex)
 		{
 			Debug.WriteLine($"Error updating setting: {ex.Message}");
+		}
+	}
+
+	private async void ConfirmDialog_Toggled(object sender, RoutedEventArgs e)
+	{
+		if (sender is ToggleSwitch toggleSwitch)
+		{
+			_isConfirm = toggleSwitch.IsOn;
+			SettingsService.CoreSettings.ConfirmCloseDlg = _isConfirm;
+			await SaveSettingsAsync();
 		}
 	}
 }

@@ -72,6 +72,7 @@ public class Settings
 		self.NewTabHistoryHistory = false;
 		self.NewTabHistoryQuick = false;
 		self.NewTabSelectorBarVisible = true;
+		self.ConfirmCloseDlg = false;
 		//self.WelcomeMsg = true;
 	}
 

@@ -198,7 +198,7 @@ public sealed partial class MainWindow : Window
 	{
 		if (Tabs.TabItems?.Count > 1)
 		{
-			if (SettingsService.CoreSettings.ConfirmCloseDlg)
+			if (SettingsService.CoreSettings.ConfirmCloseDlg == false)
 			{
 				try
 				{
@@ -209,7 +209,7 @@ public sealed partial class MainWindow : Window
 						return;
 					}
 
-					Riverside.Graphite.Runtime.CoreUi.ConfirmAppClose quickConfigurationDialog = new()
+					ConfirmAppClose quickConfigurationDialog = new()
 					{
 						XamlRoot = mainWindow.Content.XamlRoot
 					};
