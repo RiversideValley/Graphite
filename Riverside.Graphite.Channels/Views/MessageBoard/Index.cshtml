@@ -13,6 +13,7 @@
     string? UserName =  Environment.UserDomainName + "@" + Environment.UserName + ".graphite.net";
 
 }
+@* https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/ *@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,65 +21,66 @@
     <meta name="viewport" content="width=device-width" initial-scale="1.0" />
     <title>Mesage Board</title>
     <style>
-        
         .limited-text {
-            max-height: 5.4em; /* Approximate height for 4 lines of text */
-            overflow-y: auto;
-            line-height: 1.2em;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow-y: scroll;
+            overflow-x: clip; 
+            text-overflow: ellipsis;
+            line-height: 1.5; 
         }
+
+            .limited-text:empty {
+                display: none; 
+            }
       </style>
   
 </head>
 <body>
-    
-<section class="justify-content-between rounded-3 shadow-lg bg-transparent w-100">
+    <div class="container-fluid mx-auto">
+<div class="justify-content-between rounded-3 shadow-lg bg-transparent w-100">
     <div class="row shadow-lg rounded-top rounded-bottom">
         
         <div class="col-md-4 col-lg-4 col-xl-4 mb-4 mb-2 mt-2 rounded-2 collapseMessage show"  id="collapseMax">
-            <fluent-card>
-                    <div class="flex-row card-header shadow-sm rounded-bottom">
-                            <div class="float-center">
-                                <div class="dropdown border-top">
-                                    <a href="#"
-                                       class="d-flex align-items-center justify-content-center p-2 my-2 link-dark text-decoration-none dropdown-toggle"
-                                       id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <h4 class="font-weight-bold m-2 text-center text-lg-start text-primary">Members</h4>
-                                        <img src="~/images/3d-avatar-metaverse-download-3D-Avatar-Metaverse.jpg" alt="mdo"
-                                             width="48" height="48" class="rounded-circle">
-                                    </a>
-                                    <ul id="principalList" class="dropdown-menu" style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
-                                    </ul>
-                                </div>
+            <div class="flex-column">
+                <div class="flex-row card-header shadow-sm rounded-bottom">
+                        <div class="float-center">
+                            <div class="dropdown border-top">
+                                <a href="#"
+                                    class="d-flex align-items-center justify-content-center p-2 my-2 link-dark text-decoration-none dropdown-toggle"
+                                    id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <h4 class="font-weight-bold m-2 text-center text-lg-start text-primary">Members</h4>
+                                    <img src="~/images/3d-avatar-metaverse-download-3D-Avatar-Metaverse.jpg" alt="mdo"
+                                            width="48" height="48" class="rounded-circle">
+                                </a>
+                                <ul id="principalList" class="dropdown-menu" style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
+                                </ul>
                             </div>
                         </div>
-                    
-                        <fluent-card>
-                            <div class="flex-none" id="userInformation">
-                                <h2 id="userName" class="mb-3 px-3 py-2 text-dark align-items-center fw-bolder shadow"
-                                    style="font-size: 24px; font-weight:600; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif: 100%;text-align:justify">
-                                </h2>
-                                <div class="flex-row m-2 border-0 bg-transparent shadow-sm">
-                                    <input id="receiverName" title="Search for rooms or add rooms"
-                                           placeholder="Search for room (Add Room)" type="text"
-                                           class="form-control flex-sm-column p-2 mb-2 my-0 " />
-                                    <select required class="form-select flex-sm-column p-2 mb-2 my-0" id="rcNameOptions"
-                                            title="RoomsList">
-                                        <option value="Public" disabled hidden selected>Public</option>
-                                    </select>
-                                </div>
-                            <fluent-skeleton class="chat-container">
-                                <ul id="userlist" class="gy-2 chat-box  gx-3 shadow-lg list-group"
-                                    style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
-                                </ul>
-                            </fluent-skeleton>
-                            </div>
-                        </fluent-card>
-                    
-            </fluent-card>
-            
+                    </div>
+                    <div>
+                        <div class="flex-none" id="userInformation">
+                            <h2 id="userName" class="mb-3 px-3 py-2 text-dark align-items-center fw-bolder shadow"
+                                style="font-size: 24px; font-weight:600; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif: 100%;text-align:justify">
+                            </h2>
+                            <div class="flex-row m-2 border-0 bg-transparent shadow-sm">
+                                <input id="receiverName" title="Search for rooms or add rooms"
+                                        placeholder="Search for room (Add Room)" type="text"
+                                        class="form-control flex-sm-column p-2 mb-2 my-0 " />
+                                <select required class="form-select flex-sm-column p-2 mb-2 my-0" id="rcNameOptions"
+                                        title="RoomsList">
+                                    <option value="Public" disabled hidden selected>Public</option>
+                                </select>
+                        </div>
+                    </div>
+                        <div class="flex-row">
+                            <ul id="userlist" class="gy-2 chat-box  gx-3 shadow-lg list-group"
+                                style="border-right-style: hidden; overflow: scroll; overflow-x: hidden; max-height:calc(45vh) ">
+                            </ul>
+                        </div>
+                </div>
+            </div>
         </div>
         
         <div class="col-md-8 col-lg-8 col-xl-8 mt-1" id="messageColumn">
@@ -88,12 +90,14 @@
                         <span id="btnCollapseRooms" class="fas fa-caret-left"></span>
                         Rooms
                     </button>
-                    <a href="#" type="button" class="float-end" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg"><i class="fa fa-question-circle"></i></a>
+                    <div class="float-end gap-2">
+                        <a href="#" onclick="window.location.reload(true);" type="button" class="m-y-2"><i class="fa fa-refresh"></i></a>
+                        <a href="#" type="button" class="m-y-2" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg"><i class="fa fa-question-circle"></i></a>
+                    </div>
                 </div>
                 </div>
                 <h1 id="sessionLabel" class="sessionlabel text-uppercase">Public</h1>
                 <div class="flex-column">
-
                     <ul class="list-unstyled shadow-sm mt-2 mb-2 p-2 bg-transparent animated-list w-100" id="messages"></ul>
                     <div class="rounded pull-right mt-2 border-bottom justify-content-md-between ">
                         <div class="mt-2 rounded-2 shadow bg-light d-flex"
@@ -106,19 +110,19 @@
                     </div>
                 </div>
             </div>
-            <div id="statusBar" class="text-primary fw-bold mt-lg-2">
-                
-            </div>
+            <div id="statusBar" class="text-primary fw-bold mt-lg-2 limited-text">            </div>
         </div>
         <!--resources in page-->
         <div class="modal fade bd-example-modal-lg rounded-2 border-secondary-subtle p-md-1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content p-2">
-                    <ul>
+                    <ul class="list-unstyled">
                         <li>1. Public room is for all to chat. </li>
                         <li>2. Any room that is created is owned by that user.</li>
                         <li>3. Anyone can subscribe to a room with the name of the room.</li>
-                        <br />
+                        <li><hr /></li>
+                        <li><i class="fa fa-help"></i>Help Desk is now available; search for room "helpdesk"</li>
+                        <li><hr /></li>
                         <li><em>Please understand that there is a privacy policy to the rooms.</em> <img width="32" height="32" src="~/logo.png" alt="favicon" class="img-thumbnail gap-4 my-2 mx-2 float-end" /></li>
                     </ul>
                 </div>
@@ -146,8 +150,8 @@
  
     </div>
     
-    </section> 
-
+    
+    
 </body>
 
 </html>

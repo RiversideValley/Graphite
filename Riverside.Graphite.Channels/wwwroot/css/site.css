@@ -101,31 +101,37 @@ html, body {
     overflow-y: auto;
 }
 .chat-container {
-	width: 80%;
-	max-width: 600px;
+	width: 100%;
+	max-width: fit-content;
 	margin: 20px auto;
 	font-family: Arial, sans-serif;
 }
 
 .message {
-	padding: 4px 8px;
-	margin: 10px 0;
+	padding: 2px 4px;
+	margin: 10px 0, 10px,0;
 	border-radius: 20px;
 	position: relative;
-	color: #fff;
+	color: CaptionText;
 	font-size: 16px;
-	font-size: large; 
-	font-weight: 600; 
+	font-size: large;
+	height: min-content;
+	font-weight: 600;
+	width:  fit-content;	
+	overflow:inherit;
+	overflow-x: hidden;
+	overflow-y:  auto; 
 	backdrop-filter: blur(10px);
 }
 
 	.message.left {
-		background: linear-gradient(to right, rgba(58, 123, 213, 0.1), rgba(58, 123, 213, 0.3));
+		background: linear-gradient(343deg, #e9e5fb 0%, rgba(243,240,255,1) 50%, rgb(69, 82, 88, 0.70) 100%);
 		align-self: flex-start;
 	}
 
 	.message.right {
-		background: linear-gradient(to left, rgba(84, 199, 252, 0.1), rgba(84, 199, 252, 0.3));
+		background: rgb(249,240,255);
+		background: linear-gradient(343deg, rgba(249,240,255,1) 0%, rgba(190,186,215,1) 50%);
 		align-self: flex-end;
 	}
 
@@ -150,7 +156,29 @@ html, body {
 		border-width: 10px 0 0 10px;
 		border-color: rgba(84, 199, 252, 0.7) transparent transparent transparent;
 	}
+	.message.left::before {
+		content: "";
+		position: absolute;
+		top: -10px;
+		left: 20px;
+		width: 0;
+		height: 0;
+		border-left: 10px solid transparent;
+		border-right: 10px solid transparent;
+		border-bottom: 10px solid rgba(58, 123, 213, 0.3);
+	}
 
+	.message.right::before {
+		content: "";
+		position: absolute;
+		top: -10px;
+		right: 20px;
+		width: 0;
+		height: 0;
+		border-left: 10px solid transparent;
+		border-right: 10px solid transparent;
+		border-bottom: 10px solid rgba(84, 199, 252, 0.3);
+	}
 .chat-box {
 	display: flex;
 	flex-direction: column;
@@ -258,7 +286,8 @@ textarea:focus {
 .message-avatar {
     display: inline-block;
     padding: 10px;
-    max-width: 8em;
+	margin-block-start: 10px;
+    max-width: 10em;
     word-wrap: break-word;
 }
 
@@ -404,7 +433,6 @@ textarea:focus {
         padding-left: 160px;
     }
 
-     On using dropdown menu (To right shift popuped) 
     .navbar-fixed-left .navbar-nav > li > .dropdown-menu {
         margin-top: -50px;
         margin-left: 140px;
@@ -523,6 +551,13 @@ textarea:focus {
     -webkit-transition-timing-function: ease;
     transition-timing-function: ease;
     
+}
+
+
+@media (max-width: 767px) {
+	#collapseMax ul {
+		display: inline-table ;
+	}
 }
 .chatMsg {
     padding-left: 0;

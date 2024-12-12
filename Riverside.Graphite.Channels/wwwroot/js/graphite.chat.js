@@ -232,42 +232,39 @@
 				} else if (sender.toLowerCase() === authUser.toLowerCase()) {
                     entry.classList.add("justify-content-start", "gap-2", "rounded")
                     entry.innerHTML =
-                        `<fluent-card class="message left border border-success flex-row-reverse">
-                                <div class="card-header p-3 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-between">
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
-                                                class="rounded-circle shadow-1-strong" width="48"/>
-                                    </div>
-                                </div>
-                                <div class="card-body gap-1">
-                                    <p class="mb-2 limited-text shadow-sm rounded form-control rounded px-2">
-                                        ${message}
-                                    </p>
-                                    <p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
-									<p class="fw-bold mb-0 ms-3 fs-6 text-success">${sender.toLowerCase()}</p>
-                                </div>
-                            </div>
-                        </fluent-card>`
+						`<fluent-card class="message left border border-success flex-row-reverse">
+							<div class="card-header p-1 d-flex flex-row justify-content-between gap-2">
+									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
+										 class="rounded-circle shadow-1-strong" width="32"/>
+										<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
+										<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
+							</div>
+							<div class="card-body gap-1">
+								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
+									${message}
+								</p>
+								
+							</div>
+						</fluent-card>
+						`
                 } else {
                 entry.classList.add("justify-content-end", "gap-2", "rounded")
                     entry.innerHTML =
-                    `<fluent-card class="message right border border-primary flex-row" >
-                            <div class="card-header p-3 d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-between">
-                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-4.webp" alt="avatar"
-                                            class="rounded-circle shadow-1-strong" width="48"/>
-                                    
-                                </div>
-                            </div>
-                            <div class="card-body">
-                               <p class="mb-2 limited-text shadow-sm rounded form-control gap-4 rounded px-2">
-                                    ${message}
-                                </p>
-                               <p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
-							   <p class="fw-bold mb-0 ms-3 fs-6 text-success">${sender.toLowerCase()}</p>
-                            </div>
-                        </div>
-                    </fluent-card>`
+						`<fluent-card class="message right border border-primary">
+							<div class="card-header p-1 d-flex flex-row justify-content-between gap-2">
+									<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-1.webp" alt="avatar"
+										 class="rounded-circle shadow-1-strong" width="32"/>
+									<p class="text-muted small mb-0"><i class="fa fa-clock"></i> ${now}</p>
+									<p class="fw-bold mb-0 ms-2 fs-6 text-success">${sender.toLowerCase()}</p>
+							</div>
+							<div class="card-body gap-1">
+								<p class="mb-1 limited-text shadow-sm rounded bg-light rounded px-1">
+									${message}
+								</p>
+								
+							</div>
+						</fluent-card>
+						`
 
                 }
 
