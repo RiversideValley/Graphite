@@ -636,7 +636,6 @@ public sealed partial class MainWindow : Window
 			// calls from outside of mainwindow, and there has never been a CoreWebView2 
 			webContent.WebView.Source = new(uri);
 			await webContent.WebView.EnsureCoreWebView2Async();
-			//webContent.WebViewElement.CoreWebView2.Navigate(uri.ToString());
 		}
 		catch (Exception ex)
 		{
@@ -1001,12 +1000,7 @@ public sealed partial class MainWindow : Window
 			ViewModel.CurrentAddress = null;
 		}
 	}
-
-	//public static async void OpenNewWindow(Uri uri) =>  await Windows.System.Launcher.LaunchUriAsync(uri);
-	public static async void OpenNewWindow(Uri uri)
-	{
-		_ = await Windows.System.Launcher.LaunchUriAsync(uri);
-	}
+	public static async void OpenNewWindow(Uri uri) =>  await Windows.System.Launcher.LaunchUriAsync(uri);
 
 	public void ShareUi(string Url, string Title)
 	{
@@ -1296,52 +1290,24 @@ public sealed partial class MainWindow : Window
 
 	private void FavoritesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (sender is not ListView listView || listView.ItemsSource == null)
+		if ((sender as ListView)?.SelectedItem is FavItem item && !string.IsNullOrEmpty(item.Url))
 		{
-			return;
+			if (TabContent.Content is WebContent webContent) webContent.WebViewElement.CoreWebView2.Navigate(item.Url);
+			else _ = TabContent.Navigate(typeof(WebContent), CreatePasser(item.Url));
+			((ListView)sender).ItemsSource = null;
+			FavoritesFly.Hide();
 		}
-
-		if (listView.SelectedItem is FavItem item)
-		{
-			string launchurlfav = item.Url;
-			if (TabContent.Content is WebContent webContent)
-			{
-				webContent.WebViewElement.CoreWebView2.Navigate(launchurlfav);
-			}
-			else
-			{
-				_ = TabContent.Navigate(typeof(WebContent), CreatePasser(launchurlfav));
-			}
-		}
-
-		listView.ItemsSource = null;
-		FavoritesFly.Hide();
 	}
 
 	private void HistoryTemp_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (sender is not ListView listView || listView.ItemsSource == null)
+		if ((sender as ListView)?.SelectedItem is HistoryItem item && !string.IsNullOrEmpty(item.Url))
 		{
-			return;
+			if (TabContent.Content is WebContent webContent) webContent.WebViewElement.CoreWebView2.Navigate(item.Url);
+			else _ = TabContent.Navigate(typeof(WebContent), CreatePasser(item.Url));
+			((ListView)sender).ItemsSource = null;
+			HistoryFlyoutMenu.Hide();
 		}
-
-		if (listView.SelectedItem is not HistoryItem item)
-		{
-			return;
-		}
-
-		string launchurlfav = item.Url;
-		if (TabContent.Content is WebContent webContent)
-		{
-			webContent.WebViewElement.CoreWebView2.Navigate(launchurlfav);
-		}
-		else
-		{
-			_ = TabContent.Navigate(typeof(WebContent), CreatePasser(launchurlfav));
-		}
-
-		listView.ItemsSource = null;
-		HistoryFlyoutMenu.Hide();
 	}
 
 	private void DownBtn_Click(object sender, RoutedEventArgs e)
