@@ -162,6 +162,7 @@
     <None Remove="Controls\RestoreBackUp.xaml" />
     <None Remove="Controls\_Code_Examples.xaml" />
     <None Remove="Pages\ApiDash.xaml" />
+    <None Remove="Pages\Flappy.xaml" />
     <None Remove="Pages\Patch\BackUpDialog.xaml" />
     <None Remove="Pages\Patch\RestoreBackupDialog.xaml" />
     <None Remove="Pages\Patch\SureReset.xaml" />
@@ -348,6 +349,9 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\Flappy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UpdateChecker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

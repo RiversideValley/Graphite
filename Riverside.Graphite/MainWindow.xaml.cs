@@ -687,6 +687,10 @@ public sealed partial class MainWindow : Window
 			     Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
 			     SelectNewTab();
 		        break;
+			case "firebrowser://easter":
+				Tabs.TabItems.Add(CreateNewTab(typeof(FlappyBirdPage)));
+				SelectNewTab();
+				break;
 			// case "firebrowser://api-route":
 			//     Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
 			//     SelectNewTab();

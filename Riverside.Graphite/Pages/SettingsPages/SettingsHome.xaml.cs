@@ -58,22 +58,42 @@ namespace Riverside.Graphite.Pages.SettingsPages
 
 		public Task LoadUsernames()
 		{
-			List<string> usernames = AuthService.GetAllUsernames();
+			List<string> usernames = AuthService.GetAllUsernames() ?? new List<string>();
 			string currentUsername = AuthService.CurrentUser?.Username;
 
-			if (currentUsername != null && currentUsername.Contains("Private"))
+			if (string.IsNullOrEmpty(currentUsername) || currentUsername.Contains("Private"))
 			{
 				UserListView.IsEnabled = false;
 				Add.IsEnabled = false;
+				EmptyListMessage.Visibility = Visibility.Visible;
+				UserListView.Visibility = Visibility.Collapsed;
 			}
 			else
 			{
 				UserListView.IsEnabled = true;
 				Add.IsEnabled = true;
-				UserListView.ItemsSource = usernames.Where(username => username != currentUsername && !username.Contains("Private")).ToList();
+				var filteredUsernames = usernames.Where(username =>
+					!string.IsNullOrEmpty(username) &&
+					username != currentUsername &&
+					!username.Contains("Private")).ToList();
+
+				UserListView.ItemsSource = filteredUsernames;
+
+				// Update visibility based on whether there are items
+				if (filteredUsernames.Any())
+				{
+					UserListView.Visibility = Visibility.Visible;
+					EmptyListMessage.Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					UserListView.Visibility = Visibility.Collapsed;
+					EmptyListMessage.Visibility = Visibility.Visible;
+				}
 			}
 			return Task.CompletedTask;
 		}
+
 
 		private Riverside.Graphite.Core.User GetUser()
 		{
