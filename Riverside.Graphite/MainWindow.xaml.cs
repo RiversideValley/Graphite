@@ -4,6 +4,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -1463,6 +1464,39 @@ public sealed partial class MainWindow : Window
 		UrlBox.Text = args.SelectedItem.ToString();
 	}
 
-	
-	
+	private void AlphaSearchAsync(Button btn)
+	{
+
+		var win = new AlphaFilter();
+		FlyoutBase.SetAttachedFlyout(btn, win);
+		FlyoutBase.ShowAttachedFlyout(btn);
+
+	}
+
+	private void HistoryDateSearchAsync(Button btn)
+	{
+
+		var frm = new Frame();
+		var fly = new Flyout() { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft };
+		fly.AllowFocusOnInteraction = true;
+		frm.Navigate(typeof(GroupGridView), null);
+		frm.BorderBrush = new SolidColorBrush(Colors.WhiteSmoke);
+		frm.BorderThickness = new Thickness(.5);
+		frm.Width = 360;
+		frm.Height = 480;
+		fly.Content = frm;
+
+		FlyoutBase.SetAttachedFlyout(btn, fly);
+		FlyoutBase.ShowAttachedFlyout(btn);
+	}
+
+	private void AlphaSearchItem_Click(object sender, RoutedEventArgs e)
+	{
+		AlphaSearchAsync(HistoryFilterButton);
+	}
+
+	private void DateSearchItem_Click(object sender, RoutedEventArgs e)
+	{
+		HistoryDateSearchAsync(HistoryFilterButton);
+	}
 }

@@ -467,56 +467,38 @@
                                         </Viewbox>
                                     </Button>
                                     <Button
-                                        x:Name="SearchHistoryRefresh"
-                                        Width="32"
-                                        Height="32"
-                                        Margin="0,0,10,0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Command="{x:Bind ViewModelMain.RefreshHistoryCommand}">
+    x:Name="HistoryFilterButton"
+    Width="32"
+    Height="32"
+    Padding="0"
+                                        Margin="0,0,12,0"
+    Background="Transparent"
+    BorderThickness="0">
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem x:Name="RefreshHistoryItem" Text="Refresh" Command="{x:Bind ViewModelMain.RefreshHistoryCommand}">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <SymbolIcon Symbol="Refresh"/>
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem x:Name="AlphaSearchItem" Text="Sort Alphabetically" Click="AlphaSearchItem_Click">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <SymbolIcon Symbol="Font"/>
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem x:Name="DateSearchItem" Text="Sort by Date" Click="DateSearchItem_Click">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <SymbolIcon Symbol="Calendar"/>
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
                                         <Viewbox
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <SymbolIcon Symbol="Refresh" />
-                                        </Viewbox>
-                                    </Button>
-                                    <Button
-                                        x:Name="SearchHistoryAlpha"
-                                        Width="32"
-                                        Height="32"
-                                        Margin="0,0,10,0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Command="{x:Bind ViewModelMain.AlphaSearchAsyncCommand}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
-                                        <Viewbox
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <SymbolIcon Symbol="Font" />
-                                        </Viewbox>
-                                    </Button>
-                                    <Button
-                                        x:Name="SearchHistoryDate"
-                                        Width="32"
-                                        Height="32"
-                                        Margin="0,0,10,0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Command="{x:Bind ViewModelMain.HistoryDateSearchAsyncCommand}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
-                                        <Viewbox
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <SymbolIcon Symbol="Calendar" />
+        Width="20"
+        Height="20"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
+                                            <SymbolIcon Symbol="Filter"/>
                                         </Viewbox>
                                     </Button>
                                     <Button

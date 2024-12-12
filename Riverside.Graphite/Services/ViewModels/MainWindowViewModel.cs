@@ -307,30 +307,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		// Apply the brush to the Grid's background
 		return gradientBrush;
 	}
-	[RelayCommand]
-	private void HistoryDateSearchAsync(Button btn) {
 
-		var frm = new Frame();
-		var fly = new Flyout() { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft };
-		fly.AllowFocusOnInteraction = true;
-		frm.Navigate(typeof(GroupGridView), null);
-		frm.BorderBrush = new SolidColorBrush(Colors.WhiteSmoke);
-		frm.BorderThickness = new Thickness(.5);
-		frm.Width = 360;
-		frm.Height = 480;
-		fly.Content = frm;
-
-		FlyoutBase.SetAttachedFlyout(btn, fly);
-		FlyoutBase.ShowAttachedFlyout(btn); 
-	}
-	[RelayCommand]
-	private  void AlphaSearchAsync(Button btn) {
-
-		var win = new AlphaFilter();
-		FlyoutBase.SetAttachedFlyout(btn, win);
-		FlyoutBase.ShowAttachedFlyout(btn);  
-
-	}
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]
 	private void ShowOfficeOptions(Button sender) {
 
