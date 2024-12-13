@@ -719,7 +719,7 @@
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
-            connection.serverTimeoutInMilliseconds = 120000;
+            connection.serverTimeoutInMilliseconds = 240000;
 
 
             bindConnectionMessage(connection);
