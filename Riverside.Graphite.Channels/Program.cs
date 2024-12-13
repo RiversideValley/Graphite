@@ -29,7 +29,7 @@ namespace Riverside.Graphite.Channels
 			
 		}
 
-		public static void Startup(WebApplicationBuilder builder) {
+		public static void Startup(WebApplicationBuilder builder) {`
 			
 			_ = builder.Services.AddHttpClient();
 			_ = builder.Services.AddRouting();
@@ -39,7 +39,7 @@ namespace Riverside.Graphite.Channels
 			_ = builder.Services.AddCors(options => { options.AddDefaultPolicy(builder => { builder.WithOrigins().AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); }); });
 			_ = builder.Services.AddSignalR(options =>
 			{
-				options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(120000);
+				options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(240000);
 				options.KeepAliveInterval = TimeSpan.FromMilliseconds(840000);
 			}).AddAzureSignalR(options =>
 			{
