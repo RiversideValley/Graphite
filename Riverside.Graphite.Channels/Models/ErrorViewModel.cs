@@ -1,6 +1,3 @@
-
-using CommunityToolkit.Mvvm.ComponentModel;
-
 namespace FireCore.Models
 {
 	using System.ComponentModel;

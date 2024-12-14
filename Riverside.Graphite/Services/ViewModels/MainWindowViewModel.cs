@@ -2,11 +2,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
-using Microsoft.UI.Windowing;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
@@ -17,18 +18,13 @@ using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Notifications.Toasts;
 using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Graphics;
 using WinRT.Interop;
-using System.Collections.Generic;
-using static Riverside.Graphite.MainWindow;
-using System.Runtime.CompilerServices;
-using Windows.Foundation;
-using Microsoft.UI.Xaml.Media;
-using System.Net.NetworkInformation;
-using Microsoft.UI.Composition.SystemBackdrops;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -64,8 +60,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	partial void OnIsMsLoginChanged(bool value)
 	{
-		MsOptionVisibility = value ? Visibility.Visible : Visibility.Collapsed;	
-		OnPropertyChanged(nameof(MsOptionVisibility));	
+		MsOptionVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+		OnPropertyChanged(nameof(MsOptionVisibility));
 	}
 
 	[RelayCommand]
@@ -87,37 +83,13 @@ public partial class MainWindowViewModel : ObservableRecipient
 		OnPropertyChanged(nameof(WebViewContentPicture));
 		return Task.CompletedTask;
 	}
-	private async Task ValidateMicrosoft()
-	{
-	    
-		IsMsLogin = true; // AppService.MsalService.IsSignedIn;
-		if (IsMsLogin && AppService.GraphService.ProfileMicrosoft is null)
-		{
-			using Stream stream = await AppService.MsalService.GraphClient?.Me.Photo.Content.GetAsync();
-			if (stream == null)
-			{
-				MsProfilePicture = new BitmapImage(new Uri("ms-appx:///Assets/Icons/Products/MicrosoftOffice.png"));
-				return;
-			}
 
-			using MemoryStream memoryStream = new();
-			await stream.CopyToAsync(memoryStream);
-			memoryStream.Position = 0;
-
-			BitmapImage bitmapImage = new();
-			await bitmapImage.SetSourceAsync(memoryStream.AsRandomAccessStream());
-			MsProfilePicture = bitmapImage;
-		}
-		else if (IsMsLogin)
-		{
-			MsProfilePicture = AppService.GraphService.ProfileMicrosoft;
-		}
-	}
 
 	private const string nameof = "Copilot By Graphite";
-	public Task<bool> CopilotExists() {
+	public Task<bool> CopilotExists()
+	{
 
-		
+
 		if (Windowing.FindWindowsByName(nameof) is List<nint> collection)
 		{
 
@@ -131,11 +103,12 @@ public partial class MainWindowViewModel : ObservableRecipient
 						{
 							Windowing.ShowWindow(winId, Windowing.WindowShowStyle.SW_HIDE);
 						}
-						else {
+						else
+						{
 							Windowing.ShowWindow(winId, Windowing.WindowShowStyle.SW_SHOW);
 						}
-						
-						
+
+
 					}
 					else
 						continue;
@@ -149,60 +122,61 @@ public partial class MainWindowViewModel : ObservableRecipient
 	}
 
 	[RelayCommand]
-	private async Task GoCopilotOpen() {
+	private async Task GoCopilotOpen()
+	{
 
 
 		if (await CopilotExists())
-			return; 
-				
-			SizeInt32? desktop = await Windowing.SizeWindow();
+			return;
 
-			Window wndCopilot = new Window();
-		
-			
-			
-			WebView2 web = new WebView2();
-			web.Margin = new Thickness(0, 48, 0, 0); 
-			web.Source =  new Uri("https://copilot.microsoft.com/?showconv=1&?auth=1");
-			await web.EnsureCoreWebView2Async();
+		SizeInt32? desktop = await Windowing.SizeWindow();
 
-			web.CoreWebView2.NewWindowRequested += (s, e) =>
-			{
-				MainView.NavigateToUrl(e.Uri);
+		Window wndCopilot = new Window();
 
-				if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
-					if (Windowing.IsWindowVisible(WindowNative.GetWindowHandle(App.Current.m_window)))
-						Windowing.SetForegroundWindow(WindowNative.GetWindowHandle(App.Current.m_window));
-					else
-						Windowing.ShowWindow(WindowNative.GetWindowHandle(App.Current.m_window), Windowing.WindowShowStyle.SW_SHOWNORMAL);
 
-				
-				
-				e.Handled = true;
 
-			};
-			
-			wndCopilot.Content = web; 
-			
-			// window procs
-			IntPtr hWnd = WindowNative.GetWindowHandle(wndCopilot);
-			WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-			AppWindow appWindow = AppWindow.GetFromWindowId(wndId) ;
-			appWindow.SetIcon("ms-appx:///Assets/Icons/copilot.png");
+		WebView2 web = new WebView2();
+		web.Margin = new Thickness(0, 48, 0, 0);
+		web.Source = new Uri("https://copilot.microsoft.com/?showconv=1&?auth=1");
+		await web.EnsureCoreWebView2Async();
 
-			if (appWindow != null)
-			{
-				appWindow.MoveAndResize(new RectInt32(0, 0, 600, (int)(desktop.Value.Height * .75)));
-				appWindow.MoveInZOrderAtTop();
-				appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-				appWindow.Title = nameof;
-				AppWindowTitleBar titleBar = appWindow.TitleBar;
-				Windows.UI.Color btnColor = Colors.Transparent;
-				titleBar.BackgroundColor = btnColor;
-				titleBar.ForegroundColor = Colors.WhiteSmoke;
-				titleBar.ButtonBackgroundColor = btnColor;
-				titleBar.ButtonInactiveBackgroundColor = btnColor;
-				appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+		web.CoreWebView2.NewWindowRequested += (s, e) =>
+		{
+			MainView.NavigateToUrl(e.Uri);
+
+			if (Windowing.IsWindow(WindowNative.GetWindowHandle(App.Current.m_window)))
+				if (Windowing.IsWindowVisible(WindowNative.GetWindowHandle(App.Current.m_window)))
+					Windowing.SetForegroundWindow(WindowNative.GetWindowHandle(App.Current.m_window));
+				else
+					Windowing.ShowWindow(WindowNative.GetWindowHandle(App.Current.m_window), Windowing.WindowShowStyle.SW_SHOWNORMAL);
+
+
+
+			e.Handled = true;
+
+		};
+
+		wndCopilot.Content = web;
+
+		// window procs
+		IntPtr hWnd = WindowNative.GetWindowHandle(wndCopilot);
+		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
+		appWindow.SetIcon("ms-appx:///Assets/Icons/copilot.png");
+
+		if (appWindow != null)
+		{
+			appWindow.MoveAndResize(new RectInt32(0, 0, 600, (int)(desktop.Value.Height * .75)));
+			appWindow.MoveInZOrderAtTop();
+			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+			appWindow.Title = nameof;
+			AppWindowTitleBar titleBar = appWindow.TitleBar;
+			Windows.UI.Color btnColor = Colors.Transparent;
+			titleBar.BackgroundColor = btnColor;
+			titleBar.ForegroundColor = Colors.WhiteSmoke;
+			titleBar.ButtonBackgroundColor = btnColor;
+			titleBar.ButtonInactiveBackgroundColor = btnColor;
+			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 
 		}
 
@@ -236,7 +210,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		catch (OperationCanceledException)
 		{
 			AppService.IsAppUserAuthenicated = IsMsLogin = false;
-			OnPropertyChanged(nameof(IsMsLogin));	
+			OnPropertyChanged(nameof(IsMsLogin));
 			_ = MainView.NotificationQueue.Show("You've been logged out of Microsoft", 15000, "Authorization");
 			Console.WriteLine("The task was canceled due to timeout.");
 		}
@@ -284,9 +258,10 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 	[RelayCommand]
-	private void RefreshHistory() {
+	private void RefreshHistory()
+	{
 
-		MainView.FetchBrowserHistory(); 
+		MainView.FetchBrowserHistory();
 	}
 
 	private LinearGradientBrush CreateAndApplyGradientBrush()
@@ -309,7 +284,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 	}
 
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]
-	private void ShowOfficeOptions(Button sender) {
+	private void ShowOfficeOptions(Button sender)
+	{
 
 		FlyoutBase.SetAttachedFlyout(sender, MainView.MsLoggedInOptions);
 		FlyoutBase.ShowAttachedFlyout(sender);
@@ -319,24 +295,24 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private void LoginToMicrosoft(Button sender)
 	{
 		IsMsLogin = AppService.IsAppUserAuthenicated;
-	
-		var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft  };
-		
-		fly.AllowFocusOnInteraction = true; 
+
+		var fly = new Flyout() { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft };
+
+		fly.AllowFocusOnInteraction = true;
 		var frm = new Frame();
 		frm.Width = 420;
-		frm.Height = 480; 
+		frm.Height = 480;
 		frm.CanBeScrollAnchor = true;
 		frm.Navigate(typeof(MsalAuth), this);
-		frm.Padding = new Thickness(1,0,1,0);
-		fly.Content = frm; 	
-		
+		frm.Padding = new Thickness(1, 0, 1, 0);
+		fly.Content = frm;
+
 		FlyoutBase.SetAttachedFlyout(sender, fly);
 		FlyoutBase.ShowAttachedFlyout(sender);
-		
+
 		OnPropertyChanged(nameof(IsMsLogin));
 	}
-	
+
 	private void ReceivedStatus(Message_Settings_Actions message)
 	{
 		if (message is null)
@@ -364,26 +340,21 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 	}
 
-	private void ShowErrorNotification(string payload)
-	{
-		ShowNotification("Riverside.Graphite Error", payload, InfoBarSeverity.Error, TimeSpan.FromSeconds(5));
-	}
+	private void ShowErrorNotification(string payload) =>
+	   ShowNotification("Riverside.Graphite Error", payload, InfoBarSeverity.Error, TimeSpan.FromSeconds(5));
 
-	private void ShowNotifyNotification(string payload)
-	{
+	private void ShowNotifyNotification(string payload) =>
 		ShowNotification("Riverside.Graphite Information", payload, InfoBarSeverity.Informational, TimeSpan.FromSeconds(5));
-	}
 
-	private void ShowRemovedNotification()
-	{
+	private void ShowRemovedNotification() =>
 		ShowNotification("Riverside.Graphite", "User has been removed from FireBrowser!", InfoBarSeverity.Warning, TimeSpan.FromSeconds(3));
-	}
 
 	private void ShowLoginNotification()
 	{
 		_ = ToastRatings.SendToast();
 		ShowNotification("Riverside.Graphite", $"Welcome, {AuthService.CurrentUser.Username.ToUpperInvariant()}!", InfoBarSeverity.Informational, TimeSpan.FromSeconds(3));
 	}
+
 
 	private void ShowNotification(string title, string message, InfoBarSeverity severity, TimeSpan duration)
 	{

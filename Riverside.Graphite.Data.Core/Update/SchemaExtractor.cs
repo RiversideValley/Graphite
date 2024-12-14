@@ -1,29 +1,21 @@
 ﻿using JsonDiffPatchDotNet;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Services.Cortana;
 
 ///<summary>
 /// 1. Database must exist.
 /// 2. Table in db must be nameof(ClassIncoming)
 /// 3. Vaidation if same nothing happens.
 ///</summary>
-	
+
 namespace Riverside.Graphite.Data.Core.Update
 {
 	public class SchemaExtractor
@@ -38,18 +30,19 @@ namespace Riverside.Graphite.Data.Core.Update
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException(nameof(connectionString));
 
-			
+
 			if (classIn is Type type)
 				if (type is null)
-					throw new ArgumentNullException(nameof(type));	
+					throw new ArgumentNullException(nameof(type));
 
 			this.connectionString = connectionString;
 			this.classIn = classIn;
 		}
 
-		public async Task HandleExtractionSchemaChanges() {
+		public async Task HandleExtractionSchemaChanges()
+		{
 
-			
+
 			var oldSchemaJson = GetDatabaseSchemaAsJson(connectionString, classIn.Name);
 
 			var newSchemaJson = GetPropertyNamesOnlyJson(classIn);
@@ -61,17 +54,19 @@ namespace Riverside.Graphite.Data.Core.Update
 				List<PropertyInfo> properties = new List<PropertyInfo>();
 
 				JObject Jobj = JsonConvert.DeserializeObject<JObject>(diff);
-				foreach (var item in Jobj.Properties()) {
+				foreach (var item in Jobj.Properties())
+				{
 
-					var prop = GetPropertyNamesIncludePropertyName(classIn, item.Value.ToString()); 
+					var prop = GetPropertyNamesIncludePropertyName(classIn, item.Value.ToString());
 					if (prop is not null)
 						properties.Add(prop);
 				}
 
 				if (properties.Count > 0)
 				{
-					foreach (var prop in properties.Distinct().ToList()) {
-						await AddNameColumnsFromProperties(connectionString, classIn.Name, prop); 
+					foreach (var prop in properties.Distinct().ToList())
+					{
+						await AddNameColumnsFromProperties(connectionString, classIn.Name, prop);
 					}
 				}
 			}
@@ -82,7 +77,8 @@ namespace Riverside.Graphite.Data.Core.Update
 			}
 		}
 
-		public static async Task AddNameColumnsFromProperties(string connectionString, string strTableName, PropertyInfo property) {
+		public static async Task AddNameColumnsFromProperties(string connectionString, string strTableName, PropertyInfo property)
+		{
 
 			try
 			{
@@ -140,8 +136,8 @@ namespace Riverside.Graphite.Data.Core.Update
 				Console.WriteLine($"An error occurred: {ex.Message}");
 			}
 
-			await Task.Delay(100); 
-		
+			await Task.Delay(100);
+
 		}
 		public static string GetDatabaseSchemaAsJson(string connectionString, string strTableName)
 		{
@@ -149,7 +145,7 @@ namespace Riverside.Graphite.Data.Core.Update
 			{
 				connection.Open();
 
-				
+
 				var command = new SqliteCommand($"PRAGMA table_info('{strTableName}')", connection);
 				using (var reader = command.ExecuteReader())
 				{
@@ -166,60 +162,63 @@ namespace Riverside.Graphite.Data.Core.Update
 
 						tableInfo.Add(columnInfo);
 					}
-					
-					
-					var name = tableInfo.Where(x=> x.ContainsKey("name")).Select(x => x["name"]).ToList();
+
+
+					var name = tableInfo.Where(x => x.ContainsKey("name")).Select(x => x["name"]).ToList();
 					return JsonConvert.SerializeObject(name, Formatting.None);
 				}
 			}
 		}
-		public static bool IsJsonArray(string jsonString) {
-			
-			try { 
-				JToken token = JToken.Parse(jsonString.Replace('\'', '\"')); 
-				return token.Type == JTokenType.Array; 
-			}
-			catch 
+		public static bool IsJsonArray(string jsonString)
+		{
+
+			try
 			{
-				return false; 
-			} 
+				JToken token = JToken.Parse(jsonString.Replace('\'', '\"'));
+				return token.Type == JTokenType.Array;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 		public static PropertyInfo GetPropertyNamesIncludePropertyName([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, string name)
 		{
 			if (name is null || !IsJsonArray(name))
-				return null; 
+				return null;
 
 			var p_name = JArray.Parse(name)[0].Value<string>();
-			
+
 			if (p_name is null)
 				return null;
 
 			var list = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(o => o.Name == p_name).FirstOrDefault();
-			return list; 
+			return list;
 
 		}
-		public static string GetPropertyNamesOnlyJson([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type) 
-		{ 
-			var list = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(o=> o.Name != "Self").Select(p => p.Name).ToList(); 
+		public static string GetPropertyNamesOnlyJson([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+		{
+			var list = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(o => o.Name != "Self").Select(p => p.Name).ToList();
 			return JsonConvert.SerializeObject(list, Formatting.None);
 
 		}
 
-		public string SerializeModelSchema(Type classIn) {
-			var json = JsonConvert.SerializeObject(classIn); 
-			return json; 
-		} 
-		
-		public string CompareSchemas(string oldSchemaJson, string newSchemaJson) 
-		{ 
-			var jdp = new JsonDiffPatch(); 
+		public string SerializeModelSchema(Type classIn)
+		{
+			var json = JsonConvert.SerializeObject(classIn);
+			return json;
+		}
+
+		public string CompareSchemas(string oldSchemaJson, string newSchemaJson)
+		{
+			var jdp = new JsonDiffPatch();
 			var patch = jdp.Diff(oldSchemaJson, newSchemaJson);
 			if (patch != null)
 				return patch.ToString();
 			else
-				return null; 
-		} 
-			
+				return null;
+		}
+
 	}
 
 }

@@ -1,19 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FireCore.Services;
+﻿using FireCore.Services;
 using FireCore.Services.Hubs;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
 
 namespace FireCore.Models
 {
 
+	using Microsoft.AspNetCore.SignalR;
+	using Microsoft.Extensions.Logging;
 	using System;
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Net.Http;
 	using System.Threading.Tasks;
-	using Microsoft.AspNetCore.SignalR;
-	using Microsoft.Extensions.Logging;
 
 	public class MessageBoardViewModel : INotifyPropertyChanged
 	{
@@ -67,15 +64,15 @@ namespace FireCore.Models
 			}
 		}
 
-		public  Task Initialize()
+		public Task Initialize()
 		{
 			try
 			{
-				if (AzureChat.ConnectedIds  is null) return Task.CompletedTask; 
+				if (AzureChat.ConnectedIds is null) return Task.CompletedTask;
 
 				var users = AzureChat.ConnectedIds?.Select(t => t.Value).ToList();
 				_commander!.MsalCurrentUsers = users!.ToList();
-			
+
 			}
 			catch (Exception e)
 			{

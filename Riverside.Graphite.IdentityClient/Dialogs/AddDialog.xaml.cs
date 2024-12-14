@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.IdentityClient.Helpers;
-using Riverside.Graphite.IdentityClient.Models;
 using Riverside.Graphite.IdentityClient.Services;
 using Riverside.Graphite.IdentityClient.Utils;
 using Windows.ApplicationModel.DataTransfer;

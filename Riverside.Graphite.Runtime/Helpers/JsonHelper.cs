@@ -1,10 +1,10 @@
+using Riverside.Graphite.Core.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Riverside.Graphite.Core.Helper;
 
 namespace Riverside.Graphite.Runtime.Helpers
 {

@@ -1,20 +1,19 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Riverside.Graphite.Core;
-using Riverside.Graphite.Services;
-using Riverside.Graphite.Runtime.Helpers;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Microsoft.Web.WebView2.Core;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Riverside.Graphite.Core;
 using Riverside.Graphite.Helpers;
+using Riverside.Graphite.Services;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Pages.SettingsPages
 {
@@ -210,11 +209,11 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		{
 			if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is PermissionItem selectedItem)
 			{
-			     //PermissionManager.DeletePermission(AuthService.CurrentUser.Username, selectedItem.Url, selectedItem.Kind);
-				 //PermissionManager.LoadPermissionsAsync(AuthService.CurrentUser.Username); // Refresh the permissions list
+				//PermissionManager.DeletePermission(AuthService.CurrentUser.Username, selectedItem.Url, selectedItem.Kind);
+				//PermissionManager.LoadPermissionsAsync(AuthService.CurrentUser.Username); // Refresh the permissions list
 			}
 		}
-    }
+	}
 
 	public class SettingsPrivacyViewModel : INotifyPropertyChanged
 	{

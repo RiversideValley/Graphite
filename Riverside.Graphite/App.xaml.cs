@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -14,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,7 +71,7 @@ public partial class App : Application
 		//	];
 		//});
 		//_ = services.AddSingleton<HubService>();
-		
+
 		return services.BuildServiceProvider();
 	}
 
@@ -93,9 +91,9 @@ public partial class App : Application
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
 		AppService.FireWindows = new HashSet<Window>();
-		
-		
-		
+
+
+
 		try
 		{
 			//kill any hanging instance of channels, especially in debugging..
@@ -108,9 +106,9 @@ public partial class App : Application
 			ExceptionLogger.LogException(e);
 			throw;
 		}
-		
+
 	}
-	
+
 	static void KillProcessByName(string processName)
 	{
 		try
@@ -141,7 +139,7 @@ public partial class App : Application
 
 	private void StartChannels()
 	{
-		string publishDirectory = Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly); 
+		string publishDirectory = Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly);
 		string webAppPath = Path.Combine(publishDirectory, "RiverSide.Graphite.Channels.dll");
 		try
 		{
@@ -152,29 +150,29 @@ public partial class App : Application
 			{
 				UseShellExecute = false,
 				CreateNoWindow = true,
-				WindowStyle = ProcessWindowStyle.Hidden, 
+				WindowStyle = ProcessWindowStyle.Hidden,
 				FileName = "dotnet.exe",
 				Arguments = webAppPath,
 				WorkingDirectory = publishDirectory
-			}; 
+			};
 
-			_webAppProcess =  Process.Start(startInfo);
-			_webAppProcess.WaitForExit(); 
+			_webAppProcess = Process.Start(startInfo);
+			_webAppProcess.WaitForExit();
 		}
 		catch (Exception e)
 		{
 			ExceptionLogger.LogException(e);
-			throw; 
+			throw;
 		}
 
 	}
 
 	public static string Get_Appx_AssemblyDirectory(Assembly assembly)
 	{
-			string assemblyLocation = assembly.Location;
-			string directoryPath = Path.GetDirectoryName(assemblyLocation);
-	
-			return directoryPath ?? throw new DirectoryNotFoundException("Publish directory not found");
+		string assemblyLocation = assembly.Location;
+		string directoryPath = Path.GetDirectoryName(assemblyLocation);
+
+		return directoryPath ?? throw new DirectoryNotFoundException("Publish directory not found");
 
 	}
 	public static string GetFullPathToExe()
@@ -203,7 +201,7 @@ public partial class App : Application
 		{
 			ExceptionLogger.LogException(e.Exception);
 		}
-		
+
 		_webAppProcess.Kill();
 	}
 

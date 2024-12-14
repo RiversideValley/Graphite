@@ -78,7 +78,7 @@ public sealed partial class MainWindow : Window
 		LoadUserDataAndSettings(); // Load data and settings for the new user
 		_ = LoadUserSettings();
 		Init();
-		
+
 
 		try
 		{
@@ -102,11 +102,13 @@ public sealed partial class MainWindow : Window
 			{
 				AppService.Admin_Delete_Account();
 			}
-		
-			foreach (Window win in AppService.FireWindows) {
+
+			foreach (Window win in AppService.FireWindows)
+			{
 
 				var obj = new object();
-				lock (obj) {
+				lock (obj)
+				{
 					if (Windowing.IsWindow(WindowNative.GetWindowHandle(win)))
 					{
 						win.Close();
@@ -155,7 +157,7 @@ public sealed partial class MainWindow : Window
 		appWindow.Closing += AppWindow_Closing;
 	}
 
-	
+
 	public async void Init()
 	{
 		await Riverside.Graphite.Runtime.Models.Data.Init();
@@ -340,6 +342,20 @@ public sealed partial class MainWindow : Window
 	public static string SearchUrl { get; set; }
 
 	public bool isFull = false;
+
+	public void GoFullScreenLock(bool fullscreen)
+	{
+		IntPtr hWnd = WindowNative.GetWindowHandle(this);
+		Microsoft.UI.WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		AppWindow view = AppWindow.GetFromWindowId(wndId);
+		Thickness margin = fullscreen ? new Thickness(0, -40, 0, 0) : new Thickness(0, 35, 0, 0);
+
+		view.SetPresenter(fullscreen ? AppWindowPresenterKind.Default : AppWindowPresenterKind.Default);
+
+		ClassicToolbar.Height = fullscreen ? 0 : 36;
+
+		TabContent.Margin = margin;
+	}
 
 	public void GoFullScreenWeb(bool fullscreen)
 	{
@@ -607,9 +623,9 @@ public sealed partial class MainWindow : Window
 					_ = DispatcherQueue.TryEnqueue(async () => await MainWinSaveResources());
 				}
 
-					return;
+				return;
 			}
-			
+
 			// calls from outside of mainwindow, and there has never been a CoreWebView2 
 			webContent.WebView.Source = new(uri);
 			await webContent.WebView.EnsureCoreWebView2Async();
@@ -660,18 +676,19 @@ public sealed partial class MainWindow : Window
 				SelectNewTab();
 				break;
 			// Uncomment these cases if needed in the future
-			 case "firebrowser://vault":
-			     Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
-			     SelectNewTab();
-		        break;
+			case "firebrowser://vault":
+				Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
+				SelectNewTab();
+				break;
 			case "firebrowser://easter":
 				Tabs.TabItems.Add(CreateNewTab(typeof(FlappyBirdPage)));
 				SelectNewTab();
 				break;
-			// case "firebrowser://api-route":
-			//     Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
-			//     SelectNewTab();
-			//     break;
+			case "firebrowser://lock":
+			     Tabs.TabItems.Add(CreateNewTab(typeof(LockScreen)));
+				GoFullScreenLock(isFull != true);
+				SelectNewTab();
+			     break;
 			default:
 				break;
 		}
@@ -933,7 +950,7 @@ public sealed partial class MainWindow : Window
                                     return error.message; 
                                 }
                             })();");
-						}						
+						}
 					}
 				}
 			}
@@ -977,7 +994,7 @@ public sealed partial class MainWindow : Window
 			ViewModel.CurrentAddress = null;
 		}
 	}
-	public static async void OpenNewWindow(Uri uri) =>  await Windows.System.Launcher.LaunchUriAsync(uri);
+	public static async void OpenNewWindow(Uri uri) => await Windows.System.Launcher.LaunchUriAsync(uri);
 
 	public void ShareUi(string Url, string Title)
 	{
@@ -985,11 +1002,12 @@ public sealed partial class MainWindow : Window
 		ShareUIHelper.ShowShareUIURL(Url, Title, hWnd);
 	}
 
+
 	private void TabMenuClick(object sender, RoutedEventArgs e)
 	{
 		var messenger = new NotificationMessenger();
 
-				switch ((sender as Button).Tag)
+		switch ((sender as Button).Tag)
 		{
 			case "NewTab":
 				Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
@@ -1037,12 +1055,12 @@ public sealed partial class MainWindow : Window
 				{
 					messenger.PromptUserToRateApp().ConfigureAwait(false);
 				}
-				catch {;}
+				catch {; }
 				break;
 			case "Updated":
 				try
 				{
-					messenger.InstallUpdatesAsync(new FireNotification() { HasInput = false, Originator = "ToolBar"}).ConfigureAwait(false);
+					messenger.InstallUpdatesAsync(new FireNotification() { HasInput = false, Originator = "ToolBar" }).ConfigureAwait(false);
 				}
 				catch {; }
 

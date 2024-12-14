@@ -1,112 +1,106 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FireCore.Services.Contracts.MessageHandler;
 
 namespace FireCore.Services.Contracts.MessageHandler.InMemoryMessageStorage
 {
-    public class InMemoryMessageStorage : IMessageHandler
-    {
-        private readonly ConcurrentDictionary<string, SessionMessage> _messageDictionary;
+	public class InMemoryMessageStorage : IMessageHandler
+	{
+		private readonly ConcurrentDictionary<string, SessionMessage> _messageDictionary;
 
-        public InMemoryMessageStorage()
-        {
-            _messageDictionary = new ConcurrentDictionary<string, SessionMessage>();
-        }
+		public InMemoryMessageStorage()
+		{
+			_messageDictionary = new ConcurrentDictionary<string, SessionMessage>();
+		}
 
-        public Task<string> AddNewMessageAsync(string sessionId, Message message)
-        {
-            if (!_messageDictionary.TryGetValue(sessionId, out var sessionMessage))
-            {
-                _messageDictionary.TryAdd(sessionId, new SessionMessage());
-                sessionMessage = _messageDictionary[sessionId];
-            }
+		public Task<string> AddNewMessageAsync(string sessionId, Message message)
+		{
+			if (!_messageDictionary.TryGetValue(sessionId, out var sessionMessage))
+			{
+				_messageDictionary.TryAdd(sessionId, new SessionMessage());
+				sessionMessage = _messageDictionary[sessionId];
+			}
 
-            var sequenceId = sessionMessage.TryAddMessage(message);
+			var sequenceId = sessionMessage.TryAddMessage(message);
 
-            return Task.FromResult(sequenceId.ToString());
-        }
+			return Task.FromResult(sequenceId.ToString());
+		}
 
-        public async Task UpdateMessageAsync(string sessionId, string sequenceId, string messageStatus)
-        {
-            if (!_messageDictionary.TryGetValue(sessionId, out var sessionMessage))
-            {
-                throw new Exception("Session not found!");
-            }
+		public async Task UpdateMessageAsync(string sessionId, string sequenceId, string messageStatus)
+		{
+			if (!_messageDictionary.TryGetValue(sessionId, out var sessionMessage))
+			{
+				throw new Exception("Session not found!");
+			}
 
-            await sessionMessage.TryUpdateMessage(int.Parse(sequenceId), messageStatus);
+			await sessionMessage.TryUpdateMessage(int.Parse(sequenceId), messageStatus);
 
-            return;
-        }
+			return;
+		}
 
-        public Task<List<Message>> LoadHistoryMessageAsync(string sessionId)
-        {
-            if (!_messageDictionary.TryGetValue(sessionId, out var sessionMessage))
-            {
-                _messageDictionary.TryAdd(sessionId, new SessionMessage());
-                return Task.FromResult(new List<Message>());
-            }
+		public Task<List<Message>> LoadHistoryMessageAsync(string sessionId)
+		{
+			if (!_messageDictionary.TryGetValue(sessionId, out var sessionMessage))
+			{
+				_messageDictionary.TryAdd(sessionId, new SessionMessage());
+				return Task.FromResult(new List<Message>());
+			}
 
-            var result = new List<Message>(sessionMessage.Messages.Values.ToList());
-            result.Sort();
+			var result = new List<Message>(sessionMessage.Messages.Values.ToList());
+			result.Sort();
 
-            return Task.FromResult(result);
-        }
+			return Task.FromResult(result);
+		}
 
-        Task<Message?> IMessageHandler.UpdateMessageAsync(string sessionId, string sequenceId, string messageStatus)
-        {
-            throw new NotImplementedException();
-        }
+		Task<Message?> IMessageHandler.UpdateMessageAsync(string sessionId, string sequenceId, string messageStatus)
+		{
+			throw new NotImplementedException();
+		}
 
-        internal class SessionMessage
-        {
-            public int LastSequenceId;
+		internal class SessionMessage
+		{
+			public int LastSequenceId;
 
-            public ConcurrentDictionary<int, Message> Messages { get; set; }
+			public ConcurrentDictionary<int, Message> Messages { get; set; }
 
-            public SessionMessage()
-            {
-                LastSequenceId = -1;
-                Messages = new ConcurrentDictionary<int, Message>();
-            }
+			public SessionMessage()
+			{
+				LastSequenceId = -1;
+				Messages = new ConcurrentDictionary<int, Message>();
+			}
 
-            public int TryAddMessage(Message message)
-            {
-                var sequenceId = Interlocked.Increment(ref LastSequenceId);
-                message.SequenceId = sequenceId.ToString();
-                Messages.TryAdd(sequenceId, message);
+			public int TryAddMessage(Message message)
+			{
+				var sequenceId = Interlocked.Increment(ref LastSequenceId);
+				message.SequenceId = sequenceId.ToString();
+				Messages.TryAdd(sequenceId, message);
 
-                return sequenceId;
-            }
+				return sequenceId;
+			}
 
-            public async Task TryUpdateMessage(int sequenceId, string messageStatus)
-            {
-                var retry = 0;
-                const int MAX_RETRY = 10;
+			public async Task TryUpdateMessage(int sequenceId, string messageStatus)
+			{
+				var retry = 0;
+				const int MAX_RETRY = 10;
 
-                while (retry < MAX_RETRY)
-                {
-                    Messages.TryGetValue(sequenceId, out var message);
-                    var newMessage = message;
-                    newMessage.MessageStatus = messageStatus;
+				while (retry < MAX_RETRY)
+				{
+					Messages.TryGetValue(sequenceId, out var message);
+					var newMessage = message;
+					newMessage.MessageStatus = messageStatus;
 
-                    if (Messages.TryUpdate(sequenceId, newMessage, message))
-                    {
-                        return;
-                    }
+					if (Messages.TryUpdate(sequenceId, newMessage, message))
+					{
+						return;
+					}
 
-                    ++retry;
-                    await Task.Delay(new Random().Next(10, 100));
-                }
+					++retry;
+					await Task.Delay(new Random().Next(10, 100));
+				}
 
-                throw new Exception("Fail to update messages");
-            }
-        }
-    }
+				throw new Exception("Fail to update messages");
+			}
+		}
+	}
 }

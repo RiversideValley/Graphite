@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using Riverside.Graphite.Core;
-using System.Collections.Concurrent;
-using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Runtime.CoreUi;
-using System.Runtime.CompilerServices;
-using Microsoft.UI.Xaml;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Helpers
 {
@@ -83,7 +81,7 @@ namespace Riverside.Graphite.Helpers
 
 
 				_userPermissions.AddOrUpdate(username, permissions, (_, __) => permissions);
-				NotifyPermissionsChanged(username);			
+				NotifyPermissionsChanged(username);
 			}
 			catch (Exception ex)
 			{
@@ -97,7 +95,7 @@ namespace Riverside.Graphite.Helpers
 			{
 				var uri = new Uri(url);
 				string domain = uri.Host.Replace("www.", "");
-			
+
 				string key = $"{domain}:{kind}";
 				return key;
 			}

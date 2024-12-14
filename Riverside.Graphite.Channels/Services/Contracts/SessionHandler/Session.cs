@@ -3,13 +3,13 @@
 
 namespace FireCore.Services.Contracts.SessionHandler
 {
-    public class Session
-    {
-        public string SessionId { get; }
+	public class Session
+	{
+		public string SessionId { get; }
 
-        public Session(string sessionId)
-        {
-            SessionId = sessionId;
-        }
-    }
+		public Session(string sessionId)
+		{
+			SessionId = sessionId;
+		}
+	}
 }
