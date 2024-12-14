@@ -343,6 +343,20 @@ public sealed partial class MainWindow : Window
 
 	public bool isFull = false;
 
+	public void GoFullScreenLock(bool fullscreen)
+	{
+		IntPtr hWnd = WindowNative.GetWindowHandle(this);
+		Microsoft.UI.WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		AppWindow view = AppWindow.GetFromWindowId(wndId);
+		Thickness margin = fullscreen ? new Thickness(0, -40, 0, 0) : new Thickness(0, 35, 0, 0);
+
+		view.SetPresenter(fullscreen ? AppWindowPresenterKind.Default : AppWindowPresenterKind.Default);
+
+		ClassicToolbar.Height = fullscreen ? 0 : 36;
+
+		TabContent.Margin = margin;
+	}
+
 	public void GoFullScreenWeb(bool fullscreen)
 	{
 		IntPtr hWnd = WindowNative.GetWindowHandle(this);
@@ -670,10 +684,11 @@ public sealed partial class MainWindow : Window
 				Tabs.TabItems.Add(CreateNewTab(typeof(FlappyBirdPage)));
 				SelectNewTab();
 				break;
-			// case "firebrowser://api-route":
-			//     Tabs.TabItems.Add(CreateNewTab(typeof(ApiDash)));
-			//     SelectNewTab();
-			//     break;
+			case "firebrowser://lock":
+			     Tabs.TabItems.Add(CreateNewTab(typeof(LockScreen)));
+				GoFullScreenLock(isFull != true);
+				SelectNewTab();
+			     break;
 			default:
 				break;
 		}
@@ -986,6 +1001,7 @@ public sealed partial class MainWindow : Window
 		nint hWnd = WindowNative.GetWindowHandle(this);
 		ShareUIHelper.ShowShareUIURL(Url, Title, hWnd);
 	}
+
 
 	private void TabMenuClick(object sender, RoutedEventArgs e)
 	{

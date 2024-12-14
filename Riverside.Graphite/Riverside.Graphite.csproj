@@ -161,7 +161,6 @@
     <None Remove="Controls\ResetCore.xaml" />
     <None Remove="Controls\RestoreBackUp.xaml" />
     <None Remove="Controls\_Code_Examples.xaml" />
-    <None Remove="Pages\ApiDash.xaml" />
     <None Remove="Pages\Flappy.xaml" />
     <None Remove="Pages\Patch\BackUpDialog.xaml" />
     <None Remove="Pages\Patch\RestoreBackupDialog.xaml" />
@@ -400,7 +399,7 @@
     <Page Update="Pages\SecureVault.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Pages\ApiDash.xaml">
+    <Page Update="Pages\LockScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Services\WebHelpers\DarkModeWeb.js">

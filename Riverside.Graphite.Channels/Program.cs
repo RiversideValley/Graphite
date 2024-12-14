@@ -29,7 +29,7 @@ namespace Riverside.Graphite.Channels
 			
 		}
 
-		public static void Startup(WebApplicationBuilder builder) {`
+		public static void Startup(WebApplicationBuilder builder) {
 			
 			_ = builder.Services.AddHttpClient();
 			_ = builder.Services.AddRouting();
