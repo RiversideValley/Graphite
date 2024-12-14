@@ -7,7 +7,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.ServiceProcess;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Riverside.Graphite.Pages
 {
