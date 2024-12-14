@@ -227,7 +227,7 @@ public partial class HomeViewModel : ObservableRecipient
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
-	
+
 	[RelayCommand]
 	private void Chat(Button sender)
 	{
@@ -238,7 +238,7 @@ public partial class HomeViewModel : ObservableRecipient
 			{
 				window?.NavigateToUrl("http://localhost:5000/");
 			}
-			
+
 		}
 		catch (Exception e)
 		{
@@ -253,7 +253,8 @@ public partial class HomeViewModel : ObservableRecipient
 
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
-			window.DispatcherQueue?.TryEnqueue(() => {
+			window.DispatcherQueue?.TryEnqueue(() =>
+			{
 				window.Profile_Tapped(btn, new Microsoft.UI.Xaml.Input.TappedRoutedEventArgs());
 			});
 		}

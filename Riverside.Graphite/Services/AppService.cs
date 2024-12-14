@@ -31,7 +31,7 @@ namespace Riverside.Graphite.Services;
 public static class AppService
 {
 	public static Window ActiveWindow { get; set; }
-	public static HashSet<Window> FireWindows { get; set; }	
+	public static HashSet<Window> FireWindows { get; set; }
 	public static Settings AppSettings { get; set; }
 	public static CancellationToken CancellationToken { get; set; }
 	public static bool IsAppGoingToClose { get; set; }
@@ -69,7 +69,7 @@ public static class AppService
 
 			if (File.Exists(restoreFilePath))
 			{
-				AuthService.Logout(); 
+				AuthService.Logout();
 				ActiveWindow = new RestoreBackUp();
 				ActiveWindow.Closed += (s, e) =>
 				{
@@ -334,7 +334,7 @@ public static class AppService
         2. How we push new queries / maybe in cloud for new sql or need function to update 
         3. Migrations are for new and then Update with this new procedure for existing data... 
         Need function after injection, before use logins, and when use authorized */
-		
+
 		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql"); /* we will eventually not use this unless development */
 
 		_ = AuthService.Authenticate(username);
@@ -388,10 +388,10 @@ public static class AppService
 				// 2. gather class & db action-> 2g schema of db linked to a class(Setting, Download, Etc..)
 				var connectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
 				var schema = new SchemaExtractor(connectionPath, typeof(Settings));
-				
-				await schema.HandleExtractionSchemaChanges(); 
-							
-				
+
+				await schema.HandleExtractionSchemaChanges();
+
+
 				// if we get to here than all is validated and open Browser->go; 
 			}
 			catch (Exception ex)
@@ -408,7 +408,7 @@ public static class AppService
 		Package package = Package.Current;
 		PackageId packageId = package.Id;
 		PackageVersion version = packageId.Version;
-		return new Tuple<int,int,int,int>(version.Major,version.Minor,version.Build,version.Revision);
+		return new Tuple<int, int, int, int>(version.Major, version.Minor, version.Build, version.Revision);
 	}
 	public static async void CreateNewUsersSettings()
 	{
@@ -506,11 +506,11 @@ public static class AppService
 		if (Directory.Exists(userFolderPath))
 		{
 			string username = GetUsernameFromCoreFolderPath(userFolderPath, "Private");
-			if (username is not null) 
+			if (username is not null)
 				return;
 		}
 
-		 
+
 		if (AuthService.UserExists("Private") is null)
 		{
 			User newUser = new()
@@ -520,12 +520,12 @@ public static class AppService
 				IsFirstLaunch = true,
 				UserSettings = null
 			};
-		
+
 			AuthService.AddUser(newUser);
 			UserFolderManager.CreateUserFolders(newUser);
 		}
 
-		
+
 	}
 
 	private static void HideDirectory(string directoryPath)

@@ -1,21 +1,11 @@
-using FireCore.Data.Database;
-using FireCore.Services.Contracts.MessageHandler.AzureTableMessageStorage;
+using FireCore.Models;
+using FireCore.Services;
 using FireCore.Services.Contracts.MessageHandler;
 using FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage;
-using FireCore.Services;
-using Microsoft.Identity.Web;
-using System.Security.Claims;
 using FireCore.Services.Hubs;
-
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using FireCore.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using System.Security.Claims;
 
 namespace Riverside.Graphite.Channels
 {
@@ -24,18 +14,19 @@ namespace Riverside.Graphite.Channels
 		public static void Main(string[] args)
 		{
 			var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
-			builder.WebHost.UseKestrel(x => x.ListenAnyIP(5000));  
+			builder.WebHost.UseKestrel(x => x.ListenAnyIP(5000));
 			Startup(builder);
-			
+
 		}
 
-		public static void Startup(WebApplicationBuilder builder) {
-			
+		public static void Startup(WebApplicationBuilder builder)
+		{
+
 			_ = builder.Services.AddHttpClient();
 			_ = builder.Services.AddRouting();
-			_ = builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); 
+			_ = builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 			_ = builder.Services.AddDistributedMemoryCache();
-			_ = builder.Services.AddRazorPages(); 
+			_ = builder.Services.AddRazorPages();
 			_ = builder.Services.AddCors(options => { options.AddDefaultPolicy(builder => { builder.WithOrigins().AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); }); });
 			_ = builder.Services.AddSignalR(options =>
 			{
@@ -92,7 +83,7 @@ namespace Riverside.Graphite.Channels
 				.UseEndpoints(endpoints =>
 				{
 					endpoints.MapControllers();
-					endpoints.MapRazorPages(); 
+					endpoints.MapRazorPages();
 					endpoints.MapHub<AzureChat>("/chat");
 
 				});
@@ -101,13 +92,13 @@ namespace Riverside.Graphite.Channels
 				name: "default",
 				pattern: "{controller=Home}/{action=Index}/{id?}");
 
-			
+
 			app.Run();
 
 		}
 		//public static IHostBuilder CreateHostBuilder(string[] args)
 		//{
-		
+
 
 		//	return Host.CreateDefaultBuilder(args)
 		//		.ConfigureServices((hostContext, services) =>
@@ -140,14 +131,14 @@ namespace Riverside.Graphite.Channels
 		//						.AddSingleton<IHubContextStore>(sp => sp.GetService<SignalRService>());
 		//			//					_= services.AddSingleton<SessionContext>();
 		//			_ = services.AddSingleton<IHubCommander, HubCommander>();
-				   
+
 		//			_= services.AddSingleton<AzureChat>();
 		//			//_ = services.AddHostedService<Worker>(); 
 		//			//_ = services.AddWindowsService(op =>
 		//			//{
 		//			//	op.ServiceName = "GraphiteChannel";
 		//			//});
-					
+
 		//			_ = services.AddLogging(configure => configure.AddConsole())
 		//						.Configure<LoggerFilterOptions>(options => options.MinLevel = Microsoft.Extensions.Logging.LogLevel.Information);
 		//		}).ConfigureLogging(options =>

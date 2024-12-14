@@ -285,7 +285,7 @@ public sealed partial class NewTab : Page
 	{
 		Visibility visibility = isLightMode ? Visibility.Collapsed : Visibility.Visible;
 
-		NtpGrid.Visibility = Edit.Visibility = SetTab.Visibility =  visibility;
+		NtpGrid.Visibility = Edit.Visibility = SetTab.Visibility = visibility;
 	}
 
 	private void GridSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -2,12 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using Azure;
 using Azure.Data.Tables;
-using FireCore.Services.Contracts.MessageHandler.AzureTableMessageStorage;
 using FireCore.Services.Contracts.MessageHandler;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using FireCore.Services.Contracts.MessageHandler.AzureTableMessageStorage;
 
 public class AzureDataTableMessages : IMessageHandler
 {

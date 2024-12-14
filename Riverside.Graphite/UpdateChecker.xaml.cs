@@ -1,15 +1,14 @@
+using Microsoft.Data.Sqlite;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Microsoft.Data.Sqlite;
-using System.Reflection;
-using Riverside.Graphite.Core;
 
 namespace Riverside.Graphite
 {

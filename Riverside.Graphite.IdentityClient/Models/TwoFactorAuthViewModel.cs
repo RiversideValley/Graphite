@@ -1,12 +1,11 @@
-﻿using Riverside.Graphite.IdentityClient.Enums;
-using Riverside.Graphite.IdentityClient.Models;
-using Riverside.Graphite.IdentityClient.Utils;
+﻿using Microsoft.UI.Xaml;
+using Riverside.Graphite.IdentityClient.Enums;
 using Riverside.Graphite.IdentityClient.Services;
+using Riverside.Graphite.IdentityClient.Utils;
 using System;
-using System.Windows.Input;
-using Microsoft.UI.Xaml;
-using Windows.ApplicationModel.DataTransfer;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Riverside.Graphite.IdentityClient.Models
 {

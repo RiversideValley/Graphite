@@ -1,16 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace FireCore.Data.Models.Contracts
+﻿namespace FireCore.Data.Models.Contracts
 {
-    public interface ISessionDbEntity
-    {
-        public string? ConnectionId { get; set; }
-        
-        public string? PartnerName { get; set; }
-        public string? SessionId { get; set; }
-        public DateTimeOffset DateTime { get; set; }
+	public interface ISessionDbEntity
+	{
+		public string? ConnectionId { get; set; }
 
-    }
+		public string? PartnerName { get; set; }
+		public string? SessionId { get; set; }
+		public DateTimeOffset DateTime { get; set; }
+
+	}
 }

@@ -1,6 +1,4 @@
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +13,7 @@ namespace Riverside.Graphite.Services.Notifications
 		private StoreContext _storeContext;
 		public ObservableCollection<FireNotification> PublicMessages => messages;
 
-		public NotificationMessenger() { messages = new();  }
+		public NotificationMessenger() { messages = new(); }
 		public NotificationMessenger(ref ObservableCollection<FireNotification> messagesPage)
 		{
 			messages = messagesPage;
@@ -52,7 +50,7 @@ namespace Riverside.Graphite.Services.Notifications
 					if (updateResult.OverallState == StorePackageUpdateState.Completed)
 					{
 						// Inform the user that the update was successful
-						window.DispatcherQueue.TryEnqueue(()=>
+						window.DispatcherQueue.TryEnqueue(() =>
 							window.NotificationQueue.Show("Update is Complete", 2000, "Graphite Browser"));
 					}
 					else
