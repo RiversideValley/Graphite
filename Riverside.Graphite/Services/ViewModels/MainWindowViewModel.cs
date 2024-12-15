@@ -88,11 +88,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 	private const string nameof = "Copilot By Graphite";
 	public Task<bool> CopilotExists()
 	{
-
-
 		if (Windowing.FindWindowsByName(nameof) is List<nint> collection)
 		{
-
 			if (collection.Count > 0)
 			{
 				foreach (nint winId in collection)
@@ -107,8 +104,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 						{
 							Windowing.ShowWindow(winId, Windowing.WindowShowStyle.SW_SHOW);
 						}
-
-
 					}
 					else
 						continue;
@@ -118,14 +113,11 @@ public partial class MainWindowViewModel : ObservableRecipient
 		}
 
 		return Task.FromResult(false);
-
 	}
 
 	[RelayCommand]
 	private async Task GoCopilotOpen()
 	{
-
-
 		if (await CopilotExists())
 			return;
 
@@ -153,7 +145,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 
 			e.Handled = true;
-
 		};
 
 		wndCopilot.Content = web;
@@ -177,12 +168,10 @@ public partial class MainWindowViewModel : ObservableRecipient
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
 			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-
 		}
 
 		AppService.FireWindows.Add(wndCopilot);
 		Windowing.AnimateWindow(hWnd, 200, Windowing.AW_HOR_NEGATIVE | Windowing.AW_BLEND | Windowing.AW_ACTIVATE);
-
 	}
 	[RelayCommand]
 	private async Task LogOut()
@@ -260,7 +249,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[RelayCommand]
 	private void RefreshHistory()
 	{
-
 		MainView.FetchBrowserHistory();
 	}
 
@@ -286,7 +274,6 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[RelayCommand(CanExecute = nameof(IsMsLogin))]
 	private void ShowOfficeOptions(Button sender)
 	{
-
 		FlyoutBase.SetAttachedFlyout(sender, MainView.MsLoggedInOptions);
 		FlyoutBase.ShowAttachedFlyout(sender);
 	}
@@ -372,5 +359,4 @@ public partial class MainWindowViewModel : ObservableRecipient
 	{
 		OnPropertyChanged(propertyName);
 	}
-
 }

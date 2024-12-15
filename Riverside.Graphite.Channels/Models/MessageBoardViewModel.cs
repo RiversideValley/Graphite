@@ -1,9 +1,8 @@
-﻿using FireCore.Services;
+using FireCore.Services;
 using FireCore.Services.Hubs;
 
 namespace FireCore.Models
 {
-
 	using Microsoft.AspNetCore.SignalR;
 	using Microsoft.Extensions.Logging;
 	using System;
@@ -72,7 +71,6 @@ namespace FireCore.Models
 
 				var users = AzureChat.ConnectedIds?.Select(t => t.Value).ToList();
 				_commander!.MsalCurrentUsers = users!.ToList();
-
 			}
 			catch (Exception e)
 			{
@@ -82,5 +80,4 @@ namespace FireCore.Models
 			return Task.CompletedTask;
 		}
 	}
-
 }

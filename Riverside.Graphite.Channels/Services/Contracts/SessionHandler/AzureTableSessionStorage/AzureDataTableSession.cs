@@ -1,4 +1,4 @@
-﻿using Azure.Data.Tables;
+using Azure.Data.Tables;
 
 
 namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
@@ -29,18 +29,15 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 		}
 		public async Task<Task> InitializeTables()
 		{
-
 			_tableServiceClient = new(_configuration?.GetRequiredSection("AzureStorage").Value!);
 			_tableClient = _tableServiceClient?.GetTableClient("SessionTable");
 			await _tableClient!.CreateIfNotExistsAsync().ConfigureAwait(false);
 			return Task.CompletedTask;
-
 		}
 
 
 		internal async Task<Session?> SetPrivateSession(string userName, string partnerName)
 		{
-
 			var result = _tableClient?.QueryAsync<SQL_SESSION_ENTITY>(x => x.PartitionKey == userName && x.RowKey == partnerName).AsPages().ToBlockingEnumerable();
 
 			if (result!.Count() > 0)
@@ -48,13 +45,10 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 				return await Task.FromResult<Session?>(new Session(result?.First().Values!.Select(x => x.SessionId).ToString()!));
 			}
 			else { return null; }
-
-
 		}
 
 		public async Task<bool> IsUserActive(string roomNameUserName)
 		{
-
 			var answer = _tableClient?.QueryAsync<SQL_SESSION_ENTITY>(x => x.PartitionKey == roomNameUserName).AsPages().ToBlockingEnumerable();
 
 			if (answer!.Count() > 0)
@@ -63,11 +57,9 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 			}
 
 			return await Task.FromResult(false);
-
 		}
 		public async Task<bool> DeleteUserSession(string userName, string partnerName)
 		{
-
 			var answer = _tableClient?.QueryAsync<SQL_SESSION_ENTITY>(x => x.PartitionKey == userName && x.RowKey == partnerName);
 
 			var batchIt = new List<TableTransactionAction>();
@@ -85,7 +77,6 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 			}
 
 			return false;
-
 		}
 		public async Task<Session> GetOrCreateSessionAsync(string userName, string partnerName)
 		{
@@ -95,7 +86,6 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 
 			if (isJointRoom is null)
 			{
-
 				var isPartnerJoint = await SetPrivateSession(partnerName, userName);
 
 				if (isPartnerJoint is not null)
@@ -114,7 +104,6 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 						await _tableClient!.AddEntityAsync(new SQL_SESSION_ENTITY(partnerName, userName, session));
 						return session;
 					}
-
 				}
 			}
 
@@ -124,7 +113,6 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 
 			if (sql?.ToBlockingEnumerable().Count() > 0)
 			{
-
 				var sessionExists = _tableClient?.GetEntityIfExists<SQL_SESSION_ENTITY>(userName, partnerName);
 
 				if (sessionExists!.HasValue)
@@ -147,12 +135,10 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 				await _tableClient!.AddEntityAsync(new SQL_SESSION_ENTITY(userName, partnerName, newSession));
 				return newSession;
 			}
-
 		}
 
 		public async Task<List<SQL_SESSION_ENTITY>> GetSessionBySessionId(string sessionId)
 		{
-
 			var answer = _tableClient?.QueryAsync<SQL_SESSION_ENTITY>(x => x.SessionId == sessionId).AsPages();
 
 			var sessions = new List<SQL_SESSION_ENTITY>();
@@ -163,11 +149,9 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 			}
 
 			return sessions;
-
 		}
 		public async Task<KeyValuePair<string, Session>[]> GetLatestSessionsAsync(string userName)
 		{
-
 			var result = _tableClient?.QueryAsync<SQL_SESSION_ENTITY>(s => s.PartitionKey == userName).ConfigureAwait(false);
 
 			var sessions = new SortedDictionary<string, Session>();
@@ -179,9 +163,6 @@ namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 
 			return sessions.ToArray();
 		}
-
-
 	}
-
 }
 

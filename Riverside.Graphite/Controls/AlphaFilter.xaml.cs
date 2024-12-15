@@ -26,6 +26,5 @@ public sealed partial class AlphaFilter : Flyout
 		}
 		this.Hide();
 	}
-
 }
 

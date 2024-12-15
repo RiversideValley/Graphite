@@ -1,11 +1,10 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Azure.SignalR.Management;
 
 namespace FireCore.Services
 {
-
 	public interface IHubContextStore
 	{
 		ServiceHubContext MessageHubContext { get; set; }
@@ -38,7 +37,6 @@ namespace FireCore.Services
 
 			MessageHubContext = await serviceManager.CreateHubContextAsync(MessageHub, cancellationToken);
 			ChatHubContext = await serviceManager.CreateHubContextAsync(ChatHub, cancellationToken);
-
 		}
 
 
@@ -61,7 +59,5 @@ namespace FireCore.Services
 			MessageHubContext?.Dispose();
 			ChatHubContext?.Dispose();
 		}
-
-
 	}
 }

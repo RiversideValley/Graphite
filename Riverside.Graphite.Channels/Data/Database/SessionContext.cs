@@ -1,4 +1,4 @@
-﻿using FireCore.Data.Models;
+using FireCore.Data.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +18,6 @@ namespace FireCore.Data.Database
 		public SessionContext(DbContextOptions<SessionContext> options)
 	   : base(options)
 		{
-
 		}
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
@@ -31,13 +30,9 @@ namespace FireCore.Data.Database
 			{
 				model.Property(e => e.DateTime).HasDefaultValue(DateTimeOffset.Now);
 				modelBuilder.Entity<SessionDbEntity>();
-
 			});
 
 			base.OnModelCreating(modelBuilder);
 		}
-
 	}
-
-
 }

@@ -32,12 +32,10 @@ namespace Riverside.Graphite.Controls
 		public ItemGrouped Selected { get; set; }
 		public GroupGridView()
 		{
-
 			this.InitializeComponent();
 			ViewModelSourced = new SourceViewModel();
 			ViewModelGrouped = new GroupedViewModel(ViewModelSourced);
 			DataContext = ViewModelGrouped;
-
 		}
 
 
@@ -74,14 +72,11 @@ namespace Riverside.Graphite.Controls
 				await ViewModelSourced.GetHistoryItems();
 				ViewModelGrouped.GroupedItems = await ViewModelGrouped.GetGroupedData(ViewModelSourced);
 				ViewModelGrouped.RaisePropertyChanges(nameof(ViewModelGrouped.GroupedItems));
-
 			};
 
 			flyout.Items.Add(deleteMenuItem);
 
 			flyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
-
-
 		}
 		private void GroupHeader_Click(object sender, RoutedEventArgs e)
 		{
@@ -157,8 +152,6 @@ namespace Riverside.Graphite.Controls
 					win.HistoryFlyoutMenu.Hide();
 			}
 		}
-
-
 	}
 	public class ItemGrouped : HistoryItem
 	{
@@ -190,8 +183,6 @@ namespace Riverside.Graphite.Controls
 
 		public async Task GetHistoryItems()
 		{
-
-
 			try
 			{
 				ObservableCollection<HistoryItem> HistoryItems = await FetchBrowserHistoryItems();
@@ -208,7 +199,6 @@ namespace Riverside.Graphite.Controls
 					foreach (var data in item)
 					{
 						Items.Add(new ItemGrouped(data));
-
 					}
 				}
 				OnPropertyChanged(nameof(Items));
@@ -217,7 +207,6 @@ namespace Riverside.Graphite.Controls
 			{
 				ExceptionLogger.LogException(e);
 			}
-
 		}
 
 
@@ -246,14 +235,12 @@ namespace Riverside.Graphite.Controls
 
 		public GroupedViewModel(SourceViewModel viewModel)
 		{
-
 			GetGroupedData(viewModel).ConfigureAwait(false);
 			GroupedItems = GetGroupedData(viewModel).GetAwaiter().GetResult();
 		}
 
 		public Task<CollectionViewSource> GetGroupedData(SourceViewModel viewModel)
 		{
-
 			DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
 
 			var collection = new CollectionViewSource
@@ -273,5 +260,4 @@ namespace Riverside.Graphite.Controls
 			OnPropertyChanged(propertyName);
 		}
 	}
-
 }

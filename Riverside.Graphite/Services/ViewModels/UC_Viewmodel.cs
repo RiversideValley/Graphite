@@ -94,7 +94,6 @@ namespace Riverside.Graphite
 					MsProfilePicture = bitmapImage;
 					RaisePropertyChanges(nameof(MsProfilePicture));
 					RaisePropertyChanges(nameof(IsLoggedIn));
-
 				}
 				else
 				{

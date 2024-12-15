@@ -140,13 +140,11 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		private void SelectbarHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.NewTabSelectorBarVisible = value);
-
 		}
 
 		private void LogoHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsLogoVisible = value);
-
 		}
 	}
 }

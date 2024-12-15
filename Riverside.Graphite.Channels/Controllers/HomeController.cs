@@ -19,12 +19,10 @@ namespace FireCore.Controllers
 			_logger = logger;
 			_commander = commander;
 			_configuration = configuration;
-
 		}
 
 		public IActionResult Index()
 		{
-
 			ViewData["GraphApiResult"] = User.GetDisplayName();
 			return View();
 		}
@@ -32,7 +30,6 @@ namespace FireCore.Controllers
 		[HttpGet("users/all")]
 		public IActionResult GetallMsalUsers()
 		{
-
 			var users = AzureChat.ConnectedIds.Select(t => t.Value).ToList(); // _commander?.MsalCurrentUsers;
 			return new JsonResult(users!.Select(x => x).ToArray());
 		}

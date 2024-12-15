@@ -86,14 +86,12 @@ public class AuthService
 #nullable enable
 	public static User? UserExists(string userName)
 	{
-
 		if (users.Any(t => t.Username == userName))
 		{
 			return users.Where(t => t.Username == userName).FirstOrDefault();
 		}
 
 		return null;
-
 	}
 
 	public static List<string> GetAllUsernames()

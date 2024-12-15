@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Azure;
@@ -6,7 +6,6 @@ using Azure.Data.Tables;
 
 namespace FireCore.Services.Contracts.SessionHandler.AzureTableSessionStorage
 {
-
 	public class SQL_SESSION_ENTITY : ITableEntity
 	{
 		public string RowKey { get; set; } = default!;

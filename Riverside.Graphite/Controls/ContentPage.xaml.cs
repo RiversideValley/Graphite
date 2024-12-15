@@ -14,6 +14,5 @@ namespace Riverside.Graphite.Controls
 		{
 			this.InitializeComponent();
 		}
-
 	}
 }

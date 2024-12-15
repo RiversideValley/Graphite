@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using FireCore.Services;
@@ -8,7 +8,6 @@ using Microsoft.Azure.SignalR.Management;
 
 namespace FireCore.Controllers
 {
-
 	[ApiController]
 	public class NegotiateController : ControllerBase
 	{
@@ -22,7 +21,6 @@ namespace FireCore.Controllers
 			_messageHubContext = store.MessageHubContext;
 			_chatHubContext = store.ChatHubContext;
 			_enableDetailedErrors = configuration.GetValue(EnableDetailedErrors, false);
-
 		}
 
 		[HttpPost("message/negotiate")]

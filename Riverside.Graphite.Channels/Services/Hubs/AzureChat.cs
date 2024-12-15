@@ -12,8 +12,6 @@ using System.Data;
 
 namespace FireCore.Services.Hubs
 {
-
-
 	public class AzureChat : Hub
 	{
 		private readonly IMessageHandler _messageHandler;
@@ -89,12 +87,10 @@ namespace FireCore.Services.Hubs
 			var message = new Message("Public", DateTime.Now, onDisconnectedMessage, "Sent");
 			await Clients!.All.SendAsync("sendNotify", onDisconnectedMessage);
 			await base.OnDisconnectedAsync(exception);
-
 		}
 
 		public async Task AddSessionsToCommander(KeyValuePair<string, Contracts.SessionHandler.Session>[] userSessions)
 		{
-
 			await _commander.DeleteAllSessionsByUser(Context.ConnectionId);
 
 			foreach (var session in userSessions)
@@ -102,7 +98,6 @@ namespace FireCore.Services.Hubs
 				await _commander.WriteAsync(new Data.Models.SessionDbEntity(Context.ConnectionId, session.Key, session.Value.SessionId, DateTimeOffset.Now));
 				await AddToGroup(session.Key);
 			}
-
 		}
 
 		public async Task AddToGroup(string groupName)
@@ -143,14 +138,12 @@ namespace FireCore.Services.Hubs
 			}
 			else
 			{
-
 				var userSessions = await _azureDataTableSessionStorage.GetLatestSessionsAsync(sender!);
 				await AddSessionsToCommander(userSessions);
 			}
 
 			await Task.Delay(400);
 			return session.SessionId;
-
 		}
 		public async Task<string> SendUserMessage(string sessionId, string roomName, string messageContent)
 		{
@@ -181,7 +174,6 @@ namespace FireCore.Services.Hubs
 				await Clients!.User(roomName).SendAsync("displayUserMessage", sessionId, sequenceId, Context.UserIdentifier!, messageContent);
 				await Clients!.Caller.SendAsync("displayResponseMessage", sessionId, sequenceId, "Sent");
 				await Clients!.User(roomName).SendAsync("sendPrivateMessage", sessionId, string.Format("You have a private message from: {0}", Context!.UserIdentifier), messageContent, sender!);
-
 			}
 			else
 			{
@@ -190,8 +182,6 @@ namespace FireCore.Services.Hubs
 			}
 
 			return sessionId;
-
-
 		}
 
 		public async Task<string> SendUserResponse(string sessionId, string sequenceId, string receiver, string messageStatus)

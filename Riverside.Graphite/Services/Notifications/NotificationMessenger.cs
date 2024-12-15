@@ -65,7 +65,6 @@ namespace Riverside.Graphite.Services.Notifications
 					// Inform the user that no updates are available
 					window.DispatcherQueue.TryEnqueue(() =>
 						window.NotificationQueue.Show("No Updates Available\nYou already have the lastest version of the App", 2000, "Graphite Browser"));
-
 				}
 			}
 

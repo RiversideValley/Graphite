@@ -105,7 +105,6 @@ public sealed partial class MainWindow : Window
 
 			foreach (Window win in AppService.FireWindows)
 			{
-
 				var obj = new object();
 				lock (obj)
 				{
@@ -1055,14 +1054,14 @@ public sealed partial class MainWindow : Window
 				{
 					messenger.PromptUserToRateApp().ConfigureAwait(false);
 				}
-				catch {; }
+				catch { }
 				break;
 			case "Updated":
 				try
 				{
 					messenger.InstallUpdatesAsync(new FireNotification() { HasInput = false, Originator = "ToolBar" }).ConfigureAwait(false);
 				}
-				catch {; }
+				catch { }
 
 
 				break;
@@ -1427,16 +1426,13 @@ public sealed partial class MainWindow : Window
 
 	private void AlphaSearchAsync(Button btn)
 	{
-
 		var win = new AlphaFilter();
 		FlyoutBase.SetAttachedFlyout(btn, win);
 		FlyoutBase.ShowAttachedFlyout(btn);
-
 	}
 
 	private void HistoryDateSearchAsync(Button btn)
 	{
-
 		var frm = new Frame();
 		var fly = new Flyout() { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft };
 		fly.AllowFocusOnInteraction = true;

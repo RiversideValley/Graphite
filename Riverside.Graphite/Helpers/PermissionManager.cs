@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
 using Riverside.Graphite.Core;
@@ -142,7 +142,6 @@ namespace Riverside.Graphite.Helpers
 			string url,
 			CoreWebView2PermissionKind kind)
 		{
-
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(url))
 			{
 				return CoreWebView2PermissionState.Deny;
@@ -183,7 +182,6 @@ namespace Riverside.Graphite.Helpers
 			string url,
 			CoreWebView2PermissionKind kind)
 		{
-
 			await LoadPermissionsAsync(username);
 			var (storedPermission, _) = GetStoredPermission(username, url, kind);
 
@@ -255,7 +253,6 @@ namespace Riverside.Graphite.Helpers
 					{
 						File.WriteAllText(filePath, json);
 					}
-
 				}
 			}
 			catch (Exception ex)
