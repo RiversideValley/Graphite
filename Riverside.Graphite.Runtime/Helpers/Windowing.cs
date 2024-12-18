@@ -1,4 +1,4 @@
-﻿using Microsoft.UI;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
@@ -15,7 +15,6 @@ using WinRT.Interop;
 namespace Riverside.Graphite.Runtime.Helpers;
 public class WindowBounce(Window inWindow)
 {
-
 	private DispatcherTimer timer;
 	private int bounceCount = 0;
 	private int screenWidth, screenHeight, windowWidth, windowHeight;
@@ -23,7 +22,6 @@ public class WindowBounce(Window inWindow)
 
 	public async Task ShowWindowBounce()
 	{
-
 		IntPtr hWnd = WindowNative.GetWindowHandle(inWindow);
 		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
@@ -70,7 +68,6 @@ public class WindowBounce(Window inWindow)
 			_ = Windowing.SetWindowPos(hwnd, IntPtr.Zero, centerX, endY, 0, 0, Windowing.SWP_NOZORDER | Windowing.SWP_NOSIZE);
 		}
 	}
-
 }
 public class Windowing
 {
@@ -267,7 +264,6 @@ public class Windowing
 
 	public static SizeInt32 GetTheSizeofWindow(IntPtr hWnd)
 	{
-
 		SizeInt32 size = new SizeInt32();
 
 		RECT rect;
@@ -275,17 +271,14 @@ public class Windowing
 		{
 			size.Width = rect.right - rect.left;
 			size.Height = rect.bottom - rect.top;
-
 		}
 
 		return size;
-
 	}
 
 	public static WindowInfo Commander { get; private set; }
 	public static async void AllowNonOverlappingWindow(Window inWindow)
 	{
-
 		var dlg = GetAppWindow(inWindow);
 		var winSize = await SizeWindow();
 		var hWnd = WindowNative.GetWindowHandle(inWindow);
@@ -294,7 +287,6 @@ public class Windowing
 
 		if (dlg is not null)
 		{
-
 			var winParentId = Win32Interop.GetWindowIdFromWindow(parent);
 
 			Microsoft.UI.Windowing.DisplayArea displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(winParentId, Microsoft.UI.Windowing.DisplayAreaFallback.Nearest);
@@ -320,12 +312,8 @@ public class Windowing
 					var newSize = new SizeInt32((int)displayArea.WorkArea.Width - dlg.Size.Width - PositionOfNewWindow, parentSize.Height);
 
 					ChangeWindowSize(parent, newSize.Width, newSize.Height);
-
-
 				}
-
 			}
-
 		}
 		PositionOfNewWindow += 15;
 	}

@@ -26,11 +26,9 @@ namespace Riverside.Graphite.Channels
 			var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 			builder.WebHost.UseKestrel(x => x.ListenAnyIP(5000));  
 			Startup(builder);
-			
 		}
 
 		public static void Startup(WebApplicationBuilder builder) {
-			
 			_ = builder.Services.AddHttpClient();
 			_ = builder.Services.AddRouting();
 			_ = builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation(); 
@@ -51,7 +49,6 @@ namespace Riverside.Graphite.Channels
 					 new Claim(ClaimTypes.NameIdentifier, context?.Request?.Query["username"]!)
 				];
 				options.ServerStickyMode = Microsoft.Azure.SignalR.ServerStickyMode.Preferred;
-
 			});
 
 			_ = builder.Services.AddSingleton<IMessageHandler, AzureDataTableMessages>();
@@ -94,7 +91,6 @@ namespace Riverside.Graphite.Channels
 					endpoints.MapControllers();
 					endpoints.MapRazorPages(); 
 					endpoints.MapHub<AzureChat>("/chat");
-
 				});
 
 			app.MapControllerRoute(
@@ -103,8 +99,6 @@ namespace Riverside.Graphite.Channels
 
 			
 			app.Run();
-
 		}
-	
 	}
 }

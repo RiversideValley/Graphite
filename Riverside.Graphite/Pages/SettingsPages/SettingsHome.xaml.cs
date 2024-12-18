@@ -80,7 +80,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				UserListView.ItemsSource = filteredUsernames;
 
 				// Update visibility based on whether there are items
-				if (filteredUsernames.Any())
+				if (filteredUsernames.Count != 0)
 				{
 					UserListView.Visibility = Visibility.Visible;
 					EmptyListMessage.Visibility = Visibility.Collapsed;

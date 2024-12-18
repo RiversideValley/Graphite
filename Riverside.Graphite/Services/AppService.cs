@@ -524,8 +524,6 @@ public static class AppService
 			AuthService.AddUser(newUser);
 			UserFolderManager.CreateUserFolders(newUser);
 		}
-
-
 	}
 
 	private static void HideDirectory(string directoryPath)

@@ -30,7 +30,6 @@ namespace Riverside.Graphite.Services
 				_webView.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
 				_webView.CoreWebView2Initialized -= WebView_CoreWebView2Initialized;
 			}
-
 		}
 
 		public async Task Initialize(WebView2 webView)
@@ -87,6 +86,5 @@ namespace Riverside.Graphite.Services
 				ExceptionLogger.LogException(e);
 			}
 		}
-
 	}
 }

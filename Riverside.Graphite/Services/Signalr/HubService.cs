@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -10,7 +10,6 @@ namespace Riverside.Graphite.Services.Signalr
 	{
 		public HubService()
 		{
-
 			Initialize();
 		}
 		private HubConnection _hubConnection;
@@ -36,7 +35,5 @@ namespace Riverside.Graphite.Services.Signalr
 			}
 		}
 		//(https://github.com/microsoft/WindowsAppSDK/discussions/3561)
-
-
 	}
 }

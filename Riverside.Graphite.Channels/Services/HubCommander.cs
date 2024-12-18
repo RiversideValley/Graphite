@@ -1,4 +1,4 @@
-﻿
+
 using FireCore.Data.Models;
 using System.Collections.Concurrent;
 
@@ -13,7 +13,6 @@ namespace FireCore.Services
 		Task<bool> DeleteAllSessionsByUser(string connectionId);
 		ConcurrentDictionary<Tuple<string, string>, string> ActiveGroups { get; }
 		List<string>? MsalCurrentUsers { get; set; }
-
 	}
 	public sealed class HubCommander : IHubCommander
 	{
@@ -34,7 +33,6 @@ namespace FireCore.Services
 
 		public async Task<bool> DeleteAllSessionsByUser(string connectionId)
 		{
-
 			var success = false;
 
 			try
@@ -48,13 +46,10 @@ namespace FireCore.Services
 					{
 						success = await DeleteAsync(item);
 					}
-
 				}
-
 			}
 			catch (Exception)
 			{
-
 				throw;
 			}
 			return (success);
@@ -70,7 +65,6 @@ namespace FireCore.Services
 			{
 				throw;
 			}
-
 		}
 
 		public Task<string> GetSessionIdAsync(Tuple<string, string> key)
@@ -85,17 +79,14 @@ namespace FireCore.Services
 			{
 				throw;
 			}
-
 		}
 
 		public Task<bool> WriteAsync(SessionDbEntity entity)
 		{
 			try
 			{
-
 				var result = _inMemoryStorage?.TryAdd(new Tuple<string, string>(entity.ConnectionId, entity.PartnerName), entity.SessionId);
 				return Task.FromResult((bool)result!);
-
 			}
 			catch (Exception ex)
 			{
@@ -103,6 +94,5 @@ namespace FireCore.Services
 				throw;
 			}
 		}
-
 	}
 }

@@ -1,4 +1,4 @@
-﻿using JsonDiffPatchDotNet;
+using JsonDiffPatchDotNet;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -26,7 +26,6 @@ namespace Riverside.Graphite.Data.Core.Update
 
 		public SchemaExtractor(string connectionString, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type classIn)
 		{
-
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException(nameof(connectionString));
 
@@ -41,8 +40,6 @@ namespace Riverside.Graphite.Data.Core.Update
 
 		public async Task HandleExtractionSchemaChanges()
 		{
-
-
 			var oldSchemaJson = GetDatabaseSchemaAsJson(connectionString, classIn.Name);
 
 			var newSchemaJson = GetPropertyNamesOnlyJson(classIn);
@@ -56,7 +53,6 @@ namespace Riverside.Graphite.Data.Core.Update
 				JObject Jobj = JsonConvert.DeserializeObject<JObject>(diff);
 				foreach (var item in Jobj.Properties())
 				{
-
 					var prop = GetPropertyNamesIncludePropertyName(classIn, item.Value.ToString());
 					if (prop is not null)
 						properties.Add(prop);
@@ -79,7 +75,6 @@ namespace Riverside.Graphite.Data.Core.Update
 
 		public static async Task AddNameColumnsFromProperties(string connectionString, string strTableName, PropertyInfo property)
 		{
-
 			try
 			{
 				// capture db, datatype, defaults->go;
@@ -137,7 +132,6 @@ namespace Riverside.Graphite.Data.Core.Update
 			}
 
 			await Task.Delay(100);
-
 		}
 		public static string GetDatabaseSchemaAsJson(string connectionString, string strTableName)
 		{
@@ -171,7 +165,6 @@ namespace Riverside.Graphite.Data.Core.Update
 		}
 		public static bool IsJsonArray(string jsonString)
 		{
-
 			try
 			{
 				JToken token = JToken.Parse(jsonString.Replace('\'', '\"'));
@@ -194,13 +187,11 @@ namespace Riverside.Graphite.Data.Core.Update
 
 			var list = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(o => o.Name == p_name).FirstOrDefault();
 			return list;
-
 		}
 		public static string GetPropertyNamesOnlyJson([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
 		{
 			var list = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(o => o.Name != "Self").Select(p => p.Name).ToList();
 			return JsonConvert.SerializeObject(list, Formatting.None);
-
 		}
 
 		public string SerializeModelSchema(Type classIn)
@@ -218,8 +209,6 @@ namespace Riverside.Graphite.Data.Core.Update
 			else
 				return null;
 		}
-
 	}
-
 }
 

@@ -106,7 +106,6 @@ public partial class App : Application
 			ExceptionLogger.LogException(e);
 			throw;
 		}
-
 	}
 
 	static void KillProcessByName(string processName)
@@ -164,7 +163,6 @@ public partial class App : Application
 			ExceptionLogger.LogException(e);
 			throw;
 		}
-
 	}
 
 	public static string Get_Appx_AssemblyDirectory(Assembly assembly)
@@ -173,7 +171,6 @@ public partial class App : Application
 		string directoryPath = Path.GetDirectoryName(assemblyLocation);
 
 		return directoryPath ?? throw new DirectoryNotFoundException("Publish directory not found");
-
 	}
 	public static string GetFullPathToExe()
 	{

@@ -1,4 +1,4 @@
-﻿using FireCore.Services;
+using FireCore.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FireCore.Controllers
@@ -15,7 +15,6 @@ namespace FireCore.Controllers
 			_contextStore = hubContextStore;
 			_commander = commander;
 			_configuration = configuration;
-
 		}
 		#endregion;
 
@@ -30,10 +29,9 @@ namespace FireCore.Controllers
 				foreach (var cookie in Request.Cookies)
 				{ Response.Cookies.Delete(cookie.Key); }
 				Console.Write(e.Message!.ToString());
-			};
+			}
 
 			return Redirect("~/");
-
 		}
 	}
 }

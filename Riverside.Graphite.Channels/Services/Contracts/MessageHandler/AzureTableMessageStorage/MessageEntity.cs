@@ -1,11 +1,10 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Azure;
 
 namespace FireCore.Services.Contracts.MessageHandler.AzureTableMessageStorage
 {
-
 	public class MessageEntity : Azure.Data.Tables.ITableEntity
 	{
 		public string RowKey { get; set; } = default!;

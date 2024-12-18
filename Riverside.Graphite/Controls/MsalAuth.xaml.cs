@@ -32,7 +32,6 @@ namespace Riverside.Graphite.Controls
 			string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser?.Username, "Browser");
 			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
 			Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
-
 		}
 
 		public async Task Initialize(MainWindowViewModel mainWindowViewModel)
@@ -42,8 +41,6 @@ namespace Riverside.Graphite.Controls
 			SetWebViewHandler(webView);
 			webView.CoreWebView2.SetVirtualHostNameToFolderMapping("fireapp.msal", "Assets/WebView/AppFrontend", CoreWebView2HostResourceAccessKind.Allow);
 			webView.CoreWebView2.Navigate("https://fireapp.msal/main.html");
-
-
 		}
 
 		protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -61,7 +58,6 @@ namespace Riverside.Graphite.Controls
 
 		private void SetWebViewHandler(WebView2 s)
 		{
-
 			s.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = true;
 			s.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 			s.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
@@ -122,7 +118,6 @@ namespace Riverside.Graphite.Controls
 					window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));
 					Console.WriteLine("Login successful.");
 				}
-
 			}
 
 			string script = @"
@@ -203,7 +198,6 @@ namespace Riverside.Graphite.Controls
 
 		private bool IsLogoutRequest(CoreWebView2WebResourceRequest request)
 		{
-
 			string[] logoutUrls = { "https://login.live.com/logout", "https://login.microsoftonline.com/logout", "https://login.microsoftonline.com/common/oauth2/logout", "https://login.microsoftonline.com/common/oauth2/v2.0/logout?", "https://login.microsoftonline.com/common/oauth2/logoutsession" };
 			return logoutUrls.Any(logoutUrl => request.Uri.StartsWith(logoutUrl, StringComparison.OrdinalIgnoreCase));
 		}

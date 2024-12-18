@@ -11,11 +11,7 @@ using System.Threading.Tasks;
 
 namespace ChatChannel
 {
-
-
 	public sealed class ChatHost() {
 		public IHost Host { get; set; }
-
-		
 	}
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 
 namespace Riverside.Graphite.Helpers
@@ -17,6 +17,4 @@ namespace Riverside.Graphite.Helpers
 			Views.Remove(window);
 		}
 	}
-
-
 }

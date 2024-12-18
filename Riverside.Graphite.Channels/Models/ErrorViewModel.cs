@@ -42,5 +42,4 @@ namespace FireCore.Models
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
-
 }

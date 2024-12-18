@@ -197,7 +197,6 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
 				await File.WriteAllTextAsync(filePath, json);
-
 			}
 			catch (Exception ex)
 			{

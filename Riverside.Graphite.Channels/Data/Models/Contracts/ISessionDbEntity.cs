@@ -1,4 +1,4 @@
-﻿namespace FireCore.Data.Models.Contracts
+namespace FireCore.Data.Models.Contracts
 {
 	public interface ISessionDbEntity
 	{
@@ -7,6 +7,5 @@
 		public string? PartnerName { get; set; }
 		public string? SessionId { get; set; }
 		public DateTimeOffset DateTime { get; set; }
-
 	}
 }

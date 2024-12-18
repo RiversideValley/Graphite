@@ -231,26 +231,22 @@ public partial class HomeViewModel : ObservableRecipient
 	[RelayCommand]
 	private void Chat(Button sender)
 	{
-
 		try
 		{
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
 				window?.NavigateToUrl("http://localhost:5000/");
 			}
-
 		}
 		catch (Exception e)
 		{
 			ExceptionLogger.LogException(e);
 			_ = Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
 		}
-
 	}
 	[RelayCommand]
 	private void Logins(Button btn)
 	{
-
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			window.DispatcherQueue?.TryEnqueue(() =>
