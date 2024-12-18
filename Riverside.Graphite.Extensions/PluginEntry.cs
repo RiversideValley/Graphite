@@ -9,6 +9,7 @@ public class PluginEntry
 	private readonly IPluginBase Plugin = null;
 
 	public UserControl form { get; set; } = null;
+	public UserControl Form { get; internal set; }
 
 	public PluginEntry(IPluginBase p)
 	{
