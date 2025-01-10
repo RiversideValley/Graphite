@@ -60,7 +60,7 @@ namespace Riverside.Graphite.Services
 				Storyboard storyboard = new();
 				ColorAnimation colorAnimation = new();
 				colorAnimation.To = Microsoft.UI.Colors.Transparent; // Change this to the original color
-				colorAnimation.Duration = TimeSpan.FromMilliseconds(200);
+				colorAnimation.Duration = TimeSpan.FromMilliseconds(100);
 				storyboard.Children.Add(colorAnimation);
 				Storyboard.SetTarget(colorAnimation, button);
 				Storyboard.SetTargetProperty(colorAnimation, "(Button.Background).(SolidColorBrush.Color)");
@@ -76,7 +76,7 @@ namespace Riverside.Graphite.Services
 				Storyboard storyboard = new();
 				ColorAnimation colorAnimation = new();
 				colorAnimation.To = Microsoft.UI.Colors.LightGray;
-				colorAnimation.Duration = TimeSpan.FromMilliseconds(200);
+				colorAnimation.Duration = TimeSpan.FromMilliseconds(100);
 				storyboard.Children.Add(colorAnimation);
 				Storyboard.SetTarget(colorAnimation, button);
 				Storyboard.SetTargetProperty(colorAnimation, "(Button.Background).(SolidColorBrush.Color)");
@@ -111,7 +111,7 @@ namespace Riverside.Graphite.Services
 				Storyboard storyboard = new();
 				DoubleAnimation opacityAnimation = new();
 				opacityAnimation.To = 1.0; // Return to original opacity
-				opacityAnimation.Duration = TimeSpan.FromMilliseconds(200);
+				opacityAnimation.Duration = TimeSpan.FromMilliseconds(100);
 				storyboard.Children.Add(opacityAnimation);
 				Storyboard.SetTarget(opacityAnimation, button);
 				Storyboard.SetTargetProperty(opacityAnimation, "(Button.Opacity)");
@@ -127,7 +127,7 @@ namespace Riverside.Graphite.Services
 				Storyboard storyboard = new();
 				DoubleAnimation opacityAnimation = new();
 				opacityAnimation.To = 0.5; // Example opacity value
-				opacityAnimation.Duration = TimeSpan.FromMilliseconds(200);
+				opacityAnimation.Duration = TimeSpan.FromMilliseconds(100);
 				storyboard.Children.Add(opacityAnimation);
 				Storyboard.SetTarget(opacityAnimation, button);
 				Storyboard.SetTargetProperty(opacityAnimation, "(Button.Opacity)");
