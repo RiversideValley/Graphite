@@ -23,7 +23,7 @@
     <Grid Width="310" Height="510">
         <Grid.RowDefinitions>
             <RowDefinition Height="42" />
-            <RowDefinition />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid
@@ -32,9 +32,7 @@
             VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <!--  Left column for TextBlock  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Right column for Buttons  -->
             </Grid.ColumnDefinitions>
 
             <TextBlock
@@ -65,7 +63,6 @@
             </StackPanel>
         </Grid>
 
-
         <Grid
             Grid.Row="1"
             Margin="6"
@@ -73,9 +70,9 @@
             BorderBrush="#33808080"
             BorderThickness="1"
             CornerRadius="3">
-            <ListView x:Name="list" 
-                  Grid.Row="1" 
-                  SelectionMode="None">
+            <ListView 
+                x:Name="list" 
+                SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="items:TwoFactorAuthViewModel">
                         <Grid Margin="0,8">
@@ -89,21 +86,25 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{x:Bind Name}" 
-                                   Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock 
+                                Text="{x:Bind Name}" 
+                                Style="{StaticResource BodyTextBlockStyle}"/>
 
-                            <TextBlock Grid.Row="1" 
-                                   Text="{x:Bind Code, Mode=OneWay}" 
-                                   Style="{StaticResource TitleTextBlockStyle}"
-                                   Margin="0,4,0,0"/>
+                            <TextBlock 
+                                Grid.Row="1" 
+                                Text="{x:Bind Code, Mode=OneWay}" 
+                                Style="{StaticResource TitleTextBlockStyle}"
+                                Margin="0,4,0,0"/>
 
-                            <ProgressBar Grid.Row="2" 
-                                     Value="{x:Bind ProgressValue, Mode=OneWay}" 
-                                     Maximum="30" 
-                                     Height="4" 
-                                     Margin="0,4,0,0"/>
+                            <ProgressBar 
+                                Grid.Row="2" 
+                                Value="{Binding ViewModel.ProgressValue, Mode=OneWay}" 
+                                Maximum="100" 
+                                Height="4" 
+                                Margin="0,4,0,0"/>
 
-                            <Button Grid.Column="1" 
+                            <Button 
+                                Grid.Column="1" 
                                 Grid.RowSpan="2" 
                                 Content="Copy" 
                                 Command="{x:Bind CopyCodeCommand}"

@@ -11,12 +11,28 @@ namespace Riverside.Graphite.IdentityClient.Controls
 	public sealed partial class Two2FAFlyout : Flyout
 	{
 		private readonly Riverside.Graphite.IdentityClient.Services.TwoFactorAuthService _authService;
+		private DispatcherTimer _timer;
 
 		public Two2FAFlyout(Riverside.Graphite.IdentityClient.Services.TwoFactorAuthService authService)
 		{
 			InitializeComponent();
 			_authService = authService;
 			list.ItemsSource = _authService.AuthItems;
+
+			// Initialize and start the timer
+			_timer = new DispatcherTimer();
+			_timer.Interval = TimeSpan.FromSeconds(1);
+			_timer.Tick += Timer_Tick;
+			_timer.Start();
+		}
+
+		private void Timer_Tick(object sender, object e)
+		{
+			// Update all items in the list
+			foreach (var item in _authService.AuthItems)
+			{
+				item.UpdateCodeAndProgress();
+			}
 		}
 
 		private async void Button_Click(object sender, RoutedEventArgs e)
@@ -32,16 +48,6 @@ namespace Riverside.Graphite.IdentityClient.Controls
 				string issuer = addDialog.ItemIssuer;
 
 				await _authService.AddItemAsync(name, secret, issuer);
-			}
-		}
-
-		private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
-		{
-			if (sender is ListViewItem item && item.DataContext is TwoFactorAuthViewModel twoFactAuth)
-			{
-				DataPackage package = new DataPackage();
-				package.SetText(twoFactAuth.Code);
-				Clipboard.SetContent(package);
 			}
 		}
 	}

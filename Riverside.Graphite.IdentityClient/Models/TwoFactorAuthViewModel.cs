@@ -73,27 +73,21 @@ namespace Riverside.Graphite.IdentityClient.Models
 
 			_totp = new Totp(Item.Secret, 30, (OtpHashMode)Item.OtpHashMode, Item.Size);
 
-			// Generate initial code and set initial remaining seconds
+			// Calculate initial remaining seconds
+			long currentUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			_remainingSeconds = 30 - (int)(currentUnixTime % 30);
+
+			// Generate initial code
 			GenerateNewCode();
-
-			_timer = new DispatcherTimer();
-			_timer.Interval = TimeSpan.FromSeconds(1);
-			_timer.Tick += Timer_Tick;
-			_timer.Start();
-
 			UpdateProgressValue();
-		}
-
-		private void Timer_Tick(object sender, object e)
-		{
-			UpdateCodeAndProgress();
 		}
 
 		public void UpdateCodeAndProgress()
 		{
-			_remainingSeconds--;
+			long currentUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			_remainingSeconds = 30 - (int)(currentUnixTime % 30);
 
-			if (_remainingSeconds <= 0)
+			if (_remainingSeconds == 30 || _remainingSeconds == 0)
 			{
 				GenerateNewCode();
 			}
@@ -104,12 +98,12 @@ namespace Riverside.Graphite.IdentityClient.Models
 		private void GenerateNewCode()
 		{
 			Code = _totp.ComputeTotp();
-			_remainingSeconds = 30;
 		}
 
 		private void UpdateProgressValue()
 		{
-			ProgressValue = _remainingSeconds;
+			// Calculate progress as a percentage (0-100)
+			ProgressValue = (int)((_remainingSeconds / 30.0) * 100);
 		}
 
 		private async void CopyCode()
@@ -118,12 +112,11 @@ namespace Riverside.Graphite.IdentityClient.Models
 			dataPackage.SetText(Code);
 			Clipboard.SetContent(dataPackage);
 
-			await Task.Delay(2000); // Wait for 2 seconds
+			await Task.Delay(2000);
 		}
 
 		private async void RemoveItem()
 		{
-			_timer.Stop();
 			await _authService.RemoveItemAsync(this);
 		}
 
