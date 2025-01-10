@@ -17,9 +17,9 @@
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundle>Auto</AppxBundle>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
+    <AppxBundle>Always</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
 	  <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
@@ -50,7 +50,7 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.67.1" />
     <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.67.1" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.67.1" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2651.64" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
@@ -68,7 +68,9 @@
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
   </ItemGroup>
-
+  <ItemGroup>
+  <Content Remove="$(NuGetPackageRoot)microsoft.web.webview2\**\runtimes\win-x64\native\WebView2Loader.dll" />
+</ItemGroup>
   <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
@@ -478,6 +480,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-
-
+<ItemGroup>
+  <None Include="NativeLibs\WebView2Loader.dll">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Link>runtimes\win-x64\native\WebView2Loader.dll</Link>
+  </None>
+</ItemGroup>
 </Project>

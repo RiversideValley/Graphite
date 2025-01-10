@@ -37,6 +37,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2651.64" />
       <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
       <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
       <PackageReference Include="System.Net.Http" Version="4.3.4" />

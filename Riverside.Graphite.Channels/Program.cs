@@ -19,8 +19,9 @@ namespace Riverside.Graphite.Channels
 
 		}
 
-		public static void Startup(WebApplicationBuilder builder) {
-			
+		public static void Startup(WebApplicationBuilder builder)
+		{
+
 			_ = builder.Services.AddHttpClient();
 			_ = builder.Services.AddRouting();
 			_ = builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -97,7 +98,7 @@ namespace Riverside.Graphite.Channels
 		}
 		//public static IHostBuilder CreateHostBuilder(string[] args)
 		//{
-		
+
 
 		//	return Host.CreateDefaultBuilder(args)
 		//		.ConfigureServices((hostContext, services) =>
@@ -130,14 +131,14 @@ namespace Riverside.Graphite.Channels
 		//						.AddSingleton<IHubContextStore>(sp => sp.GetService<SignalRService>());
 		//			//					_= services.AddSingleton<SessionContext>();
 		//			_ = services.AddSingleton<IHubCommander, HubCommander>();
-				   
+
 		//			_= services.AddSingleton<AzureChat>();
 		//			//_ = services.AddHostedService<Worker>(); 
 		//			//_ = services.AddWindowsService(op =>
 		//			//{
 		//			//	op.ServiceName = "GraphiteChannel";
 		//			//});
-					
+
 		//			_ = services.AddLogging(configure => configure.AddConsole())
 		//						.Configure<LoggerFilterOptions>(options => options.MinLevel = Microsoft.Extensions.Logging.LogLevel.Information);
 		//		}).ConfigureLogging(options =>
