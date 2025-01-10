@@ -24,6 +24,12 @@
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
 	  <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Services\Workers\**" />
+    <EmbeddedResource Remove="Services\Workers\**" />
+    <None Remove="Services\Workers\**" />
+    <Page Remove="Services\Workers\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Data.Tables" Version="12.9.1" />
@@ -465,7 +471,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\WebView\AppFrontend\src\" />
-    <Folder Include="Services\Workers\" />
   </ItemGroup>
   <PropertyGroup>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
@@ -474,4 +479,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <ItemGroup>
+    <PRIResource Remove="Services\Workers\**" />
+  </ItemGroup>
 </Project>

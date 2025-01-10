@@ -7,7 +7,6 @@ using Windows.ApplicationModel;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 
-
 namespace Riverside.Graphite.Runtime.Helpers
 {
 	public class UrlValidater
@@ -41,36 +40,99 @@ namespace Riverside.Graphite.Runtime.Helpers
 				return false;
 			}
 		}
-		public static Uri? GetValidateUrl(string queryText)
+
+		public static Uri GetValidateUrl(string queryText)
 		{
-			Regex regex = new(@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog|firebrowser)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$", RegexOptions.IgnoreCase);
-
-			Uri uriOut;
-			//Regex($@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$", RegexOptions.IgnoreCase);
-
-			if (IsUrlValid(queryText, regex, out Uri sendUri))
-			{
-				uriOut = sendUri != null ? new UriBuilder(sendUri.ToString()).Uri : new Uri(queryText);
-			}
-			else
-			{
+			if (string.IsNullOrWhiteSpace(queryText))
 				return null;
+
+			// If it already starts with a protocol, try to create a URI directly
+			if (queryText.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+				queryText.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+			{
+				if (Uri.TryCreate(queryText, UriKind.Absolute, out Uri uri))
+				{
+					return uri;
+				}
 			}
 
-			return uriOut;
+			// Check if it's an IP address with port
+			if (IsValidIpWithPort(queryText))
+			{
+				// Try HTTPS first for IP addresses with ports
+				try
+				{
+					var httpsUri = new Uri($"https://{queryText}");
+					return httpsUri;
+				}
+				catch
+				{
+					try
+					{
+						// Fallback to HTTP if HTTPS fails
+						return new Uri($"http://{queryText}");
+					}
+					catch
+					{
+						return null;
+					}
+				}
+			}
+
+			// Then check if it's a valid domain without protocol
+			if (IsValidDomain(queryText))
+			{
+				return new Uri($"http://{queryText}");
+			}
+
+			// Finally check if it's a full URL with a different protocol
+			if (IsValidFullUrl(queryText))
+			{
+				return new Uri(queryText);
+			}
+
+			return null;
 		}
 
-		private static bool IsUrlValid(string url, Regex regex, out Uri uri)
+		private static bool IsValidIpWithPort(string input)
 		{
-			uri = null;
-			if (regex.IsMatch(url))
+			// Updated regex to better handle IPv4 addresses with ports
+			var ipPortRegex = new Regex(@"^(\d{1,3}\.){3}\d{1,3}(:\d+)?$");
+			if (ipPortRegex.IsMatch(input))
 			{
-				if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
+				string[] parts = input.Split(':');
+				string ipPart = parts[0];
+
+				// Validate each octet of the IP address
+				string[] octets = ipPart.Split('.');
+				if (octets.Length == 4 && octets.All(octet =>
+					byte.TryParse(octet, out byte value)))
 				{
-					return true;
+					// If there's a port, validate it
+					if (parts.Length == 2)
+					{
+						return int.TryParse(parts[1], out int port) &&
+							   port >= 1 &&
+							   port <= 65535;
+					}
+					return true; // Valid IP without port
 				}
 			}
 			return false;
+		}
+
+		private static bool IsValidDomain(string input)
+		{
+			// Match domain names like youtube.com, www.youtube.com, etc.
+			var domainRegex = new Regex(@"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$");
+			return domainRegex.IsMatch(input);
+		}
+
+		private static bool IsValidFullUrl(string input)
+		{
+			// Match URLs with various protocols
+			var urlRegex = new Regex(@"^(http|https|ms-appx|ms-appx-web|ftp|firebrowseruser|firebrowserwinui|firebrowserincog|firebrowser)://", RegexOptions.IgnoreCase);
+			return urlRegex.IsMatch(input) && Uri.TryCreate(input, UriKind.Absolute, out _);
 		}
 
 		private static async Task<(string Name, string DisplayName)[]> GetProtocolsFromManifest()
@@ -91,5 +153,4 @@ namespace Riverside.Graphite.Runtime.Helpers
 		}
 	}
 }
-
 

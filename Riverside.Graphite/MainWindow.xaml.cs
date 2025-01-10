@@ -623,7 +623,6 @@ public sealed partial class MainWindow : Window
 			{
 				launchurl ??= uri;
 				_ = TabContent.Navigate(typeof(WebContent), CreatePasser(uri));
-				// newTab is not browsing to new site.
 
 				if (SettingsService.CoreSettings.ResourceSave == true)
 				{
@@ -633,8 +632,7 @@ public sealed partial class MainWindow : Window
 				return;
 			}
 
-			// calls from outside of mainwindow, and there has never been a CoreWebView2 
-			webContent.WebView.Source = new(uri);
+			webContent.WebView.Source = new Uri(uri);
 			await webContent.WebView.EnsureCoreWebView2Async();
 		}
 		catch (Exception ex)
@@ -644,7 +642,6 @@ public sealed partial class MainWindow : Window
 	}
 	private async void UrlBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 	{
-		// Reload the settings due to changes from outside view. 
 		SettingsService.Initialize();
 
 		try
@@ -699,18 +696,11 @@ public sealed partial class MainWindow : Window
 
 	private async Task HandleNormalUrlOrSearch(string input)
 	{
-		Uri browserTo = Riverside.Graphite.Runtime.Helpers.UrlValidater.GetValidateUrl(input);
+		Uri browserTo = UrlValidater.GetValidateUrl(input);
 
 		if (browserTo != null)
 		{
-			if (await Riverside.Graphite.Runtime.Helpers.UrlValidater.IsUrlReachable(browserTo))
-			{
-				NavigateToUrl(browserTo.AbsoluteUri);
-			}
-			else
-			{
-				PerformSearch(input);
-			}
+			NavigateToUrl(browserTo.AbsoluteUri);
 		}
 		else
 		{

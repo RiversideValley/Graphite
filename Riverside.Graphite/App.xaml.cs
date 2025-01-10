@@ -21,7 +21,6 @@ using Path = System.IO.Path;
 namespace Riverside.Graphite;
 public partial class App : Application
 {
-	private readonly string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");
 	public static new App Current => (App)Application.Current;
 
 	private Process _webAppProcess;
