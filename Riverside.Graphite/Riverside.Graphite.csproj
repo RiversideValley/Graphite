@@ -45,11 +45,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Graph" Version="5.67.0" />
+    <PackageReference Include="Microsoft.Graph" Version="5.68.0" />
     <PackageReference Include="Microsoft.Graph.Core" Version="3.2.1" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.2" />
-    <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.66.2" />
-    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.66.2" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.67.1" />
+    <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.67.1" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.67.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.241114004-experimental1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
@@ -160,7 +160,6 @@
     <None Remove="Controls\ProfileCommander.xaml" />
     <None Remove="Controls\ResetCore.xaml" />
     <None Remove="Controls\RestoreBackUp.xaml" />
-    <None Remove="Controls\_Code_Examples.xaml" />
     <None Remove="Pages\Flappy.xaml" />
     <None Remove="Pages\Patch\BackUpDialog.xaml" />
     <None Remove="Pages\Patch\RestoreBackupDialog.xaml" />
@@ -367,9 +366,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Styles\Thickness.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Controls\_Code_Examples.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Pages\Patch\UpLoadBackup.xaml">
