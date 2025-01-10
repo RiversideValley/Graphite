@@ -119,7 +119,7 @@ public sealed partial class MainWindow : Window
 		SizeChanged += async (s, e) =>
 		{
 			SemaphoreSlim semaphoreSlim = new(3);
-			IntPtr hWnd = Windowing.GetForegroundWindow();
+			IntPtr hWnd = WindowNative.GetWindowHandle(this);
 			await Task.Delay(100);
 
 			if (hWnd != IntPtr.Zero)
