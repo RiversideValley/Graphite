@@ -1,58 +1,64 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Riverside.Graphite.Pages;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
 using Riverside.Graphite.ViewModels;
 using System.ComponentModel;
 
-namespace Riverside.Graphite.Controls;
-public sealed partial class FireBrowserTabViewItem : TabViewItem
+namespace Riverside.Graphite.Controls
 {
-	public FireBrowserTabViewItem()
+	public sealed partial class FireBrowserTabViewItem : TabViewItem, INotifyPropertyChanged
 	{
-		InitializeComponent();
-	}
-
-	public TabViewItemViewModel ViewModel { get; set; } = new TabViewItemViewModel() { IsTooltipEnabled = default };
-
-	public BitmapImage BitViewWebContent { get; set; }
-	public string Value
-	{
-		get => (string)GetValue(ValueProperty);
-		set => SetValue(ValueProperty, value);
-	}
-
-	public static DependencyProperty ValueProperty = DependencyProperty.Register(
-	nameof(Value),
-	typeof(string),
-	typeof(FireBrowserTabViewItem),
-	null);
-
-	public WebView2 MainWebView
-	{
-		get;
-		set;
-	}
-
-	public event PropertyChangedEventHandler PropertyChanged;
-
-	private void TabViewItem_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-	{
-		MainWindow win = (Application.Current as App).m_window as MainWindow;
-
-		if ((sender as Riverside.Graphite.Controls.FireBrowserTabViewItem).IsSelected)
+		public FireBrowserTabViewItem()
 		{
-			if (win?.TabViewContainer.SelectedItem is FireBrowserTabViewItem)
+			InitializeComponent();
+		}
+
+		private TabViewItemViewModel _viewModel = new TabViewItemViewModel { IsTooltipEnabled = false };
+
+		public TabViewItemViewModel ViewModel
+		{
+			get => _viewModel;
+			set
 			{
-				if (win?.TabContent.Content is WebContent web)
+				if (_viewModel != value)
 				{
-					if (web.PictureWebElement is not null)
-					{
-						ImgTabViewItem.Source = web.PictureWebElement;
-						ImgTabViewHeader.Header = new TextBlock() { Text = web.WebView.CoreWebView2?.DocumentTitle, IsColorFontEnabled = true, FontSize = 12, MaxLines = 2, TextWrapping = TextWrapping.WrapWholeWords };
-						ViewModel.IsTooltipEnabled = true;
-					}
+					_viewModel = value;
+					OnPropertyChanged(nameof(ViewModel));
 				}
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		private void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public void ShowPreview()
+		{
+			if (TabPreviewPopup != null)
+			{
+				UpdatePopupContent();
+				TabPreviewPopup.IsOpen = true;
+			}
+		}
+
+		public void HidePreview()
+		{
+			if (TabPreviewPopup != null)
+			{
+				TabPreviewPopup.IsOpen = false;
+			}
+		}
+
+		private void UpdatePopupContent()
+		{
+			if (Content != null)
+			{
+				PreviewTitle.Text = Header?.ToString() ?? "No Title";
+				PreviewContent.Content = Content; // Display the tab's content dynamically in the popup
+				PreviewFooter.Text = "Status: Ready";
 			}
 		}
 	}

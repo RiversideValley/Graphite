@@ -4,28 +4,53 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     x:Name="TabViewItem"
-    PointerEntered="TabViewItem_PointerEntered">
-    <ToolTipService.ToolTip>
-        <ToolTip
-            BorderBrush="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
-            BorderThickness=".5"
-            CornerRadius="1."
-            IsEnabled="{x:Bind ViewModel.IsTooltipEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <ToolTip.Content>
-                <controls:HeaderedContentControl
-                    x:Name="ImgTabViewHeader"
-                    Width="300"
-                    Height="240"
+   >
+
+    <TabViewItem.Resources>
+        <Popup x:Name="TabPreviewPopup"
+               IsLightDismissEnabled="False"
+               IsOpen="False"
+               HorizontalOffset="0"
+               VerticalOffset="0">
+            <Border Background="{ThemeResource LayerFillColorDefaultBrush}" 
+                    CornerRadius="8"
+                    MaxWidth="450"
+                    MinWidth="350"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8">
-                    <Image
-                        x:Name="ImgTabViewItem"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Stretch="UniformToFill" />
-                </controls:HeaderedContentControl>
-            </ToolTip.Content>
-        </ToolTip>
-    </ToolTipService.ToolTip>
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Padding="12,8">
+                        <TextBlock x:Name="PreviewTitle"
+                                   Text="Tab Preview"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                    </Grid>
+
+                    <!-- Main Content -->
+                    <ContentPresenter x:Name="PreviewContent"
+                                      Grid.Row="1"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="8" />
+
+                    <!-- Footer -->
+                    <Grid Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" Padding="12,8">
+                        <TextBlock x:Name="PreviewFooter"
+                                   Text="Loading..."
+                                   FontStyle="Italic"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </Popup>
+    </TabViewItem.Resources>
 </TabViewItem>

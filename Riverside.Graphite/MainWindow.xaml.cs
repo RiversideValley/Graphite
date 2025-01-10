@@ -5,6 +5,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -14,6 +15,7 @@ using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -39,6 +41,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.Web.UI.Interop;
 using WinRT.Interop;
 using Settings = Riverside.Graphite.Core.Settings;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
@@ -153,6 +156,9 @@ public sealed partial class MainWindow : Window
 			}
 			e.Handled = true;
 		};
+
+
+
 
 		appWindow.Closing += AppWindow_Closing;
 	}
@@ -460,6 +466,9 @@ public sealed partial class MainWindow : Window
 			Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
 		};
 
+		ToolTipService.SetToolTip(newItem, null);
+	
+
 		Passer passer = new()
 		{
 			Tab = newItem,
@@ -489,6 +498,7 @@ public sealed partial class MainWindow : Window
 		return newItem;
 	}
 
+	
 
 	public Frame TabContent => (Tabs.SelectedItem as FireBrowserTabViewItem)?.Content as Frame;
 	public WebView2 TabWebView => (TabContent?.Content as WebContent)?.WebViewElement;

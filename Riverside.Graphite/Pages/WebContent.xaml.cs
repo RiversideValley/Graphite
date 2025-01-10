@@ -268,10 +268,6 @@ namespace Riverside.Graphite.Pages
 							PictureWebElement = bitmap;
 
 							MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
-							if (currentWindow?.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab && currentWindow.TabContent.Content is WebContent web)
-							{
-								tab.BitViewWebContent = web.PictureWebElement;
-							}
 						}
 						catch (Exception ex)
 						{

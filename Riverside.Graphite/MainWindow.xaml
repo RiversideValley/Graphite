@@ -29,6 +29,7 @@
         BorderThickness=".4"
         CornerRadius="4">
         <Grid.Resources>
+           
             <VisualTransition x:Key="FlyoutOpenTransition" To="Open">
                 <Storyboard>
                     <DoubleAnimation
@@ -178,7 +179,8 @@
                             Click="TabMenuClick"
                             IsEnabled="False"
                             Tag="SplitTab"
-                            Visibility="Collapsed">
+                            Visibility="Collapsed"
+                            >
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
@@ -784,7 +786,9 @@
             Mode="Modern"
             SelectionChanged="Tabs_SelectionChanged"
             TabCloseRequested="Tabs_TabCloseRequested"
-            TabItemsChanged="Tabs_TabItemsChanged">
+            TabItemsChanged="Tabs_TabItemsChanged"
+            IsPreviewEnabled="True"
+            >
             <firebrowser:FireBrowserTabViewContainer.TabStripHeader>
                 <PersonPicture
                     x:Name="Profile"
