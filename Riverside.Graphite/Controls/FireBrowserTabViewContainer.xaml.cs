@@ -56,34 +56,34 @@ namespace Riverside.Graphite.Controls
 			set => SetValue(IsPreviewEnabledProperty, value);
 		}
 
-		private void TabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			// Optional: Handle selection changes between tabs.
-		}
+		//private void TabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		//{
+		//	// Optional: Handle selection changes between tabs.
+		//}
 
-		public void AddTab(FireBrowserTabViewItem tabViewItem)
-		{
-			if (tabViewItem != null)
-			{
-				tabViewItem.PointerEntered += TabItem_PointerEntered;
-				tabViewItem.PointerExited += TabItem_PointerExited;
-			}
-		}
+		//public void AddTab(FireBrowserTabViewItem tabViewItem)
+		//{
+		//	if (tabViewItem != null)
+		//	{
+		//		tabViewItem.PointerEntered += TabItem_PointerEntered;
+		//		tabViewItem.PointerExited += TabItem_PointerExited;
+		//	}
+		//}
 
-		private void TabItem_PointerEntered(object sender, RoutedEventArgs e)
-		{
-			if (IsPreviewEnabled && sender is FireBrowserTabViewItem tabViewItem)
-			{
-				tabViewItem.ShowPreview();
-			}
-		}
+		//private void TabItem_PointerEntered(object sender, RoutedEventArgs e)
+		//{
+		//	if (IsPreviewEnabled && sender is FireBrowserTabViewItem tabViewItem)
+		//	{
+		//		tabViewItem.ShowPreview();
+		//	}
+		//}
 
-		private void TabItem_PointerExited(object sender, RoutedEventArgs e)
-		{
-			if (sender is FireBrowserTabViewItem tabViewItem)
-			{
-				tabViewItem.HidePreview();
-			}
-		}
+		//private void TabItem_PointerExited(object sender, RoutedEventArgs e)
+		//{
+		//	if (sender is FireBrowserTabViewItem tabViewItem)
+		//	{
+		//		tabViewItem.HidePreview();
+		//	}
+		//}
 	}
 }

@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI.Behaviors;
+using Graphite.Controls;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -461,9 +462,10 @@ public sealed partial class MainWindow : Window
 			Header = "NewTab",
 			IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.Home },
 			Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
+		
 		};
 
-		ToolTipService.SetToolTip(newItem, null);
+		//ToolTipService.SetToolTip(newItem, null);
 
 
 		Passer passer = new()

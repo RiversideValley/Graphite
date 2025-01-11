@@ -1,5 +1,6 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
+using Graphite.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

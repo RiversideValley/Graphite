@@ -1,63 +1,70 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Pages;
 using Riverside.Graphite.ViewModels;
-using System.ComponentModel;
+using Riverside.Graphite;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.Web.WebView2.Core;
+using Windows.Storage.Streams;
+using System;
+using Riverside.Graphite.Data.Favorites;
+using CommunityToolkit.WinUI.Behaviors;
 
-namespace Riverside.Graphite.Controls
+namespace Graphite.Controls;
+public sealed partial class FireBrowserTabViewItem : TabViewItem
 {
-	public sealed partial class FireBrowserTabViewItem : TabViewItem, INotifyPropertyChanged
+	public FireBrowserTabViewItem() => InitializeComponent();
+
+	public TabViewItemViewModel ViewModel { get; set; } = new TabViewItemViewModel() { IsTooltipEnabled = default };
+
+	public BitmapImage BitViewWebContent { get; set; }
+	public string Value
 	{
-		public FireBrowserTabViewItem()
-		{
-			InitializeComponent();
-		}
+		get => (string)GetValue(ValueProperty);
+		set => SetValue(ValueProperty, value);
+	}
 
-		private TabViewItemViewModel _viewModel = new TabViewItemViewModel { IsTooltipEnabled = false };
+	public static DependencyProperty ValueProperty = DependencyProperty.Register(
+	nameof(Value),
+	typeof(string),
+	typeof(FireBrowserTabViewItem),
+	null);
 
-		public TabViewItemViewModel ViewModel
-		{
-			get => _viewModel;
-			set
+
+	private async void TabViewItem_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	{
+		MainWindow win = (Window)(Application.Current as App).m_window as MainWindow;
+
+		if ((sender as FireBrowserTabViewItem).IsSelected)
+			if (win?.TabViewContainer.SelectedItem is FireBrowserTabViewItem tab)
 			{
-				if (_viewModel != value)
+				if (win?.TabContent.Content is WebContent web)
 				{
-					_viewModel = value;
-					OnPropertyChanged(nameof(ViewModel));
+					if (web.PictureWebElement is BitmapImage)
+					{
+						// get preview from webcontent corewebView2 apis
+					    ViewModel.WebPreview = web.PictureWebElement;
+						ViewModel.WebTitle = web.WebView.CoreWebView2?.DocumentTitle;
+						
+						BitmapImage bitmapImage = new();
+						IRandomAccessStream stream = await web.WebView.CoreWebView2?.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png); ;
+						ImageIconSource iconSource = new() { ImageSource = bitmapImage };
+						await bitmapImage.SetSourceAsync(stream ?? await web.WebView.CoreWebView2?.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png));
+
+						ViewModel.IconImage = bitmapImage;
+						ViewModel.IsTooltipEnabled = true;
+						ViewModel.WebAddress = web.WebView.CoreWebView2?.Source.ToLower();
+						// raise enable prop hence page is two-way bindings. 
+						ViewModel.RaisePropertyChange(nameof(ViewModel.IsTooltipEnabled));
+						await Task.Delay(100); 
+					}
+
 				}
 			}
-		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		private void OnPropertyChanged(string propertyName)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		public void ShowPreview()
-		{
-			if (TabPreviewPopup != null)
-			{
-				UpdatePopupContent();
-				TabPreviewPopup.IsOpen = true;
-			}
-		}
-
-		public void HidePreview()
-		{
-			if (TabPreviewPopup != null)
-			{
-				TabPreviewPopup.IsOpen = false;
-			}
-		}
-
-		private void UpdatePopupContent()
-		{
-			if (Content != null)
-			{
-				PreviewTitle.Text = Header?.ToString() ?? "No Title";
-				PreviewContent.Content = Content; // Display the tab's content dynamically in the popup
-				PreviewFooter.Text = "Status: Ready";
-			}
-		}
+		e.Handled = true; 
 	}
+
 }
