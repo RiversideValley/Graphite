@@ -12,13 +12,12 @@ namespace Riverside.Graphite.Data.Core;
 public class HistoryContext : DbContext
 {
 	public DbSet<DbHistoryItem> Urls { get; set; }
-	//public DbSet<DownloadItem> Downloads { get; set; }
 	//public DbSet<DbUser> Users { get; set; }
-
+	public DbSet<DbCollection> Collections { get; set; }	
 	public string ConnectionPath { get; set; }
 	public IEnumerable<object> HistoryEntries { get; set; }
 
-	public HistoryContext(string username)
+	public HistoryContext(string username = "dizzler")
 	{
 		ConnectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Database", "History.db");
 	}
@@ -27,4 +26,14 @@ public class HistoryContext : DbContext
 	{
 		_ = optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
 	}
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder.Entity<DbHistoryItem>()
+			.HasMany(h => h.DbCollections)
+			.WithOne()
+			.HasForeignKey(d => d.HistoryItemId)
+			.OnDelete(DeleteBehavior.Cascade);
+	}
+
 }

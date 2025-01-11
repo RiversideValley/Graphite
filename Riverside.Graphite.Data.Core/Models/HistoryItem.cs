@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -26,5 +27,5 @@ public class HistoryItem
 	[JsonIgnore]
 	[NotMapped]
 	public HistoryItem Self { get; }
+	
 }
-
