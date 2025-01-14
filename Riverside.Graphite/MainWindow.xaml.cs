@@ -1,4 +1,6 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI.Behaviors;
+using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -1083,22 +1085,40 @@ public sealed partial class MainWindow : Window
 		}
 	}
 
-	private ObservableCollection<HistoryItem> browserHistory;
+    public partial class BrowserHistoryCollection : ObservableObject, IIncrementalSource<HistoryItem>
+    {
+        private ObservableCollection<HistoryItem> _historyItems = new();
 
-	public async void FetchBrowserHistory()
-	{
-		//Riverside.Graphite.Core.User user = AuthService.CurrentUser;
-		try
-		{
-			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
-			browserHistory = await historyActions.GetAllHistoryItems();
-			HistoryTemp.ItemsSource = browserHistory;
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-		}
-	}
+        public ObservableCollection<HistoryItem> HistoryItems
+        {
+            get => _historyItems;
+            set => SetProperty(ref _historyItems, value);
+        }
+
+        public async Task<IEnumerable<HistoryItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+        {
+            HistoryActions historyActions = new(AuthService.CurrentUser.Username);
+            ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
+            HistoryItems = new ObservableCollection<HistoryItem>(allItems.Skip(pageIndex * pageSize).Take(pageSize));
+            return HistoryItems;
+        }
+    }
+
+    public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
+
+    public void FetchBrowserHistory()
+    {
+        try
+        {
+            var graphiteHistory = new BrowserHistoryCollection();
+            browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
+            HistoryTemp.ItemsSource = browserHistory;
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogger.LogException(ex);
+        }
+    }
 
 	#endregion
 

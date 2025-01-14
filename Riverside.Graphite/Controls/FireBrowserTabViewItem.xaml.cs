@@ -51,21 +51,22 @@ public sealed partial class FireBrowserTabViewItem : TabViewItem
 					// get preview from webcontent corewebView2 apis
 					if (!viewTab.IsSelected)
 						ViewModel.WebPreview =  web.PictureWebElement;
-					
-					ViewModel.WebTitle = web.WebView.CoreWebView2?.DocumentTitle;
-
-					BitmapImage bitmapImage = new();
-					IRandomAccessStream stream = await web.WebView.CoreWebView2?.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png); ;
-					ImageIconSource iconSource = new() { ImageSource = bitmapImage };
-					await bitmapImage.SetSourceAsync(stream ?? await web.WebView.CoreWebView2?.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png));
-
-					ViewModel.IconImage = bitmapImage;
-					ViewModel.IsTooltipEnabled = true;
-					ViewModel.WebAddress = web.WebView.CoreWebView2?.Source.ToLower();
-					// raise enable prop hence page is two-way bindings. 
-					ViewModel.RaisePropertyChange(nameof(ViewModel.IsTooltipEnabled));
-					await Task.Delay(100);
 				}
+
+				ViewModel.WebTitle = web.WebView.CoreWebView2?.DocumentTitle;
+
+				BitmapImage bitmapImage = new();
+				IRandomAccessStream stream = await web.WebView.CoreWebView2?.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png); ;
+				ImageIconSource iconSource = new() { ImageSource = bitmapImage };
+				await bitmapImage.SetSourceAsync(stream ?? await web.WebView.CoreWebView2?.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png));
+
+				ViewModel.IconImage = bitmapImage;
+				ViewModel.IsTooltipEnabled = true;
+				ViewModel.WebAddress = web.WebView.CoreWebView2?.Source.ToLower();
+				// raise enable prop hence page is two-way bindings. 
+				ViewModel.RaisePropertyChange(nameof(ViewModel.IsTooltipEnabled));
+				await Task.Delay(100);
+				
 			}			
 		}
 
