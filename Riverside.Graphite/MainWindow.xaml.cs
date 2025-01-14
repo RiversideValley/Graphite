@@ -1100,7 +1100,8 @@ public sealed partial class MainWindow : Window
             HistoryActions historyActions = new(AuthService.CurrentUser.Username);
             ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
             HistoryItems = new ObservableCollection<HistoryItem>(allItems.Skip(pageIndex * pageSize).Take(pageSize));
-            return HistoryItems;
+			//ExceptionLogger.LogInformation($"{DateTime.Now.ToLocalTime()} getItems: {pageSize} indexPage: {pageIndex} totalItems: {allItems.Count}"); 
+			return HistoryItems;
         }
     }
 
