@@ -1,8 +1,6 @@
 using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Microsoft.Identity.Client;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Pages.Patch;
@@ -278,37 +276,27 @@ namespace Riverside.Graphite.Services
 			byte[] hash = md5.ComputeHash(stream);
 			return Convert.ToBase64String(hash);
 		}
-		public async Task<ResponseAZFILE> UploadFileToBlobAsync(string blobName, IRandomAccessStream fileStream)
-		{
-			try
-			{
-				CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConnString);
-				CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-				CloudBlobContainer container = blobClient.GetContainerReference("firebackups");
-				object response = new();
-				string fileName = blobName;
-				// Upload the file to Azure Blob Storage
-				CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
+        public async Task<ResponseAZFILE> UploadFileToBlobAsync(string blobName, IRandomAccessStream fileStream)
+        {
+            try
+            {
+                BlobServiceClient blobServiceClient = new BlobServiceClient(ConnString);
+                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("firebackups");
+                BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
-				await blockBlob.UploadFromStreamAsync(fileStream.AsStream());
-				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
+                await blobClient.UploadAsync(fileStream.AsStream(), true);
 
-				string sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
-				{
-					Permissions = SharedAccessBlobPermissions.Read,
-					SharedAccessExpiryTime = DateTime.UtcNow.AddHours(1) // Token valid for 1 hour
-				});
+                string sasToken = blobClient.GenerateSasUri( Azure.Storage.Sas.BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1)).ToString();
+                string sasUrl = blobClient.Uri.AbsoluteUri + sasToken;
 
-				string sasUrl = blockBlob.Uri.AbsoluteUri + sasToken; //blockBlob.Uri.AbsoluteUri
-
-				return new ResponseAZFILE(blobName, sasUrl);
-			}
-			catch (Exception ex)
-			{
-				ExceptionLogger.LogException(ex);
-				throw;
-			}
-		}
+                return new ResponseAZFILE(blobName, sasUrl);
+            }
+            catch (Exception ex)
+            {
+                ExceptionLogger.LogException(ex);
+                throw;
+            }
+        }
 		#endregion
 
 		#region WindowsGetUserBetaClasses
