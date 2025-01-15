@@ -1,6 +1,7 @@
 ﻿using Riverside.Graphite.Data.Core.Models.Contacts;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Riverside.Graphite.Data.Core.Models;
 
@@ -14,7 +15,6 @@ public class DbHistoryItem : IHistoryItem
 	public int visit_count { get; set; }
 	public int typed_count { get; set; }
 	public int hidden { get; set; }
-	public ICollection<Collection> Collections { get; set; }  // Ensure this property exists
 
 	public DbHistoryItem(string last_visit_time, string url, string title, int visit_count, int typed_count, int hidden)
 	{

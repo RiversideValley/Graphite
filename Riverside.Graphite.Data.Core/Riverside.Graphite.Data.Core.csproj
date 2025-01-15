@@ -51,6 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\History\" />
     <Folder Include="Migrations\Settings\" />
     <Folder Include="Migrations\Settings\" />
   </ItemGroup>

@@ -22,6 +22,8 @@ public class HistoryItem
 
 	public string LastVisitTime { get; set; }
 
+	[JsonIgnore]
+	[NotMapped]
 	public BitmapImage ImageSource { get; set; }
 
 	[JsonIgnore]

@@ -110,6 +110,10 @@ public class DatabaseServices : IDatabaseService
 			}
 			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
 			{
+				if (historyActions.HistoryContext.Database.HasPendingModelChanges())
+				{
+					await historyActions.HistoryContext.Database.MigrateAsync();
+				}
 				_ = await historyActions.HistoryContext.Database.CanConnectAsync();
 			}
 		}

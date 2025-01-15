@@ -8,11 +8,11 @@ using Riverside.Graphite.Data.Core;
 
 #nullable disable
 
-namespace Riverside.Graphite.Data.Core.Migrations
+namespace Riverside.Graphite.Data.Core.Migrations.History
 {
     [DbContext(typeof(HistoryContext))]
-    [Migration("20250102031459_History_Add_Collections")]
-    partial class History_Add_Collections
+    [Migration("20250115061509_SnapShot_History_Add_CollectionsTables")]
+    partial class SnapShot_History_Add_CollectionsTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,22 +20,38 @@ namespace Riverside.Graphite.Data.Core.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
-            modelBuilder.Entity("Riverside.Graphite.Data.Core.DbCollection", b =>
+            modelBuilder.Entity("Riverside.Graphite.Data.Core.CollectionName", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Collection_Name")
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("DateTime_Created")
+                    b.HasKey("Id");
+
+                    b.ToTable("CollectionNames");
+                });
+
+            modelBuilder.Entity("Riverside.Graphite.Data.Core.Models.Collection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CollectionNameId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("HistoryItemId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CollectionNameId");
 
                     b.HasIndex("HistoryItemId");
 
@@ -71,18 +87,19 @@ namespace Riverside.Graphite.Data.Core.Migrations
                     b.ToTable("Urls");
                 });
 
-            modelBuilder.Entity("Riverside.Graphite.Data.Core.DbCollection", b =>
+            modelBuilder.Entity("Riverside.Graphite.Data.Core.Models.Collection", b =>
                 {
+                    b.HasOne("Riverside.Graphite.Data.Core.CollectionName", null)
+                        .WithMany()
+                        .HasForeignKey("CollectionNameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Riverside.Graphite.Data.Core.Models.DbHistoryItem", null)
-                        .WithMany("DbCollections")
+                        .WithMany()
                         .HasForeignKey("HistoryItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Riverside.Graphite.Data.Core.Models.DbHistoryItem", b =>
-                {
-                    b.Navigation("DbCollections");
                 });
 #pragma warning restore 612, 618
         }

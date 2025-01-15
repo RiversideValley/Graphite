@@ -12,7 +12,6 @@ namespace Riverside.Graphite.Data.Core;
 public class HistoryContext : DbContext
 {
 	public DbSet<DbHistoryItem> Urls { get; set; }
-	//public DbSet<DbUser> Users { get; set; }
 	public DbSet<Collection> Collections { get; set; }
 	public DbSet<CollectionName> CollectionNames { get; set; }
 
@@ -30,17 +29,17 @@ public class HistoryContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		modelBuilder.Entity<DbHistoryItem>()
-			.HasMany(h => h.Collections)
-			.WithOne()
-			.HasForeignKey(d => d.HistoryItemId)
-			.OnDelete(DeleteBehavior.Cascade);
+		modelBuilder.Entity<Collection>()
+			   .HasOne<DbHistoryItem>()
+			   .WithMany()
+			   .HasForeignKey(c => c.HistoryItemId)
+			   .OnDelete(DeleteBehavior.Cascade);
 
 		modelBuilder.Entity<Collection>()
-			.HasOne(c => c.CollectionName)
-			.WithMany(cn => cn.Collections)
+			.HasOne<CollectionName>()
+			.WithMany()
 			.HasForeignKey(c => c.CollectionNameId)
-			.OnDelete(DeleteBehavior.Cascade);  // Cascade delete if CollectionName is deleted
+			.OnDelete(DeleteBehavior.Cascade);// Cascade delete if CollectionName is deleted
 	}
 
 }
