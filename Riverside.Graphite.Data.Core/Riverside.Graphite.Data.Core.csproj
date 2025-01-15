@@ -7,7 +7,7 @@
     <RootNamespace>Riverside.Graphite.Data.Core</RootNamespace>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
-    <Platforms>AnyCPU;x64</Platforms>
+	<Platforms>AnyCPU;x64</Platforms>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -28,6 +28,7 @@
       <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
       <PackageReference Include="EntityFramework" Version="6.5.1" />
       <PackageReference Include="JsonDiffPatch.Net" Version="2.3.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
