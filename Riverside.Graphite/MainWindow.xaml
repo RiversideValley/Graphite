@@ -23,11 +23,7 @@
     </Window.Title>
 
     <Grid
-        x:Name="MainView"
-        Padding="{ThemeResource ContentDialogBorderWidth}"
-        Background="Transparent"
-        BorderThickness=".4"
-        CornerRadius="4">
+        x:Name="MainView">
         <Grid.Resources>
 
             <VisualTransition x:Key="FlyoutOpenTransition" To="Open">
@@ -795,13 +791,14 @@
             Mode="Modern"
             SelectionChanged="Tabs_SelectionChanged"
             TabCloseRequested="Tabs_TabCloseRequested"
-            TabItemsChanged="Tabs_TabItemsChanged">
+            TabItemsChanged="Tabs_TabItemsChanged"
+            Margin="0, -10, 0, 0">
             <firebrowser:FireBrowserTabViewContainer.TabStripHeader>
                 <PersonPicture
                     x:Name="Profile"
                     Width="32"
                     Height="32"
-                    Margin="5,0,0,0"
+                    Margin="10, 20, 10, 0"
                     ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}"
                     Tapped="Profile_Tapped" />
             </firebrowser:FireBrowserTabViewContainer.TabStripHeader>
@@ -809,13 +806,14 @@
                 <Grid
                     x:Name="Apptitlebar"
                     MinWidth="175"
+                    Margin="0, 8, 0, 0"
                     IsHitTestVisible="False" />
             </firebrowser:FireBrowserTabViewContainer.TabStripFooter>
         </firebrowser:FireBrowserTabViewContainer>
         <Grid
             x:Name="ClassicToolbar"
             Height="37"
-            Margin="0,40,0,0"
+            Margin="4,44,4,0"
             VerticalAlignment="Top"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             BorderThickness="0">
@@ -827,12 +825,14 @@
             <StackPanel
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
-                Spacing="2">
+                Spacing="4">
                 <Button
                     x:Name="BackBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72B;}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="Back">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="B" Modifiers="Control" />
@@ -842,7 +842,9 @@
                     x:Name="ForwBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72A;}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="Forward">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="F" Modifiers="Control" />
@@ -852,7 +854,9 @@
                     x:Name="ReloadBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE72C;}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="Refresh">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="R" Modifiers="Control" />
@@ -862,7 +866,9 @@
                     x:Name="HomeBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE80F;}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="Home">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="H" Modifiers="Control" />
@@ -871,7 +877,9 @@
                 <Button
                     Command="{x:Bind ViewModelMain.ShowOfficeOptionsCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     ToolTipService.ToolTip="Office 365"
                     Visibility="{x:Bind ViewModelMain.MsOptionVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <Image
@@ -888,12 +896,12 @@
                 <AutoSuggestBox
                     x:Name="UrlBox"
                     x:Uid="SearchBar"
-                    Padding="32,5,5,0"
+                    CornerRadius="16"
                     x:FieldModifier="Public"
-                    CornerRadius="5"
                     MaxSuggestionListHeight="500"
                     QuerySubmitted="UrlBox_QuerySubmitted"
                     Style="{ThemeResource PortalBarStyle}"
+                    BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                     SuggestionChosen="UrlBox_SuggestionChosen"
                     TabIndex="1"
                     Text="{x:Bind ViewModel.CurrentAddress, Mode=OneWay}"
@@ -902,9 +910,12 @@
                     x:Name="Secure"
                     x:FieldModifier="Public"
                     DoubleTapped="Secure_DoubleTapped"
-                    Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                    IsDoubleTapEnabled="True"
-                    Style="{StaticResource QuietButtonStyle}">
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="6"
+                    Margin="2, 0"
+                    CornerRadius="100"
+                    IsDoubleTapEnabled="True">
                     <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="{x:Bind ViewModel.SecurityIcon, Mode=OneWay}" />
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
@@ -928,7 +939,7 @@
                     </Button.Flyout>
                 </Button>
             </Grid>
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <StackPanel Grid.Column="2" Spacing="4" Orientation="Horizontal">
                 <Button
                     x:Name="ToolBoxMore"
                     Content="{firebrowser:FluentIcon Glyph=&#xE70F;}"
@@ -946,28 +957,36 @@
                                     x:Name="ReadBtn"
                                     Click="ToolbarButtonClick"
                                     Content="{firebrowser:FluentIcon Glyph=&#xE736;}"
-                                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                                     Tag="ReadingMode"
                                     ToolTipService.ToolTip="Reading Mode" />
                                 <Button
                                     x:Name="AdBlock"
                                     Click="ToolbarButtonClick"
                                     Content="{firebrowser:FluentIcon Glyph=&#xEA18;}"
-                                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                                     Tag="AdBlock"
                                     ToolTipService.ToolTip="Basic AdBlock" />
                                 <Button
                                     x:Name="BtnTrans"
                                     Click="ToolbarButtonClick"
                                     Content="{firebrowser:FluentIcon Glyph=&#xE87E;}"
-                                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                                     Tag="Translate"
                                     ToolTipService.ToolTip="Translate" />
                                 <Button
                                     x:Name="BtnDark"
                                     Click="ToolbarButtonClick"
                                     Content="{firebrowser:FluentIcon Glyph=&#xE790;}"
-                                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                                     Tag="DarkMode"
                                     ToolTipService.ToolTip="DarkMode Website" />
                             </StackPanel>
@@ -978,7 +997,9 @@
                     x:Name="AddFav"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE734;}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="AddFavoriteFlyout"
                     Visibility="Visible">
                     <interactivity:Interaction.Behaviors>
@@ -1030,28 +1051,36 @@
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE728;}"
                     Flyout="{x:Bind FavoritesFly}"
-                    Style="{StaticResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="Favorites" />
                 <Button
                     x:Name="DownBtn"
                     x:FieldModifier="Public"
                     Click="DownBtn_Click"
                     Content="{firebrowser:FluentIcon Glyph=&#xE896;}"
-                    Style="{ThemeResource QuietButtonStyle}" />
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8" />
                 <Button
                     x:Name="History"
                     x:FieldModifier="Public"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xE81C;}"
                     Flyout="{x:Bind HistoryFlyoutMenu}"
-                    Style="{ThemeResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="History" />
                 <Button
                     x:Name="QrBtn"
                     Click="ToolbarButtonClick"
                     Content="{firebrowser:FluentIcon Glyph=&#xED14;}"
                     Flyout="{x:Bind QRCodeFlyout}"
-                    Style="{ThemeResource QuietButtonStyle}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8"
                     Tag="QRCode" />
                 <Button
                     x:Name="MoreTool"
@@ -1060,18 +1089,17 @@
                     Click="MoreTool_Click"
                     Content="{firebrowser:FluentIcon Glyph=&#xE712;}"
                     Flyout="{StaticResource MoreFlyout}"
-                    Style="{ThemeResource QuietButtonStyle}" />
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Padding="8" />
             </StackPanel>
         </Grid>
         <InfoBar
             MaxWidth="480"
-            Margin="5,0,25,5"
+            Margin="25"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
-            BorderBrush="{ThemeResource AppBarBorderThemeBrush}"
-            BorderThickness="1.5"
-            Foreground="{ThemeResource AcrylicBackgroundFillColorDefaultInverseBrush}">
+            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
             <interactivity:Interaction.Behaviors>
                 <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
             </interactivity:Interaction.Behaviors>

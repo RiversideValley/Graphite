@@ -15,185 +15,187 @@
     xmlns:local="using:Riverside.Graphite.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:provider="using:Riverside.Graphite.Services.Models"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="NewTab_Loaded"
     mc:Ignorable="d">
 
     <Grid
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Margin="4"
+        CornerRadius="6">
+        <Grid
         x:Name="GridMain"
         x:FieldModifier="Public"
         Background="{x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}">
-        <Grid x:Name="GridImage" Background="{x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}" />
-        <Button
-            x:Name="Edit"
-            x:Uid="NewTabEditButton"
-            Margin="0,31,96,0"
-            Padding="6"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            button:ButtonAnimationHelper.AddPointerOverAnimation="True"
-            button:ButtonAnimationHelper.AddPressedAnimation="True"
-            Content="{firebrowser:FluentIcon Glyph=&#xE70F;}"
-            Style="{ThemeResource QuietButtonStyle}">
-            <Button.Flyout>
-                <Flyout Placement="Bottom">
-                    <StackPanel>
-                        <ToggleSwitch x:Name="Type" Toggled="Type_Toggled">
-                            Enable Auto Fill TextBox
-                        </ToggleSwitch>
-                        <ToggleSwitch x:Name="Mode" Toggled="Mode_Toggled">
-                            Enable Light Mode
-                        </ToggleSwitch>
-                        <ToggleSwitch
-                            x:Name="FavoritesTimeToggle"
-                            IsOn="{x:Bind ViewModel.IsFavoriteExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Toggled="FavoritesToggle_Toggled">
-                            Expand Favorites
-                        </ToggleSwitch>
-                        <ToggleSwitch
-                            x:Name="HistoryToggle"
-                            IsOn="{x:Bind ViewModel.IsHistoryExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Toggled="HistoryToggle_Toggled">
-                            Expand History
-                        </ToggleSwitch>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-        <Button
-            x:Name="Eay"
-            x:Uid="NewTabEayButton"
-            Margin="0,31,64,0"
-            Padding="6"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            button:ButtonAnimationHelper.AddPointerOverAnimation="True"
-            button:ButtonAnimationHelper.AddPressedAnimation="True"
-            Content="{firebrowser:FluentIcon Glyph=&#xE890;}"
-            Style="{ThemeResource QuietButtonStyle}">
-            <Button.Flyout>
-                <Flyout Placement="Bottom">
-                    <StackPanel>
-                        <ToggleSwitch
+            <Grid x:Name="GridImage" Background="{x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}" />
+
+            <Border Height="250" VerticalAlignment="Top">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0, 0" EndPoint="0, 1" MappingMode="RelativeToBoundingBox">
+                        <GradientStop Color="#88000000"/>
+                        <GradientStop Color="#00000000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right" Margin="32">
+                <Button x:Name="Edit"
+                    Padding="6"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Content="{firebrowser:FluentIcon Glyph=&#xE70F;}"
+                    Background="Transparent"
+                    BorderBrush="Transparent">
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel>
+                                <ToggleSwitch x:Name="Type" Toggled="Type_Toggled">
+                                    Enable Auto Fill TextBox
+                                </ToggleSwitch>
+                                <ToggleSwitch x:Name="Mode" Toggled="Mode_Toggled">
+                                    Enable Light Mode
+                                </ToggleSwitch>
+                                <ToggleSwitch x:Name="FavoritesTimeToggle"
+                                          IsOn="{x:Bind ViewModel.IsFavoriteExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Toggled="FavoritesToggle_Toggled">
+                                    Expand Favorites
+                                </ToggleSwitch>
+                                <ToggleSwitch x:Name="HistoryToggle"
+                                          IsOn="{x:Bind ViewModel.IsHistoryExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Toggled="HistoryToggle_Toggled">
+                                    Expand History
+                                </ToggleSwitch>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="Eay"
+                    x:Uid="NewTabEayButton"
+                    Padding="6"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Content="{firebrowser:FluentIcon Glyph=&#xE890;}"
+                    Background="Transparent"
+                    BorderBrush="Transparent">
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel>
+                                <ToggleSwitch
                             x:Name="DateTimeToggle"
                             IsOn="{x:Bind ViewModel.NtpTimeEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="DateTimeToggle_Toggled">
-                            Show Clock
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show Clock
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="FloatingBox"
                             IsEnabled="True"
                             IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="FloatingBox_Toggled"
                             Visibility="Collapsed">
-                            Show Logo
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show Logo
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="HistoryVisible"
                             IsOn="{x:Bind ViewModel.IsHistoryCardEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="HistoryVisible_Toggled">
-                            Show History
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show History
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="FavsVisible"
                             IsOn="{x:Bind ViewModel.IsFavoriteCardEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="FavsVisible_Toggled">
-                            Show Favorites
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show Favorites
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="SearchVisible"
                             IsOn="{x:Bind ViewModel.IsSearchBoxEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="SearchVisible_Toggled">
-                            Show Search Engine
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show Search Engine
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="TrendingVisible"
                             IsOn="{x:Bind ViewModel.IstrendingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="TrendingVisible_Toggled">
-                            Show Trending 
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show Trending
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="SelectBar"
                             IsOn="{x:Bind ViewModel.IsSelectBarEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="SelectBar_Toggled">
-                            Show Select Bar
-                        </ToggleSwitch>
-                        <ToggleSwitch
+                                    Show Select Bar
+                                </ToggleSwitch>
+                                <ToggleSwitch
                             x:Name="LogoToggle"
                             IsOn="{x:Bind ViewModel.IslogoEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Toggled="LogoToggle_Toggled">
-                            Show Logo
-                        </ToggleSwitch>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-        <Button
-            x:Name="SetTab"
-            x:Uid="NewTabSettingsButton"
-            Margin="0,31,32,0"
-            Padding="6"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            button:ButtonAnimationHelper.AddPointerOverAnimation="True"
-            button:ButtonAnimationHelper.AddPressedAnimation="True"
-            Content="{firebrowser:FluentIcon Glyph=&#xE713;}"
-            Style="{ThemeResource QuietButtonStyle}">
-            <Button.Flyout>
-                <Flyout Placement="Bottom">
-                    <StackPanel Background="Transparent">
-                        <GridView
+                                    Show Logo
+                                </ToggleSwitch>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="SetTab"
+                    x:Uid="NewTabSettingsButton"
+                    Padding="6"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Content="{firebrowser:FluentIcon Glyph=&#xE713;}"
+                    Background="Transparent"
+                    BorderBrush="Transparent">
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel Background="Transparent">
+                                <GridView
                             x:Name="GridSelect"
                             Background="{ThemeResource SystemControlBackgroundTransparentRevealBorderBrush}"
                             SelectionChanged="GridSelect_SelectionChanged">
-                            <GridViewItem
+                                    <GridViewItem
                                 x:Name="NoneGrid"
                                 Padding="12"
                                 x:FieldModifier="Public"
                                 Tag="None">
-                                <StackPanel>
-                                    <Image Width="100" Source="{dllimg:ImageLoader ImageName=BackgroundNone.png}" />
-                                    <TextBlock
+                                        <StackPanel>
+                                            <Image Width="100" Source="{dllimg:ImageLoader ImageName=BackgroundNone.png}" />
+                                            <TextBlock
                                         x:Uid="NewTabBackgroundNone"
                                         Margin="0,8,0,0"
                                         HorizontalAlignment="Center">
                                         None
-                                    </TextBlock>
-                                </StackPanel>
-                            </GridViewItem>
-                            <GridViewItem
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </GridViewItem>
+                                    <GridViewItem
                                 x:Name="FsGrid"
                                 Padding="12"
                                 x:FieldModifier="Public"
                                 Tag="Featured">
-                                <StackPanel>
-                                    <Image Width="100" Source="{dllimg:ImageLoader ImageName=BackgroundBing.png}" />
-                                    <TextBlock
+                                        <StackPanel>
+                                            <Image Width="100" Source="{dllimg:ImageLoader ImageName=BackgroundBing.png}" />
+                                            <TextBlock
                                         x:Uid="NewTabBackgroundBing"
                                         Margin="0,8,0,0"
                                         HorizontalAlignment="Center">
                                         Bind Image
-                                    </TextBlock>
-                                </StackPanel>
-                            </GridViewItem>
-                            <GridViewItem
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </GridViewItem>
+                                    <GridViewItem
                                 x:Name="CsGrid"
                                 Padding="12"
                                 x:FieldModifier="Public"
                                 Tag="Custom">
-                                <StackPanel>
-                                    <Image Width="100" Source="{dllimg:ImageLoader ImageName=BackgroundCostum.png}" />
-                                    <TextBlock
+                                        <StackPanel>
+                                            <Image Width="100" Source="{dllimg:ImageLoader ImageName=BackgroundCostum.png}" />
+                                            <TextBlock
                                         x:Uid="NewTabBackgroundCostum"
                                         Margin="0,8,0,0"
                                         HorizontalAlignment="Center">
                                         Custom
-                                    </TextBlock>
-                                </StackPanel>
-                            </GridViewItem>
-                        </GridView>
-                        <TextBlock FontWeight="Bold" Text="New-Tab Background Color" />
-                        <Button
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </GridViewItem>
+                                </GridView>
+                                <TextBlock FontWeight="Bold" Text="New-Tab Background Color" />
+                                <Button
                             x:Name="NewColor"
                             Width="Auto"
                             Height="Auto"
@@ -202,20 +204,20 @@
                             Content="{firebrowser:FluentIcon Glyph=&#xE790;}"
                             IsEnabled="True"
                             Style="{ThemeResource QuietButtonStyle}">
-                            <Button.Flyout>
-                                <Flyout>
-                                    <ColorPicker
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <ColorPicker
                                         x:Name="NewColorPicker"
                                         Margin="0,5,0,0"
                                         x:FieldModifier="Public"
                                         ColorChanged="NewColor_TextChanged"
                                         IsDoubleTapEnabled="True"
                                         IsMoreButtonVisible="True" />
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                        <TextBlock FontWeight="Bold" Text="Ntp Text Color" />
-                        <Button
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <TextBlock FontWeight="Bold" Text="Ntp Text Color" />
+                                <Button
                             x:Name="NtpColorBox"
                             Width="Auto"
                             Height="Auto"
@@ -224,19 +226,19 @@
                             Content="{firebrowser:FluentIcon Glyph=&#xE790;}"
                             IsEnabled="True"
                             Style="{ThemeResource QuietButtonStyle}">
-                            <Button.Flyout>
-                                <Flyout>
-                                    <ColorPicker
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <ColorPicker
                                         x:Name="NtpColorPicker"
                                         Margin="0,5,0,0"
                                         x:FieldModifier="Public"
                                         ColorChanged="NtpColorPicker_ColorChanged"
                                         IsDoubleTapEnabled="True"
                                         IsMoreButtonVisible="True" />
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                        <Button
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button
                             x:Name="Download"
                             Width="Auto"
                             Margin="0,5,0,0"
@@ -246,69 +248,70 @@
                             Click="Download_Click"
                             Content="{firebrowser:FluentIcon Glyph=&#xE78C;}"
                             Style="{ThemeResource QuietButtonStyle}">
-                            <Button.Flyout>
-                                <Flyout Placement="Bottom">
-                                    <TextBlock
+                                    <Button.Flyout>
+                                        <Flyout Placement="Bottom">
+                                            <TextBlock
                                         LineStackingStrategy="MaxHeight"
                                         MaxLines="50"
                                         Text="Download Bing Daily Image To Documents"
                                         TextLineBounds="Full"
                                         TextWrapping="Wrap" />
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
 
-        <Grid
+            <Grid
             x:Name="GridTrending"
-            Width="150"
+            Width="250"
             Height="Auto"
             Margin="8"
             Padding="8"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
+            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
-            CornerRadius="6"
+            CornerRadius="4"
             Translation="0,0,32"
             Visibility="{x:Bind ViewModel.IsTrendingVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-            <TextBlock
+                <TextBlock
                 Grid.Row="0"
-                Margin="0,0,0,8"
+                Margin="12, 8"
                 HorizontalAlignment="Left"
                 FontWeight="SemiBold"
-                Foreground="Black"
+                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                 Style="{ThemeResource SubtitleTextBlockStyle}">
-                Trending Now ( Unavailable Temperoraily Until Next Update )
-            </TextBlock>
-
-            <ListView
+                Trending Now
+                </TextBlock>
+                <InfoBar IsOpen="True" Margin="0, 50, 0, 0" Title="Unavailable temperoraily until the next update" Severity="Error" IsClosable="False"/>
+                <ListView
                 x:Name="ItemTrending"
                 Grid.Row="1"
                 Width="150"
                 Padding="-10,0,0,0"
                 ItemsSource="{x:Bind ViewModel.TrendingItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectionChanged="TrendingSelectionChanged">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel
                             Margin="0,2,0,2"
                             Padding="2.5"
                             BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
                             BorderThickness=".5"
                             CornerRadius="4"
                             Orientation="Vertical">
-                            <TextBlock
+                                <TextBlock
                                 Margin="0,2,0,2"
                                 Padding="4"
                                 FontStyle="Oblique"
@@ -316,28 +319,28 @@
                                 MaxLines="3"
                                 Text="{Binding name}"
                                 TextWrapping="WrapWholeWords" />
-                            <Image
+                                <Image
                                 Width="100"
                                 Height="100"
                                 HorizontalAlignment="Center"
                                 Source="{Binding url, Mode=OneWay}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
 
-        <Grid
+            <Grid
             x:Name="NtpGrid"
             Margin="0,25,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             RowSpacing="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
                 x:Name="NtpTime"
                 Grid.Row="0"
                 FontSize="68"
@@ -346,16 +349,16 @@
                 Text="{x:Bind ViewModel.NtpTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextAlignment="Center"
                 Visibility="{x:Bind ViewModel.NtpCoreVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
+                <TextBlock
                 x:Name="NtpDate"
                 Grid.Row="1"
                 HorizontalAlignment="Center"
                 Foreground="{x:Bind ViewModel.BrushNtp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Text="{x:Bind ViewModel.NtpDateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Visibility="{x:Bind ViewModel.NtpCoreVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </Grid>
+            </Grid>
 
-        <Grid
+            <Grid
             x:Name="BigGrid"
             Width="Auto"
             MinWidth="350"
@@ -365,99 +368,92 @@
             Padding="15"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
-            BorderBrush="Black"
-            BorderThickness="1.5"
-            CornerRadius="6"
-            RowSpacing="24"
+            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            RowSpacing="12"
             Visibility="{x:Bind ViewModel.IsLogoVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <StackPanel
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel
                 Grid.Row="0"
                 Orientation="Vertical"
                 Spacing="2">
-                <TextBlock
-                    FontSize="{ThemeResource TextStyleLargeFontSize}"
-                    Text="Search or enter an address"
-                    Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <AutoSuggestBox
+                    <AutoSuggestBox
                     x:Name="NewTabSearchBox"
                     x:Uid="SearchBar"
                     Grid.Row="1"
                     Width="Auto"
                     Height="40"
+                    VerticalContentAlignment="Center"
                     MinWidth="350"
                     HorizontalAlignment="Stretch"
                     x:FieldModifier="Public"
-                    Background="Transparent"
-                    BorderBrush="{ThemeResource SystemAltHighColor}"
-                    BorderThickness="1,1,1,1"
-                    CornerRadius="5"
+                    CornerRadius="20"
+                        Margin="0, 4, 0, 0"
+                    BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                     IsHoldingEnabled="True"
                     PreviewKeyDown="NewTabSearchBox_PreviewKeyDown"
                     QuerySubmitted="NewTabSearchBox_QuerySubmittedAsync"
                     SuggestionChosen="QueryThis_SuggestionChosen"
                     TextChanged="QueryThis_TextChanged"
                     Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <AutoSuggestBox.Resources>
-                        <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="{ThemeResource SystemAltHighColor}" />
-                        <SolidColorBrush x:Key="TextControlButtonForeground" Color="{ThemeResource SystemAltHighColor}" />
-                    </AutoSuggestBox.Resources>
-                    <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate x:DataType="history:HistoryItem">
-                            <ContentPresenter>
-                                <Grid>
-                                    <StackPanel
-                                        Margin="{StaticResource XXSmallLeftTopRightBottomMargin}"
+                        <AutoSuggestBox.QueryIcon>
+                            <FontIcon Glyph="&#xE721;" FontSize="16"/>
+                        </AutoSuggestBox.QueryIcon>
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate x:DataType="history:HistoryItem">
+                                <ContentPresenter>
+                                    <Grid>
+                                        <StackPanel
                                         Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
                                         VerticalAlignment="Top"
-                                        BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
-                                        BorderThickness="2"
                                         CornerRadius="8"
                                         Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal" Spacing="2">
-                                            <Image
+                                            <StackPanel Orientation="Horizontal" Spacing="2">
+                                                <Image
                                                 x:Name="HistoryWebView"
                                                 Width="24"
                                                 Height="24"
                                                 Margin="{StaticResource XXSmallLeftTopRightBottomMargin}"
                                                 HorizontalAlignment="Left"
                                                 Source="{Binding ImageSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <TextBlock
+                                                <StackPanel>
+                                                    <TextBlock
                                                 FontSize="14"
                                                 FontWeight="ExtraBold"
-                                                Foreground="ForestGreen"
                                                 Text="{Binding Title, Mode=OneWay}"
                                                 TextWrapping="WrapWholeWords"
                                                 ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}" />
-                                        </StackPanel>
-                                        <TextBlock
-                                            Foreground="BlanchedAlmond"
+                                                    <TextBlock
+                                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                             Text="{Binding Url, Mode=OneWay}"
                                             TextWrapping="NoWrap" />
-                                        <TextBlock
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <TextBlock
                                             Padding="2"
+                                                Foreground="{ThemeResource TextFillColorDisabledBrush}"
                                             HorizontalAlignment="Right"
                                             FontSize="12"
-                                            Foreground="OrangeRed"
                                             Text="{Binding LastVisitTime}"
                                             TextWrapping="NoWrap" />
-                                    </StackPanel>
-                                </Grid>
-                            </ContentPresenter>
-                        </DataTemplate>
-                    </AutoSuggestBox.ItemTemplate>
-                </AutoSuggestBox>
-                <SelectorBar Visibility="{x:Bind ViewModel.IsselectBarVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <SelectorBarItem>
-                        <Button
+                                        </StackPanel>
+                                    </Grid>
+                                </ContentPresenter>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
+                    <SelectorBar Visibility="{x:Bind ViewModel.IsselectBarVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <SelectorBarItem>
+                            <Button
                             x:Name="His"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -467,17 +463,17 @@
                             Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                             Tag="History">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE81C;" />
-                                <TextBlock Margin="10,0,0,0" Text="History" />
-                            </StackPanel>
-                        </Button>
-                    </SelectorBarItem>
-                    <SelectorBarItem>
-                        <Button
+                                    <TextBlock Margin="10,0,0,0" Text="History" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
+                        <SelectorBarItem>
+                            <Button
                             x:Name="Fav"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -487,17 +483,17 @@
                             Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                             Tag="Favorites">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE728;" />
-                                <TextBlock Margin="10,0,0,0" Text="Favorites" />
-                            </StackPanel>
-                        </Button>
-                    </SelectorBarItem>
-                    <SelectorBarItem>
-                        <Button
+                                    <TextBlock Margin="10,0,0,0" Text="Favorites" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
+                        <SelectorBarItem>
+                            <Button
                             x:Name="Down"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -507,17 +503,17 @@
                             Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                             Tag="Downloads">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE896;" />
-                                <TextBlock Margin="10,0,0,0" Text="Downloads" />
-                            </StackPanel>
-                        </Button>
-                    </SelectorBarItem>
-                    <SelectorBarItem>
-                        <Button
+                                    <TextBlock Margin="10,0,0,0" Text="Downloads" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
+                        <SelectorBarItem>
+                            <Button
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
@@ -525,17 +521,17 @@
                             Command="{x:Bind ViewModel.ProtocolHandlerCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                             Tag="Settings">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE713;" />
-                                <TextBlock Margin="10,0,0,0" Text="Settings" />
-                            </StackPanel>
-                        </Button>
-                    </SelectorBarItem>
-                    <SelectorBarItem>
-                        <Button
+                                    <TextBlock Margin="10,0,0,0" Text="Settings" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
+                        <SelectorBarItem>
+                            <Button
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
@@ -543,89 +539,91 @@
                             Command="{x:Bind ViewModel.LoginsCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                             Tag="Settings">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xEC25;" />
-                                <TextBlock Margin="10,0,0,0" Text="Logins" />
-                            </StackPanel>
-                        </Button>
-                    </SelectorBarItem>
-                    <SelectorBarItem>
-                        <Button
+                                    <TextBlock Margin="10,0,0,0" Text="Logins" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
+                        <SelectorBarItem>
+                            <Button
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
                             BorderBrush="Transparent"
                             Command="{x:Bind ViewModel.ChatCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xe8f2;" />
-                                <TextBlock Margin="10,0,0,0" Text="Chat" />
-                            </StackPanel>
-                        </Button>
-                    </SelectorBarItem>
-                </SelectorBar>
-            </StackPanel>
-            <labs:SettingsCard
+                                    <TextBlock Margin="10,0,0,0" Text="Chat" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
+                    </SelectorBar>
+                </StackPanel>
+                <labs:SettingsCard
                 Grid.Row="2"
-                Width="Auto"
                 MinWidth="500"
                 Margin="1"
-                HorizontalAlignment="Center"
-                Background="{ThemeResource DesktopAcrylicTransparentBrush}"
-                BorderBrush="Black"
+                HorizontalAlignment="Stretch"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="5"
                 Visibility="{x:Bind ViewModel.IsSearchVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <labs:SettingsCard.Header>
-                    Search Engine
-                </labs:SettingsCard.Header>
-                <labs:SettingsCard.HeaderIcon>
-                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE721;" />
-                </labs:SettingsCard.HeaderIcon>
-                <ComboBox
+                    <labs:SettingsCard.Header>
+                        Search Engine
+                    </labs:SettingsCard.Header>
+                    <labs:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE721;" />
+                    </labs:SettingsCard.HeaderIcon>
+                    <ComboBox
                     x:Name="SearchengineSelection"
                     HorizontalAlignment="Right"
                     ItemsSource="{x:Bind provider:SearchProviders.ProvidersList}"
                     SelectedItem="{x:Bind ViewModel.SearchProvider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectionChanged="SearchengineSelection_SelectionChanged">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="provider:SearchProviders">
-                            <Grid>
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <Image
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="provider:SearchProviders">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <Image
                                         Width="24"
                                         Height="24"
                                         Source="{Binding Image}" />
-                                    <TextBlock
+                                        <TextBlock
                                         Padding="4"
                                         VerticalAlignment="Center"
                                         Text="{Binding ProviderName}"
                                         TextWrapping="NoWrap" />
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </labs:SettingsCard>
-            <StackPanel
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </labs:SettingsCard>
+                <Grid
                 Grid.Row="3"
                 Width="Auto"
                 MinWidth="250"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Orientation="Horizontal">
-                <labs:SettingsExpander
+                ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <labs:SettingsExpander
                     x:Name="FavoritesCard"
-                    Width="Auto"
-                    MinWidth="250"
-                    Margin="5"
-                    BorderBrush="Black"
+                    VerticalAlignment="Top"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     Description="Favorites"
                     Header="My Favorites"
@@ -633,13 +631,13 @@
                     IsExpanded="{x:Bind ViewModel.IsFavoriteExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{x:Bind ViewModel.IsFavoritesVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                    <labs:SettingsExpander.Items>
-                        <labs:SettingsCard
+                        <labs:SettingsExpander.Items>
+                            <labs:SettingsCard
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             Background="{ThemeResource DesktopAcrylicTransparentBrush}"
                             CornerRadius="5">
-                            <ListView
+                                <ListView
                                 Height="180"
                                 MinWidth="250"
                                 Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
@@ -647,45 +645,46 @@
                                 BorderThickness="1"
                                 ItemsSource="{x:Bind ViewModel.FavoriteItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectionChanged="FavoritesListView_SelectionChanged">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="firebrowserfavorites:FavItem">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="firebrowserfavorites:FavItem">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image
                                                 Height="24"
                                                 HorizontalAlignment="Left"
                                                 Source="{Binding IconUrlPath, Mode=OneWay}"
                                                 Stretch="UniformToFill" />
-                                            <AppBarSeparator />
-                                            <TextBlock
+                                                <AppBarSeparator />
+                                                <TextBlock
                                                 Text="{Binding Title}"
                                                 TextWrapping="WrapWholeWords"
                                                 ToolTipService.ToolTip="{Binding Title, Mode=OneWay}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </labs:SettingsCard>
-                    </labs:SettingsExpander.Items>
-                </labs:SettingsExpander>
-                <labs:SettingsExpander
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </labs:SettingsCard>
+                        </labs:SettingsExpander.Items>
+                    </labs:SettingsExpander>
+                    <labs:SettingsExpander
                     x:Name="HistoryCard"
-                    Width="Auto"
-                    MinWidth="250"
-                    BorderBrush="Black"
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     Description="Histories"
                     Header="My History"
                     HeaderIcon="{firebrowser:FluentIcon Glyph=&#xE81C;}"
                     IsExpanded="{x:Bind ViewModel.IsHistoryExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <!--  To-Do Binding Uno Twoway error  -->
-                    <labs:SettingsExpander.Items>
-                        <labs:SettingsCard
+                        <!--  To-Do Binding Uno Twoway error  -->
+                        <labs:SettingsExpander.Items>
+                            <labs:SettingsCard
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             Background="{ThemeResource DesktopAcrylicTransparentBrush}"
                             CornerRadius="5">
-                            <ListView
+                                <ListView
                                 Height="180"
                                 MinWidth="250"
                                 Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
@@ -693,49 +692,50 @@
                                 BorderThickness="1"
                                 ItemsSource="{x:Bind ViewModel.HistoryItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 SelectionChanged="ListView_SelectionChanged">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="history:HistoryItem">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="history:HistoryItem">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image
                                                 Height="24"
                                                 HorizontalAlignment="Left"
                                                 Source="{x:Bind ImageSource, Mode=OneWay}"
                                                 Stretch="UniformToFill" />
-                                            <AppBarSeparator />
-                                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" TextWrapping="WrapWholeWords" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </labs:SettingsCard>
-                    </labs:SettingsExpander.Items>
-                </labs:SettingsExpander>
-            </StackPanel>
-            <StackPanel
+                                                <AppBarSeparator />
+                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </labs:SettingsCard>
+                        </labs:SettingsExpander.Items>
+                    </labs:SettingsExpander>
+                </Grid>
+                <StackPanel
                 Grid.Row="4"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 Orientation="Horizontal"
                 Spacing="8">
-                <Image
+                    <Image
                     Width="24"
                     Height="24"
                     Source="{dllimg:ImageLoader ImageName=LogoApp.png}" />
-                <TextBlock
+                    <TextBlock
                     x:Uid="AppName"
                     VerticalAlignment="Center"
                     Style="{ThemeResource BodyStrongTextBlockStyle}" />
-            </StackPanel>
-        </Grid>
+                </StackPanel>
+            </Grid>
 
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="640" />
-                    </VisualState.StateTriggers>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="640" />
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
     </Grid>
 </Page>
