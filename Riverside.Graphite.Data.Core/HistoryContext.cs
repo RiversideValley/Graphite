@@ -19,7 +19,7 @@ public class HistoryContext : DbContext
 
 	public string ConnectionPath { get; set; }
 
-	public HistoryContext(string username = "john")
+	public HistoryContext(string username)
 	{
 		ConnectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Database", "History.db");
 	}
