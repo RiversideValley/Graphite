@@ -23,6 +23,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\History\20231010_AddDbHistoryItem.cs" />
+  </ItemGroup>
 
   <ItemGroup>
       <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
@@ -51,7 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\History\" />
     <Folder Include="Migrations\Settings\" />
     <Folder Include="Migrations\Settings\" />
   </ItemGroup>

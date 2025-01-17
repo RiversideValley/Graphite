@@ -25,24 +25,6 @@ namespace Riverside.Graphite.Data.Core.Migrations.History
                 });
 
             migrationBuilder.CreateTable(
-                name: "Urls",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    last_visit_time = table.Column<string>(type: "TEXT", nullable: true),
-                    url = table.Column<string>(type: "TEXT", nullable: true),
-                    title = table.Column<string>(type: "TEXT", nullable: true),
-                    visit_count = table.Column<int>(type: "INTEGER", nullable: false),
-                    typed_count = table.Column<int>(type: "INTEGER", nullable: false),
-                    hidden = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Urls", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Collections",
                 columns: table => new
                 {
@@ -89,8 +71,6 @@ namespace Riverside.Graphite.Data.Core.Migrations.History
             migrationBuilder.DropTable(
                 name: "CollectionNames");
 
-            migrationBuilder.DropTable(
-                name: "Urls");
         }
     }
 }

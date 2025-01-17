@@ -70,18 +70,26 @@ namespace Riverside.Graphite.Pages
 
 		private async Task AfterComplete()
 		{
+			
 			if (IsIncognitoModeEnabled) return;
-
 			await Task.Delay(500);
-			User username = AuthService.CurrentUser;
-			string source = WebViewElement.Source.ToString();
-			string title = WebViewElement.CoreWebView2?.DocumentTitle;
+			try
+			{
+				User username = AuthService.CurrentUser;
+				string source = WebViewElement.Source.ToString();
+				string title = WebViewElement.CoreWebView2?.DocumentTitle;
 
-			var dbContext = new HistoryActions(username.Username);
-			await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
+				var dbContext = new HistoryActions(username.Username);
+				await dbContext.InsertHistoryItem(source, title, 0, 0, 0);
 
-			if (source is not null)
-				UpdateSecurityInfo(source);
+				if (source is not null)
+					UpdateSecurityInfo(source);
+			}
+			catch (Exception e)
+			{
+				ExceptionLogger.LogException(e);	
+			}
+			
 		}
 
 		private void UpdateSecurityInfo(string source)

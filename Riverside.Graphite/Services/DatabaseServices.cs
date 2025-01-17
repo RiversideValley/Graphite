@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using SQLitePCL;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Services;
@@ -92,7 +94,11 @@ public class DatabaseServices : IDatabaseService
 			}
 			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
 			{
-				_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
+				if (settingsActions.SettingsContext.Database.GetPendingMigrations().Any())
+				{
+					await settingsActions.SettingsContext.Database.MigrateAsync();
+				}
+					_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
 			}
 		}
 		catch (Exception ex)
@@ -110,7 +116,7 @@ public class DatabaseServices : IDatabaseService
 			}
 			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
 			{
-				if (historyActions.HistoryContext.Database.HasPendingModelChanges())
+				if (historyActions.HistoryContext.Database.GetPendingMigrations().Any())
 				{
 					await historyActions.HistoryContext.Database.MigrateAsync();
 				}
