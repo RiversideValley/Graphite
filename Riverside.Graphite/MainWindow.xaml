@@ -15,7 +15,7 @@
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt" />
+        <MicaBackdrop/>
     </Window.SystemBackdrop>
 
     <Window.Title>
@@ -66,11 +66,14 @@
                 x:Name="MoreFlyout"
                 x:FieldModifier="Public"
                 Placement="Bottom">
-                <StackPanel Width="250">
+                <Flyout.SystemBackdrop>
+                    <MicaBackdrop/>
+                </Flyout.SystemBackdrop>
+                <StackPanel Width="250" Margin="-12, -12">
                     <StackPanel Name="menuheader">
                         <Button
                             x:Name="MainUser"
-                            Margin="0,0,0,10"
+                            Margin="0, 4, 0, 10"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
@@ -143,10 +146,10 @@
                             </Frame>
                         </StackPanel>
                         <Border
-                            Margin="10,5,10,10"
-                            BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
-                            BorderThickness="1"
-                            Opacity="0.3" />
+                            Margin="-8, 4"
+                            Opacity="0.5"
+                            Background="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                            Height="1"/>
                         <Button
                             x:Name="NewTab"
                             Margin="0"
@@ -160,7 +163,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xEC6C;" />
                                 <TextBlock Margin="10,0,0,0" Text="New-Tab" />
                             </StackPanel>
@@ -179,7 +182,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xF57C;" />
                                 <TextBlock Margin="10,0,0,0" Text="New-Split-Tab" />
                             </StackPanel>
@@ -195,7 +198,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE737;" />
                                 <TextBlock Margin="10,0,0,0" Text="New-Window" />
                             </StackPanel>
@@ -211,16 +214,16 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE727;" />
                                 <TextBlock Margin="10,0,0,0" Text="New-Private" />
                             </StackPanel>
                         </Button>
                         <Border
-                            Margin="10,10"
-                            BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
-                            BorderThickness="1"
-                            Opacity="0.3" />
+                            Margin="-8, 4"
+                            Opacity="0.5"
+                            Background="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                            Height="1"/>
                         <Button
                             x:Name="His"
                             HorizontalAlignment="Stretch"
@@ -233,7 +236,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE81C;" />
                                 <TextBlock Margin="10,0,0,0" Text="History" />
                             </StackPanel>
@@ -250,7 +253,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE728;" />
                                 <TextBlock Margin="10,0,0,0" Text="Favorites" />
                             </StackPanel>
@@ -267,16 +270,16 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE896;" />
                                 <TextBlock Margin="10,0,0,0" Text="Downloads" />
                             </StackPanel>
                         </Button>
                         <Border
-                            Margin="10,10"
-                            BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
-                            BorderThickness="1"
-                            Opacity="0.3" />
+                            Margin="-8, 4"
+                            Opacity="0.5"
+                            Background="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                            Height="1"/>
                         <Button
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -285,7 +288,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE749;" />
                                 <TextBlock Margin="10,0,0,0" Text="Print" />
                             </StackPanel>
@@ -302,7 +305,7 @@
                                 <FontIcon
                                     x:Name="Icon"
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE740;" />
                                 <TextBlock
                                     x:Name="TextFull"
@@ -320,16 +323,16 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="Segoe Fluent Icons"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE72D;" />
                                 <TextBlock Margin="10,0,0,0" Text="Share" />
                             </StackPanel>
                         </Button>
                         <Border
-                            Margin="10,10"
-                            BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
-                            BorderThickness="1"
-                            Opacity="0.3" />
+                            Margin="-8, 4"
+                            Opacity="0.5"
+                            Background="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                            Height="1"/>
                         <Button
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -352,7 +355,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE8e1;" />
                                 <TextBlock Margin="10,0,0,0" Text="Rate Us" />
                             </StackPanel>
@@ -367,7 +370,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xEC7A;" />
                                 <TextBlock Margin="10,0,0,0" Text="Dev Tools" />
                             </StackPanel>
@@ -382,7 +385,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon
                                     FontFamily="{StaticResource FluentIcons}"
-                                    FontSize="18"
+                                    FontSize="16"
                                     Glyph="&#xE713;" />
                                 <TextBlock Margin="10,0,0,0" Text="Settings" />
                             </StackPanel>
@@ -455,13 +458,7 @@
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Click="SearchHistoryMenuFlyout_Click">
-                                        <Viewbox
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <SymbolIcon Symbol="Find" />
-                                        </Viewbox>
+                                        <FontIcon Glyph="&#xE721;" FontSize="16"/>
                                     </Button>
                                     <Button
                                         x:Name="HistoryFilterButton"
@@ -499,13 +496,7 @@
                                                 </MenuFlyoutItem>
                                             </MenuFlyout>
                                         </Button.Flyout>
-                                        <Viewbox
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <SymbolIcon Symbol="Filter" />
-                                        </Viewbox>
+                                        <FontIcon Glyph="&#xE71C;" FontSize="16"/>
                                     </Button>
                                     <Button
                                         x:Name="MenuHistoryMenuFlyout"
@@ -535,13 +526,7 @@
                                                 </MenuFlyoutItem>
                                             </MenuFlyout>
                                         </Button.Flyout>
-                                        <Viewbox
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <SymbolIcon Symbol="More" />
-                                        </Viewbox>
+                                        <FontIcon Glyph="&#xE712;" FontSize="16"/>
                                     </Button>
                                 </StackPanel>
                                 <ListView
