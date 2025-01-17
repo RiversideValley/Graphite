@@ -7,7 +7,7 @@ using Riverside.Graphite.Data.Core;
 
 #nullable disable
 
-namespace Riverside.Graphite.Data.Core.Migrations.History
+namespace Riverside.Graphite.Data.Core.Riverside.Graphite.Data.Core.Migrations.History
 {
     [DbContext(typeof(HistoryContext))]
     partial class HistoryContextModelSnapshot : ModelSnapshot

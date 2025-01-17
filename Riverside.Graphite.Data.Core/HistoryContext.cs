@@ -4,8 +4,10 @@
 using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Data.Core;
 
@@ -17,15 +19,18 @@ public class HistoryContext : DbContext
 
 	public string ConnectionPath { get; set; }
 
-	public HistoryContext(string username)
+	public HistoryContext(string username = "john")
 	{
 		ConnectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Database", "History.db");
 	}
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		_ = optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
-	}
+	public static readonly string InformationFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "sql_event_logger.log");
+	
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+        optionsBuilder.LogTo(Console.WriteLine);
+    }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,13 +6,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Riverside.Graphite.Data.Core.Migrations.History
 {
     /// <inheritdoc />
-    public partial class SnapShot_History_Add_CollectionsTables : Migration
+    public partial class Add_Collection_Names : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-			
-			migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable(
                 name: "CollectionNames",
                 columns: table => new
                 {
@@ -72,7 +70,6 @@ namespace Riverside.Graphite.Data.Core.Migrations.History
 
             migrationBuilder.DropTable(
                 name: "CollectionNames");
-
         }
     }
 }

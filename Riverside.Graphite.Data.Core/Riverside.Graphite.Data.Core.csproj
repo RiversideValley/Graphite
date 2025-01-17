@@ -25,6 +25,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Migrations\History\20231010_AddDbHistoryItem.cs" />
+    <Compile Remove="Migrations\History\20250115061509_SnapShot_History_Add_CollectionsTables.cs" />
+    <Compile Remove="Migrations\History\20250115061509_SnapShot_History_Add_CollectionsTables.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
