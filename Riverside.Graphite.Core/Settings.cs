@@ -18,6 +18,7 @@ public class Settings
 		self.StatusBar = true;
 		self.BrowserKeys = true;
 		self.BrowserScripts = true;
+		self.BackDrop = "Mica";
 		self.Useragent = "WebView";
 		self.LightMode = false;
 		self.OpSw = true;
@@ -74,7 +75,7 @@ public class Settings
 		self.NewTabSelectorBarVisible = true;
 		self.ConfirmCloseDlg = false;
 		//self.WelcomeMsg = true; //why is this commented out every time code is pushed
-		self.BackDrop = "Mica";
+		
 	}
 
 	[JsonIgnore]
@@ -95,9 +96,9 @@ public class Settings
 		}
 	}
 	public Settings() { }
-
+	
 	[Key]
-	public string PackageName { get; set; }
+    public string PackageName { get; set; }
 	public bool DisableJavaScript { get; set; } // Use "0" for false, "1" for true
 	public bool DisablePassSave { get; set; } // Use "0" for false, "1" for true
 	public bool DisableWebMess { get; set; } // Use "0" for false, "1" for true
@@ -107,9 +108,8 @@ public class Settings
 	public bool StatusBar { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserKeys { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserScripts { get; set; } // Use "0" for false, "1" for true
-	public string Useragent { get; set; }
 	public string BackDrop { get; set; }
-
+	public string Useragent { get; set; }
 	public bool LightMode { get; set; } // Use "0" for false, "1" for true
 	public bool OpSw { get; set; } // Use "0" for false, "1" for true
 	public string EngineFriendlyName { get; set; }

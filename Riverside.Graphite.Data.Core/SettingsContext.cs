@@ -26,6 +26,6 @@ public class SettingsContext : DbContext
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);
-		//modelBuilder.Entity<Settings>().HasData(new Riverside.Graphite.Core.Settings(true).Self);
+		//modelBuilder.Entity<Settings>().HasData(new Riverside.Graphite.Core.Settings(true).Self);20240923053656_InitSettingsModelSnapShot
 	}
 }

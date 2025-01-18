@@ -131,14 +131,14 @@ public class DatabaseServices : IDatabaseService
 
 		try
 		{
-			DownloadActions settingsActions = new(AuthService.CurrentUser.Username);
+			DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
 			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
 			{
-				await settingsActions.DownloadContext.Database.MigrateAsync();
+				await downloadActions.DownloadContext.Database.MigrateAsync();
 			}
 			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
 			{
-				_ = await settingsActions.DownloadContext.Database.CanConnectAsync();
+				_ = await downloadActions.DownloadContext.Database.CanConnectAsync();
 			}
 		}
 		catch (Exception ex)
