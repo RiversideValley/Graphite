@@ -73,7 +73,8 @@ public class Settings
 		self.NewTabHistoryQuick = false;
 		self.NewTabSelectorBarVisible = true;
 		self.ConfirmCloseDlg = false;
-		//self.WelcomeMsg = true;
+		//self.WelcomeMsg = true; //why is this commented out every time code is pushed
+		self.BackDrop = "Mica";
 	}
 
 	[JsonIgnore]
@@ -107,6 +108,8 @@ public class Settings
 	public bool BrowserKeys { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserScripts { get; set; } // Use "0" for false, "1" for true
 	public string Useragent { get; set; }
+	public string BackDrop { get; set; }
+
 	public bool LightMode { get; set; } // Use "0" for false, "1" for true
 	public bool OpSw { get; set; } // Use "0" for false, "1" for true
 	public string EngineFriendlyName { get; set; }

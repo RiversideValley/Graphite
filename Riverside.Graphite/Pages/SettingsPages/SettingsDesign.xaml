@@ -79,5 +79,15 @@
                 <x:String>Custom</x:String>
             </ComboBox>
         </labs:SettingsExpander>
+
+        <labs:SettingsCard Description="Change the Window Backdrop" Header="Window Backdrop">
+            <labs:SettingsCard.HeaderIcon>
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
+            </labs:SettingsCard.HeaderIcon>
+            <ComboBox x:Name="BackDrop">
+                <x:String>Mica</x:String>
+                <x:String>MicaAlt</x:String>
+            </ComboBox>
+        </labs:SettingsCard>
     </StackPanel>
 </Page>

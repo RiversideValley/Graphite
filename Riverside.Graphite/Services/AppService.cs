@@ -9,6 +9,7 @@ using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Update;
+using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
@@ -16,6 +17,7 @@ using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Setup;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -204,7 +206,7 @@ public static class AppService
 			{
 				ActiveWindow = new UserCentral();
 				ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
-				ConfigureWindowAppearance();
+				WindowManagerScale.ConfigureWindowAppearance(ActiveWindow);
 				ActiveWindow.Activate();
 				Windowing.Center(ActiveWindow);
 			}
@@ -223,35 +225,7 @@ public static class AppService
 		return urlParts.FirstOrDefault();
 	}
 
-	public static void ConfigureWindowAppearance()
-	{
-		if (ActiveWindow is null)
-		{
-			return;
-		}
-
-		IntPtr hWnd = WindowNative.GetWindowHandle(ActiveWindow);
-		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
-
-		if (appWindow != null)
-		{
-			appWindow.MoveAndResize(new RectInt32(600, 600, 900, 700));
-			appWindow.MoveInZOrderAtTop();
-			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-			// need this for inquires down line for window placement. 
-			appWindow.Title = "UserCentral";
-			AppWindowTitleBar titleBar = appWindow.TitleBar;
-			Windows.UI.Color btnColor = Colors.Transparent;
-			titleBar.BackgroundColor = btnColor;
-			titleBar.ForegroundColor = Colors.LimeGreen;
-			titleBar.ButtonBackgroundColor = btnColor;
-			titleBar.ButtonInactiveBackgroundColor = btnColor;
-			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-			appWindow.SetIcon("Assets\\AppTiles\\Logo.ico");
-		}
-	}
-
+	
 	private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
 	{
 		string userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);

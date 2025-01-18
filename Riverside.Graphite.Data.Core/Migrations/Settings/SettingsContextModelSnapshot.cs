@@ -207,7 +207,10 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 					b.Property<string>("Useragent")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("PackageName");
+					b.Property<string>("BackDrop")
+					.HasColumnType("TEXT");
+
+					b.HasKey("PackageName");
 
                     b.ToTable("Settings");
                 });
