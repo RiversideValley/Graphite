@@ -36,7 +36,7 @@
                             x:Name="TextBox"
                             Width="{TemplateBinding Width}"
                             Margin="0"
-                            Padding="34, 5, 0, 5"
+                            Padding="34,5,0,5"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             contract7Present:CornerRadius="{TemplateBinding CornerRadius}"

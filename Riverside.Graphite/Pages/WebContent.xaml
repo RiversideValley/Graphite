@@ -215,23 +215,22 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
-        <Grid x:Name="Grid"
-              Margin="4"
-              ui:UIElementExtensions.ClipToBounds="True">
+        <Grid
+            x:Name="Grid"
+            Margin="4"
+            ui:UIElementExtensions.ClipToBounds="True">
             <ProgressBar
                 x:Name="ProgressLoading"
                 Height="2"
                 VerticalAlignment="Top"
                 Canvas.ZIndex="1"
                 IsIndeterminate="True" />
-            <Border
-              ui:UIElementExtensions.ClipToBounds="True"
-              CornerRadius="6">
-            <WebView2
-                x:Name="WebViewElement"
-                x:FieldModifier="public"
-                AllowDrop="True"
-                Canvas.ZIndex="2" />
+            <Border ui:UIElementExtensions.ClipToBounds="True" CornerRadius="6">
+                <WebView2
+                    x:Name="WebViewElement"
+                    x:FieldModifier="public"
+                    AllowDrop="True"
+                    Canvas.ZIndex="2" />
 
             </Border>
         </Grid>
