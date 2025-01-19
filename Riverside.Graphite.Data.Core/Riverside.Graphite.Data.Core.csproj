@@ -60,10 +60,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Schema\PRAGMA_Downloads\" />
-    <Folder Include="Schema\PRAGMA_History\" />
-    <Folder Include="Schema\PRAGMA_Settings\" />
-  </ItemGroup>
 </Project>
