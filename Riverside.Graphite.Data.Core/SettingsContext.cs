@@ -13,7 +13,7 @@ public class SettingsContext : DbContext
 {
 	public DbSet<Settings> Settings { get; set; }
 	public string ConnectionPath { get; set; }
-	public SettingsContext(string username)
+	public SettingsContext(string username = "dizzler")
 	{
 		ConnectionPath = username == null
 			? throw new ArgumentNullException(nameof(username))

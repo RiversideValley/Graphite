@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Riverside.Graphite.Data.Core.Migrations.Settings
 {
     [DbContext(typeof(SettingsContext))]
-    [Migration("20241109230640_InitSettings")]
+    [Migration("20240923053656_InitSettings")]
     partial class InitSettings
     {
         /// <inheritdoc />

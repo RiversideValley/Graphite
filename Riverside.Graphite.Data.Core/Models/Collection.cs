@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,5 +16,8 @@ namespace Riverside.Graphite.Data.Core.Models
 
         [ForeignKey("CollectionNameId")]
         public int CollectionNameId { get; set; } // Navigation Property for CollectionName
-    }
+
+		[NotMapped]
+		public IEnumerable<CollectionName> Children { get; set; }	
+	}
 }
