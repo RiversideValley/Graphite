@@ -1,13 +1,5 @@
-﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
-    "MigrationId" TEXT NOT NULL CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY,
-    "ProductVersion" TEXT NOT NULL
-);
-
-BEGIN TRANSACTION;
-
-CREATE TABLE "IntialSettings" (
-    "PackageName" TEXT NOT NULL CONSTRAINT "PK_InitSettings" PRIMARY KEY,
-    "Gender" TEXT NOT NULL, 
+﻿CREATE TABLE "Settings" (
+    "PackageName" TEXT NOT NULL CONSTRAINT "PK_Settings" PRIMARY KEY,
     "DisableJavaScript" INTEGER NOT NULL,
     "DisablePassSave" INTEGER NOT NULL,
     "DisableWebMess" INTEGER NOT NULL,
@@ -17,6 +9,7 @@ CREATE TABLE "IntialSettings" (
     "StatusBar" INTEGER NOT NULL,
     "BrowserKeys" INTEGER NOT NULL,
     "BrowserScripts" INTEGER NOT NULL,
+    "BackDrop" TEXT NULL,
     "Useragent" TEXT NULL,
     "LightMode" INTEGER NOT NULL,
     "OpSw" INTEGER NOT NULL,
@@ -69,13 +62,7 @@ CREATE TABLE "IntialSettings" (
     "NewTabHistoryDownloads" INTEGER NOT NULL,
     "NewTabHistoryFavorites" INTEGER NOT NULL,
     "NewTabHistoryHistory" INTEGER NOT NULL,
-	"NewTabSelectorBarVisible" INTEGER NOT NULL,
-	"BackDrop" TEXT DEFAULT 'Mica',
-
+    "NewTabSelectorBarVisible" INTEGER NOT NULL
 );
 
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20240923183422_InitialSettingsSnapShot', '9.0.0-preview.7.24405.3');
-
-COMMIT;
 

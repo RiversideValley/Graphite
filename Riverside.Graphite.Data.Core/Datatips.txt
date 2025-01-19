@@ -6,3 +6,5 @@ efcore iterafaces
 https://www.codeproject.com/Tips/5320939/Delete-All-Rows-in-a-Table-in-Entity-Framework
 tip efcore 
 https://khalidabuhakmeh.com/more-efficient-deletes-with-entity-framework-core
+
+to change the id of a migration you must first change the designer of the migration and then the migration itself rename the migration and then update the database
