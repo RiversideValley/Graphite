@@ -21,6 +21,7 @@ public sealed partial class SettingsDesign : Page
 	public void Init()
 	{
 		AutoTog.IsOn = SettingsService.CoreSettings.Auto;
+		BackDrop.SelectedItem = SettingsService.CoreSettings.BackDrop;
 	}
 
 	public void Check()
@@ -117,5 +118,20 @@ public sealed partial class SettingsDesign : Page
 			// Save the modified settings back to the user's settings file
 			await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
 		}
+	}
+
+	private async void BackDrop_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		string selection = e.AddedItems[0].ToString();
+		if (selection == "Mica")
+		{
+			SettingsService.CoreSettings.BackDrop = $"{selection}";
+		}
+		if (selection == "MicaAlt")
+		{
+			SettingsService.CoreSettings.BackDrop = $"{selection}";
+		}
+
+		await SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
 	}
 }

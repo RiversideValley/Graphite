@@ -84,7 +84,7 @@
             <labs:SettingsCard.HeaderIcon>
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE790;" />
             </labs:SettingsCard.HeaderIcon>
-            <ComboBox x:Name="BackDrop">
+            <ComboBox x:Name="BackDrop" SelectionChanged="BackDrop_SelectionChanged">
                 <x:String>Mica</x:String>
                 <x:String>MicaAlt</x:String>
             </ComboBox>

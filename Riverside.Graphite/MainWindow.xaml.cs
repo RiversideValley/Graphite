@@ -3,6 +3,8 @@ using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
 using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -59,8 +61,6 @@ public sealed partial class MainWindow : Window
 
 	//public HubService HubService { get; set; }	
 	public string PicturePath { get; set; }
-
-	public string BackDropType = "Base";
 	public MainWindow()
 	{
 		appWindow = AppWindow;
@@ -157,8 +157,8 @@ public sealed partial class MainWindow : Window
 			e.Handled = true;
 		};
 
-
-
+		MicaBackdropController micaBackdropController = new MicaBackdropController(this);
+		micaBackdropController.SetBackdrop(this);
 
 		appWindow.Closing += AppWindow_Closing;
 	}

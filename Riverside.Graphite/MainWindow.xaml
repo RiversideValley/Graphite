@@ -14,9 +14,6 @@
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
     mc:Ignorable="d">
 
-    <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt" />
-    </Window.SystemBackdrop>
 
     <Window.Title>
         Graphite
