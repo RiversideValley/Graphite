@@ -5,7 +5,7 @@ namespace Riverside.Graphite.Core;
 
 public static class UserFolderManager
 {
-	private static readonly string[] SubFolderNames = ["Settings", "Database", "Browser", "Modules"];
+	private static readonly string[] SubFolderNames = ["Settings", "Database", "Browser", "Modules", "Permissions"];
 
 	public static void CreateUserFolders(User user)
 	{
