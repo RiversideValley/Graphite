@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
+using Riverside.Graphite.Data.Core.Methods;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using SQLitePCL;
 using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,75 +82,130 @@ public class DatabaseServices : IDatabaseService
 
 		return Task.CompletedTask;
 	}
-	public async Task<Task> DatabaseCreationValidation()
-	{
-		if (!AuthService.IsUserAuthenticated)
-		{
-			return Task.FromResult(false);
-		}
 
-		try
-		{
-			SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
-			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-			{
-				await settingsActions.SettingsContext.Database.MigrateAsync();
-			}
-			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-			{
-				if (settingsActions.SettingsContext.Database.GetPendingMigrations().Any())
-				{
-					await settingsActions.SettingsContext.Database.MigrateAsync();
-				}
-					_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
-			}
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-			Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-		}
 
-		try
-		{
-			HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
-			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
-			{
-				await historyActions.HistoryContext.Database.MigrateAsync();
-			}
-			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
-			{
-				if (historyActions.HistoryContext.Database.GetPendingMigrations().Any())
-				{
-					await historyActions.HistoryContext.Database.MigrateAsync();
-				}
-				_ = await historyActions.HistoryContext.Database.CanConnectAsync();
-			}
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-			Console.WriteLine($"Error in Creating History Database: {ex.Message}");
-		}
 
-		try
-		{
-			DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
-			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
-			{
-				await downloadActions.DownloadContext.Database.MigrateAsync();
-			}
-			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
-			{
-				_ = await downloadActions.DownloadContext.Database.CanConnectAsync();
-			}
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-			Console.WriteLine($"Error in Creating Downloads Database: {ex.Message}");
-		}
+	//public async Task<Task> DatabaseCreationValidation()
+	//{
+	//	if (!AuthService.IsUserAuthenticated)
+	//	{
+	//		return Task.FromResult(false);
+	//	}
+
+	//	try
+	//	{
+	//		SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
+	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+	//		{
+	//			await settingsActions.SettingsContext.Database.MigrateAsync();
+	//		}
+	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+	//		{
+	//			if (settingsActions.SettingsContext.Database.GetPendingMigrations().Any())
+	//			{
+	//				if (!await Methods.ApplyPendingMigrations(settingsActions.SettingsContext))
+	//					throw new Exception("Can't update you settings database, please reset your application in the settings page");
+	//				//await settingsActions.SettingsContext.Database.MigrateAsync();
+	//			}
+	//			_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
+	//		}
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		ExceptionLogger.LogException(ex);
+	//		Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+	//	}
+
+	//	try
+	//	{
+	//		HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
+	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
+	//		{
+	//			await historyActions.HistoryContext.Database.MigrateAsync();
+	//		}
+	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
+	//		{
+	//			if (historyActions.HistoryContext.Database.GetPendingMigrations().Any())
+	//			{
+	//				if (!await Methods.ApplyPendingMigrations(historyActions.HistoryContext))
+	//					throw new Exception("Can't update you History database, please reset your application in the settings page");
+
+	//			}
+	//			_ = await historyActions.HistoryContext.Database.CanConnectAsync();
+	//		}
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		ExceptionLogger.LogException(ex);
+	//		Console.WriteLine($"Error in Creating History Database: {ex.Message}");
+	//	}
+
+	//	try
+	//	{
+	//		DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
+	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
+	//		{
+	//			await downloadActions.DownloadContext.Database.MigrateAsync();
+	//		}
+	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
+	//		{
+	//			if (downloadActions.DownloadContext.Database.GetPendingMigrations().Any())
+	//			{
+	//				if (!await Methods.ApplyPendingMigrations(downloadActions.DownloadContext))
+	//					throw new Exception("Can't update you Downloads database, please reset your application in the settings page");
+
+	//			}
+	//			_ = await downloadActions.DownloadContext.Database.CanConnectAsync();
+	//		}
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		ExceptionLogger.LogException(ex);
+	//		Console.WriteLine($"Error in Creating Downloads Database: {ex.Message}");
+	//	}
+	//}
+    private async Task ValidateDatabaseAsync(string username, string dbSubFolder, string dbName,  Func<DbContext> contextFactory, string errorMessage)
+    {
+        try
+        {
+            var context = contextFactory();
+            var dbPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, dbSubFolder, dbName);
+            if (!File.Exists(dbPath))
+            {
+                await context.Database.MigrateAsync();
+            }
+            if (File.Exists(dbPath))
+            {
+                if (context.Database.GetPendingMigrations().Any())
+                {
+                    if (!await Methods.ApplyPendingMigrations(context))
+                        throw new Exception(errorMessage);
+                }
+                _ = await context.Database.CanConnectAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogger.LogException(ex);
+            Console.WriteLine($"Error in Creating {dbName} Database: {ex.Message}");
+        }
+    }
+
+    public async Task<Task> DatabaseCreationValidation()
+    {
+        if (!AuthService.IsUserAuthenticated)
+        {
+            return Task.FromResult(false);
+        }
+
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(AuthService.CurrentUser.Username), "Can't update your Settings database, please reset your application in the settings page");
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(AuthService.CurrentUser.Username), "Can't update your History database, please reset your application in the settings page");
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(AuthService.CurrentUser.Username), "Can't update your Downloads database, please reset your application in the settings page");
+		// allow ui to flow. 
+		await Task.Delay(2000);  
 
 		return Task.CompletedTask;
-	}
+    }
 }
+
+	

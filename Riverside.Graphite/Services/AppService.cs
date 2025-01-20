@@ -366,7 +366,7 @@ public static class AppService
 
 			try
 			{
-				// DATABASE EXISTS && CONNECTS. 
+				// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
 				_ = await dbServer.DatabaseCreationValidation();
 
 				_ = await dbServer.InsertUserSettings(); // new user add default from class
@@ -462,7 +462,7 @@ public static class AppService
 		if (appWindow != null)
 		{
 			SizeInt32? desktop = await Windowing.SizeWindow();
-			appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .75), (int)(desktop?.Height * .75)));
+			appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .66), (int)(desktop?.Height * .66)));
 			appWindow.MoveInZOrderAtTop();
 			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 			appWindow.Title = "Settings for: " + AuthService.NewCreatedUser?.Username;
