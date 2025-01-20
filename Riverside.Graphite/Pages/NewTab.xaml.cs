@@ -54,6 +54,14 @@ public sealed partial class NewTab : Page
 		// assign to ViewModel, and or new instance.  
 		ViewModel.SettingsService.Initialize();
 		userSettings = ViewModel.SettingsService.CoreSettings;
+		this.Unloaded += (s, e) =>
+		{
+
+			CancellationTokenSource cancel = new();
+			cancel.Cancel();
+			ViewModel.CancellationTokenClock = cancel.Token;
+
+		};
 
 		InitializeComponent();
 	}

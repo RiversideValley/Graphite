@@ -201,7 +201,6 @@ public partial class App : Application
 			ExceptionLogger.LogException(e.Exception);
 		}
 
-		_webAppProcess.Kill();
 	}
 
 	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)

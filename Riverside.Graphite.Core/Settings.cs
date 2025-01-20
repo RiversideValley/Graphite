@@ -18,7 +18,6 @@ public class Settings
 		self.StatusBar = true;
 		self.BrowserKeys = true;
 		self.BrowserScripts = true;
-		self.BackDrop = "Mica";
 		self.Useragent = "WebView";
 		self.LightMode = false;
 		self.OpSw = true;
@@ -68,6 +67,7 @@ public class Settings
 		self.IsAdBlockerEnabled = false;
 		self.AdBlockerType = 0;
 		self.Gender = "Male";
+		self.BackDrop = "Mica";
 		self.NewTabHistoryDownloads = false;
 		self.NewTabHistoryFavorites = false;
 		self.NewTabHistoryHistory = false;
@@ -108,7 +108,6 @@ public class Settings
 	public bool StatusBar { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserKeys { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserScripts { get; set; } // Use "0" for false, "1" for true
-	public string BackDrop { get; set; }
 	public string Useragent { get; set; }
 	public bool LightMode { get; set; } // Use "0" for false, "1" for true
 	public bool OpSw { get; set; } // Use "0" for false, "1" for true
@@ -157,6 +156,7 @@ public class Settings
 	public bool IsSearchVisible { get; set; }
 	public bool IsTrendingVisible { get; set; }
 	public bool NtpCoreVisibility { get; set; }
+	public string BackDrop { get; set; }
 	public bool NewTabHistoryQuick { get; set; }
 	public bool NewTabHistoryDownloads { get; set; }
 	public bool NewTabHistoryFavorites { get; set; }

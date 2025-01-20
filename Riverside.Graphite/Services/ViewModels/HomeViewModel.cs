@@ -85,7 +85,7 @@ public partial class HomeViewModel : ObservableRecipient
 
 	public CancellationToken CancellationTokenTimer { get; set; }
 	public ObservableCollection<TrendingItem> TrendingItems { get; set; }
-
+	public CancellationToken CancellationTokenClock { get; set; }	
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
 	private void LoadUISettings()
@@ -297,7 +297,8 @@ public partial class HomeViewModel : ObservableRecipient
 		UpdateUIControls();
 		if (NtpTimeEnabled)
 		{
-			InitClock();
+			CancellationTokenClock = new CancellationToken();
+			InitClock(CancellationTokenClock);
 		}
 		return Task.CompletedTask;
 	}
@@ -307,7 +308,7 @@ public partial class HomeViewModel : ObservableRecipient
 		OnPropertyChanged(nameof(NtpTimeText));
 		OnPropertyChanged(nameof(NtpDateText));
 	}
-	private void InitClock()
+	private void InitClock(CancellationToken cancellationToken)
 	{
 		// intial time => use timer to update then after that.
 		UpdateClock();
@@ -316,6 +317,11 @@ public partial class HomeViewModel : ObservableRecipient
 		timer.Interval = new System.TimeSpan(0, 0, 4);
 		timer.Tick += (_, _) =>
 		{
+			if (cancellationToken.IsCancellationRequested)
+			{
+				timer.Stop();
+				return;
+			}
 			UpdateClock();
 		};
 		timer.Start();
