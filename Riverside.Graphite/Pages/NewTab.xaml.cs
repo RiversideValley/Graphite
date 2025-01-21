@@ -276,6 +276,7 @@ public sealed partial class NewTab : Page
 		//NtpTime.Foreground = NtpDate.Foreground = new SolidColorBrush(color);
 		GridSelect.SelectedIndex = userSettings.Background;
 		SetVisibilityBasedOnLightMode(userSettings.LightMode is true);
+		SetBackgroundAsync();
 		await Task.CompletedTask;
 	}
 
@@ -312,6 +313,7 @@ public sealed partial class NewTab : Page
 				});
 		}
 	}
+
 	private async void SetAndSaveBackgroundSettings((int, Settings.NewTabBackground, bool, Visibility) settings)
 	{
 		(int background, Settings.NewTabBackground backgroundType, bool isNewColorEnabled, Visibility downloadVisibility) = settings;
@@ -340,134 +342,16 @@ public sealed partial class NewTab : Page
 
 		base.OnNavigatedFrom(e);
 	}
-	public static Brush GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, Riverside.Graphite.Core.Settings userSettings)
+
+	private async void SetBackgroundAsync()
 	{
-		switch (backgroundType)
-		{
-			case Settings.NewTabBackground.None:
-				return new SolidColorBrush(Colors.Transparent);
-
-			case Settings.NewTabBackground.Costum:
-				string colorString = userSettings.ColorBackground?.ToString() ?? "#000000";
-
-				Color color = colorString == "#000000" ?
-				 Colors.Transparent :
-				 (Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), colorString);
-				return new SolidColorBrush(color);
-
-
-			case Settings.NewTabBackground.Featured:
-				SocketsHttpHandler handler = new()
-				{
-					EnableMultipleHttp2Connections = true, // Optional but recommended
-					SslOptions = new SslClientAuthenticationOptions
-					{
-						ApplicationProtocols = new List<SslApplicationProtocol> { SslApplicationProtocol.Http3 }
-					}
-				};
-
-				HttpClient client = new(handler);
-
-				// Static field to cache the ImageBrush so it's fetched only once
-				ImageBrush cachedImageBrush = null;
-
-				// Check if the image has already been fetched and cached
-				if (cachedImageBrush != null)
-				{
-					return cachedImageBrush;
-				}
-
-				try
-				{
-					string request = client.GetStringAsync(new Uri("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1")).Result;
-
-					try
-					{
-						// Deserialize JSON response into ImageRoot object
-						ImageRoot images = System.Text.Json.JsonSerializer.Deserialize<ImageRoot>(request);
-
-						// Construct the image URL using data from the API
-						Uri imageUrl = new("https://bing.com" + images.images[0].url);
-
-						// Create BitmapImage from the URL
-						BitmapImage btpImg = new(imageUrl);
-
-						// Create and return an ImageBrush for WPF
-						cachedImageBrush = new ImageBrush()
-						{
-							ImageSource = btpImg,
-							Stretch = Stretch.UniformToFill
-						};
-
-						return cachedImageBrush;
-					}
-					catch (System.Text.Json.JsonException jsonEx)
-					{
-						// Handle JSON parsing errors
-						Console.WriteLine($"Error parsing JSON: {jsonEx.Message}");
-					}
-					catch (Exception ex)
-					{
-						// Handle other exceptions
-						Console.WriteLine($"Error: {ex.Message}");
-					}
-				}
-				catch (HttpRequestException httpEx)
-				{
-					// Handle HTTP request exceptions
-					Console.WriteLine($"HTTP request error: {httpEx.Message}");
-				}
-				catch (Exception ex)
-				{
-					// Handle other exceptions
-					Console.WriteLine($"Error: {ex.Message}");
-				}
-				break;
-		}
-
-		return new SolidColorBrush();
+		var background = await BackgroundManager.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings);
+		GridMain.Background = background;
 	}
-
-
 
 	private async Task DownloadImage()
 	{
-		try
-		{
-			Riverside.Graphite.Core.User user = AuthService.CurrentUser;
-			string username = user.Username;
-			string databasePath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Database");
-			string imagesFolderPath = Path.Combine(databasePath, "CacheImages");
-			string storedDbPath = Path.Combine(databasePath, "StoredDb.json");
-
-			if (!Directory.Exists(imagesFolderPath))
-			{
-				_ = Directory.CreateDirectory(imagesFolderPath);
-			}
-
-			if (!File.Exists(storedDbPath))
-			{
-				File.WriteAllText(storedDbPath, "[]");
-			}
-
-			Guid gd = Guid.NewGuid();
-			string imageName = $"{gd}.png";
-			string savedImagePath = await new ImageDownloader().SaveGridAsImageAsync(GridImage, imageName, imagesFolderPath);
-
-			StoredImages newImageData = new()
-			{
-				Name = imageName,
-				Location = imagesFolderPath,
-				Extension = ".png",
-				Primary = false // Adjust this according to your logic
-			};
-
-			await new ImagesHelper().AppendToJsonAsync(storedDbPath, newImageData);
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-		}
+		
 	}
 	private void UpdateUserSettings(Action<Riverside.Graphite.Core.Settings> updateAction)
 	{

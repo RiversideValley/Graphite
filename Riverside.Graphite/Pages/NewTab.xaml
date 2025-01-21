@@ -14,6 +14,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"
     xmlns:local="using:Riverside.Graphite.Pages"
+    xmlns:helpers="using:Riverside.Graphite.Services"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:provider="using:Riverside.Graphite.Services.Models"
     Loaded="NewTab_Loaded"
@@ -25,9 +26,7 @@
         CornerRadius="10">
         <Grid
             x:Name="GridMain"
-            x:FieldModifier="Public"
-            Background="{x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}">
-            <Grid x:Name="GridImage" Background="{x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}" />
+            x:FieldModifier="Public">
 
             <Border Height="250" VerticalAlignment="Top">
                 <Border.Background>
