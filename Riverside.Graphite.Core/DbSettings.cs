@@ -11,6 +11,7 @@ public class DbSettings
 	public bool DisableWebMess { get; set; } // Use "0" for false, "1" for true
 	public bool DisableGenAutoFill { get; set; } // Use "0" for false, "1" for true
 	public string ColorBackground { get; set; }
+	public string Gender { get; set; }
 	public bool StatusBar { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserKeys { get; set; } // Use "0" for false, "1" for true
 	public bool BrowserScripts { get; set; } // Use "0" for false, "1" for true
@@ -21,8 +22,6 @@ public class DbSettings
 	public string SearchUrl { get; set; }
 	public string ColorTool { get; set; }
 	public string ColorTV { get; set; }
-
-	public string Gender { get; set; }
 	public int AdBlockerType { get; set; }
 	public int Background { get; set; } // Use "0" for false, "1" for true
 	public bool IsAdBlockerEnabled { get; set; } // Use "0" for false, "1" for true
@@ -49,7 +48,6 @@ public class DbSettings
 	public bool ExitDialog { get; set; }
 	public string NtpTextColor { get; set; }
 	public string ExceptionLog { get; set; }
-
 	public bool Eq2fa { get; set; }
 	public bool Eqfav { get; set; }
 	public bool EqHis { get; set; }
@@ -65,15 +63,11 @@ public class DbSettings
 	public bool IsSearchVisible { get; set; }
 	public bool IsTrendingVisible { get; set; }
 	public bool NtpCoreVisibility { get; set; }
-
+	public string BackDrop { get; set; }
 	public bool NewTabHistoryQuick { get; set; }
-
 	public bool NewTabHistoryDownloads { get; set; }
-
 	public bool NewTabHistoryFavorites { get; set; }
-
 	public bool NewTabHistoryHistory { get; set; }
-
-
+	public bool NewTabSelectorBarVisible { get; set; }
 	// public bool WelcomeMsg { get; set; }
 }
