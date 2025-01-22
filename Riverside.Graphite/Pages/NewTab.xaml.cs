@@ -276,7 +276,7 @@ public sealed partial class NewTab : Page
 		//NtpTime.Foreground = NtpDate.Foreground = new SolidColorBrush(color);
 		GridSelect.SelectedIndex = userSettings.Background;
 		SetVisibilityBasedOnLightMode(userSettings.LightMode is true);
-		SetBackgroundAsync();
+		//SetBackgroundAsync();
 		await Task.CompletedTask;
 	}
 
@@ -322,6 +322,8 @@ public sealed partial class NewTab : Page
 		NewColor.IsEnabled = isNewColorEnabled;
 		Download.Visibility = downloadVisibility;
 		await ViewModel.SettingsService?.SaveChangesToSettings(AuthService.CurrentUser, userSettings);
+		ViewModel.NewTabBackGround = await ViewModel.ImageManager.GetGridBackgroundAsync(backgroundType, userSettings);	
+		ViewModel.RaisePropertyChanges(nameof(ViewModel.NewTabBackGround));
 	}
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
@@ -343,16 +345,16 @@ public sealed partial class NewTab : Page
 		base.OnNavigatedFrom(e);
 	}
 
-	private async void SetBackgroundAsync()
-	{
-		var background = await BackgroundManager.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings);
-		GridMain.Background = background;
-	}
+	//private async void SetBackgroundAsync()
+	//{
+	//	var background = await BackgroundManager.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings);
+	//	GridMain.Background = background;
+	//}
 
-	private async Task DownloadImage()
-	{
+	//private async Task DownloadImage()
+	//{
 		
-	}
+	//}
 	private void UpdateUserSettings(Action<Riverside.Graphite.Core.Settings> updateAction)
 	{
 		if (AuthService.CurrentUser != null)
@@ -389,9 +391,8 @@ public sealed partial class NewTab : Page
 	private void NewColor_TextChanged(ColorPicker sender, ColorChangedEventArgs args)
 	{
 		string newColor = userSettings.ColorBackground = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NewColorPicker.Color).ToString();
-		UpdateUserSettings(userSettings => userSettings.ColorBackground = newColor);
-		// raise a change to backgroundtype so that the x:Bind on GridMain will show new backgroundColor {x:Bind local:NewTab.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings), Mode=OneWay}
-		ViewModel.RaisePropertyChanges(nameof(ViewModel.BackgroundType));
+		SetAndSaveBackgroundSettings((2, Settings.NewTabBackground.Costum, true, Visibility.Collapsed));
+		
 	}
 	private void DateTimeToggle_Toggled(object sender, RoutedEventArgs e)
 	{
@@ -429,10 +430,10 @@ public sealed partial class NewTab : Page
 		UpdateUserSettings(userSettings => userSettings.NtpTextColor = newColor);
 		ViewModel.BrushNtp = new SolidColorBrush(NtpColorPicker.Color);
 	}
-	private void Download_Click(object sender, RoutedEventArgs e)
-	{
-		_ = DownloadImage().ConfigureAwait(false);
-	}
+	//private void Download_Click(object sender, RoutedEventArgs e)
+	//{
+	//	_ = DownloadImage().ConfigureAwait(false);
+	//}
 
 	private void NewTabSearchBox_PreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
 	{

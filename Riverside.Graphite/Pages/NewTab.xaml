@@ -10,11 +10,11 @@
     xmlns:dllimg="using:Riverside.Graphite.Assets"
     xmlns:firebrowser="using:Riverside.Graphite.Controls"
     xmlns:firebrowserfavorites="using:Riverside.Graphite.Data.Favorites"
+    xmlns:helpers="using:Riverside.Graphite.Services"
     xmlns:history="using:Riverside.Graphite.Data.Core.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"
     xmlns:local="using:Riverside.Graphite.Pages"
-    xmlns:helpers="using:Riverside.Graphite.Services"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:provider="using:Riverside.Graphite.Services.Models"
     Loaded="NewTab_Loaded"
@@ -22,12 +22,9 @@
 
     <Grid
         Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Background="{x:Bind ViewModel.NewTabBackGround, Mode=OneWay}"
         CornerRadius="10">
-        <Grid
-            x:Name="GridMain"
-            x:FieldModifier="Public">
-
+        <Grid x:Name="GridMain" x:FieldModifier="Public">
             <Border Height="250" VerticalAlignment="Top">
                 <Border.Background>
                     <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0, 0" EndPoint="0, 1">
@@ -254,7 +251,6 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     x:FieldModifier="Public"
-                                    Click="Download_Click"
                                     Content="{firebrowser:FluentIcon Glyph=&#xE78C;}"
                                     Style="{ThemeResource QuietButtonStyle}">
                                     <Button.Flyout>

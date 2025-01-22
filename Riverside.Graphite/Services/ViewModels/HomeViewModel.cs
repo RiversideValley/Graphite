@@ -88,8 +88,11 @@ public partial class HomeViewModel : ObservableRecipient
 	public CancellationToken CancellationTokenClock { get; set; }	
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
+	public BackgroundManager ImageManager { get; internal set; }
 	private void LoadUISettings()
 	{
+		ImageManager = App.GetService<BackgroundManager>();	
+
 		NtpCoreVisibility = SettingsService.CoreSettings.NtpCoreVisibility ? Visibility.Visible : Visibility.Collapsed;
 		IsNtpTimeVisible = SettingsService.CoreSettings.NtpDateTime;
 		NtpTimeEnabled = SettingsService.CoreSettings.NtpDateTime;
@@ -392,6 +395,8 @@ public partial class HomeViewModel : ObservableRecipient
 
 		return Task.CompletedTask;
 	}
+	public Brush NewTabBackGround { get; set; }
+	
 	public Settings.NewTabBackground BackgroundType
 	{
 		get => _backgroundType;

@@ -13,7 +13,7 @@ namespace Riverside.Graphite.Services
 {
 	public class BackgroundManager
 	{
-		public static async Task<Brush> GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, Riverside.Graphite.Core.Settings userSettings)
+		public async Task<Brush> GetGridBackgroundAsync(Settings.NewTabBackground backgroundType, Riverside.Graphite.Core.Settings userSettings)
 		{
 			switch (backgroundType)
 			{

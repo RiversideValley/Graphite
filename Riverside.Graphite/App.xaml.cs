@@ -50,6 +50,7 @@ public partial class App : Application
 		_ = services.AddSingleton<DownloadService>();
 		_ = services.AddSingleton<MsalAuthService>();
 		_ = services.AddSingleton<GraphService>();
+		_ = services.AddSingleton<BackgroundManager>();
 		_ = services.AddTransient<AdBlockerWrapper>();
 		_ = services.AddTransient<DownloadsViewModel>();
 		_ = services.AddTransient<HomeViewModel>();
