@@ -1,5 +1,6 @@
 
 using Microsoft.Bing.WebSearch.Models;
+using Microsoft.Graph.Models.Security;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -276,7 +277,7 @@ public sealed partial class NewTab : Page
 		//NtpTime.Foreground = NtpDate.Foreground = new SolidColorBrush(color);
 		GridSelect.SelectedIndex = userSettings.Background;
 		SetVisibilityBasedOnLightMode(userSettings.LightMode is true);
-		//SetBackgroundAsync();
+		await ViewModel.ImageManager.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings);
 		await Task.CompletedTask;
 	}
 
@@ -299,6 +300,9 @@ public sealed partial class NewTab : Page
 
 	private void GridSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
+		if (e.AddedItems.Count == 0)
+			return;
+		
 		GridViewItem selection = (sender as GridView)?.SelectedItem as GridViewItem;
 
 		if (selection != null && selection.Tag is string tag)
@@ -312,6 +316,7 @@ public sealed partial class NewTab : Page
 					_ => throw new ArgumentException("Invalid selection.")
 				});
 		}
+
 	}
 
 	private async void SetAndSaveBackgroundSettings((int, Settings.NewTabBackground, bool, Visibility) settings)
@@ -345,15 +350,11 @@ public sealed partial class NewTab : Page
 		base.OnNavigatedFrom(e);
 	}
 
-	//private async void SetBackgroundAsync()
-	//{
-	//	var background = await BackgroundManager.GetGridBackgroundAsync(ViewModel.BackgroundType, userSettings);
-	//	GridMain.Background = background;
-	//}
+	
 
 	//private async Task DownloadImage()
 	//{
-		
+
 	//}
 	private void UpdateUserSettings(Action<Riverside.Graphite.Core.Settings> updateAction)
 	{
@@ -388,11 +389,24 @@ public sealed partial class NewTab : Page
 		UpdateUserSettings(userSettings => userSettings.LightMode = Mode.IsOn);
 	}
 
-	private async void NewColor_TextChanged(ColorPicker sender, ColorChangedEventArgs args)
+	private  void NewColor_TextChanged(ColorPicker sender, ColorChangedEventArgs args)
 	{
-		string newColor = userSettings.ColorBackground = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NewColorPicker.Color).ToString();
-		SetAndSaveBackgroundSettings((2, Settings.NewTabBackground.Costum, true, Visibility.Collapsed));
-		await Task.Delay(100);
+		if (userSettings.Background is 2)
+		{
+			userSettings.ColorBackground = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NewColorPicker.Color).ToString();
+		}
+		
+		SetAndSaveBackgroundSettings(
+				userSettings.Background switch
+				{
+					0 => (0, Settings.NewTabBackground.None, false, Visibility.Collapsed),
+					1 => (1, Settings.NewTabBackground.Featured, false, Visibility.Visible),
+					2 => (2, Settings.NewTabBackground.Costum, true, Visibility.Collapsed),
+					_ => throw new ArgumentException("Invalid selection.")
+				});
+
+		//SetAndSaveBackgroundSettings((userSettings.Background, Settings.NewTabBackground.Costum, true, Visibility.Collapsed));
+	
 	}
 	private void DateTimeToggle_Toggled(object sender, RoutedEventArgs e)
 	{
