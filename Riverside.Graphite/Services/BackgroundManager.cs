@@ -39,7 +39,7 @@ namespace Riverside.Graphite.Services
 		{
 			string cachedImagePath = GetCachedImagePath();
 
-			if (await IsCachedImageValidAsync(cachedImagePath))
+			if (IsCachedImageValid(cachedImagePath))
 			{
 				return await CreateImageBrushFromFileAsync(cachedImagePath);
 			}
@@ -94,7 +94,7 @@ namespace Riverside.Graphite.Services
 			return File.Exists(jpgPath) ? jpgPath : pngPath;
 		}
 
-		private  async Task<bool> IsCachedImageValidAsync(string path)
+		private bool IsCachedImageValid(string path)
 		{
 			if (!File.Exists(path))
 				return false;
