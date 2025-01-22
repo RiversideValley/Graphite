@@ -388,11 +388,11 @@ public sealed partial class NewTab : Page
 		UpdateUserSettings(userSettings => userSettings.LightMode = Mode.IsOn);
 	}
 
-	private void NewColor_TextChanged(ColorPicker sender, ColorChangedEventArgs args)
+	private async void NewColor_TextChanged(ColorPicker sender, ColorChangedEventArgs args)
 	{
 		string newColor = userSettings.ColorBackground = XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), NewColorPicker.Color).ToString();
 		SetAndSaveBackgroundSettings((2, Settings.NewTabBackground.Costum, true, Visibility.Collapsed));
-		
+		await Task.Delay(100);
 	}
 	private void DateTimeToggle_Toggled(object sender, RoutedEventArgs e)
 	{
