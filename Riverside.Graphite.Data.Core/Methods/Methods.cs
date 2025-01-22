@@ -46,7 +46,7 @@ namespace Riverside.Graphite.Data.Core.Methods
 					catch (Exception e)
 					{
 						ExceptionLogger.LogException(e);
-						return false;
+						continue; 
 					}
 				}
 				return true;

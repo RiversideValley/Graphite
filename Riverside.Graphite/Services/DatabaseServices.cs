@@ -83,87 +83,6 @@ public class DatabaseServices : IDatabaseService
 		return Task.CompletedTask;
 	}
 
-
-
-	//public async Task<Task> DatabaseCreationValidation()
-	//{
-	//	if (!AuthService.IsUserAuthenticated)
-	//	{
-	//		return Task.FromResult(false);
-	//	}
-
-	//	try
-	//	{
-	//		SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
-	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-	//		{
-	//			await settingsActions.SettingsContext.Database.MigrateAsync();
-	//		}
-	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-	//		{
-	//			if (settingsActions.SettingsContext.Database.GetPendingMigrations().Any())
-	//			{
-	//				if (!await Methods.ApplyPendingMigrations(settingsActions.SettingsContext))
-	//					throw new Exception("Can't update you settings database, please reset your application in the settings page");
-	//				//await settingsActions.SettingsContext.Database.MigrateAsync();
-	//			}
-	//			_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
-	//		}
-	//	}
-	//	catch (Exception ex)
-	//	{
-	//		ExceptionLogger.LogException(ex);
-	//		Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-	//	}
-
-	//	try
-	//	{
-	//		HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
-	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
-	//		{
-	//			await historyActions.HistoryContext.Database.MigrateAsync();
-	//		}
-	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "History.db")))
-	//		{
-	//			if (historyActions.HistoryContext.Database.GetPendingMigrations().Any())
-	//			{
-	//				if (!await Methods.ApplyPendingMigrations(historyActions.HistoryContext))
-	//					throw new Exception("Can't update you History database, please reset your application in the settings page");
-
-	//			}
-	//			_ = await historyActions.HistoryContext.Database.CanConnectAsync();
-	//		}
-	//	}
-	//	catch (Exception ex)
-	//	{
-	//		ExceptionLogger.LogException(ex);
-	//		Console.WriteLine($"Error in Creating History Database: {ex.Message}");
-	//	}
-
-	//	try
-	//	{
-	//		DownloadActions downloadActions = new(AuthService.CurrentUser.Username);
-	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
-	//		{
-	//			await downloadActions.DownloadContext.Database.MigrateAsync();
-	//		}
-	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Database", "Downloads.db")))
-	//		{
-	//			if (downloadActions.DownloadContext.Database.GetPendingMigrations().Any())
-	//			{
-	//				if (!await Methods.ApplyPendingMigrations(downloadActions.DownloadContext))
-	//					throw new Exception("Can't update you Downloads database, please reset your application in the settings page");
-
-	//			}
-	//			_ = await downloadActions.DownloadContext.Database.CanConnectAsync();
-	//		}
-	//	}
-	//	catch (Exception ex)
-	//	{
-	//		ExceptionLogger.LogException(ex);
-	//		Console.WriteLine($"Error in Creating Downloads Database: {ex.Message}");
-	//	}
-	//}
     private async Task ValidateDatabaseAsync(string username, string dbSubFolder, string dbName,  Func<DbContext> contextFactory, string errorMessage)
     {
         try
@@ -173,7 +92,7 @@ public class DatabaseServices : IDatabaseService
             if (!File.Exists(dbPath))
             {
                 await context.Database.MigrateAsync();
-            }
+			}
             if (File.Exists(dbPath))
             {
                 if (context.Database.GetPendingMigrations().Any())
@@ -202,8 +121,6 @@ public class DatabaseServices : IDatabaseService
         await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(AuthService.CurrentUser.Username), "Can't update your History database, please reset your application in the settings page");
         await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(AuthService.CurrentUser.Username), "Can't update your Downloads database, please reset your application in the settings page");
 		// allow ui to flow. 
-		await Task.Delay(2000);  
-
 		return Task.CompletedTask;
     }
 }

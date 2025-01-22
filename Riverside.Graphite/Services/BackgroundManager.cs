@@ -21,12 +21,12 @@ namespace Riverside.Graphite.Services
 	#region DependableClasses
 	public class ImageRoot
 	{
-		public List<Image> Images { get; set; }
+		public List<Image> images { get; set; }
 	}
 
 	public class Image
 	{
-		public string Url { get; set; }
+		public string url { get; set; }
 	}
 	#endregion
 	public class BackgroundManager
@@ -60,10 +60,11 @@ namespace Riverside.Graphite.Services
 				string request = await client.GetStringAsync(new Uri("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1"));
 
 				ImageRoot images = JsonSerializer.Deserialize<ImageRoot>(request);
-				Uri imageUrl = new("https://bing.com" + images.Images[0].Url);
+				Uri imageUrl = new("https://bing.com" + images.images[0].url);
 
 				// Download and save the image
 				byte[] imageData = await client.GetByteArrayAsync(imageUrl);
+
 				await File.WriteAllBytesAsync(cachedImagePath, imageData);
 
 				cachedImageBrush = await CreateImageBrushFromFileAsync(cachedImagePath);

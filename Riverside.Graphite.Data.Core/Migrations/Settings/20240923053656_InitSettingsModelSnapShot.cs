@@ -70,11 +70,7 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 					IsSearchVisible = table.Column<bool>(type: "INTEGER", nullable: false),
 					IsTrendingVisible = table.Column<bool>(type: "INTEGER", nullable: false),
 					NtpCoreVisibility = table.Column<bool>(type: "INTEGER", nullable: false),
-					NewTabHistoryQuick = table.Column<bool>(type: "INTEGER", nullable: false),
-					NewTabHistoryDownloads = table.Column<bool>(type: "INTEGER", nullable: false),
-					NewTabHistoryFavorites = table.Column<bool>(type: "INTEGER", nullable: false),
-					NewTabHistoryHistory = table.Column<bool>(type: "INTEGER", nullable: false),
-					NewTabSelectorBarVisible = table.Column<bool>(type: "INTEGER", nullable: false)
+					
 				},
 				constraints: table =>
 				{
