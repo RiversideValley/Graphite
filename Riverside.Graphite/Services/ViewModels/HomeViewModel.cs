@@ -355,6 +355,12 @@ public partial class HomeViewModel : ObservableRecipient
 		timer.Interval = TimeSpan.FromMinutes(4);
 		timer.Tick += (s, e) =>
 		{
+			if(CancellationTokenTimer.IsCancellationRequested)
+			{
+				timer.Stop();
+				return;
+			}
+
 			if (!SettingsService.CoreSettings.IsTrendingVisible)
 			{
 				CancellationTokenSource source = new();
