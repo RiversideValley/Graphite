@@ -1,0 +1,18 @@
+[
+    {
+        "Id": 1,
+        "Name": "Work"
+    },
+    {
+        "Id": 2,
+        "Name": "Personal"
+    },
+    {
+        "Id": 3,
+        "Name": "Hobbies"
+    },
+    {
+        "Id": 4,
+        "Name": "Following"
+    }
+]
