@@ -1,12 +1,13 @@
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core;
+using System.Threading.Tasks;
+
 public class DatabaseImportProgram
 {
-    public static async Task Main(string[] args)
+    public async Task Main()
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite("Data Source=sample.db")
-            .Options;
-
-        using var context = new ApplicationDbContext(options);
+        
+        var context = new HistoryContext(AuthService.CurrentUser?.Username);
         var importer = new DataImporter(context);
 
         await importer.ImportCollectionsAsync("SampleData/Collections.json");

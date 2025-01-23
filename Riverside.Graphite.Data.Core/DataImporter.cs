@@ -1,16 +1,16 @@
+using Riverside.Graphite.Data.Core;
+using Riverside.Graphite.Data.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Riverside.Graphite.Data.Core.Models;
 
 public class DataImporter
 {
-    private readonly DbContext _context;
+    private readonly HistoryContext _context;
 
-    public DataImporter(DbContext context)
+    public DataImporter(HistoryContext context)
     {
         _context = context;
     }
