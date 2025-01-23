@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Data.Core.Actions;
 
-public class HistoryActions : IHistoryActions
+public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 {
 	public HistoryContext HistoryContext { get; set; }
 
@@ -105,4 +105,81 @@ public class HistoryActions : IHistoryActions
 			return await Task.FromResult(new ObservableCollection<HistoryItem>());
 		}
 	}
+
+	public Task InsertCollectionsItem(DateTime createdDate, HistoryItem historyItem, CollectionName collectionName)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task DeleteCollectionsItem(int Id)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task DeleteAllCollectionsItems()
+	{
+		throw new NotImplementedException();
+	}
+
+    public async Task<ObservableCollection<Collection>> GetAllCollectionsItems()
+    {
+        try
+        {
+            var list = await (from x in HistoryContext.Collections
+                              select new Collection
+                              {
+                                  Id = x.Id,
+                                  CreatedDate = x.CreatedDate,
+                                  HistoryItemId = x.HistoryItemId,
+                                  CollectionNameId = x.CollectionNameId,
+                                  ParentCollection = HistoryContext.CollectionNames.Where(cn => cn.Id == x.CollectionNameId).ToList(),
+                                  ItemsHistory = HistoryContext.Urls.Where(uh => uh.id == x.HistoryItemId).ToList()
+                              }).ToListAsync();
+
+            return list.ToObservableCollection();
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogger.LogException(ex);
+            Console.WriteLine($"Error gathering Collections Items: {ex.Message}");
+            return new ObservableCollection<Collection>();
+        }
+    }
+
+	public Task InsertCollectionName(string NameOfCollection)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task DeleteCollectionNamesItem(int Id)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task DeleteAllCollectionNamesItems()
+	{
+		throw new NotImplementedException();
+	}
+
+    public async Task<ObservableCollection<CollectionName>> GetAllCollectionNamesItems()
+    {
+        try
+        {
+            var list = await (from cn in HistoryContext.CollectionNames
+                              select new CollectionName
+                              {
+                                  Id = cn.Id,
+                                  Name = cn.Name,
+                                  Children = HistoryContext.Collections.Where(c => c.CollectionNameId == cn.Id).ToList(),
+                              }).ToListAsync();
+
+            return list.ToObservableCollection();
+        }
+        catch (Exception ex)
+        {
+            ExceptionLogger.LogException(ex);
+            Console.WriteLine($"Error gathering Collection Names Items: {ex.Message}");
+            return new ObservableCollection<CollectionName>();
+        }
+    }
 }

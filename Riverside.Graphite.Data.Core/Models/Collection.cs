@@ -18,6 +18,8 @@ namespace Riverside.Graphite.Data.Core.Models
         public int CollectionNameId { get; set; } // Navigation Property for CollectionName
 
 		[NotMapped]
-		public IEnumerable<CollectionName> Children { get; set; }	
+		public IEnumerable<CollectionName> ParentCollection { get; set; }
+		[NotMapped]
+		public IEnumerable<DbHistoryItem> ItemsHistory { get; set; }
 	}
 }

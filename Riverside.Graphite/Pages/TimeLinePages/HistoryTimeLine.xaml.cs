@@ -28,6 +28,10 @@ public sealed partial class HistoryTimeLine : Page
 		{
 			HistoryActions historyActions = new(_user.Username);
 			_browserHistory = await historyActions.GetAllHistoryItems();
+			
+			//var collections = await historyActions.GetAllCollectionsItems();
+			//var collectNames = await historyActions.GetAllCollectionNamesItems();
+
 			BigTemp.ItemsSource = _browserHistory;
 		}
 		catch (Exception ex)
