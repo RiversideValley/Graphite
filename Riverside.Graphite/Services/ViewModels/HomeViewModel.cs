@@ -230,7 +230,14 @@ public partial class HomeViewModel : ObservableRecipient
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
-
+	[RelayCommand]
+	private void GetCollections(Button sender)
+	{
+		if (Application.Current is App app && app.m_window is MainWindow window)
+		{
+			_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Controls.CollectionsPage));
+		}
+	}
 	[RelayCommand]
 	private void Chat(Button sender)
 	{

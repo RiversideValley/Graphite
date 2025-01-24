@@ -5,8 +5,14 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -23,8 +29,12 @@ namespace Riverside.Graphite.Controls
 	/// </summary>
 	public sealed partial class CollectionsPage : Page
 	{
+		public CollectionsPageViewModel ViewModel { get; set; } 
 		public CollectionsPage()
 		{
+			ViewModel = App.GetService<CollectionsPageViewModel>();
+			ViewModel.Initialize(); 
+
 			this.InitializeComponent();
 		}
 

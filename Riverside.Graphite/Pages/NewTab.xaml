@@ -600,6 +600,23 @@
                                 </StackPanel>
                             </Button>
                         </SelectorBarItem>
+                        <SelectorBarItem>
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                Command="{x:Bind ViewModel.GetCollectionsCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
+                                        FontFamily="{StaticResource FluentIcons}"
+                                        FontSize="16"
+                                        Glyph="&#xe71d;" />
+                                    <TextBlock Margin="10,0,0,0" Text="Collections" />
+                                </StackPanel>
+                            </Button>
+                        </SelectorBarItem>
                     </SelectorBar>
                 </StackPanel>
                 <labs:SettingsCard

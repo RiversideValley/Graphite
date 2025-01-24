@@ -57,6 +57,7 @@ public partial class App : Application
 		_ = services.AddTransient<SettingsService>();
 		_ = services.AddTransient<MainWindowViewModel>();
 		_ = services.AddTransient<UploadBackupViewModel>();
+		_ = services.AddTransient<CollectionsPageViewModel>(); 
 		//_ = services.AddSignalR(options =>
 		//{
 		//	options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(120000);

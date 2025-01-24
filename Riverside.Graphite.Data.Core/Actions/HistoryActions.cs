@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Data.Core.Models;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace Riverside.Graphite.Data.Core.Actions;
 
@@ -161,7 +163,16 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 		throw new NotImplementedException();
 	}
 
-    public async Task<ObservableCollection<CollectionName>> GetAllCollectionNamesItems()
+	private SolidColorBrush GetRandomSolidColorBrush()
+	{
+		Random random = new Random();
+		byte r = (byte)random.Next(256);
+		byte g = (byte)random.Next(256);
+		byte b = (byte)random.Next(256);
+		return new SolidColorBrush(Color.FromArgb(255, r, g, b));
+	}
+
+	public async Task<ObservableCollection<CollectionName>> GetAllCollectionNamesItems()
     {
         try
         {
@@ -171,9 +182,14 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
                                   Id = cn.Id,
                                   Name = cn.Name,
                                   Children = HistoryContext.Collections.Where(c => c.CollectionNameId == cn.Id).ToList(),
-                              }).ToListAsync();
+							  }).ToListAsync();
 
-            return list.ToObservableCollection();
+			foreach (var item in list)
+			{
+				item.BackgroundBrush = GetRandomSolidColorBrush();
+			}
+
+			return list.ToObservableCollection();
         }
         catch (Exception ex)
         {

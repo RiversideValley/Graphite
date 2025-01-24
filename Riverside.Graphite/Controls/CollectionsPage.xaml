@@ -5,24 +5,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:collect="using:Riverside.Graphite.Data.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:Riverside.Graphite.Helpers"
     xmlns:local="using:Riverside.Graphite.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <helpers:TextSubStringConverter x:Key="SubstringConverter" />
+    </Page.Resources>
     <Grid>
         <ScrollViewer
             Grid.Row="2"
             Padding="40,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             HorizontalScrollBarVisibility="Auto"
             HorizontalScrollMode="Enabled">
-            <ItemsRepeater x:Name="UserCardsRepeater">
+            <ItemsRepeater x:Name="UserCardsRepeater" ItemsSource="{x:Bind ViewModel.Collections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsRepeater.Layout>
                     <StackLayout Orientation="Horizontal" Spacing="24" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="collect:Collection">
+                    <DataTemplate x:DataType="collect:CollectionName">
                         <Button
                             Width="220"
                             Height="280"
@@ -40,8 +45,8 @@
                                     Height="120"
                                     Margin="0,24,0,0"
                                     HorizontalAlignment="Center"
-                                    ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}" />
-
+                                    Background="{Binding Path=BackgroundBrush}"
+                                    Initials="{Binding Path=Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
                                 <!--  Username  -->
                                 <StackPanel
                                     Grid.Row="2"
@@ -50,12 +55,13 @@
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         FontSize="18"
-                                        FontWeight="SemiBold" />
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Name}" />
                                     <TextBlock
                                         Margin="0,4,0,0"
                                         FontSize="12"
                                         Opacity="0.6"
-                                        Text="Click to login" />
+                                        Text="{Binding Children[0].ItemsHistory[0].title}" />
                                 </StackPanel>
                             </Grid>
                         </Button>
