@@ -33,7 +33,7 @@ namespace Riverside.Graphite.Controls
 		public CollectionsPage()
 		{
 			ViewModel = App.GetService<CollectionsPageViewModel>();
-			ViewModel.Initialize(); 
+
 
 			this.InitializeComponent();
 		}
