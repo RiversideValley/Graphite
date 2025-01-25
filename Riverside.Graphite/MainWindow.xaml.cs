@@ -688,6 +688,10 @@ public sealed partial class MainWindow : Window
 				Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
 				SelectNewTab();
 				break;
+			case "firebrowser://collec":
+				Tabs.TabItems.Add(CreateNewTab(typeof(CollectionsPage)));
+				SelectNewTab();
+				break;
 			case "firebrowser://lock":
 				Tabs.TabItems.Add(CreateNewTab(typeof(LockScreen)));
 				GoFullScreenLock(isFull != true);
