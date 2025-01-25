@@ -1,5 +1,6 @@
 using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,25 +18,44 @@ public class DataImporter
 
     public async Task ImportCollectionsAsync(string filePath)
     {
-        var jsonData = await File.ReadAllTextAsync(filePath);
-        var collections = JsonSerializer.Deserialize<List<Collection>>(jsonData);
+		try
+		{
+			var jsonData =  File.ReadAllText(filePath);
+			var collections = JsonSerializer.Deserialize<List<Collection>>(jsonData);
 
-        if (collections != null)
-        {
-            _context.Collections.AddRange(collections);
-            await _context.SaveChangesAsync();
-        }
+			if (collections != null)
+			{
+				_context.Collections.AddRange(collections);
+				await _context.SaveChangesAsync();
+			}
+		}
+		catch (Exception e)
+		{
+			ExceptionLogger.LogException(e);
+			throw;
+		}
+		
     }
 
     public async Task ImportCollectionNamesAsync(string filePath)
     {
-        var jsonData = await File.ReadAllTextAsync(filePath);
-        var collectionNames = JsonSerializer.Deserialize<List<CollectionName>>(jsonData);
 
-        if (collectionNames != null)
-        {
-            _context.CollectionNames.AddRange(collectionNames);
-            await _context.SaveChangesAsync();
-        }
+		try
+		{
+			var jsonData = File.ReadAllText(filePath);
+			var collectionNames = JsonSerializer.Deserialize<List<CollectionName>>(jsonData);
+
+			if (collectionNames != null)
+			{
+				_context.CollectionNames.AddRange(collectionNames);
+				await _context.SaveChangesAsync();
+			}
+		}
+		catch (Exception e)
+		{
+			ExceptionLogger.LogException(e);
+			throw;
+		}
+		
     }
 }

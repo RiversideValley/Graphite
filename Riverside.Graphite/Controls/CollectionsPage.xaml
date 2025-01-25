@@ -22,14 +22,14 @@
             VerticalAlignment="Center"
             HorizontalScrollBarVisibility="Auto"
             HorizontalScrollMode="Enabled">
-            <SemanticZoom Height="Auto">
+            <!--<SemanticZoom Height="Auto" IsZoomedInViewActive="True">
                 <SemanticZoom.ZoomedInView>
                     <GridView
                         x:Name="ZoomInView"
                         HorizontalAlignment="Left"
                         ItemsSource="{x:Bind ViewModel.Collections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="collect:CollectionName">
+                            <DataTemplate x:DataType="collect:CollectionGroup">
                                 <Button
                                     Width="220"
                                     Height="280"
@@ -47,9 +47,11 @@
                                             Height="120"
                                             Margin="0,24,0,0"
                                             HorizontalAlignment="Center"
-                                            Background="{Binding Path=BackgroundBrush}"
-                                            Initials="{Binding Path=Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
-                                        <!--  Username  -->
+                                            Background="{Binding Path=CollectionName.BackgroundBrush}"
+                                            Initials="{Binding Path=CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
+            -->
+            <!--  Username  -->
+            <!--
                                         <StackPanel
                                             Grid.Row="2"
                                             Margin="0,0,0,24"
@@ -58,12 +60,12 @@
                                                 HorizontalAlignment="Center"
                                                 FontSize="18"
                                                 FontWeight="SemiBold"
-                                                Text="{Binding Name}" />
+                                                Text="{Binding Path=CollectionName.Name}" />
                                             <TextBlock
                                                 Margin="0,4,0,0"
                                                 FontSize="12"
                                                 Opacity="0.6"
-                                                Text="{Binding Children[0].ItemsHistory[0].title}" />
+                                                Text="{Binding Path=CollectionName.Children[0].ItemsHistory[0].title}" />
                                         </StackPanel>
                                     </Grid>
                                 </Button>
@@ -73,22 +75,12 @@
                 </SemanticZoom.ZoomedInView>
 
                 <SemanticZoom.ZoomedOutView>
-                    <GridView>
+                    <GridView
+                        x:Name="ZoomInView2"
+                        HorizontalAlignment="Left"
+                        ItemsSource="{x:Bind ViewModel.GrpViewModel.GroupedItems.View}">
                         <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Border
-                                    Width="300"
-                                    Height="300"
-                                    Background="Violet" />
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                    <!--<ItemsRepeater x:Name="UserCardsRepeater" ItemsSource="{x:Bind ViewModel.Collections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ItemsRepeater.Layout>
-                            <StackLayout Orientation="Horizontal" Spacing="24" />
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="collect:CollectionName">
+                            <DataTemplate x:DataType="collect:CollectionGroup">
                                 <Button
                                     Width="220"
                                     Height="280"
@@ -106,11 +98,11 @@
                                             Height="120"
                                             Margin="0,24,0,0"
                                             HorizontalAlignment="Center"
-                                            Background="{Binding Path=BackgroundBrush}"
-                                            Initials="{Binding Path=Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
-                    -->
-                    <!--  Username  -->
-                    <!--
+                                            Background="{Binding Path=CollectionName.BackgroundBrush}"
+                                            Initials="{Binding Path=CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
+            -->
+            <!--  Username  -->
+            <!--
                                         <StackPanel
                                             Grid.Row="2"
                                             Margin="0,0,0,24"
@@ -119,20 +111,65 @@
                                                 HorizontalAlignment="Center"
                                                 FontSize="18"
                                                 FontWeight="SemiBold"
-                                                Text="{Binding Name}" />
+                                                Text="{Binding Path=CollectionName.Name}" />
                                             <TextBlock
                                                 Margin="0,4,0,0"
                                                 FontSize="12"
                                                 Opacity="0.6"
-                                                Text="{Binding Children[0].ItemsHistory[0].title}" />
+                                                Text="{Binding Path=CollectionName.Children[0].ItemsHistory[0].title}" />
                                         </StackPanel>
                                     </Grid>
                                 </Button>
                             </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>-->
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                  </SemanticZoom.ZoomedOutView>
+  </SemanticZoom>-->
+            <ItemsRepeater x:Name="UserCardsRepeater" ItemsSource="{x:Bind ViewModel.Collections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsRepeater.Layout>
+                    <StackLayout Orientation="Horizontal" Spacing="24" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="collect:CollectionGroup">
+                        <Button
+                            Width="220"
+                            Height="280"
+                            Click="UserCard_Click">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <PersonPicture
+                                    x:Name="RootImage"
+                                    Width="120"
+                                    Height="120"
+                                    Margin="0,24,0,0"
+                                    HorizontalAlignment="Center"
+                                    Background="{Binding Path=CollectionName.BackgroundBrush}"
+                                    Initials="{Binding Path=CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
+                                <StackPanel
+                                    Grid.Row="2"
+                                    Margin="0,0,0,24"
+                                    HorizontalAlignment="Center">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Path=CollectionName.Name}" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        FontSize="12"
+                                        Opacity="0.6"
+                                        Text="{Binding Path=CollectionName.Children[0].ItemsHistory[0].title}" />
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
 
         </ScrollViewer>
 
