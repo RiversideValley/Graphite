@@ -29,13 +29,14 @@ namespace Riverside.Graphite.Services
 		public string url { get; set; }
 	}
 	#endregion
+
 	public class BackgroundManager
 	{
-		private  readonly string CacheFolder = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser.Username);
-		private  readonly string CacheFilePrefix = "cachedaily";
-		private  ImageBrush cachedImageBrush = null;
+		private readonly string CacheFolder = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser.Username);
+		private readonly string CacheFilePrefix = "cachedaily";
+		private ImageBrush cachedImageBrush = null;
 
-		public  async Task<ImageBrush> GetFeaturedBackgroundAsync()
+		public async Task<ImageBrush> GetFeaturedBackgroundAsync()
 		{
 			string cachedImagePath = GetCachedImagePath();
 
@@ -43,6 +44,9 @@ namespace Riverside.Graphite.Services
 			{
 				return await CreateImageBrushFromFileAsync(cachedImagePath);
 			}
+
+			// Remove old cached images
+			RemoveOldCachedImages();
 
 			SocketsHttpHandler handler = new()
 			{
@@ -86,7 +90,7 @@ namespace Riverside.Graphite.Services
 			return null;
 		}
 
-		private  string GetCachedImagePath()
+		private string GetCachedImagePath()
 		{
 			string date = DateTime.Now.ToString("yyyyMMdd");
 			string jpgPath = Path.Combine(CacheFolder, $"{CacheFilePrefix}{date}.jpg");
@@ -104,7 +108,27 @@ namespace Riverside.Graphite.Services
 			return (DateTime.Now - fileInfo.CreationTime).TotalHours < 24;
 		}
 
-		private  async Task<ImageBrush> CreateImageBrushFromFileAsync(string path)
+		private void RemoveOldCachedImages()
+		{
+			string[] cachedFiles = Directory.GetFiles(CacheFolder, $"{CacheFilePrefix}*");
+			foreach (string file in cachedFiles)
+			{
+				FileInfo fileInfo = new FileInfo(file);
+				if ((DateTime.Now - fileInfo.CreationTime).TotalHours >= 24)
+				{
+					try
+					{
+						File.Delete(file);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Error deleting old cached image: {ex.Message}");
+					}
+				}
+			}
+		}
+
+		private async Task<ImageBrush> CreateImageBrushFromFileAsync(string path)
 		{
 			StorageFile file = await StorageFile.GetFileFromPathAsync(path);
 			using IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
@@ -142,5 +166,5 @@ namespace Riverside.Graphite.Services
 			}
 		}
 	}
-	
 }
+
