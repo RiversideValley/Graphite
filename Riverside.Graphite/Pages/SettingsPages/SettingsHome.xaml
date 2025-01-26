@@ -71,10 +71,13 @@
                 <labs:SettingsCard.HeaderIcon>
                     <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE777;" />
                 </labs:SettingsCard.HeaderIcon>
-                <Button
-                    x:Name="PatchBtn"
-                    Click="PatchBtn_Click"
-                    Content="Check For Updates" />
+                <StackPanel>
+                    <Button
+    x:Name="PatchBtn"
+    Click="PatchBtn_Click"
+    Content="Check For Updates" />
+                </StackPanel>
+                
             </labs:SettingsCard>
 
             <labs:SettingsCard Header="Reset App">
