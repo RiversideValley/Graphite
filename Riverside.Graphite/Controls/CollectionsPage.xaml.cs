@@ -47,6 +47,7 @@ namespace Riverside.Graphite.Controls
 			ViewModel.GatherCollections(id.Value);
 			if (ViewModel.Children.Count > 0) {
 				ViewModel.ChildrenVisible = Visibility.Visible;
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.ChildrenVisible));
 			}
 		}
 
