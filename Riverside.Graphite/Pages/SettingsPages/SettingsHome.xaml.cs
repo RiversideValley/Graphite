@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,6 +10,7 @@ using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.UpdateService;
 using Riverside.Graphite.Utils;
 using System;
 using System.Collections.Generic;
@@ -25,8 +27,9 @@ namespace Riverside.Graphite.Pages.SettingsPages
 	{
 		private SettingsService SettingsService { get; set; }
 		public static SettingsHome Instance { get; set; }
-		private readonly AddonManager _addonManager;
+		private readonly AddonManager _addonManager ;
 		private readonly DispatcherQueue _dispatcherQueue;
+
 		private IMessenger Messenger { get; set; }
 		public bool IsPremium { get; set; }
 
@@ -40,6 +43,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			_ = LoadUsernames();
 			_addonManager = new AddonManager();
 			_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
 			IsPremium = false;
 			Version.Text = "App version: " + GetVersionDescription();
 
@@ -173,7 +177,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 		}
 
-		private void PatchBtn_Click(object sender, RoutedEventArgs e)
+		private async void PatchBtn_Click(object sender, RoutedEventArgs e)
 		{
 			if (sender is Button button)
 			{
@@ -183,6 +187,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 				button.Visibility = Visibility.Visible;
 				button.Opacity = 1;
 			}
+			
 		}
 
 		private async void Reset_Click(object sender, RoutedEventArgs e)
