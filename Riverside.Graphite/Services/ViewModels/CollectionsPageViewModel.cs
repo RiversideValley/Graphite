@@ -42,7 +42,10 @@ namespace Riverside.Graphite.ViewModels
             }
 			
         }
-        
+
+		[ObservableProperty]
+		private int _selectedCollection;
+		
 		[ObservableProperty]
         private Visibility _ChildrenVisible;
 
@@ -72,7 +75,6 @@ namespace Riverside.Graphite.ViewModels
 		public async void Initialize() {
 
 			Items = await _collectionGroupData.GetGroupedCollectionsAsync();	
-			OnPropertyChanged(nameof(Items));
 		}
   
 		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)

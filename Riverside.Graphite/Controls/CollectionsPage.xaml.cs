@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -43,7 +44,10 @@ namespace Riverside.Graphite.Controls
             var btn = sender as Button;
             var id = (int?)btn.Tag;
 
+			
 			ViewModel.GatherCollections(id.Value);
+			ViewModel.SelectedCollection = id.Value;	
+
 			if (ViewModel.Children.Count > 0) {
 				ViewModel.ChildrenVisible = Visibility.Visible;
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.ChildrenVisible));
@@ -76,9 +80,11 @@ namespace Riverside.Graphite.Controls
 			flyout.ShowAt(sender, position);
 		}
 
-		private void RemoveHistoryItem(string selectedHistoryItem)
+		private async void RemoveHistoryItem(string selectedHistoryItem)
 		{
-			ViewModel.Initialize();	
+			ViewModel.Initialize();
+			await Task.Delay(100);	
+			ViewModel.GatherCollections(ViewModel.SelectedCollection);
 		}
 
 		

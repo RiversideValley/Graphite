@@ -65,6 +65,7 @@
             Grid.Row="1"
             HorizontalAlignment="Center"
             ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=OneWay}"
             SelectionMode="Single">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="collect:CollectionGroup">
@@ -169,7 +170,7 @@
                                     <TextBlock
                                         FontWeight="ExtraBold"
                                         Foreground="{ThemeResource SystemAccentColor}"
-                                        MaxLines="2"
+                                        MaxLines="3"
                                         Text="{Binding url}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="Wrap" />
