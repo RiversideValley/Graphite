@@ -3,9 +3,13 @@
     x:Class="Riverside.Graphite.Controls.CollectionsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
     xmlns:collect="using:Riverside.Graphite.Data.Core.Models"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:firebrowser="using:Riverside.Graphite.Controls"
     xmlns:helpers="using:Riverside.Graphite.Helpers"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:Riverside.Graphite.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
@@ -13,143 +17,43 @@
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:TextSubStringConverter x:Key="SubstringConverter" />
+        <helpers:InverseBoolToVisibilityConverter x:Key="InverseBooleanConverter" />
     </Page.Resources>
-    <Grid>
-        <ScrollViewer
-            Grid.Row="2"
-            Padding="40,40"
+
+    <Grid BorderBrush="AliceBlue" BorderThickness="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Grid.Row="0"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            HorizontalScrollBarVisibility="Auto"
-            HorizontalScrollMode="Enabled">
-            <!--<SemanticZoom Height="Auto" IsZoomedInViewActive="True">
-                <SemanticZoom.ZoomedInView>
-                    <GridView
-                        x:Name="ZoomInView"
-                        HorizontalAlignment="Left"
-                        ItemsSource="{x:Bind ViewModel.Collections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="collect:CollectionGroup">
-                                <Button
-                                    Width="220"
-                                    Height="280"
-                                    Click="UserCard_Click">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-
-                                        <PersonPicture
-                                            x:Name="RootImage"
-                                            Width="120"
-                                            Height="120"
-                                            Margin="0,24,0,0"
-                                            HorizontalAlignment="Center"
-                                            Background="{Binding Path=CollectionName.BackgroundBrush}"
-                                            Initials="{Binding Path=CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
-            -->
-            <!--  Username  -->
-            <!--
-                                        <StackPanel
-                                            Grid.Row="2"
-                                            Margin="0,0,0,24"
-                                            HorizontalAlignment="Center">
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                FontSize="18"
-                                                FontWeight="SemiBold"
-                                                Text="{Binding Path=CollectionName.Name}" />
-                                            <TextBlock
-                                                Margin="0,4,0,0"
-                                                FontSize="12"
-                                                Opacity="0.6"
-                                                Text="{Binding Path=CollectionName.Children[0].ItemsHistory[0].title}" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                </SemanticZoom.ZoomedInView>
-
-                <SemanticZoom.ZoomedOutView>
-                    <GridView
-                        x:Name="ZoomInView2"
-                        HorizontalAlignment="Left"
-                        ItemsSource="{x:Bind ViewModel.GrpViewModel.GroupedItems.View}">
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="collect:CollectionGroup">
-                                <Button
-                                    Width="220"
-                                    Height="280"
-                                    Click="UserCard_Click">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-
-                                        <PersonPicture
-                                            x:Name="RootImage"
-                                            Width="120"
-                                            Height="120"
-                                            Margin="0,24,0,0"
-                                            HorizontalAlignment="Center"
-                                            Background="{Binding Path=CollectionName.BackgroundBrush}"
-                                            Initials="{Binding Path=CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
-            -->
-            <!--  Username  -->
-            <!--
-                                        <StackPanel
-                                            Grid.Row="2"
-                                            Margin="0,0,0,24"
-                                            HorizontalAlignment="Center">
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                FontSize="18"
-                                                FontWeight="SemiBold"
-                                                Text="{Binding Path=CollectionName.Name}" />
-                                            <TextBlock
-                                                Margin="0,4,0,0"
-                                                FontSize="12"
-                                                Opacity="0.6"
-                                                Text="{Binding Path=CollectionName.Children[0].ItemsHistory[0].title}" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                  </SemanticZoom.ZoomedOutView>
-  </SemanticZoom>-->
-            <ItemsRepeater x:Name="UserCardsRepeater" ItemsSource="{x:Bind ViewModel.Collections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <ItemsRepeater.Layout>
-                    <StackLayout Orientation="Horizontal" Spacing="24" />
-                </ItemsRepeater.Layout>
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="collect:CollectionGroup">
+            FontSize="48"
+            FontStyle="Italic"
+            FontWeight="ExtraBold"
+            Text="Collections" />
+        <GridView
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectionMode="Single">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="collect:CollectionGroup">
+                    <StackPanel Orientation="Horizontal">
                         <Button
-                            Width="220"
-                            Height="280"
-                            Click="UserCard_Click">
+                            x:Name="toggleZoom"
+                            Click="GroupHeader_Click"
+                            Tag="{Binding CollectionName.Id}">
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
                                 <PersonPicture
                                     x:Name="RootImage"
                                     Width="120"
                                     Height="120"
                                     Margin="0,24,0,0"
                                     HorizontalAlignment="Center"
-                                    Background="{Binding Path=CollectionName.BackgroundBrush}"
-                                    Initials="{Binding Path=CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
+                                    Background="{Binding CollectionName.BackgroundBrush}"
+                                    Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
                                 <StackPanel
                                     Grid.Row="2"
                                     Margin="0,0,0,24"
@@ -158,20 +62,101 @@
                                         HorizontalAlignment="Center"
                                         FontSize="18"
                                         FontWeight="SemiBold"
-                                        Text="{Binding Path=CollectionName.Name}" />
-                                    <TextBlock
-                                        Margin="0,4,0,0"
-                                        FontSize="12"
-                                        Opacity="0.6"
-                                        Text="{Binding Path=CollectionName.Children[0].ItemsHistory[0].title}" />
+                                        Text="{Binding CollectionName.Name}" />
                                 </StackPanel>
                             </Grid>
                         </Button>
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
+                    </StackPanel>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VariableSizedWrapGrid Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </GridView>
 
-        </ScrollViewer>
+        <ListView
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            ItemsSource="{x:Bind ViewModel.Children, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectionMode="None"
+            Visibility="{x:Bind ViewModel.ChildrenVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="collect:Collection">
+                    <Grid>
+                        <TextBlock Text="{Binding CreatedDate}" />
+                        <ListView ItemsSource="{Binding Path=ItemsHistory}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="collect:HistoryItem">
+                                    <TextBlock Text="{Binding Title}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
     </Grid>
+
+    <!--<GridView ItemsSource="{x:Bind ViewModel.GroupedItems.View, Mode=OneWay}">
+        <GridView.GroupStyle>
+            <GroupStyle>
+                <GroupStyle.HeaderTemplate>
+                    <DataTemplate x:DataType="collect:CollectionGroup">
+                        <StackPanel>
+                            <ToggleButton
+                                Width="340"
+                                HorizontalAlignment="Center"
+                                Click="GroupHeader_Click"
+                                Content="{Binding Key}"
+                                IsChecked="False" />
+                        </StackPanel>
+                    </DataTemplate>
+                </GroupStyle.HeaderTemplate>
+                <GroupStyle.Panel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </GroupStyle.Panel>
+            </GroupStyle>
+        </GridView.GroupStyle>
+        <GridView.ItemTemplate>
+            <DataTemplate x:DataType="collect:Collection">
+                <ItemsRepeater x:Name="GroupItemsPanel" ItemsSource="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="collect:HistoryItem">
+                            <Grid
+                                Margin="5"
+                                Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
+                                ColumnDefinitions="Auto,*"
+                                RightTapped="Grid_RightTapped">
+                                <Image
+                                    Width="32"
+                                    Height="32"
+                                    Source="{Binding ImageSource}" />
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Title}"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        FontWeight="ExtraBold"
+                                        Foreground="{ThemeResource SystemAccentColor}"
+                                        MaxLines="2"
+                                        Text="{Binding Url}"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="{Binding LastVisitTime}" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </DataTemplate>
+        </GridView.ItemTemplate>
+    </GridView>-->
 </Page>

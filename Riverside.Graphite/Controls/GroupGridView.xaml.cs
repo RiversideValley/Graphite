@@ -262,7 +262,8 @@ namespace Riverside.Graphite.Controls
 				Source = viewModel.Items.GroupBy(i => i.Date >= sevenDaysAgo
 						? i.Date.ToString("MMMM dd, yyyy")
 						: i.Date.ToString("MMMM yyyy"))
-				.Select(group => new { Key = group.Key, Items = group.ToList() })
+				.Select(group => new { Key = group.Key, Items = group.ToList() }),
+				ItemsPath = new("Items"),
 			};
 
 			OnPropertyChanged(nameof(GroupedItems));

@@ -118,6 +118,9 @@ public sealed partial class MainWindow : Window
 					}
 				}
 			}
+
+			App.Current.KillProcessByName("dotnet");	
+
 		};
 		SizeChanged += async (s, e) =>
 		{

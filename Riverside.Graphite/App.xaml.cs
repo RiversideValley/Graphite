@@ -110,7 +110,7 @@ public partial class App : Application
 
 	}
 
-	static void KillProcessByName(string processName)
+	public void KillProcessByName(string processName)
 	{
 		try
 		{
