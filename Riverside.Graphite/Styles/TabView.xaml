@@ -368,7 +368,11 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal" >
+                                    <VisualState.Setters>
+                                        <Setter Target="TabContainer.Background" Value="Transparent" />
+                                    </VisualState.Setters>
+                                </VisualState>
 
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -417,7 +421,6 @@
                                         <Setter Target="RightRadiusRenderTriangle.Visibility" Value="Collapsed" />
                                         <Setter Target="LeftRadiusRenderArc.Visibility" Value="Collapsed" />
                                         <Setter Target="LeftRadiusRenderTriangle.Visibility" Value="Collapsed" />
-                                        <Setter Target="TabContainer.Margin" Value="{ThemeResource TabViewSelectedItemHeaderMargin}" />
                                         <Setter Target="TabContainer.BorderBrush" Value="{ThemeResource TabViewSelectedItemBorderBrush}" />
                                         <Setter Target="TabContainer.BorderThickness" Value="{ThemeResource TabViewSelectedItemBorderThickness}" />
                                         <Setter Target="TabContainer.Background" Value="{ThemeResource TabViewItemHeaderBackgroundSelected}" />
@@ -437,7 +440,6 @@
                                         <Setter Target="RightRadiusRenderTriangle.Visibility" Value="Collapsed" />
                                         <Setter Target="LeftRadiusRenderArc.Visibility" Value="Collapsed" />
                                         <Setter Target="LeftRadiusRenderTriangle.Visibility" Value="Collapsed" />
-                                        <Setter Target="TabContainer.Margin" Value="{ThemeResource TabViewSelectedItemHeaderMargin}" />
                                         <Setter Target="TabContainer.BorderBrush" Value="{ThemeResource TabViewSelectedItemBorderBrush}" />
                                         <Setter Target="TabContainer.BorderThickness" Value="{ThemeResource TabViewSelectedItemBorderThickness}" />
                                         <Setter Target="TabContainer.Background" Value="{ThemeResource TabViewItemHeaderBackgroundSelected}" />
