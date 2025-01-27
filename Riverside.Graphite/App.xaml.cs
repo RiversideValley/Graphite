@@ -98,18 +98,18 @@ public partial class App : Application
 
 
 
-		//try
-		//{
-		//	//kill any hanging instance of channels, especially in debugging..
-		//	KillProcessByName("dotnet");
+		try
+		{
+			//kill any hanging instance of channels, especially in debugging..
+			KillProcessByName("dotnet");
 
-		//	Task.Run(() => StartChannels());
-		//}
-		//catch (Exception e)
-		//{
-		//	ExceptionLogger.LogException(e);
-		//	throw;
-		//}
+			Task.Run(() => StartChannels());
+		}
+		catch (Exception e)
+		{
+			ExceptionLogger.LogException(e);
+			throw;
+		}
 
 	}
 

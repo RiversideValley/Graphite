@@ -155,6 +155,7 @@
                         <Grid
                             Margin="5"
                             Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
+                            ColumnSpacing="2"
                             RightTapped="Grid_RightTapped">
                             <StackPanel Orientation="Horizontal" Spacing="2">
                                 <Image
@@ -168,6 +169,7 @@
                                         Text="{Binding title}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
+                                        MaxWidth="600"
                                         FontWeight="ExtraBold"
                                         Foreground="{ThemeResource SystemAccentColor}"
                                         MaxLines="3"
