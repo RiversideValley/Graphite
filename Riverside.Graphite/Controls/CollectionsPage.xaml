@@ -12,27 +12,55 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:Riverside.Graphite.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:TextSubStringConverter x:Key="SubstringConverter" />
         <helpers:InverseBoolToVisibilityConverter x:Key="InverseBooleanConverter" />
+        <helpers:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter" />
     </Page.Resources>
 
-    <Grid BorderBrush="AliceBlue" BorderThickness="1">
+    <Grid
+        Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
+        BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+        BorderThickness="2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="150" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock
+
+        <StackPanel
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="4">
+            <FontIcon
+                FontFamily="{StaticResource FluentIcons}"
+                FontSize="16"
+                Glyph="&#xe71d;" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="Segoe Script"
+                FontSize="48"
+                FontStyle="Italic"
+                FontWeight="ExtraBold"
+                Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                Text=" Collections " />
+        </StackPanel>
+
+
+
+        <!--<TextBlock
             Grid.Row="0"
             HorizontalAlignment="Center"
             FontSize="48"
             FontStyle="Italic"
             FontWeight="ExtraBold"
-            Text="Collections" />
+            Text="Collections" />-->
         <GridView
             Grid.Row="1"
             HorizontalAlignment="Center"
@@ -40,24 +68,25 @@
             SelectionMode="Single">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="collect:CollectionGroup">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
                         <Button
                             x:Name="toggleZoom"
                             Click="GroupHeader_Click"
                             Tag="{Binding CollectionName.Id}">
                             <Grid>
-                                <PersonPicture
-                                    x:Name="RootImage"
-                                    Width="120"
-                                    Height="120"
-                                    Margin="0,24,0,0"
-                                    HorizontalAlignment="Center"
-                                    Background="{Binding CollectionName.BackgroundBrush}"
-                                    Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
                                 <StackPanel
                                     Grid.Row="2"
                                     Margin="0,0,0,24"
-                                    HorizontalAlignment="Center">
+                                    HorizontalAlignment="Center"
+                                    Spacing="2">
+                                    <PersonPicture
+                                        x:Name="RootImage"
+                                        Width="120"
+                                        Height="120"
+                                        Margin="0,24,0,0"
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding CollectionName.BackgroundBrush}"
+                                        Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         FontSize="18"
@@ -79,20 +108,79 @@
         <ListView
             Grid.Row="2"
             HorizontalAlignment="Center"
-            ItemsSource="{x:Bind ViewModel.Children, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            SelectionMode="None"
-            Visibility="{x:Bind ViewModel.ChildrenVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
+            SelectionMode="Single">
+            <ListView.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="100" />
+                </TransitionCollection>
+            </ListView.Transitions>
+            <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Grid>
+                                    <ContentPresenter />
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualStateGroup.Transitions>
+                                                <VisualTransition
+                                                    GeneratedDuration="0:0:0.5"
+                                                    From="Unloaded"
+                                                    To="Open">
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            From="0"
+                                                            To="1"
+                                                            Duration="0:0:0.5" />
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                            </VisualStateGroup.Transitions>
+                                            <VisualState x:Name="Unloaded" />
+                                            <VisualState x:Name="Open" />
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Resources>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="collect:Collection">
+                <DataTemplate x:DataType="collect:DbHistoryItem">
                     <Grid>
-                        <TextBlock Text="{Binding CreatedDate}" />
-                        <ListView ItemsSource="{Binding Path=ItemsHistory}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="collect:HistoryItem">
-                                    <TextBlock Text="{Binding Title}" />
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                        <Grid
+                            Margin="5"
+                            Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
+                            RightTapped="Grid_RightTapped">
+                            <StackPanel Orientation="Horizontal" Spacing="2">
+                                <Image
+                                    Width="32"
+                                    Height="32"
+                                    Margin="{ThemeResource SmallLeftMargin}"
+                                    Source="{Binding url, Converter={StaticResource UrlToImageSourceConverter}}" />
+                                <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Vertical">
+                                    <TextBlock
+                                        FontWeight="SemiBold"
+                                        Text="{Binding title}"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        FontWeight="ExtraBold"
+                                        Foreground="{ThemeResource SystemAccentColor}"
+                                        MaxLines="2"
+                                        Text="{Binding url}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="{Binding last_visit_time}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                        </Grid>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

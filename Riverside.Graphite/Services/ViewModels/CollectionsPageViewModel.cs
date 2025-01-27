@@ -20,15 +20,33 @@ using Riverside.Graphite.Runtime.Helpers;
 
 namespace Riverside.Graphite.ViewModels
 {
-    public class CollectionsPageViewModel : ObservableObject
+    public partial class CollectionsPageViewModel : ObservableRecipient
     {
-		private readonly HistoryActions _historyActions;
-		private readonly CollectionsGroupData _collectionGroupData;	
+		#region dp_injection_services
+			private readonly HistoryActions _historyActions;
+			private readonly CollectionsGroupData _collectionGroupData;
+		#endregion
+
+		#region ui_props
+
 		public ObservableCollection<Brush> RandomBrushes { get; set; }
 		public ObservableCollection<CollectionGroup> Items { get; set; }
 		public ObservableCollection<Collection> Children { get; set; }
-		public CollectionViewSource GroupedItems { get; set; }
-		public Visibility ChildrenVisible { get; set; } = Visibility.Collapsed;
+        public ObservableCollection<DbHistoryItem> SubHistoryItems
+        {
+            get
+            {
+                return Children != null
+                    ? new ObservableCollection<DbHistoryItem>(Children.SelectMany(t => t.ItemsHistory ?? Enumerable.Empty<DbHistoryItem>()))
+                    : new ObservableCollection<DbHistoryItem>();
+            }
+			
+        }
+        
+		[ObservableProperty]
+        private Visibility _ChildrenVisible;
+
+		#endregion
 		public CollectionsPageViewModel()
         {
 			if (AuthService.CurrentUser is null)
@@ -41,32 +59,22 @@ namespace Riverside.Graphite.ViewModels
 		}
 
 
-		public void GatherCollections(int Id)
+		public async void GatherCollections(int Id)
 		{
 			Children = Items.Where(x => x.CollectionName.Id == Id).SelectMany(x => x.Collections).ToObservableCollection();
+			
+			await Task.Delay(100);
 			OnPropertyChanged(nameof(Children));
+			await Task.Delay(100);
+			OnPropertyChanged(nameof(SubHistoryItems));
 		}	
 
 		public async void Initialize() {
 
 			Items = await _collectionGroupData.GetGroupedCollectionsAsync();	
-			//GroupedItems = await GetGroupedData(Items);
-			OnPropertyChanged(nameof(GroupedItems));
-
+			OnPropertyChanged(nameof(Items));
 		}
-        public async Task<CollectionViewSource> GetGroupedData(ObservableCollection<Collection> items)
-        {
-            var collection = new CollectionViewSource
-            {
-                IsSourceGrouped = true,
-                Source = items.GroupBy(i => _historyActions.GetAllCollectionNamesItems().Result.Where(x => x.Id == i.Id).Select(g=> g.Name))
-                              .Select(group => new { group.Key, Items = group.SelectMany(x=> x.ItemsHistory).ToList() })
-            };
-			
-			OnPropertyChanged(nameof(GroupedItems));
-			return await Task.FromResult(collection);
-        }
-
+  
 		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
 		{
 			OnPropertyChanged(propertyName);

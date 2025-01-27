@@ -159,7 +159,6 @@
     <None Remove="Assets\WebView\AppFrontend\notfound.html" />
     <None Remove="ChangeUsernameCore.xaml" />
     <None Remove="Controls\AlphaFilter.xaml" />
-    <None Remove="Controls\CollectionNames.xaml" />
     <None Remove="Controls\ContentPage.xaml" />
     <None Remove="Controls\CreateBackup.xaml" />
     <None Remove="Controls\GroupGridView.xaml" />
@@ -354,9 +353,6 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="Controls\CollectionNames.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Update="UpdateChecker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

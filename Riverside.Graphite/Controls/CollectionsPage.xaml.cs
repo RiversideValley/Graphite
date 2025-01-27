@@ -38,7 +38,6 @@ namespace Riverside.Graphite.Controls
  
 			this.InitializeComponent();
 		}
-
         private void GroupHeader_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -50,56 +49,13 @@ namespace Riverside.Graphite.Controls
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.ChildrenVisible));
 			}
 		}
-
-		private void ExpandPanel(ItemsControl panel)
-		{
-			// Ensure the panel is visible
-			panel.Visibility = Visibility.Visible;
-
-			// Animate the expansion
-			var storyboard = new Storyboard();
-			var animation = new DoubleAnimation
-			{
-				From = 0,
-				To = panel.ActualHeight,
-				Duration = new Duration(TimeSpan.FromMilliseconds(500))
-			};
-			Storyboard.SetTarget(animation, panel);
-			Storyboard.SetTargetProperty(animation, "Height");
-			storyboard.Children.Add(animation);
-			storyboard.Begin();
-		}
-
-		private void CollapsePanel(ItemsControl panel)
-		{
-			// Animate the collapse
-			var storyboard = new Storyboard();
-			var animation = new DoubleAnimation
-			{
-				From = panel.ActualHeight,
-				To = 0,
-				Duration = new Duration(TimeSpan.FromMilliseconds(500))
-			};
-			Storyboard.SetTarget(animation, panel);
-			Storyboard.SetTargetProperty(animation, "Height");
-			storyboard.Children.Add(animation);
-			storyboard.Begin();
-
-			// Hide the panel after animation completes
-			storyboard.Completed += (s, e) =>
-			{
-				panel.Visibility = Visibility.Collapsed;
-			};
-		}
-
 		private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
 		{
-			if (((FrameworkElement)sender).DataContext is HistoryItem historyItem)
+			if (((FrameworkElement)sender).DataContext is DbHistoryItem historyItem)
 			{
-				ShowContextMenu(historyItem.Url, (FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+				ShowContextMenu(historyItem.url, (FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
 			}
 		}
-
 		private void ShowContextMenu(string selectedHistoryItem, FrameworkElement sender, Windows.Foundation.Point position)
 		{
 			MenuFlyout flyout = new();
@@ -126,12 +82,5 @@ namespace Riverside.Graphite.Controls
 		}
 
 		
-		private void ZoomControl_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
-		{
-			if (e.IsSourceZoomedInView == false)
-			{
-				e.DestinationItem.Item = e.SourceItem.Item;
-			}
-		}
 	}
 }
