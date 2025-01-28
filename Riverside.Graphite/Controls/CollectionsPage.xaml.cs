@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Web.WebView2.Core;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Actions;
@@ -20,6 +21,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.WebUI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,7 +38,7 @@ namespace Riverside.Graphite.Controls
 		{
 			ViewModel = App.GetService<CollectionsPageViewModel>();
 			DataContext = ViewModel;
- 
+			
 			this.InitializeComponent();
 		}
         private void GroupHeader_Click(object sender, RoutedEventArgs e)
@@ -87,6 +89,31 @@ namespace Riverside.Graphite.Controls
 			ViewModel.GatherCollections(ViewModel.SelectedCollection);
 		}
 
-		
+		private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count > 0)
+			{
+				ViewModel.SelectedUrl = new((e.AddedItems[0]! as DbHistoryItem).url);
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.SelectedUrl));
+
+				ViewModel.IsHistoryViewing = true;
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.IsHistoryViewing));
+			}
+		}
+
+		private async void WebViewHistoryItem_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+		{
+
+			if (sender is WebView2 view)
+			{
+
+				await view.EnsureCoreWebView2Async();
+				await view.CoreWebView2.ExecuteScriptWithResultAsync(@"
+					document.body.style.zoom='.75';
+				");
+			}
+
+
+		}
 	}
 }

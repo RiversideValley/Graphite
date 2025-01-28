@@ -23,6 +23,8 @@
     </Page.Resources>
 
     <Grid
+        Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+        Padding="2"
         Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
         BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
         BorderThickness="2">
@@ -107,9 +109,11 @@
         </GridView>
 
         <ListView
+            x:Name="ListCollectionHistoryItems"
             Grid.Row="2"
             HorizontalAlignment="Center"
             ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
+            SelectionChanged="ListView_SelectionChanged"
             SelectionMode="Single">
             <ListView.Transitions>
                 <TransitionCollection>
@@ -189,8 +193,56 @@
             </ListView.ItemTemplate>
         </ListView>
 
-    </Grid>
 
+        <TeachingTip
+            x:Name="ViewSelectedUrl"
+            Title="History Item"
+            IsLightDismissEnabled="True"
+            IsOpen="{x:Bind ViewModel.IsHistoryViewing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            PlacementMargin="15"
+            PreferredPlacement="RightTop"
+            Subtitle="Graphite Collections..."
+            Target="{Binding ElementName=ListCollectionHistoryItems}">
+            <TeachingTip.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
+                </TransitionCollection>
+            </TeachingTip.Transitions>
+            <TeachingTip.HeroContent>
+
+                <Grid
+                    Width="768"
+                    Height="920"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    Padding="2"
+                    HorizontalAlignment="Center"
+                    BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
+                    BorderThickness="1.5"
+                    CornerRadius="3">
+                    <WebView2
+                        x:Name="WebViewHistoryItem"
+                        NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
+                        Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <WebView2.Transitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
+                            </TransitionCollection>
+                        </WebView2.Transitions>
+
+                    </WebView2>
+                </Grid>
+
+            </TeachingTip.HeroContent>
+            <TeachingTip.Content>
+                <TextBlock
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    FontFamily="Arial"
+                    Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.SelectedUrl.Host, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
+            </TeachingTip.Content>
+        </TeachingTip>
+    </Grid>
     <!--<GridView ItemsSource="{x:Bind ViewModel.GroupedItems.View, Mode=OneWay}">
         <GridView.GroupStyle>
             <GroupStyle>

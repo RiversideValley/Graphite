@@ -42,6 +42,11 @@ namespace Riverside.Graphite.ViewModels
             }
 			
         }
+		[ObservableProperty]
+		private bool _IsHistoryViewing;
+		
+		[ObservableProperty]
+		private Uri _selectedUrl; 
 
 		[ObservableProperty]
 		private int _selectedCollection;
@@ -49,6 +54,11 @@ namespace Riverside.Graphite.ViewModels
 		[ObservableProperty]
         private Visibility _ChildrenVisible;
 
+		partial void OnSelectedUrlChanged(Uri value)
+		{
+			_IsHistoryViewing = true;
+			RaisePropertyChanges(nameof(IsHistoryViewing));	
+		}
 		#endregion
 		public CollectionsPageViewModel()
         {

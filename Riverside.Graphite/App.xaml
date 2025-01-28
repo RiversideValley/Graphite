@@ -12,6 +12,12 @@
                 <ResourceDictionary Source="Styles/TextBox.xaml" />
                 <ResourceDictionary Source="Styles/Buttons.xaml" />
                 <ResourceDictionary Source="Styles/Thickness.xaml" />
+                <ResourceDictionary>
+                    <x:Double x:Key="TeachingTipMinHeight">60</x:Double>
+                    <x:Double x:Key="TeachingTipMaxHeight">550</x:Double>
+                    <x:Double x:Key="TeachingTipMinWidth">120</x:Double>
+                    <x:Double x:Key="TeachingTipMaxWidth">575</x:Double>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
