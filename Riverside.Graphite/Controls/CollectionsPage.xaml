@@ -14,23 +14,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:TextSubStringConverter x:Key="SubstringConverter" />
-        <helpers:InverseBoolToVisibilityConverter x:Key="InverseBooleanConverter" />
+        <helpers:BoolToVisibilityConverter x:Key="BooleanConverter" />
         <helpers:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter" />
+        <helpers:InverseVisiblityToBoolConverter x:Key="InverseBooleanFromVisible" />
     </Page.Resources>
 
     <Grid
-        Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
         Padding="2"
         Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
         BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
         BorderThickness="2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="150" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -55,193 +55,191 @@
         </StackPanel>
 
 
-
-        <!--<TextBlock
-            Grid.Row="0"
-            HorizontalAlignment="Center"
-            FontSize="48"
-            FontStyle="Italic"
-            FontWeight="ExtraBold"
-            Text="Collections" />-->
-        <GridView
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=OneWay}"
-            SelectionMode="Single">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="collect:CollectionGroup">
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <Button
-                            x:Name="toggleZoom"
-                            Click="GroupHeader_Click"
-                            Tag="{Binding CollectionName.Id}">
-                            <Grid>
-                                <StackPanel
-                                    Grid.Row="2"
-                                    Margin="0,0,0,24"
-                                    HorizontalAlignment="Center"
-                                    Spacing="2">
-                                    <PersonPicture
-                                        x:Name="RootImage"
-                                        Width="120"
-                                        Height="120"
-                                        Margin="0,24,0,0"
-                                        HorizontalAlignment="Center"
-                                        Background="{Binding CollectionName.BackgroundBrush}"
-                                        Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="18"
-                                        FontWeight="SemiBold"
-                                        Text="{Binding CollectionName.Name}" />
-                                </StackPanel>
-                            </Grid>
-                        </Button>
-                    </StackPanel>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-            <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VariableSizedWrapGrid Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-        </GridView>
-
-        <ListView
-            x:Name="ListCollectionHistoryItems"
-            Grid.Row="2"
-            HorizontalAlignment="Center"
-            ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
-            SelectionChanged="ListView_SelectionChanged"
-            SelectionMode="Single">
-            <ListView.Transitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromHorizontalOffset="100" />
-                </TransitionCollection>
-            </ListView.Transitions>
-            <ListView.Resources>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GridView
+                x:Name="GridCollections"
+                Grid.Column="0"
+                Margin="{ThemeResource SmallLeftRightMargin}"
+                HorizontalAlignment="Left"
+                ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=OneWay}"
+                SelectionMode="Single">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="collect:CollectionGroup">
+                        <StackPanel
+                            Padding="2"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <Button
+                                x:Name="toggleZoom"
+                                Click="GroupHeader_Click"
+                                Tag="{Binding CollectionName.Id}">
                                 <Grid>
-                                    <ContentPresenter />
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup x:Name="CommonStates">
-                                            <VisualStateGroup.Transitions>
-                                                <VisualTransition
-                                                    GeneratedDuration="0:0:0.5"
-                                                    From="Unloaded"
-                                                    To="Open">
-                                                    <Storyboard>
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetProperty="Opacity"
-                                                            From="0"
-                                                            To="1"
-                                                            Duration="0:0:0.5" />
-                                                    </Storyboard>
-                                                </VisualTransition>
-                                            </VisualStateGroup.Transitions>
-                                            <VisualState x:Name="Unloaded" />
-                                            <VisualState x:Name="Open" />
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        Margin="0,0,0,24"
+                                        HorizontalAlignment="Center"
+                                        Spacing="2">
+                                        <PersonPicture
+                                            x:Name="RootImage"
+                                            Width="80"
+                                            Height="80"
+                                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                                            HorizontalAlignment="Center"
+                                            Background="{Binding CollectionName.BackgroundBrush}"
+                                            Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="18"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding CollectionName.Name}" />
+                                    </StackPanel>
                                 </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.Resources>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="collect:DbHistoryItem">
-                    <Grid>
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
+            <Grid Grid.Column="1">
+                <ListView
+                    x:Name="ListCollectionHistoryItems"
+                    HorizontalAlignment="Left"
+                    ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
+                    SelectionChanged="ListView_SelectionChanged"
+                    SelectionMode="Single">
+                    <ListView.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition FromHorizontalOffset="100" />
+                        </TransitionCollection>
+                    </ListView.Transitions>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="collect:DbHistoryItem">
+                            <Grid>
+                                <Grid
+                                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
+                                    RightTapped="Grid_RightTapped">
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
+                                        <Image
+                                            Width="32"
+                                            Height="32"
+                                            Margin="{ThemeResource SmallLeftMargin}"
+                                            Source="{Binding url, Converter={StaticResource UrlToImageSourceConverter}}" />
+                                        <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Vertical">
+                                            <TextBlock
+                                                MaxWidth="400"
+                                                FontWeight="SemiBold"
+                                                MaxLines="3"
+                                                Text="{Binding title}"
+                                                TextWrapping="WrapWholeWords" />
+                                            <TextBlock
+                                                MaxWidth="400"
+                                                FontWeight="ExtraBold"
+                                                Foreground="{ThemeResource SystemAccentColor}"
+                                                MaxLines="3"
+                                                Text="{Binding url}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="Wrap" />
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                                Text="{Binding last_visit_time}" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </Grid>
+
+            <Grid
+                Grid.Column="2"
+                Width="NaN"
+                Height="NaN"
+                Margin="{ThemeResource XSmallLeftTopRightBottomMargin}"
+                ui:UIElementExtensions.ClipToBounds="True"
+                BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Visibility="{x:Bind ViewModel.WebViewVisible, Mode=OneWay}">
+                <WebView2
+                    x:Name="WebViewHistoryItem"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    CoreWebView2Initialized="WebViewHistoryItem_CoreWebView2Initialized"
+                    NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
+                    Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+
+
+            <!--<TeachingTip
+                    x:Name="ViewSelectedUrl"
+                    Title="History Item"
+                    Grid.Column="2"
+                    IsLightDismissEnabled="True"
+                    IsOpen="{x:Bind ViewModel.IsHistoryViewing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlacementMargin="15"
+                    PreferredPlacement="Center"
+                    Subtitle="Graphite Collections..."
+                    Target="{Binding ElementName=PresentView}">
+                    <TeachingTip.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
+                        </TransitionCollection>
+                    </TeachingTip.Transitions>
+                    <TeachingTip.HeroContent>
+
                         <Grid
-                            Margin="5"
-                            Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
-                            ColumnSpacing="2"
-                            RightTapped="Grid_RightTapped">
-                            <StackPanel Orientation="Horizontal" Spacing="2">
-                                <Image
-                                    Width="32"
-                                    Height="32"
-                                    Margin="{ThemeResource SmallLeftMargin}"
-                                    Source="{Binding url, Converter={StaticResource UrlToImageSourceConverter}}" />
-                                <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Vertical">
-                                    <TextBlock
-                                        FontWeight="SemiBold"
-                                        Text="{Binding title}"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        MaxWidth="600"
-                                        FontWeight="ExtraBold"
-                                        Foreground="{ThemeResource SystemAccentColor}"
-                                        MaxLines="3"
-                                        Text="{Binding url}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        HorizontalAlignment="Right"
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{Binding last_visit_time}" />
-                                </StackPanel>
-                            </StackPanel>
+                            Width="600"
+                            Height="800"
+                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                            Padding="2"
+                            HorizontalAlignment="Center"
+                            BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
+                            BorderThickness="1.5"
+                            CornerRadius="3">
+                            <ScrollViewer
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Visible"
+                                VerticalScrollMode="Auto">
+                                <WebView2
+                                    x:Name="WebViewHistoryItem"
+                                    NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
+                                    Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <WebView2.Transitions>
+                                        <TransitionCollection>
+                                            <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
+                                        </TransitionCollection>
+                                    </WebView2.Transitions>
 
+                                </WebView2>
+                            </ScrollViewer>
                         </Grid>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
 
+                    </TeachingTip.HeroContent>
+                    <TeachingTip.Content>
+                        <TextBlock
+                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                            FontFamily="Arial"
+                            Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                            Text="{x:Bind ViewModel.SelectedUrl.Host, Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                    </TeachingTip.Content>
+                </TeachingTip>-->
 
-        <TeachingTip
-            x:Name="ViewSelectedUrl"
-            Title="History Item"
-            IsLightDismissEnabled="True"
-            IsOpen="{x:Bind ViewModel.IsHistoryViewing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            PlacementMargin="15"
-            PreferredPlacement="RightTop"
-            Subtitle="Graphite Collections..."
-            Target="{Binding ElementName=ListCollectionHistoryItems}">
-            <TeachingTip.Transitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
-                </TransitionCollection>
-            </TeachingTip.Transitions>
-            <TeachingTip.HeroContent>
-
-                <Grid
-                    Width="768"
-                    Height="920"
-                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                    Padding="2"
-                    HorizontalAlignment="Center"
-                    BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
-                    BorderThickness="1.5"
-                    CornerRadius="3">
-                    <WebView2
-                        x:Name="WebViewHistoryItem"
-                        NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
-                        Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <WebView2.Transitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
-                            </TransitionCollection>
-                        </WebView2.Transitions>
-
-                    </WebView2>
-                </Grid>
-
-            </TeachingTip.HeroContent>
-            <TeachingTip.Content>
-                <TextBlock
-                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                    FontFamily="Arial"
-                    Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
-                    Text="{x:Bind ViewModel.SelectedUrl.Host, Mode=OneWay}"
-                    TextWrapping="WrapWholeWords" />
-            </TeachingTip.Content>
-        </TeachingTip>
+        </Grid>
     </Grid>
     <!--<GridView ItemsSource="{x:Bind ViewModel.GroupedItems.View, Mode=OneWay}">
         <GridView.GroupStyle>

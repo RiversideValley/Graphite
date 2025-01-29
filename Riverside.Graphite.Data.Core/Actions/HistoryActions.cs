@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Windows.UI;
 
@@ -88,7 +89,7 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 			List<HistoryItem> items = (from x in HistoryContext.Urls
 									   select new HistoryItem
 									   {
-										   Id = x.hidden,
+										   Id = x.id,
 										   Url = x.url,
 										   Title = x.title,
 										   VisitCount = x.visit_count,
@@ -108,9 +109,35 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 		}
 	}
 
-	public Task InsertCollectionsItem(DateTime createdDate, HistoryItem historyItem, CollectionName collectionName)
-	{
-		throw new NotImplementedException();
+    public async Task<bool> InsertCollectionsItem(HistoryItem historyItem, CollectionName collectionName)
+    {
+        try
+        {
+            if (await HistoryContext.Collections.FirstOrDefaultAsync(t => t.HistoryItemId == historyItem.Id && t.CollectionNameId == collectionName.Id) is Collection item)
+            {
+				return false;
+			}
+            else
+            {	
+				var newCollection = new Collection
+                {
+                    CreatedDate = DateTime.Now,
+                    HistoryItemId = historyItem.Id,
+                    CollectionNameId = collectionName.Id
+                };
+                await HistoryContext.Collections.AddAsync(newCollection);
+			}
+
+            await HistoryContext.SaveChangesAsync();
+			return true;
+		}
+        catch (Exception ex)
+        {
+            ExceptionLogger.LogException(ex);
+            Console.WriteLine($"Error inserting collection item: {ex.Message}");
+		}
+
+		return false;
 	}
 
 	public Task DeleteCollectionsItem(int Id)
@@ -186,7 +213,7 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 
 			foreach (var item in list)
 			{
-				item.BackgroundBrush = GetRandomSolidColorBrush();
+				item.BackgroundBrush =  GetRandomSolidColorBrush();
 			}
 
 			return list.ToObservableCollection();

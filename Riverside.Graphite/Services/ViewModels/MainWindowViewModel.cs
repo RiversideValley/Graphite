@@ -33,6 +33,7 @@ namespace Riverside.Graphite.Services.ViewModels;
 public partial class MainWindowViewModel : ObservableRecipient
 {
 	internal MainWindow MainView { get; set; }
+	public IMessenger MessengerMainWindowViewModel { get; set; }
 
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(ShowOfficeOptionsCommand))]
@@ -63,6 +64,11 @@ public partial class MainWindowViewModel : ObservableRecipient
 	{
 		MsOptionVisibility = value ? Visibility.Visible : Visibility.Collapsed;
 		OnPropertyChanged(nameof(MsOptionVisibility));
+	}
+
+	public void SendMessageOut(Message_Settings_Actions messageAction)
+	{
+		Messenger.Send(messageAction);
 	}
 
 	[RelayCommand]
@@ -335,6 +341,8 @@ public partial class MainWindowViewModel : ObservableRecipient
 			case EnumMessageStatus.XorError:
 				ShowErrorNotification(message.Payload!);
 				break;
+			case EnumMessageStatus.Collections:
+				break; 
 			default:
 				ShowNotifyNotification(message.Payload!);
 				break;

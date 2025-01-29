@@ -19,6 +19,7 @@ using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -26,6 +27,7 @@ using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Runtime.ShareHelper;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.BarcodeHost;
+using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Notifications;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
@@ -44,6 +46,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI.Text;
 using WinRT.Interop;
 using Settings = Riverside.Graphite.Core.Settings;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
@@ -1180,7 +1183,7 @@ public sealed partial class MainWindow : Window
 	}
 
 	private string selectedHistoryItem;
-	private void Grid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+	private async void Grid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
 	{
 		if (((FrameworkElement)sender).DataContext is not HistoryItem historyItem)
 		{
@@ -1188,6 +1191,8 @@ public sealed partial class MainWindow : Window
 		}
 
 		selectedHistoryItem = historyItem.Url;
+
+		HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
 		MenuFlyout flyout = new();
 
@@ -1213,7 +1218,6 @@ public sealed partial class MainWindow : Window
 				"History.db"
 			);
 
-			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			await historyActions.DeleteHistoryItem(selectedHistoryItem);
 			await Task.Delay(1000);
 
@@ -1224,11 +1228,59 @@ public sealed partial class MainWindow : Window
 				{
 					_ = historyItems.Remove(itemToRemove);
 				}
+				ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
 			}
+
 		};
 
-		flyout.Items.Add(deleteMenuItem);
+		var subMenu = new MenuFlyoutSubItem
+		{
+			Text = "Collections",
+			Icon = new FontIcon { Glyph = "\xe71d" }
+		};	
 
+		var list = await  historyActions.GetAllCollectionNamesItems();
+		foreach (var item in list)
+		{
+			var menuItem = new MenuFlyoutItem()
+			{
+				Text = item.Name,
+				Icon = new FontIcon { Glyph = $"{item.Name.Substring(0, 1)}", FontSize = 24, FontFamily = new FontFamily("Segoe UI") , FontStyle = Windows.UI.Text.FontStyle.Italic   },
+				Background = RandomColors.GetRandomSolidColorBrush(),
+				
+			};
+			menuItem.Click += async (s, args) =>
+			{
+				var answer = await historyActions.InsertCollectionsItem(historyItem, item);
+
+				if (answer)
+				{
+					Notification note = new()
+					{
+						Title = $"Added To Collection",
+						Message = item.Name,
+						Severity = InfoBarSeverity.Informational,
+						Duration = TimeSpan.FromSeconds(1.5)
+					};
+					_ = NotificationQueue.Show(note);
+					ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
+				}
+				else
+				{
+					Notification note = new()
+					{
+						Title = $"Already In Collection",
+						Message = item.Name,
+						Severity = InfoBarSeverity.Informational,
+						Duration = TimeSpan.FromSeconds(1.5)
+					};
+					_ = NotificationQueue.Show(note);
+				};
+			};
+			subMenu.Items.Add(menuItem);
+		}
+		flyout.Items.Add(deleteMenuItem);
+		flyout.Items.Add(subMenu);	
 		flyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
 	}
 	private void ClearHistoryDataMenuItem_Click(object sender, RoutedEventArgs e) { ClearDb(); }

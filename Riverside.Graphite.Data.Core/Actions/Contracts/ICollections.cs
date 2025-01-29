@@ -10,7 +10,7 @@ namespace Riverside.Graphite.Data.Core.Actions.Contracts
 {
 	public  interface ICollections
 	{
-		Task InsertCollectionsItem(DateTime createdDate, HistoryItem historyItem, CollectionName collectionName);
+		Task<bool> InsertCollectionsItem(HistoryItem historyItem, CollectionName collectionName);
 		Task DeleteCollectionsItem(int Id);
 		Task DeleteAllCollectionsItems();
 		Task<ObservableCollection<Collection>> GetAllCollectionsItems();

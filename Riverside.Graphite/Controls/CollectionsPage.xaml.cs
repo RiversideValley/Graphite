@@ -11,6 +11,7 @@ using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Pages;
 using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.WebUI;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,7 +40,6 @@ namespace Riverside.Graphite.Controls
 		{
 			ViewModel = App.GetService<CollectionsPageViewModel>();
 			DataContext = ViewModel;
-			
 			this.InitializeComponent();
 		}
         private void GroupHeader_Click(object sender, RoutedEventArgs e)
@@ -52,8 +53,16 @@ namespace Riverside.Graphite.Controls
 
 			if (ViewModel.Children.Count > 0) {
 				ViewModel.ChildrenVisible = Visibility.Visible;
-				ViewModel.RaisePropertyChanges(nameof(ViewModel.ChildrenVisible));
 			}
+			else
+			{
+				ViewModel.ChildrenVisible = Visibility.Collapsed;
+				if (App.Current.m_window is MainWindow window) {
+					window.DispatcherQueue.TryEnqueue(() => window.NotificationQueue.Show("No items in this collection", 2000, "Collections"));	
+				}
+			}
+
+			ViewModel.WebViewVisible = Visibility.Collapsed;
 		}
 		private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
 		{
@@ -70,6 +79,19 @@ namespace Riverside.Graphite.Controls
 				Text = "Delete This Record",
 				Icon = new FontIcon { Glyph = "\uE74D" }
 			};
+			MenuFlyoutItem newTabMenuItem = new()
+			{
+				Text = "Open in New Tab",
+				Icon = new FontIcon { Glyph = "\uE8AD" }
+			};
+
+			newTabMenuItem.Click += (s, args) =>
+			{
+				if (App.Current.m_window is MainWindow window)
+				{
+					window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem));
+				}
+			};	
 
 			deleteMenuItem.Click += async (s, args) =>
 			{
@@ -77,7 +99,7 @@ namespace Riverside.Graphite.Controls
 				await historyActions.DeleteHistoryItem(selectedHistoryItem);
 				RemoveHistoryItem(selectedHistoryItem);
 			};
-
+			flyout.Items.Add(newTabMenuItem);
 			flyout.Items.Add(deleteMenuItem);
 			flyout.ShowAt(sender, position);
 		}
@@ -95,9 +117,6 @@ namespace Riverside.Graphite.Controls
 			{
 				ViewModel.SelectedUrl = new((e.AddedItems[0]! as DbHistoryItem).url);
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.SelectedUrl));
-
-				ViewModel.IsHistoryViewing = true;
-				ViewModel.RaisePropertyChanges(nameof(ViewModel.IsHistoryViewing));
 			}
 		}
 
@@ -111,9 +130,30 @@ namespace Riverside.Graphite.Controls
 				await view.CoreWebView2.ExecuteScriptWithResultAsync(@"
 					document.body.style.zoom='.75';
 				");
+				
+				await Task.Delay(400);
+				
+				ViewModel.WebViewVisible = Visibility.Visible;
+				
 			}
 
 
+		}
+
+		private async void WebViewHistoryItem_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
+		{
+			if(sender is WebView2 view)
+			{
+				await view.EnsureCoreWebView2Async(); 
+				view.CoreWebView2.NewWindowRequested += (s, e) =>
+				{
+					e.Handled = true;
+					if (App.Current.m_window is MainWindow window)
+					{
+						window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), e.Uri));
+					}	
+				};	
+			}
 		}
 	}
 }

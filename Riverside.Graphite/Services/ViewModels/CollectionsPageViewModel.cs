@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.Runtime.Helpers;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Graph.Models;
+using Riverside.Graphite.Services.Messages;
 
 namespace Riverside.Graphite.ViewModels
 {
@@ -54,23 +57,55 @@ namespace Riverside.Graphite.ViewModels
 		[ObservableProperty]
         private Visibility _ChildrenVisible;
 
+		[ObservableProperty]
+		private Visibility _WebViewVisible;
+
 		partial void OnSelectedUrlChanged(Uri value)
 		{
 			_IsHistoryViewing = true;
 			RaisePropertyChanges(nameof(IsHistoryViewing));	
 		}
 		#endregion
-		public CollectionsPageViewModel()
-        {
+		public CollectionsPageViewModel(IMessenger messenger):base(messenger)
+		{
 			if (AuthService.CurrentUser is null)
-				return; 
-
+				return;
+			Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 			_historyActions = new HistoryActions(AuthService.CurrentUser?.Username);
 			_collectionGroupData = new CollectionsGroupData(_historyActions); 
 			Initialize();
 				
 		}
 
+		private async void ReceivedStatus(Message_Settings_Actions m)
+		{
+			switch(m.Status)
+			{
+				case EnumMessageStatus.Collections:
+					if (SelectedCollection is not 0) {
+						Items = await _collectionGroupData.GetGroupedCollectionsAsync();
+						RaisePropertyChanges(nameof(Items));	
+						GatherCollections(SelectedCollection);
+					}
+					break;
+				case EnumMessageStatus.Updated:
+					break;
+				case EnumMessageStatus.Added:
+					break;
+				case EnumMessageStatus.Removed:
+					break;
+				case EnumMessageStatus.Informational:
+					break;
+				case EnumMessageStatus.Login:
+					break;
+				case EnumMessageStatus.Logout:
+					break;
+				case EnumMessageStatus.Settings:
+					break;
+				case EnumMessageStatus.XorError:
+					break;
+			}
+		}
 
 		public async void GatherCollections(int Id)
 		{
@@ -84,7 +119,9 @@ namespace Riverside.Graphite.ViewModels
 
 		public async void Initialize() {
 
-			Items = await _collectionGroupData.GetGroupedCollectionsAsync();	
+			Items = await _collectionGroupData.GetGroupedCollectionsAsync();
+			ChildrenVisible = Visibility.Collapsed;
+			WebViewVisible = Visibility.Collapsed;
 		}
   
 		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)

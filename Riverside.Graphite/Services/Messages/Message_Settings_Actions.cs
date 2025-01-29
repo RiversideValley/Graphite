@@ -2,6 +2,7 @@ namespace Riverside.Graphite.Services.Messages;
 public enum EnumMessageStatus
 {
 	Added,
+	Collections,
 	Informational,
 	Login,
 	Logout,
