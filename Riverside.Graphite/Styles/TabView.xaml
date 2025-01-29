@@ -368,7 +368,7 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" >
+                                <VisualState x:Name="Normal">
                                     <VisualState.Setters>
                                         <Setter Target="TabContainer.Background" Value="Transparent" />
                                     </VisualState.Setters>

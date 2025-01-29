@@ -11,20 +11,30 @@ public enum EnumMessageStatus
 	Updated,
 	XorError,
 }
-public record class Message_Settings_Actions(string _payload, EnumMessageStatus _status)
+public record class Message_Settings_Actions(string _payload, EnumMessageStatus _status, object _dataItemPassed = null)
 {
-	public Message_Settings_Actions(string payload) : this(payload, EnumMessageStatus.Updated)
+    public Message_Settings_Actions(string payload) : this(payload, EnumMessageStatus.Updated, null)
+    {
+        Payload = payload;
+        Status = _status;
+    }
+	public Message_Settings_Actions(EnumMessageStatus _status, object _dataItemPassed = null) : this(null, _status, _dataItemPassed) 
 	{
-		Payload = payload;
-		Status = _status;
+	
+		DataItemPassed = _dataItemPassed;	
+		Status = _status;	
 	}
+    public Message_Settings_Actions(EnumMessageStatus _status) : this(null, _status, null)
+    {
+        Payload = _payload;
+        Status = _status;
+    }
 
-	public Message_Settings_Actions(EnumMessageStatus _status) : this(null, _status)
-	{
-		Payload = _payload;
-		Status = _status;
-	}
-
-	public EnumMessageStatus Status { get; } = _status;
-	public string Payload { get; } = _payload;
+    public Message_Settings_Actions(object dataItemPassed) : this(null, EnumMessageStatus.Updated, dataItemPassed)
+    {
+        DataItemPassed = dataItemPassed;
+    }
+	public object DataItemPassed { get; }	
+    public EnumMessageStatus Status { get; } = _status;
+    public string Payload { get; } = _payload;
 }

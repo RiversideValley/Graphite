@@ -1,3 +1,4 @@
+using Microsoft.Bing.WebSearch;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -35,12 +36,19 @@ namespace Riverside.Graphite.Controls
 	/// </summary>
 	public sealed partial class CollectionsPage : Page
 	{
-		public CollectionsPageViewModel ViewModel { get; set; } 
+		public CollectionsPageViewModel ViewModel { get; set; }
+		public WebView2 WebView { get; private set; }
+
 		public CollectionsPage()
 		{
 			ViewModel = App.GetService<CollectionsPageViewModel>();
 			DataContext = ViewModel;
 			this.InitializeComponent();
+			WebView = this.WebViewHistoryItem; 
+
+			string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser?.Username, "Browser");
+			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
+			Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 		}
         private void GroupHeader_Click(object sender, RoutedEventArgs e)
         {
@@ -76,7 +84,7 @@ namespace Riverside.Graphite.Controls
 			MenuFlyout flyout = new();
 			MenuFlyoutItem deleteMenuItem = new()
 			{
-				Text = "Delete This Record",
+				Text = "Remove From Collection",
 				Icon = new FontIcon { Glyph = "\uE74D" }
 			};
 			MenuFlyoutItem newTabMenuItem = new()
@@ -95,9 +103,34 @@ namespace Riverside.Graphite.Controls
 
 			deleteMenuItem.Click += async (s, args) =>
 			{
-				HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
-				await historyActions.DeleteHistoryItem(selectedHistoryItem);
-				RemoveHistoryItem(selectedHistoryItem);
+				var item =  ViewModel.SubHistoryItems.Where(t=> t.url == selectedHistoryItem).FirstOrDefault();	
+				var collectItem = ViewModel.Children.Where(t => t.HistoryItemId == item.id).Where(s=> s.CollectionNameId == ViewModel.SelectedCollection).FirstOrDefault();
+
+				if (collectItem is Collection itemToDelete)
+				{
+					HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
+					await historyActions.DeleteCollectionsItem(itemToDelete.Id); 
+					RemoveHistoryItem(selectedHistoryItem);
+				}
+
+				await WebViewHistoryItem.EnsureCoreWebView2Async(); ; 
+
+				_ = await WebViewHistoryItem.CoreWebView2?.ExecuteScriptAsync(
+							@"(function() { 
+							try
+							{
+								const videos = document.querySelectorAll('video');
+								videos.forEach((video) => { video.pause();});
+								console.log('WINUI3_CoreWebView2: YES_VIDEOS_CLOSED');
+								return true; 
+							}
+							catch(error) {
+								console.log('WINUI3_CoreWebView2: NO_VIDEOS_CLOSED');
+								return error.message; 
+							}
+						})();");	
+					
+
 			};
 			flyout.Items.Add(newTabMenuItem);
 			flyout.Items.Add(deleteMenuItem);
@@ -107,7 +140,7 @@ namespace Riverside.Graphite.Controls
 		private async void RemoveHistoryItem(string selectedHistoryItem)
 		{
 			ViewModel.Initialize();
-			await Task.Delay(100);	
+			await Task.Delay(200);	
 			ViewModel.GatherCollections(ViewModel.SelectedCollection);
 		}
 
@@ -131,8 +164,9 @@ namespace Riverside.Graphite.Controls
 					document.body.style.zoom='.75';
 				");
 				
-				await Task.Delay(400);
-				
+				ViewModel.IsWebViewLoaded = false;
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.IsWebViewLoaded));
+
 				ViewModel.WebViewVisible = Visibility.Visible;
 				
 			}
@@ -154,6 +188,14 @@ namespace Riverside.Graphite.Controls
 					}	
 				};	
 			}
+		}
+
+		private void WebViewHistoryItem_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
+		{
+			
+			ViewModel.IsWebViewLoaded = true;
+			ViewModel.RaisePropertyChanges(nameof(ViewModel.IsWebViewLoaded));
+
 		}
 	}
 }

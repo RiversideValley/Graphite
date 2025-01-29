@@ -45,6 +45,13 @@ namespace Riverside.Graphite.ViewModels
             }
 			
         }
+
+		[ObservableProperty]
+		private bool isWebViewLoaded ;
+
+		[ObservableProperty]
+		private string _selectedCollectionName; 
+
 		[ObservableProperty]
 		private bool _IsHistoryViewing;
 		
@@ -60,6 +67,10 @@ namespace Riverside.Graphite.ViewModels
 		[ObservableProperty]
 		private Visibility _WebViewVisible;
 
+		partial void OnSelectedCollectionChanged(int value)
+		{
+			SelectedCollectionName = Items?.Where(t=> t.CollectionName.Id == value).Select(t => t.CollectionName.Name).FirstOrDefault();
+		}
 		partial void OnSelectedUrlChanged(Uri value)
 		{
 			_IsHistoryViewing = true;
@@ -86,6 +97,17 @@ namespace Riverside.Graphite.ViewModels
 						Items = await _collectionGroupData.GetGroupedCollectionsAsync();
 						RaisePropertyChanges(nameof(Items));	
 						GatherCollections(SelectedCollection);
+
+						if (SelectedUrl is not null && m.DataItemPassed is not null && SelectedUrl?.AbsoluteUri == (m.DataItemPassed! as HistoryItem).Url)
+						{
+							SelectedUrl = null;
+							RaisePropertyChanges(nameof(SelectedUrl));
+
+							await Task.Delay(200);
+
+							WebViewVisible = Visibility.Collapsed;
+							RaisePropertyChanges(nameof(WebViewVisible));
+						}
 					}
 					break;
 				case EnumMessageStatus.Updated:

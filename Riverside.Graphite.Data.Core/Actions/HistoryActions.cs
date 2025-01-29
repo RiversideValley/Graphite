@@ -65,20 +65,22 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 
 	public async Task DeleteAllHistoryItems()
 	{
-		Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction tran = HistoryContext.Database.BeginTransaction();
-
-		try
+		
+		using (var tran = HistoryContext.Database.BeginTransaction())
 		{
-			// executesqlAsync doesn't have a default tran so add on.
-			_ = await HistoryContext.Database.ExecuteSqlAsync($"DELETE FROM urls;");
-			_ = await HistoryContext.SaveChangesAsync();
-			tran.Commit();
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-			Console.WriteLine($"Error deleting history item: {ex.Message}");
-			tran.Rollback();
+			try
+			{
+				// executesqlAsync doesn't have a default tran so add on.
+				_ = await HistoryContext.Database.ExecuteSqlAsync($"DELETE FROM urls;");
+				_ = await HistoryContext.SaveChangesAsync();
+				tran.Commit();
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				Console.WriteLine($"Error deleting history item: {ex.Message}");
+				tran.Rollback();
+			}
 		}
 	}
 
@@ -140,9 +142,26 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 		return false;
 	}
 
-	public Task DeleteCollectionsItem(int Id)
+	public async Task DeleteCollectionsItem(int Id)
 	{
-		throw new NotImplementedException();
+
+		using(var tran = HistoryContext.Database.BeginTransaction())
+		{
+			try
+			{
+				_ = await HistoryContext.Collections.Where(x => x.Id == Id).ExecuteDeleteAsync();
+				_ = await HistoryContext.SaveChangesAsync();
+				tran.Commit();
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				Console.WriteLine($"Error deleting history item: {ex.Message}");
+				tran.Rollback();
+			}
+		}	
+
+
 	}
 
 	public Task DeleteAllCollectionsItems()

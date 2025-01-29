@@ -1109,7 +1109,7 @@ public sealed partial class MainWindow : Window
         {
             HistoryActions historyActions = new(AuthService.CurrentUser.Username);
             ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
-            HistoryItems = new ObservableCollection<HistoryItem>(allItems.Skip(pageIndex * pageSize).Take(pageSize));
+            HistoryItems = new ObservableCollection<HistoryItem>(allItems.OrderByDescending(t=> t.Id).Skip(pageIndex * pageSize).Take(pageSize));
 			//ExceptionLogger.LogInformation($"{DateTime.Now.ToLocalTime()} getItems: {pageSize} indexPage: {pageIndex} totalItems: {allItems.Count}"); 
 			return HistoryItems;
         }
@@ -1228,7 +1228,7 @@ public sealed partial class MainWindow : Window
 				{
 					_ = historyItems.Remove(itemToRemove);
 				}
-				ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
+				ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections, itemToRemove));
 			}
 
 		};
@@ -1245,10 +1245,11 @@ public sealed partial class MainWindow : Window
 			var menuItem = new MenuFlyoutItem()
 			{
 				Text = item.Name,
-				Icon = new FontIcon { Glyph = $"{item.Name.Substring(0, 1)}", FontSize = 24, FontFamily = new FontFamily("Segoe UI") , FontStyle = Windows.UI.Text.FontStyle.Italic   },
+				Icon = new FontIcon { Glyph = $"{item.Name.Substring(0, 1)}", FontSize = 24, FontFamily = new FontFamily("Segoe UI"), FontStyle = Windows.UI.Text.FontStyle.Italic },
 				Background = RandomColors.GetRandomSolidColorBrush(),
-				
-			};
+				Opacity = .9
+
+			}; 
 			menuItem.Click += async (s, args) =>
 			{
 				var answer = await historyActions.InsertCollectionsItem(historyItem, item);

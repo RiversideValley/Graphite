@@ -22,6 +22,7 @@
         <helpers:BoolToVisibilityConverter x:Key="BooleanConverter" />
         <helpers:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter" />
         <helpers:InverseVisiblityToBoolConverter x:Key="InverseBooleanFromVisible" />
+        <helpers:CollectionNameIdConverter x:Key="CollectionNameIdConverter" />
     </Page.Resources>
 
     <Grid
@@ -53,7 +54,25 @@
                 Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
                 Text=" Collections " />
         </StackPanel>
+        <StackPanel VerticalAlignment="Bottom" Orientation="Vertical">
+            <TextBlock
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontFamily="Segoe Script"
+                FontSize="24"
+                FontStyle="Italic"
+                FontWeight="SemiLight"
+                Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                Text="{x:Bind ViewModel.SelectedCollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue='Welcome..'}" />
 
+            <ProgressBar
+                Width="125"
+                Height="10"
+                Margin="{ThemeResource XXSmallTopMargin}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                IsIndeterminate="{x:Bind ViewModel.IsWebViewLoaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -61,6 +80,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+
             <GridView
                 x:Name="GridCollections"
                 Grid.Column="0"
@@ -111,6 +131,7 @@
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
             </GridView>
+
             <Grid Grid.Column="1">
                 <ListView
                     x:Name="ListCollectionHistoryItems"
@@ -120,7 +141,8 @@
                     SelectionMode="Single">
                     <ListView.Transitions>
                         <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="100" />
+                            <AddDeleteThemeTransition />
+                            <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
                         </TransitionCollection>
                     </ListView.Transitions>
                     <ListView.ItemTemplate>
@@ -171,6 +193,7 @@
                 Width="NaN"
                 Height="NaN"
                 Margin="{ThemeResource XSmallLeftTopRightBottomMargin}"
+                Padding="2"
                 ui:UIElementExtensions.ClipToBounds="True"
                 BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
                 BorderThickness="1"
@@ -181,6 +204,7 @@
                     Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                     CoreWebView2Initialized="WebViewHistoryItem_CoreWebView2Initialized"
                     NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
+                    NavigationStarting="WebViewHistoryItem_NavigationStarting"
                     Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
 

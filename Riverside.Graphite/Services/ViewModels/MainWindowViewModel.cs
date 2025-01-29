@@ -68,7 +68,12 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	public void SendMessageOut(Message_Settings_Actions messageAction)
 	{
-		Messenger.Send(messageAction);
+		_ = MainView.DispatcherQueue.TryEnqueue(() =>
+		{
+			Messenger.Send(messageAction);
+			MainView?.MoreFlyout.Hide();
+		});
+		
 	}
 
 	[RelayCommand]
