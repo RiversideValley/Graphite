@@ -68,7 +68,8 @@
                 HorizontalAlignment="Left"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=OneWay}"
-                SelectionMode="Single">
+                SelectionMode="Single"
+                SingleSelectionFollowsFocus="True">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="collect:CollectionGroup">
                         <StackPanel
@@ -77,6 +78,7 @@
                             Spacing="4">
                             <Button
                                 x:Name="toggleZoom"
+                                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                                 Click="GroupHeader_Click"
                                 Tag="{Binding CollectionName.Id}">
                                 <Grid>
@@ -89,7 +91,6 @@
                                             x:Name="RootImage"
                                             Width="80"
                                             Height="80"
-                                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                                             HorizontalAlignment="Center"
                                             Background="{Binding CollectionName.BackgroundBrush}"
                                             Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
