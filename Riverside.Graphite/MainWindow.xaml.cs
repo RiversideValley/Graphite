@@ -238,6 +238,11 @@ public sealed partial class MainWindow : Window
 					ExceptionLogger.LogException(ex);
 				}
 			}
+			else
+			{
+				args.Cancel = false;
+				return;
+			}
 			return;
 		}
 		args.Cancel = false;

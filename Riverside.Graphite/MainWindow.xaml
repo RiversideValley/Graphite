@@ -387,6 +387,11 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
+                    <InfoBar 
+IsOpen="True"
+Severity="Informational"
+Title="App Update"
+Message="Revamp Update &#x0a;In 6 Months"/>
                 </StackPanel>
             </Flyout>
             <Flyout
