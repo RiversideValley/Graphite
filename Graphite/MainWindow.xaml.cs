@@ -164,7 +164,7 @@ namespace Graphite
 					if (authenticatedUser != null)
 					{
 						// Open the Welcome window
-						Welcome welcomeWindow = new Welcome(authenticatedUser);
+						HomeWindow welcomeWindow = new HomeWindow(authenticatedUser);
 						welcomeWindow.Activate();
 						this.Close(); // Close the login window
 					}
@@ -200,7 +200,7 @@ namespace Graphite
 				if (authenticatedUser != null)
 				{
 					// Open the Welcome window
-					Welcome welcomeWindow = new Welcome(authenticatedUser);
+					HomeWindow welcomeWindow = new HomeWindow(authenticatedUser);
 					welcomeWindow.Activate();
 					this.Close(); // Close the login window
 				}
@@ -248,7 +248,7 @@ namespace Graphite
 			{
 				var guestUser = await UserManager.LoginAsGuestAsync();
 				// Navigate to the main application window or page for the guest user
-				Welcome welcome = new Welcome(guestUser);
+				HomeWindow welcome = new HomeWindow(guestUser);
 				welcome.Activate();
 				this.Close();
 			}

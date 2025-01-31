@@ -11,6 +11,7 @@
                 <!-- Other merged dictionaries here -->
                 <ResourceDictionary Source="Styles/Buttons.xaml" />
                 <ResourceDictionary Source="Styles/IconSource.xaml" />
+                <ResourceDictionary Source="Styles/TabView.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->

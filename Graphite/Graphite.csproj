@@ -17,8 +17,12 @@
     <Content Remove="Assets\Glyphs\SegoeFluentIcons2.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Controls\GraphiteTabViewContainer.xaml" />
+    <None Remove="Controls\GraphiteTabViewItem.xaml" />
+    <None Remove="HomeWindow.xaml" />
     <None Remove="Styles\Buttons.xaml" />
     <None Remove="Styles\IconSource.xaml" />
+    <None Remove="Styles\TabView.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,11 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Styles\IconSource.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Welcome.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -105,8 +104,20 @@
     <ProjectReference Include="..\Graphite.UserSys\Graphite.UserSys.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="HomeWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\GraphiteTabViewContainer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\GraphiteTabViewItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Styles\TabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>
