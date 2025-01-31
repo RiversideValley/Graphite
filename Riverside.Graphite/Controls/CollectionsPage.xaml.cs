@@ -1,4 +1,5 @@
 using Microsoft.Bing.WebSearch;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -44,7 +45,7 @@ namespace Riverside.Graphite.Controls
 			ViewModel = App.GetService<CollectionsPageViewModel>();
 			DataContext = ViewModel;
 			this.InitializeComponent();
-			WebView = this.WebViewHistoryItem; 
+			WebView = this.WebViewHistoryItem;
 
 			string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", AuthService.CurrentUser?.Username, "Browser");
 			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
@@ -82,21 +83,21 @@ namespace Riverside.Graphite.Controls
 				{
 					window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem));
 				}
-			};	
+			};
 
 			deleteMenuItem.Click += async (s, args) =>
 			{
-				var item =  ViewModel.SubHistoryItems.Where(t=> t.url == selectedHistoryItem).FirstOrDefault();	
-				var collectItem = ViewModel.Children.Where(t => t.HistoryItemId == item.id).Where(s=> s.CollectionNameId == ViewModel.SelectedCollection).FirstOrDefault();
+				var item = ViewModel.SubHistoryItems.Where(t => t.url == selectedHistoryItem).FirstOrDefault();
+				var collectItem = ViewModel.Children.Where(t => t.HistoryItemId == item.id).Where(s => s.CollectionNameId == ViewModel.SelectedCollection).FirstOrDefault();
 
 				if (collectItem is Collection itemToDelete)
 				{
 					HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
-					await historyActions.DeleteCollectionsItem(itemToDelete.Id); 
+					await historyActions.DeleteCollectionsItem(itemToDelete.Id);
 					RemoveHistoryItem(selectedHistoryItem);
 				}
 
-				await WebViewHistoryItem.EnsureCoreWebView2Async(); ; 
+				await WebViewHistoryItem.EnsureCoreWebView2Async(); ;
 
 				_ = await WebViewHistoryItem.CoreWebView2?.ExecuteScriptAsync(
 							@"(function() { 
@@ -111,8 +112,8 @@ namespace Riverside.Graphite.Controls
 								console.log('WINUI3_CoreWebView2: NO_VIDEOS_CLOSED');
 								return error.message; 
 							}
-						})();");	
-					
+						})();");
+
 
 			};
 			flyout.Items.Add(newTabMenuItem);
@@ -123,7 +124,7 @@ namespace Riverside.Graphite.Controls
 		private async void RemoveHistoryItem(string selectedHistoryItem)
 		{
 			ViewModel.Initialize();
-			await Task.Delay(200);	
+			await Task.Delay(200);
 			ViewModel.GatherCollections(ViewModel.SelectedCollection);
 		}
 		#endregion
@@ -146,12 +147,12 @@ namespace Riverside.Graphite.Controls
 				await view.CoreWebView2.ExecuteScriptWithResultAsync(@"
 					document.body.style.zoom='.75';
 				");
-				
+
 				ViewModel.IsWebViewLoaded = false;
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.IsWebViewLoaded));
 
 				ViewModel.WebViewVisible = Visibility.Visible;
-				
+
 			}
 
 
@@ -159,23 +160,23 @@ namespace Riverside.Graphite.Controls
 
 		private async void WebViewHistoryItem_CoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
 		{
-			if(sender is WebView2 view)
+			if (sender is WebView2 view)
 			{
-				await view.EnsureCoreWebView2Async(); 
+				await view.EnsureCoreWebView2Async();
 				view.CoreWebView2.NewWindowRequested += (s, e) =>
 				{
 					e.Handled = true;
 					if (App.Current.m_window is MainWindow window)
 					{
 						window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), e.Uri));
-					}	
-				};	
+					}
+				};
 			}
 		}
 
 		private void WebViewHistoryItem_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
 		{
-			
+
 			ViewModel.IsWebViewLoaded = true;
 			ViewModel.RaisePropertyChanges(nameof(ViewModel.IsWebViewLoaded));
 
@@ -183,7 +184,7 @@ namespace Riverside.Graphite.Controls
 
 		private void GridCollections_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if(e.AddedItems.Count > 0)
+			if (e.AddedItems.Count > 0)
 			{
 				if (e.AddedItems[0] is CollectionGroup collectionName)
 				{
@@ -208,8 +209,47 @@ namespace Riverside.Graphite.Controls
 			}
 			else { return; }
 
-			
+
 
 		}
+		private void AddCollectionButton_Click(object sender, RoutedEventArgs e)
+		{
+			AddCollectionTeachingTip.IsOpen = true;
+		}
+
+		private async void AddCollection_Click(object sender, RoutedEventArgs e)
+		{
+			string collectionName = CollectionNameTextBox.Text;
+			if (!string.IsNullOrEmpty(collectionName))
+			{
+				// Add your logic to handle the new collection name
+				try
+				{
+					if (ViewModel.Items.Any(t => t.CollectionName.Name.ToLower() == collectionName.ToLower()))
+					{
+						(App.Current.m_window as MainWindow).NotificationQueue.Show("Collection already exists", 2000, "Collections");
+						CollectionNameTextBox.Text = string.Empty;
+						return;
+					}
+
+					HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
+					historyActions.HistoryContext.CollectionNames.Add(new CollectionName { Name = collectionName });
+					await historyActions.HistoryContext.SaveChangesAsync();
+					(App.Current.m_window as MainWindow).NotificationQueue.Show("Your collection has been added successfully", 2000, "Collections");
+				}
+				catch (Exception)
+				{
+					(App.Current.m_window as MainWindow).NotificationQueue.Show("Error adding collection", 2000, "Collections");
+					throw;
+				}
+
+				AddCollectionTeachingTip.IsOpen = false;
+			}
+			else {
+				(App.Current.m_window as MainWindow).NotificationQueue.Show("Please provide a valid name for a new collection", 2000, "Collections");
+			}
+		} 
+
+		
     }
 }

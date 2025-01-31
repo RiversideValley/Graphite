@@ -54,6 +54,42 @@
                 Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
                 Text=" Collections " />
         </StackPanel>
+        <Grid>
+            <Button
+                x:Name="AddCollectionButton"
+                Width="32"
+                Height="32"
+                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                Padding="2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Canvas.ZIndex="1"
+                Click="AddCollectionButton_Click"
+                Content="{firebrowser:FluentIcon Glyph=&#xE710;}"
+                Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                ToolTipService.Placement="Bottom"
+                ToolTipService.ToolTip="Add Collection" />
+            <TeachingTip
+                x:Name="AddCollectionTeachingTip"
+                Title="Add Collection"
+                IsLightDismissEnabled="True"
+                PlacementMargin="{ThemeResource SmallLeftRightMargin}"
+                PreferredPlacement="LeftBottom"
+                Target="{Binding ElementName=AddCollectionButton}">
+                <StackPanel Spacing="4">
+                    <TextBox
+                        x:Name="CollectionNameTextBox"
+                        Width="200"
+                        Header="Collection Name" />
+                    <Button
+                        Margin="0,10,0,0"
+                        Click="AddCollection_Click"
+                        Content="Add" />
+                </StackPanel>
+            </TeachingTip>
+        </Grid>
         <StackPanel VerticalAlignment="Bottom" Orientation="Vertical">
             <TextBlock
                 HorizontalAlignment="Left"
