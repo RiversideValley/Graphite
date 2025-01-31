@@ -308,7 +308,7 @@ public partial class HomeViewModel : ObservableRecipient
 		if (NtpTimeEnabled)
 		{
 			CancellationTokenClock = new CancellationToken();
-			InitClock(CancellationTokenClock);
+			InitClock();
 		}
 		return Task.CompletedTask;
 	}
@@ -318,21 +318,31 @@ public partial class HomeViewModel : ObservableRecipient
 		OnPropertyChanged(nameof(NtpTimeText));
 		OnPropertyChanged(nameof(NtpDateText));
 	}
-	private void InitClock(CancellationToken cancellationToken)
+	private void InitClock()
 	{
 		// intial time => use timer to update then after that.
 		UpdateClock();
 		timer = new DispatcherTimer();
 		// let refresh every four seconds and allow ui to work.
-		timer.Interval = new System.TimeSpan(0, 0, 4);
+		timer.Interval = new System.TimeSpan(0, 0, 15);
 		timer.Tick += (_, _) =>
 		{
-			if (cancellationToken.IsCancellationRequested)
+			try
 			{
-				timer.Stop();
-				return;
+				if (CancellationTokenClock.IsCancellationRequested)
+				{
+					timer.Stop();
+					return;
+				}
+				UpdateClock();
 			}
-			UpdateClock();
+			catch (Exception)
+			{
+				ExceptionLogger.LogException(new Exception("Error updating clock"));
+				timer.Stop(); 
+			
+			}
+			
 		};
 		timer.Start();
 	}

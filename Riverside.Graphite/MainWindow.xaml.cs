@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
+using Microsoft.Build.Framework;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -127,8 +128,13 @@ public sealed partial class MainWindow : Window
 		};
 		SizeChanged += async (s, e) =>
 		{
+			try
+			{
+
+			
 			SemaphoreSlim semaphoreSlim = new(3);
 			IntPtr hWnd = WindowNative.GetWindowHandle(this);
+
 			await Task.Delay(100);
 
 			if (hWnd != IntPtr.Zero)
@@ -145,6 +151,8 @@ public sealed partial class MainWindow : Window
 				// Calculate the maximum allowed dimensions
 				int maxWidth = screenWidth / 4;
 				int maxHeight = screenHeight / 3;
+				
+				if (!Windowing.IsWindow(hWnd)) return; 
 
 				if (appWindow.Size.Width < maxWidth)
 				{
@@ -159,6 +167,13 @@ public sealed partial class MainWindow : Window
 					Windowing.FlashWindow(hWnd);
 				}
 				_ = semaphoreSlim.Release();
+			}
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				Console.WriteLine(ex.Message!);
+
 			}
 			e.Handled = true;
 		};
@@ -228,8 +243,10 @@ public sealed partial class MainWindow : Window
 						quickConfigurationDialog.Hide();
 
 						await Task.Delay(250);
-
-						Application.Current.Exit();
+						DispatcherQueue?.TryEnqueue(() =>
+						{
+							Application.Current.Exit();
+						});	
 					};
 					_ = await quickConfigurationDialog.ShowAsync();
 				}
