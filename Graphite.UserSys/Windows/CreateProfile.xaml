@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Graphite.UserSys.Windows.CreateProfile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.UserSys.Windows"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Create New Profile">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" 
+                   Text="Create a New Profile" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,20"/>
+
+        <TextBox Grid.Row="1" 
+                 x:Name="ProfileNameTextBox" 
+                 PlaceholderText="Enter profile name" 
+                 Margin="0,0,0,10"/>
+
+        <ComboBox Grid.Row="2" 
+                  x:Name="ProfileTypeComboBox" 
+                  PlaceholderText="Select profile type" 
+                  Margin="0,0,0,10">
+            <ComboBoxItem Content="Personal"/>
+            <ComboBoxItem Content="Work"/>
+            <ComboBoxItem Content="School"/>
+            <ComboBoxItem Content="Other"/>
+        </ComboBox>
+
+        <TextBox Grid.Row="3" 
+                 x:Name="ProfileDescriptionTextBox" 
+                 PlaceholderText="Enter profile description (optional)" 
+                 AcceptsReturn="True" 
+                 TextWrapping="Wrap" 
+                 Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="4" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right">
+            <Button x:Name="CancelButton" 
+                    Content="Cancel" 
+                    Margin="0,0,10,0" 
+                    Click="CancelButton_Click"/>
+            <Button x:Name="CreateButton" 
+                    Content="Create Profile" 
+                    Style="{StaticResource AccentButtonStyle}" 
+                    Click="CreateButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

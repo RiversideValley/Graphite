@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Graphite (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Graphite (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

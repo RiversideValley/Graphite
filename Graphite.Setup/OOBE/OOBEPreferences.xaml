@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Setup.OOBE.OOBEPreferences"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Setup.OOBE"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#7B3AED" Offset="0.0" />
+                <GradientStop Color="#FF6B00" Offset="0.33" />
+                <GradientStop Color="#FF3D00" Offset="0.66" />
+                <GradientStop Color="#4F46E5" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Back Button, Help Icon, Image Icon, and Text -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,5,5,0">
+            <Button x:Name="HelpButton"
+         Background="Transparent"
+         BorderBrush="Transparent"
+         Margin="0,0,0,0"
+        Click="HelpButton_Click"
+         >
+                <SymbolIcon Symbol="Help" Foreground="White"/>
+                <ToolTipService.ToolTip>
+                    <ToolTip Content="Get help with account creation"/>
+                </ToolTipService.ToolTip>
+            </Button>
+            <TextBlock Text="Graphite - User Preferences" Foreground="White" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
+            <ComboBox x:Name="DisplayLanguageComboBox" Header="Display Language" Width="300">
+                <ComboBoxItem Content="English (US)" Tag="en-US"/>
+                <ComboBoxItem Content="Nederlands" Tag="nl-NL"/>
+            </ComboBox>
+
+            <ToggleSwitch x:Name="EncryptPermissionsToggle" Header="Encrypt Permissions" OnContent="On" OffContent="Off"/>
+
+            <ToggleSwitch x:Name="EncryptDatabaseToggle" Header="Encrypt Database" OnContent="On" OffContent="Off"/>
+
+            <ToggleSwitch x:Name="EncryptSettingsToggle" Header="Encrypt Settings" OnContent="On" OffContent="Off"/>
+
+            <ToggleSwitch x:Name="EncryptHistoryToggle" Header="Encrypt History" OnContent="On" OffContent="Off"/>
+
+            <ToggleSwitch x:Name="EncryptFavoritesToggle" Header="Encrypt Favorites" OnContent="On" OffContent="Off"/>
+
+            <Button x:Name="NextStep" Content="Next Step" Click="NextStep_Click"/>
+        </StackPanel>
+    </Grid>
+</Page>
