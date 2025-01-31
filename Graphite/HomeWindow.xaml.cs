@@ -30,7 +30,7 @@ namespace Graphite
 		{
 			this.InitializeComponent();
 			_currentUser = user;
-
+			this.Title = $"Graphite Home Page - {_currentUser.Username}";
 		}
 	}
 }
