@@ -40,8 +40,8 @@ namespace Riverside.Graphite.ViewModels
             get
             {
                 return Children != null
-                    ? new ObservableCollection<DbHistoryItem>(Children.SelectMany(t => t.ItemsHistory ?? Enumerable.Empty<DbHistoryItem>()))
-                    : new ObservableCollection<DbHistoryItem>();
+                    ? [.. Children.SelectMany(t => t.ItemsHistory ?? Enumerable.Empty<DbHistoryItem>())]
+					: [];
             }
 			
         }

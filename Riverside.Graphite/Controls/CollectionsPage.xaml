@@ -66,7 +66,7 @@
                 Text="{x:Bind ViewModel.SelectedCollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue='Welcome..'}" />
 
             <ProgressBar
-                Width="125"
+                Width="100"
                 Height="10"
                 Margin="{ThemeResource XXSmallTopMargin}"
                 HorizontalAlignment="Left"
@@ -74,7 +74,7 @@
                 IsIndeterminate="{x:Bind ViewModel.IsWebViewLoaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="{ThemeResource SmallTopMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="Auto" />

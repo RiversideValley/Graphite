@@ -103,7 +103,7 @@ public partial class App : Application
 			//kill any hanging instance of channels, especially in debugging..
 			KillProcessByName("dotnet");
 
-			Task.Run(() => StartChannels());
+			StartChannelsAsync().ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{
@@ -141,7 +141,7 @@ public partial class App : Application
 
 
 
-	private void StartChannels()
+	private async Task StartChannelsAsync()
 	{
 		string publishDirectory = Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly);
 		string webAppPath = Path.Combine(publishDirectory, "RiverSide.Graphite.Channels.dll");
@@ -161,7 +161,7 @@ public partial class App : Application
 			};
 
 			_webAppProcess = Process.Start(startInfo);
-			_webAppProcess.WaitForExit();
+			await _webAppProcess.WaitForExitAsync(); 
 		}
 		catch (Exception e)
 		{
