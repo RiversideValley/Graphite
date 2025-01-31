@@ -126,6 +126,25 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+
+        <Button x:Name="SettingsButton"
+                Style="{StaticResource TextButtonStyle}"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                Margin="8,8,0,0">
+            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE713;"/>
+            <Button.Flyout>
+                <Flyout>
+                    <StackPanel Width="125" Background="Transparent">
+                        <TextBlock Text="Settings" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                        <ToggleSwitch x:Name="ButtonsToggle" Header="Show Buttons" />
+                        <ToggleSwitch x:Name="CheckboxToggle" Header="Show Checkbox" />
+                        <ToggleSwitch x:Name="WeatherToggle" Header="Show Weather" />
+                    </StackPanel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+
         <TextBlock Text="Who's using Graphite?" 
                    FontSize="32" 
                    FontWeight="SemiBold" 
@@ -167,8 +186,14 @@
                         </Grid.RowDefinitions>
 
                         <Button Style="{StaticResource TextButtonStyle}"
-                                HorizontalAlignment="Right"
-                                Margin="8,8,8,0">
+                HorizontalAlignment="Right"
+                Margin="8,8,8,0">
+                            <Button.Flyout>
+                                <Flyout Placement="Bottom">
+                                    <ToggleSwitch Header="Sync Data" 
+                                  x:Name="SyncDataToggle"/>
+                                </Flyout>
+                            </Button.Flyout>
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE10C;"/>
                         </Button>
 
@@ -187,6 +212,38 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
+
+        <!-- Add this after the GridView but before the bottom Grid -->
+        <Grid Grid.Row="2" 
+      VerticalAlignment="Bottom" 
+      HorizontalAlignment="Center" 
+      IsTapEnabled="False"
+      IsHoldingEnabled="False"
+      Margin="0,0,0,20"
+      Width="125">
+            <Button x:Name="WeatherButton"
+            Style="{StaticResource CardButtonStyle}"
+            >
+                <Grid Padding="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="DayText"
+                      Text="Loading..."
+                      FontWeight="SemiBold"/>
+                    <StackPanel Grid.Row="1" 
+                        Orientation="Horizontal" 
+                        Spacing="8"
+                        Margin="0,4,0,0">
+                        <TextBlock x:Name="TemperatureText"
+                         Text="Loading..."
+                         FontSize="20"
+                         FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+            </Button>
+        </Grid>
 
         <Grid Grid.Row="3" 
               Padding="32,16" 
@@ -213,7 +270,7 @@
                 >
                 <StackPanel Orientation="Horizontal">
                     <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE710;"/>
-                    <TextBlock Text="Add New Profile" Margin="4,0,0,0"/>
+                    <TextBlock Text="Add New User" Margin="4,0,0,0"/>
                 </StackPanel>
             </Button>
 
@@ -232,7 +289,20 @@
                 </StackPanel>
             </Button>
 
-
+            <Button
+x:Name="RestoreBackup"
+Padding="4"
+VerticalAlignment="Center"
+HorizontalAlignment="Left"
+Margin="260,0,0,0"
+Background="Transparent"
+BorderBrush="Transparent"
+Click="RestoreBackup_Click">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72C;"/>
+                    <TextBlock Text="Restore BackUp" Margin="4,0,0,0"/>
+                </StackPanel>
+            </Button>
 
             <CheckBox Grid.Column="3"
                       Content="Show on startup"
