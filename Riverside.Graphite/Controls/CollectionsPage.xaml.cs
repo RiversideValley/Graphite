@@ -50,28 +50,11 @@ namespace Riverside.Graphite.Controls
 			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
 			Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 		}
-        private void GroupHeader_Click(object sender, RoutedEventArgs e)
-        {
-            var btn = sender as Button;
-            var id = (int?)btn.Tag;
 
-			
-			ViewModel.GatherCollections(id.Value);
-			ViewModel.SelectedCollection = id.Value;	
+		#region CollectionName_RightTap
 
-			if (ViewModel.Children.Count > 0) {
-				ViewModel.ChildrenVisible = Visibility.Visible;
-			}
-			else
-			{
-				ViewModel.ChildrenVisible = Visibility.Collapsed;
-				if (App.Current.m_window is MainWindow window) {
-					window.DispatcherQueue.TryEnqueue(() => window.NotificationQueue.Show("No items in this collection", 2000, "Collections"));	
-				}
-			}
 
-			ViewModel.WebViewVisible = Visibility.Collapsed;
-		}
+
 		private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
 		{
 			if (((FrameworkElement)sender).DataContext is DbHistoryItem historyItem)
@@ -143,7 +126,7 @@ namespace Riverside.Graphite.Controls
 			await Task.Delay(200);	
 			ViewModel.GatherCollections(ViewModel.SelectedCollection);
 		}
-
+		#endregion
 		private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems.Count > 0)
@@ -197,5 +180,36 @@ namespace Riverside.Graphite.Controls
 			ViewModel.RaisePropertyChanges(nameof(ViewModel.IsWebViewLoaded));
 
 		}
-	}
+
+		private void GridCollections_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if(e.AddedItems.Count > 0)
+			{
+				if (e.AddedItems[0] is CollectionGroup collectionName)
+				{
+					ViewModel.SelectedCollection = collectionName.CollectionName.Id;
+					ViewModel.RaisePropertyChanges(nameof(ViewModel.SelectedCollection));
+					ViewModel.GatherCollections(collectionName.CollectionName.Id);
+					if (ViewModel.Children.Count > 0)
+					{
+						ViewModel.ChildrenVisible = Visibility.Visible;
+					}
+					else
+					{
+						ViewModel.ChildrenVisible = Visibility.Collapsed;
+						if (App.Current.m_window is MainWindow window)
+						{
+							window.DispatcherQueue.TryEnqueue(() => window.NotificationQueue.Show("No items in this collection", 2000, "Collections"));
+						}
+					}
+
+					ViewModel.WebViewVisible = Visibility.Collapsed;
+				}
+			}
+			else { return; }
+
+			
+
+		}
+    }
 }

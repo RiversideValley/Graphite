@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -5,34 +6,37 @@ using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.ViewModels.DataGetters;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using static Riverside.Graphite.MainWindow;
+
 
 namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class HistoryTimeLine : Page
 {
 	private readonly User _user = AuthService.CurrentUser;
-	private ObservableCollection<HistoryItem> _browserHistory;
+	
+	public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> _browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
 
 	public HistoryTimeLine()
 	{
 		InitializeComponent();
 		FetchBrowserHistory();
 	}
+    
 
-	private async void FetchBrowserHistory()
+
+	private void FetchBrowserHistory()
 	{
 		try
 		{
-			HistoryActions historyActions = new(_user.Username);
-			_browserHistory = await historyActions.GetAllHistoryItems();
-			
-			//var collections = await historyActions.GetAllCollectionsItems();
-			//var collectNames = await historyActions.GetAllCollectionNamesItems();
-
+			var graphiteHistory = new BrowserHistoryCollection();
+			_browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
 			BigTemp.ItemsSource = _browserHistory;
+
 		}
 		catch (Exception ex)
 		{

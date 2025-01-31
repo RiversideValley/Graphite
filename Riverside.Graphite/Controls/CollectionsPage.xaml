@@ -87,7 +87,8 @@
                 Margin="{ThemeResource SmallLeftRightMargin}"
                 HorizontalAlignment="Left"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=OneWay}"
+                SelectedIndex="0"
+                SelectionChanged="GridCollections_SelectionChanged"
                 SelectionMode="Single"
                 SingleSelectionFollowsFocus="True">
                 <GridView.ItemTemplate>
@@ -96,32 +97,26 @@
                             Padding="2"
                             Orientation="Horizontal"
                             Spacing="4">
-                            <Button
-                                x:Name="toggleZoom"
-                                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                                Click="GroupHeader_Click"
-                                Tag="{Binding CollectionName.Id}">
-                                <Grid>
-                                    <StackPanel
-                                        Grid.Row="2"
-                                        Margin="0,0,0,24"
+                            <Grid>
+                                <StackPanel
+                                    Grid.Row="2"
+                                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                                    HorizontalAlignment="Center"
+                                    Spacing="2">
+                                    <PersonPicture
+                                        x:Name="RootImage"
+                                        Width="80"
+                                        Height="80"
                                         HorizontalAlignment="Center"
-                                        Spacing="2">
-                                        <PersonPicture
-                                            x:Name="RootImage"
-                                            Width="80"
-                                            Height="80"
-                                            HorizontalAlignment="Center"
-                                            Background="{Binding CollectionName.BackgroundBrush}"
-                                            Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            FontSize="18"
-                                            FontWeight="SemiBold"
-                                            Text="{Binding CollectionName.Name}" />
-                                    </StackPanel>
-                                </Grid>
-                            </Button>
+                                        Background="{Binding CollectionName.BackgroundBrush}"
+                                        Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding CollectionName.Name}" />
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </DataTemplate>
                 </GridView.ItemTemplate>

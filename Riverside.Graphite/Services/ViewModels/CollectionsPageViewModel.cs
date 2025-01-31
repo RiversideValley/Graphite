@@ -142,6 +142,7 @@ namespace Riverside.Graphite.ViewModels
 		public async void Initialize() {
 
 			Items = await _collectionGroupData.GetGroupedCollectionsAsync();
+			Children = new(); 
 			ChildrenVisible = Visibility.Collapsed;
 			WebViewVisible = Visibility.Collapsed;
 		}

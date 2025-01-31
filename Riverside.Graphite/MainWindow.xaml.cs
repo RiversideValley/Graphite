@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
@@ -31,6 +30,7 @@ using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Notifications;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
+using Riverside.Graphite.ViewModels.DataGetters;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1099,26 +1099,6 @@ public sealed partial class MainWindow : Window
 			ExceptionLogger.LogException(ex);
 		}
 	}
-
-    public partial class BrowserHistoryCollection : ObservableObject, IIncrementalSource<HistoryItem>
-    {
-        private ObservableCollection<HistoryItem> _historyItems = new();
-
-        public ObservableCollection<HistoryItem> HistoryItems
-        {
-            get => _historyItems;
-            set => SetProperty(ref _historyItems, value);
-        }
-
-        public async Task<IEnumerable<HistoryItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
-        {
-            HistoryActions historyActions = new(AuthService.CurrentUser.Username);
-            ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
-            HistoryItems = new ObservableCollection<HistoryItem>(allItems.OrderByDescending(t=> t.Id).Skip(pageIndex * pageSize).Take(pageSize));
-			//ExceptionLogger.LogInformation($"{DateTime.Now.ToLocalTime()} getItems: {pageSize} indexPage: {pageIndex} totalItems: {allItems.Count}"); 
-			return HistoryItems;
-        }
-    }
 
     public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
 
