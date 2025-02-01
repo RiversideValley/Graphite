@@ -19,6 +19,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using WinRT.Interop;
 using Graphite.Helpers;
+using Graphite.ViewModels;
 
 namespace Graphite;
 
@@ -48,6 +49,30 @@ public sealed partial class HomeWindow : Window
 			IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.Home },
 			Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
 		};
+
+		Passer passer = new()
+		{
+			Tab = newItem,
+			TabView = Tabs,
+			ViewModel = new ToolbarViewModel(),
+			Param = param,
+		};
+
+
+		passer.ViewModel.CurrentAddress = "";
+
+		double margin = ClassicToolbar.Height;
+		Frame frame = new()
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			Margin = new Thickness(0, margin, 0, 0)
+		};
+
+		if (page != null)
+		{
+			_ = frame.Navigate(page, passer);
+		}
 
 		ToolTipService.SetToolTip(newItem, null);
 
@@ -170,4 +195,17 @@ public sealed partial class HomeWindow : Window
 
 		_ = (sender?.TabItems?.Remove(args.Tab));
 	}
+
+	#region toolbar
+
+	public ToolbarViewModel ViewModel { get; set; }
+	public class Passer
+	{
+		public GraphiteTabViewItem Tab { get; set; }
+		public GraphiteTabViewContainer TabView { get; set; }
+		public object Param { get; set; }
+		public ToolbarViewModel ViewModel { get; set; }
+	}
+
+	#endregion
 }

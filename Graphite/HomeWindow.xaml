@@ -1,13 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Window
     x:Class="Graphite.HomeWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Graphite"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:graphite="using:Graphite.Controls"
-    mc:Ignorable="d"
+    xmlns:graphitehelper="using:Graphite.Helpers"
     Title="Graphite Home Page">
 
     <Window.SystemBackdrop>
@@ -17,49 +13,66 @@
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- TabView Container -->
         <graphite:GraphiteTabViewContainer 
-        x:Name="Tabs"
-        x:FieldModifier="public"
-        Grid.Row="0"
-        Margin="0,-10,0,0"
-        Padding="0"
-        VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch"
-        Mode="Modern"
-        CanDragTabs="True"
-        CanReorderTabs="True"
-        Loaded="Tabs_Loaded"
-        AddTabButtonClick="Tabs_AddTabButtonClick"
-        TabCloseRequested="Tabs_TabCloseRequested">
+            x:Name="Tabs"
+            x:FieldModifier="public"
+            Grid.Row="0"
+            Margin="0,-20,0,0"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            Mode="Modern"
+            CanDragTabs="True"
+            CanReorderTabs="True"
+            Loaded="Tabs_Loaded"
+            AddTabButtonClick="Tabs_AddTabButtonClick"
+            TabCloseRequested="Tabs_TabCloseRequested">
 
             <graphite:GraphiteTabViewContainer.TabStripHeader>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <PersonPicture
+                <PersonPicture
                     x:Name="Profile"
-                    Grid.Column="0"
                     Width="32"
                     Height="32"
-                    Margin="10,20,5,0"/>
-                </Grid>
+                    Margin="5,30,0,0"/>
             </graphite:GraphiteTabViewContainer.TabStripHeader>
 
             <graphite:GraphiteTabViewContainer.TabStripFooter>
                 <Grid
-                x:Name="Apptitlebar"
-                MinWidth="175"
-                Margin="0,0,0,8"
-                IsHitTestVisible="False" />
+                    x:Name="Apptitlebar"
+                    MinWidth="175"
+                    Margin="0,0,0,0"
+                    IsHitTestVisible="False" />
             </graphite:GraphiteTabViewContainer.TabStripFooter>
         </graphite:GraphiteTabViewContainer>
+
+        <Grid x:Name="ClassicToolbar" Grid.Row="1" Height="37"
+              Margin="0,5,0,0"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button x:Name="BackBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72B;}" Tag="Back" Background="Transparent" BorderBrush="Transparent">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="B" Modifiers="Control" />
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <Button x:Name="ForwBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72A;}" Tag="Forward" Background="Transparent" BorderBrush="Transparent">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F" Modifiers="Control" />
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <Button x:Name="ReloadBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72C;}" Tag="Refresh" Background="Transparent" BorderBrush="Transparent">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="R" Modifiers="Control" />
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <Button x:Name="HomeBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE80F;}" Tag="Home" Background="Transparent" BorderBrush="Transparent">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="H" Modifiers="Control" />
+                    </Button.KeyboardAccelerators>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
