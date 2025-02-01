@@ -6,12 +6,60 @@
     xmlns:local="using:Graphite"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:graphite="using:Graphite.Controls"
     mc:Ignorable="d"
     Title="Graphite Home Page">
 
-    <Grid>
-        <TabView>
-            <TabViewItem></TabViewItem>
-        </TabView>
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TabView Container -->
+        <graphite:GraphiteTabViewContainer 
+        x:Name="Tabs"
+        x:FieldModifier="public"
+        Grid.Row="0"
+        Margin="0,-10,0,0"
+        Padding="0"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch"
+        Mode="Modern"
+        CanDragTabs="True"
+        CanReorderTabs="True"
+        Loaded="Tabs_Loaded"
+        AddTabButtonClick="Tabs_AddTabButtonClick"
+        TabCloseRequested="Tabs_TabCloseRequested">
+
+            <graphite:GraphiteTabViewContainer.TabStripHeader>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <PersonPicture
+                    x:Name="Profile"
+                    Grid.Column="0"
+                    Width="32"
+                    Height="32"
+                    Margin="10,20,5,0"/>
+                </Grid>
+            </graphite:GraphiteTabViewContainer.TabStripHeader>
+
+            <graphite:GraphiteTabViewContainer.TabStripFooter>
+                <Grid
+                x:Name="Apptitlebar"
+                MinWidth="175"
+                Margin="0,0,0,8"
+                IsHitTestVisible="False" />
+            </graphite:GraphiteTabViewContainer.TabStripFooter>
+        </graphite:GraphiteTabViewContainer>
     </Grid>
 </Window>
