@@ -20,6 +20,16 @@ using Riverside.Graphite.Runtime.Helpers;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graph.Models;
 using Riverside.Graphite.Services.Messages;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Windowing;
+using Riverside.Graphite.Pages;
+using WinRT.Interop;
+using static Riverside.Graphite.MainWindow;
+using Riverside.Graphite.Services;
+using System.Threading;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 
 namespace Riverside.Graphite.ViewModels
 {
@@ -47,12 +57,14 @@ namespace Riverside.Graphite.ViewModels
         }
 
 		[ObservableProperty]
+		
 		private bool isWebViewLoaded ;
 
 		[ObservableProperty]
 		private string _selectedCollectionName; 
 
 		[ObservableProperty]
+		[NotifyCanExecuteChangedFor(nameof(OpenViewNewWindowCommand))]
 		private bool _IsHistoryViewing;
 		
 		[ObservableProperty]
@@ -65,17 +77,65 @@ namespace Riverside.Graphite.ViewModels
         private Visibility _ChildrenVisible;
 
 		[ObservableProperty]
+		
 		private Visibility _WebViewVisible;
 
 		partial void OnSelectedCollectionChanged(int value)
 		{
 			SelectedCollectionName = Items?.Where(t=> t.CollectionName.Id == value).Select(t => t.CollectionName.Name).FirstOrDefault();
 		}
-		partial void OnSelectedUrlChanged(Uri value)
+		partial void OnWebViewVisibleChanged(Visibility value)
 		{
-			_IsHistoryViewing = true;
-			RaisePropertyChanges(nameof(IsHistoryViewing));	
+			if (value == Visibility.Visible) {
+				IsHistoryViewing = true;
+			}
+			else {
+				IsHistoryViewing = false; 
+			}
+
+			RaisePropertyChanges(nameof(IsHistoryViewing));
+
 		}
+
+		[RelayCommand(CanExecute = nameof(IsHistoryViewing))]
+		private async Task OpenViewNewWindow() {
+
+			if (SelectedUrl is null) return;
+
+			SemaphoreSlim semaphoreSlim = new(1);
+
+			try
+			{
+				await semaphoreSlim.WaitAsync();
+
+				var win = new Window();
+				var frame = new Frame();
+				frame.Margin = new Thickness(0, 32, 0, 0);
+				var web = new WebView2() { Source = SelectedUrl };
+				frame.Content = web;
+				win.Content = frame;
+				await web.EnsureCoreWebView2Async();
+				web.CoreWebView2.NewWindowRequested += (sender, args) =>
+				{
+					sender.Navigate(args.Uri);
+				};
+
+				await AppService.ConfigureSettingsWindow(win);
+
+			}
+			catch (Exception e)
+			{
+				ExceptionLogger.LogException(e);	
+				
+			}
+			finally { 
+
+				semaphoreSlim?.Release();	
+			}
+
+
+		}
+
 		#endregion
 		public CollectionsPageViewModel(IMessenger messenger):base(messenger)
 		{

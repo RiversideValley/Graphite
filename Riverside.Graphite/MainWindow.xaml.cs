@@ -834,9 +834,11 @@ public sealed partial class MainWindow : Window
 		{
 			case "Back":
 				GoBack();
+				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = ((Tabs.SelectedItem as FireBrowserTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
 			case "Forward":
 				GoForward();
+				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = ((Tabs.SelectedItem as FireBrowserTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
 			case "Refresh" when TabContent.Content is WebContent:
 				TabWebView.CoreWebView2.Reload();
@@ -1062,13 +1064,16 @@ public sealed partial class MainWindow : Window
 			case "Downloads":
 				UrlBox.Text = "firebrowser://downloads";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Downloads";
 				break;
 			case "History":
 				UrlBox.Text = "firebrowser://history";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "History";
 				break;
 			case "Collections": 
 				_ = TabContent.Navigate(typeof(CollectionsPage));
+				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Collections";
 				break;
 			case "InPrivate":
 				OpenNewWindow(new Uri("firebrowserincog://"));
@@ -1079,6 +1084,7 @@ public sealed partial class MainWindow : Window
 			case "Favorites":
 				UrlBox.Text = "firebrowser://favorites";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Favorites";
 				break;
 			case "Ratings":
 				try

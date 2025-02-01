@@ -57,6 +57,22 @@
         <Grid>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button
+                    x:Name="OpenExternalWindowButton"
+                    Width="32"
+                    Height="32"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    Padding="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Canvas.ZIndex="1"
+                    Command="{x:Bind ViewModel.OpenViewNewWindowCommand}"
+                    Content="{firebrowser:FluentIcon Glyph=&#xE8A7;}"
+                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    ToolTipService.Placement="Bottom"
+                    ToolTipService.ToolTip="Open External Window" />
+                <Button
                     x:Name="AddCollectionButton"
                     Width="32"
                     Height="32"
@@ -109,15 +125,19 @@
                 <TeachingTip
                     x:Name="HelpTeachingTip"
                     Title="Welcome to Collections"
+                    FontFamily="Segoe Script"
+                    FontSize="16"
                     IsLightDismissEnabled="True"
                     PlacementMargin="{ThemeResource SmallLeftRightMargin}"
-                    PreferredPlacement="LeftBottom"
+                    PreferredPlacement="Bottom"
                     Target="{Binding ElementName=HelpCollection}">
                     <TeachingTip.HeroContent>
                         <Image
                             Width="400"
                             Height="400"
+                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                             FlowDirection="LeftToRight"
+                            Shadow="{ThemeResource CommandBarFlyoutOverflowShadow}"
                             Source="ms-appx:///Assets/Experience/collect_snap_histoy_flyout.png"
                             Stretch="UniformToFill" />
                     </TeachingTip.HeroContent>
@@ -129,13 +149,13 @@
                             FontFamily="Arial New Time Roman"
                             FontSize="16"
                             TextWrapping="WrapWholeWords">
-                            <Run Text="Add History to Collection from History Flyout with a Right-Click" />
+                            <Run Text="Add History to Collection from History Flyout with a Right-Click." />
                             <LineBreak />
-                            <Run Text="1. You can also view your History Items here" />
+                            <Run Text="1. You can also view your History Items here." />
                             <LineBreak />
                             <Run Text="2. Add a Collection using + button" />
                             <LineBreak />
-                            <Run Text="3. Right click on History Items in your Collection for more options" />
+                            <Run Text="3. Right click on History Items in your Collection for more options." />
                         </TextBlock>
                     </TeachingTip.Content>
                 </TeachingTip>
@@ -163,7 +183,7 @@
 
         <Grid Grid.Row="1" Margin="{ThemeResource SmallTopMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -192,14 +212,14 @@
                                     Spacing="2">
                                     <PersonPicture
                                         x:Name="RootImage"
-                                        Width="80"
-                                        Height="80"
+                                        Width="100"
+                                        Height="100"
                                         HorizontalAlignment="Center"
                                         Background="{Binding CollectionName.BackgroundBrush}"
                                         Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
                                     <TextBlock
                                         HorizontalAlignment="Center"
-                                        FontSize="18"
+                                        FontSize="16"
                                         FontWeight="SemiBold"
                                         Text="{Binding CollectionName.Name}" />
                                 </StackPanel>
@@ -279,7 +299,7 @@
                 ui:UIElementExtensions.ClipToBounds="True"
                 Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
                 BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
-                BorderThickness="1"
+                BorderThickness=".5"
                 CornerRadius="6"
                 Visibility="{x:Bind ViewModel.WebViewVisible, Mode=OneWay}">
                 <WebView2

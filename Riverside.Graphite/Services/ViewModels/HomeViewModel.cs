@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Graphite.Controls;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -24,6 +25,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 
 namespace Riverside.Graphite.ViewModels;
@@ -236,6 +238,7 @@ public partial class HomeViewModel : ObservableRecipient
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
 			_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Controls.CollectionsPage));
+			(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Collections";
 		}
 	}
 	[RelayCommand]
@@ -288,14 +291,17 @@ public partial class HomeViewModel : ObservableRecipient
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";
 							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+							(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Downloads";
 							break;
 						case "History":
 							window.UrlBox.Text = "firebrowser://history";
 							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+							(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "History";
 							break;
 						case "Favorites":
 							window.UrlBox.Text = "firebrowser://favorites";
 							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+							(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Favorites";
 							break;
 					}
 				}
