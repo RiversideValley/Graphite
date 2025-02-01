@@ -212,9 +212,9 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 	private SolidColorBrush GetRandomSolidColorBrush()
 	{
 		Random random = new Random();
-		byte r = (byte)random.Next(256);
-		byte g = (byte)random.Next(256);
-		byte b = (byte)random.Next(256);
+		byte r = (byte)random.Next(128);
+		byte g = (byte)random.Next(128);
+		byte b = (byte)random.Next(128);
 		return new SolidColorBrush(Color.FromArgb(255, r, g, b));
 	}
 

@@ -235,6 +235,7 @@ namespace Riverside.Graphite.Controls
 					HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
 					historyActions.HistoryContext.CollectionNames.Add(new CollectionName { Name = collectionName });
 					await historyActions.HistoryContext.SaveChangesAsync();
+					ViewModel.Initialize();	
 					(App.Current.m_window as MainWindow).NotificationQueue.Show("Your collection has been added successfully", 2000, "Collections");
 				}
 				catch (Exception)
@@ -248,8 +249,11 @@ namespace Riverside.Graphite.Controls
 			else {
 				(App.Current.m_window as MainWindow).NotificationQueue.Show("Please provide a valid name for a new collection", 2000, "Collections");
 			}
-		} 
+		}
 
-		
-    }
+		private void HelpCollection_Click(object sender, RoutedEventArgs e)
+		{
+			HelpTeachingTip.IsOpen	= true;
+		}
+	}
 }

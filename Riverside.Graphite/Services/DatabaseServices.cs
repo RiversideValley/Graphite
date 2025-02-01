@@ -117,7 +117,8 @@ public class DatabaseServices : IDatabaseService
             return Task.FromResult(false);
         }
 
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(AuthService.CurrentUser.Username), "Can't update your Settings database, please reset your application in the settings page");
+        
+		await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(AuthService.CurrentUser.Username), "Can't update your Settings database, please reset your application in the settings page");
         await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(AuthService.CurrentUser.Username), "Can't update your History database, please reset your application in the settings page");
         await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(AuthService.CurrentUser.Username), "Can't update your Downloads database, please reset your application in the settings page");
 		// allow ui to flow. 

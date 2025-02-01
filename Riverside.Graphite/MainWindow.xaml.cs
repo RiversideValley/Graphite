@@ -1067,6 +1067,9 @@ public sealed partial class MainWindow : Window
 				UrlBox.Text = "firebrowser://history";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				break;
+			case "Collections": 
+				_ = TabContent.Navigate(typeof(CollectionsPage));
+				break;
 			case "InPrivate":
 				OpenNewWindow(new Uri("firebrowserincog://"));
 				break;

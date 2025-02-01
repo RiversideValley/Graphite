@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Assets;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
+using Riverside.Graphite.Data.Core.Models;
+using Riverside.Graphite.Helpers;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,9 +19,10 @@ namespace Riverside.Graphite
 	public sealed partial class SetupUser : Page
 	{
 		private string selectedImageName = "clippy.png";
-
+		readonly DatabaseServices databaseServices = new();	
 		public SetupUser()
 		{
+			databaseServices = new();
 			InitializeComponent();
 		}
 
@@ -45,6 +52,70 @@ namespace Riverside.Graphite
 			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
+		private async void CreateCollections()
+		{
+
+			try
+			{
+				HistoryActions historyActions = new HistoryActions(AuthService.NewCreatedUser?.Username);
+				string historyPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Database", "History.db");
+				if (!File.Exists(historyPath))
+				{
+					await historyActions.HistoryContext.Database.MigrateAsync();
+				}
+
+				if (File.Exists(historyPath))
+				{
+					if (await historyActions.HistoryContext.Database.CanConnectAsync())
+					{
+						historyActions.HistoryContext.CollectionNames.AddRange(new List<CollectionName>
+					{
+						new CollectionName { Name = "Work", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
+						new CollectionName { Name = "Personal", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
+						new CollectionName { Name = "Hobbies", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
+						new CollectionName { Name = "Following", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() }
+					});
+
+						await historyActions.HistoryContext.SaveChangesAsync();
+					}
+				}
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+		private async void CreateNewSettings()
+		{
+			try
+			{
+				SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
+				string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
+
+				if (!File.Exists(settingsPath))
+				{
+					await settingsActions.SettingsContext.Database.MigrateAsync();
+				}
+
+				if (File.Exists(settingsPath))
+				{
+					if (await settingsActions.SettingsContext.Database.CanConnectAsync())
+					{
+						_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+			}
+			finally
+			{
+				AuthService.NewCreatedUser = null;
+			}
+		}
 		private async Task InPrivateUser()
 		{
 			User newUser = new()
@@ -60,6 +131,8 @@ namespace Riverside.Graphite
 			AuthService.CurrentUser.Username = newUser.Username;
 			_ = AuthService.Authenticate(newUser.Username);
 			await CopyImageToUserDirectory(newUser);
+			await UserCreateDatabase();
+
 		}
 		private async Task CreateUserOnStartup()
 		{
@@ -75,8 +148,20 @@ namespace Riverside.Graphite
 			_ = AuthService.Authenticate(newUser.Username);
 
 			await CopyImageToUserDirectory(newUser);
+
+			await UserCreateDatabase();
+
 		}
 
+		async Task UserCreateDatabase()
+		{
+			if (AuthService.IsUserAuthenticated)
+			{
+				_ = await databaseServices.DatabaseCreationValidation();
+				CreateCollections();
+				CreateNewSettings();
+			}
+		}
 		private async Task CopyImageToUserDirectory(Riverside.Graphite.Core.User user)
 		{
 			try

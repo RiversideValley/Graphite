@@ -32,19 +32,21 @@ public class HistoryContext : DbContext
         optionsBuilder.LogTo(Console.WriteLine);
     }
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
-	{
-		modelBuilder.Entity<Collection>()
-			   .HasOne<DbHistoryItem>()
-			   .WithMany()
-			   .HasForeignKey(c => c.HistoryItemId)
-			   .OnDelete(DeleteBehavior.Cascade);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Collection>()
+               .HasOne<DbHistoryItem>()
+               .WithMany()
+               .HasForeignKey(c => c.HistoryItemId)
+               .OnDelete(DeleteBehavior.Cascade);
 
-		modelBuilder.Entity<Collection>()
-			.HasOne<CollectionName>()
-			.WithMany()
-			.HasForeignKey(c => c.CollectionNameId)
-			.OnDelete(DeleteBehavior.Cascade);// Cascade delete if CollectionName is deleted
-	}
+        modelBuilder.Entity<Collection>()
+            .HasOne<CollectionName>()
+            .WithMany()
+            .HasForeignKey(c => c.CollectionNameId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            
+    }
 
 }

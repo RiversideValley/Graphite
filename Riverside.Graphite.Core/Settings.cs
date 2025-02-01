@@ -62,7 +62,7 @@ public class Settings
 		self.RefreshButton = true;
 		self.HomeButton = true;
 		self.PipMode = false;
-		self.IsTrendingVisible = true;
+		self.IsTrendingVisible = false;
 		self.IsLogoVisible = true;
 		self.IsAdBlockerEnabled = false;
 		self.AdBlockerType = 0;

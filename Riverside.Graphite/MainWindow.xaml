@@ -238,6 +238,23 @@
                             </StackPanel>
                         </Button>
                         <Button
+                            x:Name="CollectionNames"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            x:FieldModifier="Public"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="TabMenuClick"
+                            Tag="Collections">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    FontSize="16"
+                                    Glyph="&#xe71d;" />
+                                <TextBlock Margin="10,0,0,0" Text="Collections" />
+                            </StackPanel>
+                        </Button>
+                        <Button
                             x:Name="Fav"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -387,11 +404,11 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
-                    <InfoBar 
-IsOpen="True"
-Severity="Informational"
-Title="App Update"
-Message="Revamp Update &#x0a;In 6 Months"/>
+                    <InfoBar
+                        Title="App Update"
+                        IsOpen="True"
+                        Message="Revamp Update &#x0a;In 6 Months"
+                        Severity="Informational" />
                 </StackPanel>
             </Flyout>
             <Flyout
