@@ -542,6 +542,14 @@
                                                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8A7;" />
                                                     </MenuFlyoutItem.Icon>
                                                 </MenuFlyoutItem>
+                                                <MenuFlyoutItem
+                                                    x:Name="OpenCollectionsMenuItem"
+                                                    Click="OpenCollectionsMenuItem_Click"
+                                                    Text="Open Collections Page">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xe71d;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
                                             </MenuFlyout>
                                         </Button.Flyout>
                                         <FontIcon FontSize="16" Glyph="&#xE712;" />

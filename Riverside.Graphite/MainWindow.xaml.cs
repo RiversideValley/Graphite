@@ -1545,4 +1545,9 @@ public sealed partial class MainWindow : Window
 	{
 		HistoryDateSearchAsync(HistoryFilterButton);
 	}
+
+	private void OpenCollectionsMenuItem_Click(object sender, RoutedEventArgs e)
+	{
+		TabContent.Navigate(typeof(CollectionsPage));
+	}
 }
