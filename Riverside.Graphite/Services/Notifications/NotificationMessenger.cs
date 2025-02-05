@@ -40,6 +40,7 @@ namespace Riverside.Graphite.Services.Notifications
 				return;
 			}
 
+			WinRT.Interop.InitializeWithWindow.Initialize(_storeContext, WinRT.Interop.WindowNative.GetWindowHandle((Application.Current as App)?.m_window as MainWindow));
 			IReadOnlyList<StorePackageUpdate> updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
