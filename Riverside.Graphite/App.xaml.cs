@@ -143,7 +143,7 @@ public partial class App : Application
 
 	private async Task StartChannelsAsync()
 	{
-		string publishDirectory = Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly);
+		string publishDirectory = GetFullPathToExe(); // Get_Appx_AssemblyDirectory(typeof(Riverside.Graphite.Channels.Program).Assembly);
 		string webAppPath = Path.Combine(publishDirectory, "RiverSide.Graphite.Channels.dll");
 		try
 		{

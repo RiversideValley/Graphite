@@ -384,16 +384,15 @@ public static class AppService
 				*/
 				#endregion
 
+				HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
-				// 1. run this hence we've change the Setting Class alot.. LOL.. amazing... 
-				// 2. gather class & db action-> 2g schema of db linked to a class(Setting, Download, Etc..)
-				var connectionPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, "Settings", "Settings.db");
-				var schema = new SchemaExtractor(connectionPath, typeof(Settings));
+				if (await historyActions.HistoryContext.Database.CanConnectAsync()) {
 
-				await schema.HandleExtractionSchemaChanges();
+					if (historyActions.HistoryContext.CollectionNames.Count() == 0)
+						dbServer.CreateCollections(); 
+				}
 
-
-				// if we get to here than all is validated and open Browser->go; 
+				
 			}
 			catch (Exception ex)
 			{

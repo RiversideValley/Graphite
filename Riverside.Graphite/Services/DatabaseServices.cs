@@ -4,6 +4,7 @@ using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Data.Core.Methods;
+using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using SQLitePCL;
@@ -124,6 +125,43 @@ public class DatabaseServices : IDatabaseService
 		// allow ui to flow. 
 		return Task.CompletedTask;
     }
+
+	public async void CreateCollections()
+	{
+
+		try
+		{
+			HistoryActions historyActions = new HistoryActions(AuthService.CurrentUser?.Username);
+			string historyPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username, "Database", "History.db");
+			if (!File.Exists(historyPath))
+			{
+				await historyActions.HistoryContext.Database.MigrateAsync();
+			}
+
+			if (File.Exists(historyPath))
+			{
+				if (await historyActions.HistoryContext.Database.CanConnectAsync())
+				{
+					historyActions.HistoryContext.CollectionNames.AddRange(new List<CollectionName>
+					{
+						new CollectionName { Name = "Work", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
+						new CollectionName { Name = "Personal", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
+						new CollectionName { Name = "Hobbies", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
+						new CollectionName { Name = "Following", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() }
+					});
+
+					await historyActions.HistoryContext.SaveChangesAsync();
+				}
+			}
+		}
+		catch (Exception e)
+		{
+
+			ExceptionLogger.LogException(e);
+			return; 
+		}
+
+	}
 }
 
 	
