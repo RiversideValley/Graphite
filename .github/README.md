@@ -1,3 +1,5 @@
+**ALL FOCUS IS NOW ON NEWREVAMP BRANCH FIRST RELEASE END OF YEAR**
+
 ![Screenshot-NoBackgroundCrop,Margin,NoRoundedCorner](https://github.com/user-attachments/assets/ec2fa1dd-2990-48e0-a747-97b5cc87b9ac)
 
 Introducing **Graphite**, a beautiful, blazingly fast web browser built with Microsoft's powerful `WindowsAppSDK` and `WebView2`. It leverages Microsoft Entra for secure login and offers a suite of powerful features designed to enhance your browsing experience.
