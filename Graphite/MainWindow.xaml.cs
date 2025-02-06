@@ -230,6 +230,13 @@ public sealed partial class MainWindow : Window
 		this.Close();
 	}
 
+	private async void Delete_Click(object sender, RoutedEventArgs e)
+	{
+		if (sender is Button deleteButton && deleteButton.DataContext is User user)
+		{
+			await UserManager.DeleteUserAsync(user.Username);
+		}
+	}
 	private async void OpenGuestUser_Click(object sender, RoutedEventArgs e)
 	{
 		try

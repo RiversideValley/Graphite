@@ -174,11 +174,11 @@
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="200" Height="240"
-                          Background="{ThemeResource CardBackgroundFillColorDefault}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                          BorderThickness="1"
-                          CornerRadius="8"
-                          Margin="8">
+                              Background="{ThemeResource CardBackgroundFillColorDefault}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefault}"
+                              BorderThickness="1"
+                              CornerRadius="8"
+                              Margin="8">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -186,31 +186,38 @@
                         </Grid.RowDefinitions>
 
                         <Button Style="{StaticResource TextButtonStyle}"
-                HorizontalAlignment="Right"
-                Margin="8,8,8,0">
+                                    HorizontalAlignment="Right"
+                                    Margin="8,8,8,0">
                             <Button.Flyout>
                                 <Flyout Placement="Bottom">
                                     <StackPanel>
                                         <ToggleSwitch Header="Sync Data" 
-x:Name="SyncDataToggle"/>
-                                        <Button Content="Delete User"/>
+                                                          IsOn="{Binding IsSyncEnabled, Mode=TwoWay}"
+                                                          />
+                                        <Button Click="Delete_Click"
+                                                    DataContext="{Binding}">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <SymbolIcon Symbol="Delete"/>
+                                                <TextBlock Text="Delete User"/>
+                                            </StackPanel>
+                                        </Button>
                                     </StackPanel>
                                 </Flyout>
                             </Button.Flyout>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE10C;"/>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE10C;"/>
                         </Button>
 
                         <PersonPicture Grid.Row="1"
-                                       ProfilePicture="{Binding ProfileImageSource}"
-                                       DisplayName="{Binding Username}"
-                                       Height="100" Width="100"
-                                       Margin="0,16"/>
+                                           ProfilePicture="{Binding ProfileImageSource}"
+                                           DisplayName="{Binding Username}"
+                                           Height="100" Width="100"
+                                           Margin="0,16"/>
 
                         <TextBlock Grid.Row="2"
-                                   Text="{Binding Username}"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"
-                                   Margin="16,8,16,24"/>
+                                       Text="{Binding Username}"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"
+                                       Margin="16,8,16,24"/>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
