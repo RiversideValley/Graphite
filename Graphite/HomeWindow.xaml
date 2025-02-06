@@ -416,6 +416,7 @@
             x:FieldModifier="public"
             Grid.Row="0"
             Margin="0,-20,0,0"
+            Width="Auto"
             VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch"
             Mode="Modern"
