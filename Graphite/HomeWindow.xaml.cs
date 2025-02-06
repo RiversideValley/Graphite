@@ -69,12 +69,15 @@ public sealed partial class HomeWindow : Window
 			Margin = new Thickness(0, margin, 0, 0)
 		};
 
+
 		if (page != null)
 		{
 			_ = frame.Navigate(page, passer);
 		}
 
 		ToolTipService.SetToolTip(newItem, null);
+
+		newItem.Content = frame;
 
 		return newItem;
 	}

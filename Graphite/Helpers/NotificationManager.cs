@@ -58,26 +58,32 @@ public sealed class NotificationManager : ObservableRecipient
 
 	public bool DispatchNotification(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
 	{
+		try
 		{
-			try
-			{
-				IDictionary<string, string> arguments = notificationActivatedEventArgs.Arguments;
+			IDictionary<string, string> arguments = notificationActivatedEventArgs.Arguments;
 
-				if (arguments.ContainsKey("action") && arguments["action"] == "UpdateApp")
-				{
-					c_notificationHandlers[(int)EnumMessageStatus.Updated](notificationActivatedEventArgs);
-				}
-				else if (arguments.ContainsKey("action") && arguments["action"] == "RateApp")
-				{
-					c_notificationHandlers[(int)EnumMessageStatus.Informational](notificationActivatedEventArgs);
-				}
-
-				return true;
-			}
-			catch (Exception ex)
+			if (arguments.ContainsKey("action"))
 			{
-				return false; // Couldn't find a NotificationHandler for scenarioId.
+				switch (arguments["action"])
+				{
+					case "UpdateApp":
+						c_notificationHandlers[(int)EnumMessageStatus.Updated](notificationActivatedEventArgs);
+						return true;
+					case "RateApp":
+						c_notificationHandlers[(int)EnumMessageStatus.Informational](notificationActivatedEventArgs);
+						return true;
+				}
 			}
+
+			// If we reach here, no matching action was found
+			System.Diagnostics.Debug.WriteLine("No matching action found for the notification.");
+			return false;
+		}
+		catch (Exception ex)
+		{
+			// Log the exception or handle it appropriately
+			System.Diagnostics.Debug.WriteLine($"Error dispatching notification: {ex.Message}");
+			return false;
 		}
 	}
 

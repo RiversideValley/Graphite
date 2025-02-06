@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
@@ -103,6 +103,7 @@
     <Content Remove="..\Graphite.Setup\bin\Debug\net9.0-windows10.0.19041.0\win-x64\Graphite.Setup.exe" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Graphite.Controls\Graphite.Controls.csproj" />
     <ProjectReference Include="..\Graphite.Setup\Graphite.Setup.csproj" />
     <ProjectReference Include="..\Graphite.UserSys\Graphite.UserSys.csproj" />
   </ItemGroup>

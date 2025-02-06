@@ -12,11 +12,9 @@ namespace Graphite;
 public partial class App : Application
 {
 	public static new App Current => (App)Application.Current;
-	public NotificationManager NotificationManager { get; set; }
-
-
-	#region DepenjencInjection
-	public IServiceProvider Services { get; set; }
+	public NotificationManager NotificationManager { get; private set; }
+	public IServiceProvider Services { get; private set; }
+	public static Window? MainWindow { get; set; }
 
 	public static T GetService<T>() where T : class
 	{
@@ -27,7 +25,7 @@ public partial class App : Application
 			: service;
 	}
 
-	public IServiceProvider ConfigureServices()
+	private IServiceProvider ConfigureServices()
 	{
 		ServiceCollection services = new();
 
@@ -40,19 +38,18 @@ public partial class App : Application
 		_ = services.AddTransient<HomeWindowViewModel>();
 		_ = services.AddTransient<TabViewItemViewModel>();
 
-
 		return services.BuildServiceProvider();
 	}
-
-	#endregion
 
 	public App()
 	{
 		this.InitializeComponent();
-		EnvorimentVariables();
+		Services = ConfigureServices();
+		NotificationManager = new NotificationManager();
+		SetEnvironmentVariables();
 	}
 
-	public void EnvorimentVariables()
+	private void SetEnvironmentVariables()
 	{
 		Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
 		Environment.SetEnvironmentVariable("WEBVIEW2_CHANNEL_SEARCH_KIND", "1");
@@ -60,20 +57,14 @@ public partial class App : Application
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
 	}
 
-    /// <param name="args">Details about the launch request and process.</param>
-    public static Window MainWindow { get; set; }
-
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-    {
-		App.Current.Services = App.Current.ConfigureServices();
+	protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+	{
 		MainWindow = new MainWindow();
-        MainWindow.Activate();
+		MainWindow.Activate();
 
 		AppInstance currentInstance = AppInstance.GetCurrent();
 		if (currentInstance.IsCurrent)
 		{
-			// AppInstance.GetActivatedEventArgs will report the correct ActivationKind,
-			// even in WinUI's OnLaunched.
 			AppActivationArguments activationArgs = currentInstance.GetActivatedEventArgs();
 			if (activationArgs != null)
 			{
@@ -87,3 +78,4 @@ public partial class App : Application
 		}
 	}
 }
+

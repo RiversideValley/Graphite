@@ -11,12 +11,6 @@
     </Window.SystemBackdrop>
 
     <Grid x:Name="RootGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
         <graphite:GraphiteTabViewContainer 
             x:Name="Tabs"
             x:FieldModifier="public"
@@ -36,7 +30,7 @@
                     x:Name="Profile"
                     Width="32"
                     Height="32"
-                    Margin="5,30,0,0"/>
+                    Margin="5,25,0,0"/>
             </graphite:GraphiteTabViewContainer.TabStripHeader>
 
             <graphite:GraphiteTabViewContainer.TabStripFooter>
@@ -48,9 +42,15 @@
             </graphite:GraphiteTabViewContainer.TabStripFooter>
         </graphite:GraphiteTabViewContainer>
 
-        <Grid x:Name="ClassicToolbar" Grid.Row="1" Height="37"
-              Margin="0,5,0,0"
+        <Grid x:Name="ClassicToolbar" Height="37"
+            Margin="0,44,0,0"
+            VerticalAlignment="Top"
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+			<Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <Button x:Name="BackBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72B;}" Tag="Back" Background="Transparent" BorderBrush="Transparent">
                     <Button.KeyboardAccelerators>

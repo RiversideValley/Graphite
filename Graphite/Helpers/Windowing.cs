@@ -537,8 +537,7 @@ public class Windowing
 				appWindow.Resize(size);
 
 				// Remove default window chrome
-				OverlappedPresenter presenter = appWindow.Presenter as OverlappedPresenter;
-				if (presenter != null)
+				if (appWindow.Presenter is OverlappedPresenter presenter)
 				{
 					presenter.IsResizable = false;
 					presenter.SetBorderAndTitleBar(true, false);

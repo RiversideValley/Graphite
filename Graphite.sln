@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphite.UserSys", "Graphit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphite.Setup", "Graphite.Setup\Graphite.Setup.csproj", "{313AC1F6-B9F1-4702-A52B-59DBFEAA6CF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphite.Controls", "Graphite.Controls\Graphite.Controls.csproj", "{8CE02D84-9AED-4BDE-9917-EF9152672AD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -61,6 +63,18 @@ Global
 		{313AC1F6-B9F1-4702-A52B-59DBFEAA6CF4}.Release|x64.Build.0 = Release|Any CPU
 		{313AC1F6-B9F1-4702-A52B-59DBFEAA6CF4}.Release|x86.ActiveCfg = Release|Any CPU
 		{313AC1F6-B9F1-4702-A52B-59DBFEAA6CF4}.Release|x86.Build.0 = Release|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Debug|x64.ActiveCfg = Debug|x64
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Debug|x64.Build.0 = Debug|x64
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Debug|x86.Build.0 = Debug|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Release|ARM64.Build.0 = Release|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Release|x64.ActiveCfg = Release|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Release|x64.Build.0 = Release|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Release|x86.ActiveCfg = Release|Any CPU
+		{8CE02D84-9AED-4BDE-9917-EF9152672AD7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
