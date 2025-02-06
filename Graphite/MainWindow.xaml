@@ -190,8 +190,11 @@
                 Margin="8,8,8,0">
                             <Button.Flyout>
                                 <Flyout Placement="Bottom">
-                                    <ToggleSwitch Header="Sync Data" 
-                                  x:Name="SyncDataToggle"/>
+                                    <StackPanel>
+                                        <ToggleSwitch Header="Sync Data" 
+x:Name="SyncDataToggle"/>
+                                        <Button Content="Delete User"/>
+                                    </StackPanel>
                                 </Flyout>
                             </Button.Flyout>
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE10C;"/>
