@@ -23,28 +23,36 @@ namespace Graphite.UserSys
             return Path.Combine(UserManager.GraphiteDataPath, username, "Settings", "settings.db");
         }
 
-        public static async Task InitializeUserSettingsAsync(string username)
-        {
-            await _semaphore.WaitAsync();
-            try
-            {
-                string dbPath = GetUserSettingsDbPath(username);
-                Directory.CreateDirectory(Path.GetDirectoryName(dbPath));
+		public static async Task InitializeUserSettingsAsync(string username)
+		{
+			await _semaphore.WaitAsync();
+			try
+			{
+				string dbPath = GetUserSettingsDbPath(username);
+				Directory.CreateDirectory(Path.GetDirectoryName(dbPath));
 
-                // Initialize batteries with v2 configuration
-                Batteries_V2.Init();
+				// Initialize batteries with v2 configuration
+				Batteries_V2.Init();
 
-                using var connection = await GetConnectionAsync(username);
-                await CreateTablesAsync(connection);
-                await InitializeDefaultSettingsAsync(connection);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-        }
+				using var connection = await GetConnectionAsync(username);
+				try
+				{
+					await CreateTablesAsync(connection);
+					await InitializeDefaultSettingsAsync(connection);
+				}
+				finally
+				{
+					await connection.CloseAsync();
+				}
+			}
+			finally
+			{
+				_semaphore.Release();
+			}
+		}
 
-        private static async Task<SqliteConnection> GetConnectionAsync(string username)
+
+		private static async Task<SqliteConnection> GetConnectionAsync(string username)
         {
             string dbPath = GetUserSettingsDbPath(username);
             var connectionString = new SqliteConnectionStringBuilder
