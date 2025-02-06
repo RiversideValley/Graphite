@@ -1,25 +1,15 @@
-using Graphite.Controls;
-using Graphite.Pages;
-using Graphite.UserSys;
-using Microsoft.UI.Windowing;
-using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using WinRT.Interop;
+using Graphite.Controls;
 using Graphite.Helpers;
+using Graphite.Pages;
+using Graphite.UserSys;
 using Graphite.ViewModels;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using WinRT.Interop;
 
 namespace Graphite;
 
@@ -35,6 +25,10 @@ public sealed partial class HomeWindow : Window
 		this.InitializeComponent();
 		_currentUser = user;
 		this.Title = $"Graphite Home Page - {_currentUser.Username}";
+		if (QRCodeTypeComboBox.SelectedItem == null)
+		{
+			QRCodeTypeComboBox.SelectedIndex = 0;
+		}
 		Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
 		TitleTop();
 	}
@@ -163,6 +157,30 @@ public sealed partial class HomeWindow : Window
 		appWindow.TitleBar?.SetDragRectangles(dragRects);
 	}
 
+	private void QRCodeTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (QRCodeTypeComboBox.SelectedItem is ComboBoxItem selectedItem)
+		{
+			string selectedType = selectedItem.Content?.ToString() ?? string.Empty;
+
+			if (WifiInputs != null)
+				WifiInputs.Visibility = selectedType == "Wifi" ? Visibility.Visible : Visibility.Collapsed;
+
+			if (TextInput != null)
+				TextInput.Visibility = (selectedType == "Text" || selectedType == "URL") ? Visibility.Visible : Visibility.Collapsed;
+
+			if (PhoneInput != null)
+				PhoneInput.Visibility = selectedType == "Phone" ? Visibility.Visible : Visibility.Collapsed;
+
+			if (CreateQRButton != null)
+				CreateQRButton.Visibility = selectedType == "URL" ? Visibility.Collapsed : Visibility.Visible;
+
+			if (selectedType == "URL" && TextInput != null)
+			{
+				TextInput.Visibility = Visibility.Collapsed;
+			}
+		}
+	}
 	private double GetScaleAdjustment()
 	{
 		nint hWnd = WindowNative.GetWindowHandle(this);

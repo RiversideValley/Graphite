@@ -108,9 +108,7 @@
                         <FontIcon FontSize="16" Glyph="&#xE721;" />
                     </AutoSuggestBox.QueryIcon>
                 </AutoSuggestBox>
-
-
-
+             
                 <!-- Quick Access Bar -->                      
 
                 <!-- Favorites and History -->
