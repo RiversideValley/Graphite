@@ -497,64 +497,101 @@ namespace Graphite.UserSys
             }
         }
 
-        public static async Task<bool> DeleteUserAsync(string username, string password = null)
-        {
-            try
-            {
-                await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-                await connection.OpenAsync();
+		public static async Task<bool> DeleteUserAsync(string username, string password = null)
+		{
+			try
+			{
+				using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
 
-                // First, check if the user exists and has a password
-                var checkCommand = connection.CreateCommand();
-                checkCommand.CommandText = "SELECT HasPassword, PasswordHash FROM Users WHERE Username = $username";
-                checkCommand.Parameters.AddWithValue("$username", username);
+				using var transaction = await connection.BeginTransactionAsync();
 
-                await using var reader = await checkCommand.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
-                {
-                    bool hasPassword = reader.GetInt32(0) == 1;
-                    string storedEncryptedPassword = reader.IsDBNull(1) ? null : reader.GetString(1);
+				try
+				{
+					// Check if the user exists and has a password
+					var checkCommand = connection.CreateCommand();
+					checkCommand.CommandText = @"
+                SELECT HasPassword, PasswordHash 
+                FROM Users 
+                WHERE Username = $username";
+					checkCommand.Parameters.AddWithValue("$username", username);
 
-                    // If the user has a password, verify it
-                    if (hasPassword)
-                    {
-                        if (password == null || DecryptPassword(storedEncryptedPassword) != password)
-                        {
-                            throw new UnauthorizedAccessException("Incorrect password provided for user deletion.");
-                        }
-                    }
-                }
-                else
-                {
-                    return false; // User not found
-                }
+					using var reader = await checkCommand.ExecuteReaderAsync();
+					if (!await reader.ReadAsync())
+					{
+						return false; // User not found
+					}
 
-                // If we've made it here, either the user doesn't have a password or the correct password was provided
-                var deleteCommand = connection.CreateCommand();
-                deleteCommand.CommandText = "DELETE FROM Users WHERE Username = $username";
-                deleteCommand.Parameters.AddWithValue("$username", username);
+					bool hasPassword = reader.GetBoolean(0);
+					string storedEncryptedPassword = reader.IsDBNull(1) ? null : reader.GetString(1);
 
-                int rowsAffected = await deleteCommand.ExecuteNonQueryAsync();
+					// If the user has a password, verify it
+					if (hasPassword)
+					{
+						if (string.IsNullOrEmpty(password))
+						{
+							throw new UnauthorizedAccessException("Password required for user deletion.");
+						}
 
-                if (rowsAffected > 0)
-                {
-                    string userFolderPath = Path.Combine(GraphiteDataPath, username);
-                    if (Directory.Exists(userFolderPath))
-                    {
-                        Directory.Delete(userFolderPath, true);
-                    }
-                    return true;
-                }
+						if (!VerifyPassword(password, storedEncryptedPassword))
+						{
+							throw new UnauthorizedAccessException("Incorrect password provided for user deletion.");
+						}
+					}
 
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to delete user: {ex.Message}", ex);
-            }
-        }
+					// Delete the user
+					var deleteCommand = connection.CreateCommand();
+					deleteCommand.CommandText = "DELETE FROM Users WHERE Username = $username";
+					deleteCommand.Parameters.AddWithValue("$username", username);
 
-        public static async Task SetPasswordAsync(string username, string newPassword)
+					int rowsAffected = await deleteCommand.ExecuteNonQueryAsync();
+
+					if (rowsAffected > 0)
+					{
+						await transaction.CommitAsync();
+
+						// Delete user folder
+						string userFolderPath = Path.Combine(GraphiteDataPath, username);
+						if (Directory.Exists(userFolderPath))
+						{
+							try
+							{
+								Directory.Delete(userFolderPath, true);
+							}
+							catch (IOException ex)
+							{
+								// Log the error but don't throw, as the user is already deleted from the database
+								Console.WriteLine($"Warning: Failed to delete user folder: {ex.Message}");
+							}
+						}
+
+						return true;
+					}
+
+					return false;
+				}
+				catch
+				{
+					await transaction.RollbackAsync();
+					throw;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to delete user: {ex.Message}", ex);
+			}
+		}
+
+		private static bool VerifyPassword(string inputPassword, string storedEncryptedPassword)
+		{
+			// Implement your password verification logic here
+			// This should securely compare the input password with the stored encrypted password
+			// Return true if the password is correct, false otherwise
+			throw new NotImplementedException("Password verification logic needs to be implemented.");
+		}
+
+
+		public static async Task SetPasswordAsync(string username, string newPassword)
         {
             try
             {

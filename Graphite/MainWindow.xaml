@@ -192,7 +192,6 @@
                                 <Flyout Placement="Bottom">
                                     <StackPanel>
                                         <ToggleSwitch Header="Sync Data" 
-                                                          IsOn="{Binding IsSyncEnabled, Mode=TwoWay}"
                                                           />
                                         <Button Click="Delete_Click"
                                                     DataContext="{Binding}">
