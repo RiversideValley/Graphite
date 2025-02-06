@@ -332,6 +332,7 @@
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
                             BorderBrush="Transparent"
+                            Click="Button_Click"
                             Tag="Settings">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon

@@ -17,7 +17,7 @@ public sealed partial class HomeWindow : Window
 {
 	private User _currentUser;
 	private AppWindow appWindow;
-	private readonly int maxTabItems = 20;
+	private readonly int maxTabItems = 30;
 
 
 	public HomeWindow(User user)
@@ -229,4 +229,10 @@ public sealed partial class HomeWindow : Window
 	}
 
 	#endregion
+
+	private void Button_Click(object sender, RoutedEventArgs e)
+	{
+		SettingsWindow settingsWindow = new SettingsWindow(_currentUser);
+		settingsWindow.Activate();
+	}
 }
