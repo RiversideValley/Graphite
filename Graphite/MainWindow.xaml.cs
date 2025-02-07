@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text.Json;
 using Windows.Devices.Geolocation;
 using Graphite.ViewModels;
+using Graphite.WindowCore;
 
 namespace Graphite;
 public sealed partial class MainWindow : Window
@@ -22,11 +23,20 @@ public sealed partial class MainWindow : Window
 	private readonly DispatcherTimer _weatherTimer;
 	private readonly HttpClient _httpClient;
 	private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
+	private bool _disposedValue;
 
 
 	public MainWindow()
 	{
 		this.InitializeComponent();
+		var app = Application.Current as App;
+		app.WindowHandler.SetTitle("Graphite Login");
+		app.WindowHandler.SetIcon("Logo.ico");
+		app.WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
+		app.WindowHandler.SetWindowSize(800,800);
+		app.WindowHandler.RestoreWindowPosition();
+
+
 		InitializeAsync();
 		TitleTop();
 
@@ -39,6 +49,32 @@ public sealed partial class MainWindow : Window
 		};
 		_weatherTimer.Tick += WeatherTimer_Tick;
 		_weatherTimer.Start();
+
+		this.Closed += MainWindow_Closed;
+	}
+
+	private void MainWindow_Closed(object sender, WindowEventArgs args)
+	{
+		Dispose();
+	}
+
+	private void Dispose(bool disposing)
+	{
+		if (!_disposedValue)
+		{
+			if (disposing)
+			{
+				_windowHandler.Dispose();
+			}
+
+			_disposedValue = true;
+		}
+	}
+
+	public void Dispose()
+	{
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
 	}
 
 	public void TitleTop()
@@ -46,7 +82,6 @@ public sealed partial class MainWindow : Window
 		nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 		appWindow = AppWindow.GetFromWindowId(windowId);
-		appWindow.SetIcon("Logo.ico");
 
 		if (!AppWindowTitleBar.IsCustomizationSupported())
 		{

@@ -40,6 +40,9 @@ namespace Graphite.WindowCore
 		Task<StorageFile> PickOpenFileAsync(params string[] fileTypes);
 		void ShowMessageDialog(string title, string message);
 		void EnableDragToMove();
+		void SaveWindowPosition();
+		void RestoreWindowPosition();
+		void Cleanup();
 	}
 
 	public enum WindowStyle
@@ -54,11 +57,12 @@ namespace Graphite.WindowCore
 	{
 		Default,
 		Mica,
+		MicaAlt,
 		Acrylic,
 		Transparent
 	}
 
-	public class WindowHandler : IWindowHandler
+	public class WindowHandler : IWindowHandler, IDisposable
 	{
 		public Window MainWindow { get; private set; }
 		public IntPtr Hwnd { get; private set; }
@@ -68,8 +72,15 @@ namespace Graphite.WindowCore
 		private SystemBackdropConfiguration _backdropConfiguration;
 		private MicaController _micaController;
 		private DesktopAcrylicController _acrylicController;
+		private WindowsSystemDispatcherQueueHelper _wsdqHelper;
+		private const string WindowPositionKey = "WindowPosition";
+		private bool _disposedValue;
 
-		public WindowHandler() { }
+		public WindowHandler()
+		{
+			_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+			_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+		}
 
 		public void Initialize(Window window)
 		{
@@ -77,8 +88,14 @@ namespace Graphite.WindowCore
 			Hwnd = GetWindowHandle(window);
 			AppWindow = GetAppWindow(window);
 			TitleBar = new TitleBar(this);
-	
+
 			SetupDefaultProperties();
+			MainWindow.Closed += MainWindow_Closed;
+		}
+
+		private void MainWindow_Closed(object sender, WindowEventArgs args)
+		{
+			Cleanup();
 		}
 
 		private void SetupDefaultProperties()
@@ -114,17 +131,18 @@ namespace Graphite.WindowCore
 
 		public void Maximize()
 		{
-			AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+			AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 		}
 
 		public void Minimize()
 		{
+			AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 			AppWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 		}
 
 		public void Restore()
 		{
-			AppWindow.SetPresenter(AppWindowPresenterKind.Default);
+			AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 		}
 
 		public void SetWindowStyle(WindowStyle style)
@@ -157,7 +175,10 @@ namespace Graphite.WindowCore
 			switch (backdropType)
 			{
 				case BackdropType.Mica:
-					SetMicaBackdrop();
+					SetMicaBackdrop(false);
+					break;
+				case BackdropType.MicaAlt:
+					SetMicaBackdrop(true);
 					break;
 				case BackdropType.Acrylic:
 					SetAcrylicBackdrop();
@@ -171,32 +192,53 @@ namespace Graphite.WindowCore
 			}
 		}
 
-		private void SetMicaBackdrop()
+		private void SetMicaBackdrop(bool useAlt)
 		{
+			_micaController?.Dispose();
 			_micaController = new MicaController();
+			_micaController.Kind = useAlt ? MicaKind.BaseAlt : MicaKind.Base;
 			_micaController.AddSystemBackdropTarget(MainWindow.As<ICompositionSupportsSystemBackdrop>());
 			_micaController.SetSystemBackdropConfiguration(_backdropConfiguration);
+			MainWindow.SystemBackdrop = new MicaBackdrop() { Kind = useAlt ? MicaKind.BaseAlt : MicaKind.Base };
 		}
 
 		private void SetAcrylicBackdrop()
 		{
+			_acrylicController?.Dispose();
 			_acrylicController = new DesktopAcrylicController();
 			_acrylicController.AddSystemBackdropTarget(MainWindow.As<ICompositionSupportsSystemBackdrop>());
 			_acrylicController.SetSystemBackdropConfiguration(_backdropConfiguration);
+			MainWindow.SystemBackdrop = new DesktopAcrylicBackdrop();
 		}
 
 		private void SetTransparentBackdrop()
 		{
-			MainWindow.SystemBackdrop = new TransparentBackdrop();
+			MainWindow.SystemBackdrop = null;
 		}
 
 		private void RemoveBackdrop()
 		{
-			_micaController?.Dispose();
-			_acrylicController?.Dispose();
-			_micaController = null;
-			_acrylicController = null;
-			MainWindow.SystemBackdrop = null;
+			if (MainWindow != null)
+			{
+				MainWindow.Closed -= MainWindow_Closed;
+			}
+
+			if (_micaController != null)
+			{
+				_micaController.Dispose();
+				_micaController = null;
+			}
+
+			if (_acrylicController != null)
+			{
+				_acrylicController.Dispose();
+				_acrylicController = null;
+			}
+
+			if (MainWindow != null)
+			{
+				MainWindow.SystemBackdrop = null;
+			}
 		}
 
 		public void SetIcon(string iconPath)
@@ -258,6 +300,59 @@ namespace Graphite.WindowCore
 			MainWindow.SetTitleBar(TitleBar.GetTitleBarElement());
 		}
 
+		public void SaveWindowPosition()
+		{
+			var position = AppWindow.Position;
+			var size = AppWindow.Size;
+			ApplicationData.Current.LocalSettings.Values[WindowPositionKey] = $"{position.X},{position.Y},{size.Width},{size.Height}";
+		}
+
+		public void RestoreWindowPosition()
+		{
+			if (ApplicationData.Current.LocalSettings.Values.TryGetValue(WindowPositionKey, out object positionData))
+			{
+				var parts = ((string)positionData).Split(',');
+				if (parts.Length == 4 &&
+					int.TryParse(parts[0], out int x) &&
+					int.TryParse(parts[1], out int y) &&
+					int.TryParse(parts[2], out int width) &&
+					int.TryParse(parts[3], out int height))
+				{
+					AppWindow.Move(new PointInt32(x, y));
+					AppWindow.Resize(new SizeInt32(width, height));
+				}
+			}
+		}
+
+		public void Cleanup()
+		{
+			if (_disposedValue) return;
+
+			RemoveBackdrop();
+			SaveWindowPosition();
+
+			_disposedValue = true;
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!_disposedValue)
+			{
+				if (disposing)
+				{
+					Cleanup();
+				}
+
+				_disposedValue = true;
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
+		}
+
 		private static IntPtr GetWindowHandle(Window window)
 		{
 			var windowNative = window.As<IWindowNative>();
@@ -279,11 +374,37 @@ namespace Graphite.WindowCore
 		IntPtr WindowHandle { get; }
 	}
 
-	public class TransparentBackdrop : SystemBackdrop
+	public class WindowsSystemDispatcherQueueHelper
 	{
-		public TransparentBackdrop()
+		[StructLayout(LayoutKind.Sequential)]
+		struct DispatcherQueueOptions
 		{
-			//later a transparent handler for window brush #000000 or other static for they brush opcapacity 45%
+			internal int dwSize;
+			internal int threadType;
+			internal int apartmentType;
+		}
+
+		[DllImport("CoreMessaging.dll")]
+		private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
+
+		object m_dispatcherQueueController = null;
+		public void EnsureWindowsSystemDispatcherQueueController()
+		{
+			if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+			{
+				// one already exists, so we'll just use it.
+				return;
+			}
+
+			if (m_dispatcherQueueController == null)
+			{
+				DispatcherQueueOptions options;
+				options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+				options.threadType = 2;    // DQTYPE_THREAD_CURRENT
+				options.apartmentType = 2; // DQTAT_COM_STA
+
+				CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
+			}
 		}
 	}
 }

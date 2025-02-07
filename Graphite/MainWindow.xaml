@@ -10,10 +10,6 @@
     mc:Ignorable="d"
     Title="Graphite - Login">
 
-    <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt"/>
-    </Window.SystemBackdrop>
-    
     <Grid >
         <Grid.Resources>
             <Style x:Key="TextButtonStyle" TargetType="Button">

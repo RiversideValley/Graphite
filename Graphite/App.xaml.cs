@@ -69,12 +69,6 @@ public partial class App : Application
 		MainWindow = new MainWindow();
 		MainWindow.Activate();
 
-		WindowHandler.Initialize(MainWindow);
-		WindowHandler.SetTitle("Test Title");
-		WindowHandler.SetWindowSize(800, 800);
-		WindowHandler.EnableDragToMove();
-		WindowHandler.CenterOnScreen();
-
 		AppInstance currentInstance = AppInstance.GetCurrent();
 		if (currentInstance.IsCurrent)
 		{
@@ -90,5 +84,7 @@ public partial class App : Application
 			}
 		}
 	}
+	
+
 }
 
