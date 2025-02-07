@@ -30,6 +30,7 @@ public sealed partial class MainWindow : Window
 	public MainWindow()
 	{
 		this.InitializeComponent();
+		_windowHandler.Initialize(this);
 		_windowHandler.SetTitle("Graphite Login");
 		_windowHandler.SetIcon("Logo.ico");
 		_windowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
