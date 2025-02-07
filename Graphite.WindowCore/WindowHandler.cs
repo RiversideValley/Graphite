@@ -386,10 +386,6 @@ namespace Graphite.WindowCore
 			internal int apartmentType;
 		}
 
-		[DynamicDependency(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods, typeof(WindowHandler))]
-
-		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(WindowsSystemDispatcherQueueHelper))]
-
 		[DllImport("CoreMessaging.dll")]
 		private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
