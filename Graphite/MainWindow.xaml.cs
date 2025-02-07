@@ -24,17 +24,17 @@ public sealed partial class MainWindow : Window
 	private readonly HttpClient _httpClient;
 	private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 	private bool _disposedValue;
+	private WindowHandler _windowHandler;
 
 
 	public MainWindow()
 	{
 		this.InitializeComponent();
-		var app = Application.Current as App;
-		app.WindowHandler.SetTitle("Graphite Login");
-		app.WindowHandler.SetIcon("Logo.ico");
-		app.WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
-		app.WindowHandler.SetWindowSize(800,800);
-		app.WindowHandler.RestoreWindowPosition();
+		_windowHandler.SetTitle("Graphite Login");
+		_windowHandler.SetIcon("Logo.ico");
+		_windowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
+		_windowHandler.SetWindowSize(800,800);
+		_windowHandler.RestoreWindowPosition();
 
 
 		InitializeAsync();
