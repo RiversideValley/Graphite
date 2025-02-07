@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Graphite.Helpers;
 using Graphite.ViewModels;
+using Graphite.WindowCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -15,6 +16,9 @@ public partial class App : Application
 	public NotificationManager NotificationManager { get; private set; }
 	public IServiceProvider Services { get; private set; }
 	public static Window? MainWindow { get; set; }
+
+	public IWindowHandler WindowHandler { get; private set; }
+
 
 	public static T GetService<T>() where T : class
 	{
@@ -37,6 +41,8 @@ public partial class App : Application
 		_ = services.AddTransient<HomeViewModel>();
 		_ = services.AddTransient<HomeWindowViewModel>();
 		_ = services.AddTransient<TabViewItemViewModel>();
+		_ = services.AddSingleton<IWindowHandler, WindowHandler>();
+
 
 		return services.BuildServiceProvider();
 	}
@@ -46,6 +52,7 @@ public partial class App : Application
 		this.InitializeComponent();
 		Services = ConfigureServices();
 		NotificationManager = new NotificationManager();
+		WindowHandler = Services.GetRequiredService<IWindowHandler>();
 		SetEnvironmentVariables();
 	}
 
@@ -61,6 +68,12 @@ public partial class App : Application
 	{
 		MainWindow = new MainWindow();
 		MainWindow.Activate();
+
+		WindowHandler.Initialize(MainWindow);
+		WindowHandler.SetTitle("Test Title");
+		WindowHandler.SetWindowSize(800, 800);
+		WindowHandler.EnableDragToMove();
+		WindowHandler.CenterOnScreen();
 
 		AppInstance currentInstance = AppInstance.GetCurrent();
 		if (currentInstance.IsCurrent)

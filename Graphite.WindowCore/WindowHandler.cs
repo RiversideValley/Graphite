@@ -7,242 +7,284 @@ using Windows.Graphics;
 using WinRT;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
-using Windows.ApplicationModel.Activation;
-using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using Windows.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
+using Windows.Storage;
+using Windows.ApplicationModel;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using System.Collections.Generic;
 
-namespace Graphite.WindowCore;
-
-public interface IWindowHandler
+namespace Graphite.WindowCore
 {
-	Window MainWindow { get; }
-	IntPtr Hwnd { get; }
-	void OnLaunched(LaunchActivatedEventArgs args);
-	void Initialize(Window window);
-	void EnableMica();
-	void EnableAcrylic();
-	void SetWindowSize(int width, int height);
-	void SetWindowPosition(int x, int y);
-	void SetWindowStyle(WindowStyles style, bool enable);
-	void SetWindowExStyle(WindowExStyles exStyle, bool enable);
-	void SetWindowTransparency(byte alpha);
-	Window GetMainWindow();
-	TitleBar TitleBar { get; }
-}
-
-public class WindowHandler : IWindowHandler
-{
-	public Window MainWindow { get; private set; }
-	private AppWindow _appWindow;
-	public IntPtr Hwnd { get; private set; }
-	public TitleBar TitleBar { get; private set; }
-
-	public WindowHandler() { }
-
-	public void Initialize(Window window)
+	public interface IWindowHandler
 	{
-		MainWindow = window;
-		Hwnd = GetWindowHandle(window);
-		_appWindow = GetAppWindow(window);
-		TitleBar = new TitleBar(this);
-
-		SetupWindowProperties();
+		Window MainWindow { get; }
+		IntPtr Hwnd { get; }
+		AppWindow AppWindow { get; }
+		TitleBar TitleBar { get; }
+		void Initialize(Window window);
+		void SetWindowSize(int width, int height);
+		void SetWindowPosition(int x, int y);
+		void CenterOnScreen();
+		void Maximize();
+		void Minimize();
+		void Restore();
+		void SetWindowStyle(WindowStyle style);
+		void SetWindowBackdrop(BackdropType backdropType);
+		void SetIcon(string iconPath);
+		void SetTitle(string title);
+		Task<StorageFile> PickSaveFileAsync(string suggestedFileName = null);
+		Task<StorageFile> PickOpenFileAsync(params string[] fileTypes);
+		void ShowMessageDialog(string title, string message);
+		void EnableDragToMove();
 	}
 
-	public void OnLaunched(LaunchActivatedEventArgs args)
+	public enum WindowStyle
 	{
-		MainWindow = new Window();
-		Initialize(MainWindow);
-		MainWindow.Activate();
-
-		ProcessLaunchActivation();
+		Default,
+		NoResize,
+		NoBorder,
+		FullScreen
 	}
 
-	private void ProcessLaunchActivation()
+	public enum BackdropType
 	{
-		AppInstance currentInstance = AppInstance.GetCurrent();
-		if (currentInstance.IsCurrent)
+		Default,
+		Mica,
+		Acrylic,
+		Transparent
+	}
+
+	public class WindowHandler : IWindowHandler
+	{
+		public Window MainWindow { get; private set; }
+		public IntPtr Hwnd { get; private set; }
+		public AppWindow AppWindow { get; private set; }
+		public TitleBar TitleBar { get; private set; }
+
+		private SystemBackdropConfiguration _backdropConfiguration;
+		private MicaController _micaController;
+		private DesktopAcrylicController _acrylicController;
+
+		public WindowHandler() { }
+
+		public void Initialize(Window window)
 		{
-			AppActivationArguments activationArgs = currentInstance.GetActivatedEventArgs();
-			if (activationArgs != null)
+			MainWindow = window;
+			Hwnd = GetWindowHandle(window);
+			AppWindow = GetAppWindow(window);
+			TitleBar = new TitleBar(this);
+	
+			SetupDefaultProperties();
+		}
+
+		private void SetupDefaultProperties()
+		{
+			AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+			AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+			AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+
+			SetWindowBackdrop(BackdropType.Mica);
+			EnableDragToMove();
+		}
+
+		public void SetWindowSize(int width, int height)
+		{
+			AppWindow.Resize(new SizeInt32(width, height));
+		}
+
+		public void SetWindowPosition(int x, int y)
+		{
+			AppWindow.Move(new PointInt32(x, y));
+		}
+
+		public void CenterOnScreen()
+		{
+			var displayArea = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Primary);
+			if (displayArea != null)
 			{
-				ExtendedActivationKind extendedKind = activationArgs.Kind;
-				if (extendedKind == ExtendedActivationKind.AppNotification)
-				{
-					var notificationActivatedEventArgs = activationArgs.Data as AppNotificationActivatedEventArgs;
-					ProcessNotification(notificationActivatedEventArgs);
-				}
+				var centerX = (displayArea.WorkArea.Width - AppWindow.Size.Width) / 2;
+				var centerY = (displayArea.WorkArea.Height - AppWindow.Size.Height) / 2;
+				AppWindow.Move(new PointInt32(centerX, centerY));
 			}
 		}
-	}
 
-	private void ProcessNotification(AppNotificationActivatedEventArgs args)
-	{
-		// Implement your notification processing logic here
-		// For example:
-		// NotificationManager.ProcessLaunchActivationArgs(args);
-	}
-
-	private static IntPtr GetWindowHandle(Window window)
-	{
-		var windowNative = window.As<IWindowNative>();
-		return windowNative.WindowHandle;
-	}
-
-	private static AppWindow GetAppWindow(Window window)
-	{
-		var windowId = Win32Interop.GetWindowIdFromWindow(GetWindowHandle(window));
-		return AppWindow.GetFromWindowId(windowId);
-	}
-
-	private void SetupWindowProperties()
-	{
-		_appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-		EnableMica();
-	}
-
-	public void EnableMica()
-	{
-		int micaValue = 1;
-		if (NativeMethods.DwmSetWindowAttribute(
-			Hwnd,
-			NativeMethods.DWMWINDOWATTRIBUTE.DWMWA_MICA_EFFECT,
-			ref micaValue,
-			sizeof(int)) != 0)
+		public void Maximize()
 		{
-			// Fallback to Acrylic if Mica is not available
-			EnableAcrylic();
+			AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+		}
+
+		public void Minimize()
+		{
+			AppWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
+		}
+
+		public void Restore()
+		{
+			AppWindow.SetPresenter(AppWindowPresenterKind.Default);
+		}
+
+		public void SetWindowStyle(WindowStyle style)
+		{
+			switch (style)
+			{
+				case WindowStyle.NoResize:
+					AppWindow.ResizeClient(new SizeInt32(AppWindow.Size.Width, AppWindow.Size.Height));
+					break;
+				case WindowStyle.NoBorder:
+					AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+					AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+					break;
+				case WindowStyle.FullScreen:
+					AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+					break;
+				default:
+					AppWindow.SetPresenter(AppWindowPresenterKind.Default);
+					break;
+			}
+		}
+
+		public void SetWindowBackdrop(BackdropType backdropType)
+		{
+			if (_backdropConfiguration == null)
+			{
+				_backdropConfiguration = new SystemBackdropConfiguration();
+			}
+
+			switch (backdropType)
+			{
+				case BackdropType.Mica:
+					SetMicaBackdrop();
+					break;
+				case BackdropType.Acrylic:
+					SetAcrylicBackdrop();
+					break;
+				case BackdropType.Transparent:
+					SetTransparentBackdrop();
+					break;
+				default:
+					RemoveBackdrop();
+					break;
+			}
+		}
+
+		private void SetMicaBackdrop()
+		{
+			_micaController = new MicaController();
+			_micaController.AddSystemBackdropTarget(MainWindow.As<ICompositionSupportsSystemBackdrop>());
+			_micaController.SetSystemBackdropConfiguration(_backdropConfiguration);
+		}
+
+		private void SetAcrylicBackdrop()
+		{
+			_acrylicController = new DesktopAcrylicController();
+			_acrylicController.AddSystemBackdropTarget(MainWindow.As<ICompositionSupportsSystemBackdrop>());
+			_acrylicController.SetSystemBackdropConfiguration(_backdropConfiguration);
+		}
+
+		private void SetTransparentBackdrop()
+		{
+			MainWindow.SystemBackdrop = new TransparentBackdrop();
+		}
+
+		private void RemoveBackdrop()
+		{
+			_micaController?.Dispose();
+			_acrylicController?.Dispose();
+			_micaController = null;
+			_acrylicController = null;
+			MainWindow.SystemBackdrop = null;
+		}
+
+		public void SetIcon(string iconPath)
+		{
+			AppWindow.SetIcon(iconPath);
+		}
+
+		public void SetTitle(string title)
+		{
+			AppWindow.Title = title;
+		}
+
+		public async Task<StorageFile> PickSaveFileAsync(string suggestedFileName = null)
+		{
+			var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+			WinRT.Interop.InitializeWithWindow.Initialize(savePicker, Hwnd);
+
+			savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+			savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".txt" });
+
+			if (!string.IsNullOrEmpty(suggestedFileName))
+			{
+				savePicker.SuggestedFileName = suggestedFileName;
+			}
+
+			return await savePicker.PickSaveFileAsync();
+		}
+
+		public async Task<StorageFile> PickOpenFileAsync(params string[] fileTypes)
+		{
+			var openPicker = new Windows.Storage.Pickers.FileOpenPicker();
+			WinRT.Interop.InitializeWithWindow.Initialize(openPicker, Hwnd);
+
+			openPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+			foreach (var fileType in fileTypes)
+			{
+				openPicker.FileTypeFilter.Add(fileType);
+			}
+
+			return await openPicker.PickSingleFileAsync();
+		}
+
+		public void ShowMessageDialog(string title, string message)
+		{
+			var dialog = new ContentDialog
+			{
+				Title = title,
+				Content = message,
+				CloseButtonText = "OK"
+			};
+
+			dialog.XamlRoot = MainWindow.Content.XamlRoot;
+			_ = dialog.ShowAsync();
+		}
+
+		public void EnableDragToMove()
+		{
+			MainWindow.ExtendsContentIntoTitleBar = true;
+			MainWindow.SetTitleBar(TitleBar.GetTitleBarElement());
+		}
+
+		private static IntPtr GetWindowHandle(Window window)
+		{
+			var windowNative = window.As<IWindowNative>();
+			return windowNative.WindowHandle;
+		}
+
+		private static AppWindow GetAppWindow(Window window)
+		{
+			var windowId = Win32Interop.GetWindowIdFromWindow(GetWindowHandle(window));
+			return AppWindow.GetFromWindowId(windowId);
 		}
 	}
 
-	public void EnableAcrylic()
+	[ComImport]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("EECDBF0E-BAE9-4CB6-A68E-9598E1CB57BB")]
+	internal interface IWindowNative
 	{
-		var accent = new NativeMethods.ACCENT_POLICY
+		IntPtr WindowHandle { get; }
+	}
+
+	public class TransparentBackdrop : SystemBackdrop
+	{
+		public TransparentBackdrop()
 		{
-			AccentState = NativeMethods.ACCENT_STATE.ACCENT_ENABLE_BLURBEHIND,
-			GradientColor = 0x99FFFFFF // Adjust color and opacity as needed
-		};
-
-		var accentStructSize = Marshal.SizeOf(accent);
-		var accentPtr = Marshal.AllocHGlobal(accentStructSize);
-		Marshal.StructureToPtr(accent, accentPtr, false);
-
-		var data = new NativeMethods.WINDOWCOMPOSITIONATTRIBDATA
-		{
-			Attrib = NativeMethods.WINDOWCOMPOSITIONATTRIB.WCA_ACCENT_POLICY,
-			pvData = accentPtr,
-			cbData = accentStructSize
-		};
-
-		NativeMethods.SetWindowCompositionAttribute(Hwnd, ref data);
-
-		Marshal.FreeHGlobal(accentPtr);
-	}
-
-	public void SetWindowSize(int width, int height)
-	{
-		_appWindow.Resize(new SizeInt32(width, height));
-	}
-
-	public void SetWindowPosition(int x, int y)
-	{
-		_appWindow.Move(new PointInt32(x, y));
-	}
-
-	public void SetWindowStyle(WindowStyles style, bool enable)
-	{
-		var currentStyle = (WindowStyles)NativeMethods.GetWindowLong(Hwnd, NativeMethods.GWL_STYLE);
-
-		if (enable)
-			currentStyle |= style;
-		else
-			currentStyle &= ~style;
-
-		NativeMethods.SetWindowLong(Hwnd, NativeMethods.GWL_STYLE, (int)currentStyle);
-	}
-
-	public void SetWindowExStyle(WindowExStyles exStyle, bool enable)
-	{
-		var currentExStyle = (WindowExStyles)NativeMethods.GetWindowLong(Hwnd, NativeMethods.GWL_EXSTYLE);
-
-		if (enable)
-			currentExStyle |= exStyle;
-		else
-			currentExStyle &= ~exStyle;
-
-		NativeMethods.SetWindowLong(Hwnd, NativeMethods.GWL_EXSTYLE, (int)currentExStyle);
-	}
-
-	public void SetWindowTransparency(byte alpha)
-	{
-		SetWindowExStyle(WindowExStyles.WS_EX_LAYERED, true);
-		NativeMethods.SetLayeredWindowAttributes(Hwnd, 0, alpha, NativeMethods.LWA_ALPHA);
-	}
-
-	public Window GetMainWindow()
-	{
-		return MainWindow;
+			//later a transparent handler for window brush #000000 or other static for they brush opcapacity 45%
+		}
 	}
 }
 
-[ComImport]
-[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-[Guid("EECDBF0E-BAE9-4CB6-A68E-9598E1CB57BB")]
-internal interface IWindowNative
-{
-	IntPtr WindowHandle { get; }
-}
-
-[Flags]
-public enum WindowStyles : uint
-{
-	WS_OVERLAPPED = 0x00000000,
-	WS_POPUP = 0x80000000,
-	WS_CHILD = 0x40000000,
-	WS_MINIMIZE = 0x20000000,
-	WS_VISIBLE = 0x10000000,
-	WS_DISABLED = 0x08000000,
-	WS_CLIPSIBLINGS = 0x04000000,
-	WS_CLIPCHILDREN = 0x02000000,
-	WS_MAXIMIZE = 0x01000000,
-	WS_CAPTION = 0x00C00000,
-	WS_BORDER = 0x00800000,
-	WS_DLGFRAME = 0x00400000,
-	WS_VSCROLL = 0x00200000,
-	WS_HSCROLL = 0x00100000,
-	WS_SYSMENU = 0x00080000,
-	WS_THICKFRAME = 0x00040000,
-	WS_GROUP = 0x00020000,
-	WS_TABSTOP = 0x00010000,
-	WS_MINIMIZEBOX = 0x00020000,
-	WS_MAXIMIZEBOX = 0x00010000,
-}
-
-[Flags]
-public enum WindowExStyles : uint
-{
-	WS_EX_DLGMODALFRAME = 0x00000001,
-	WS_EX_NOPARENTNOTIFY = 0x00000004,
-	WS_EX_TOPMOST = 0x00000008,
-	WS_EX_ACCEPTFILES = 0x00000010,
-	WS_EX_TRANSPARENT = 0x00000020,
-	WS_EX_MDICHILD = 0x00000040,
-	WS_EX_TOOLWINDOW = 0x00000080,
-	WS_EX_WINDOWEDGE = 0x00000100,
-	WS_EX_CLIENTEDGE = 0x00000200,
-	WS_EX_CONTEXTHELP = 0x00000400,
-	WS_EX_RIGHT = 0x00001000,
-	WS_EX_LEFT = 0x00000000,
-	WS_EX_RTLREADING = 0x00002000,
-	WS_EX_LTRREADING = 0x00000000,
-	WS_EX_LEFTSCROLLBAR = 0x00004000,
-	WS_EX_RIGHTSCROLLBAR = 0x00000000,
-	WS_EX_CONTROLPARENT = 0x00010000,
-	WS_EX_STATICEDGE = 0x00020000,
-	WS_EX_APPWINDOW = 0x00040000,
-	WS_EX_LAYERED = 0x00080000,
-	WS_EX_NOINHERITLAYOUT = 0x00100000,
-	WS_EX_NOREDIRECTIONBITMAP = 0x00200000,
-	WS_EX_LAYOUTRTL = 0x00400000,
-	WS_EX_COMPOSITED = 0x02000000,
-	WS_EX_NOACTIVATE = 0x08000000
-}
