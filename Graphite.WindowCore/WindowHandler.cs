@@ -38,7 +38,6 @@ namespace Graphite.WindowCore
 		void SetTitle(string title);
 		Task<StorageFile> PickSaveFileAsync(string suggestedFileName = null);
 		Task<StorageFile> PickOpenFileAsync(params string[] fileTypes);
-		void ShowMessageDialog(string title, string message);
 		void EnableDragToMove();
 		void SaveWindowPosition();
 		void RestoreWindowPosition();
@@ -88,9 +87,24 @@ namespace Graphite.WindowCore
 			Hwnd = GetWindowHandle(window);
 			AppWindow = GetAppWindow(window);
 			TitleBar = new TitleBar(this);
-
+			TitleTop();
 			SetupDefaultProperties();
 			MainWindow.Closed += MainWindow_Closed;
+		}
+
+		private void TitleTop()
+		{
+			if (!AppWindowTitleBar.IsCustomizationSupported())
+			{
+				throw new Exception("Unsupported OS version.");
+			}
+
+			AppWindowTitleBar titleBar = AppWindow.TitleBar;
+			titleBar.ExtendsContentIntoTitleBar = true;
+			Windows.UI.Color btnColor = Colors.Transparent;
+			titleBar.BackgroundColor = titleBar.ButtonBackgroundColor =
+				titleBar.InactiveBackgroundColor = titleBar.ButtonInactiveBackgroundColor =
+				titleBar.ButtonHoverBackgroundColor = btnColor;
 		}
 
 		private void MainWindow_Closed(object sender, WindowEventArgs args)
@@ -279,19 +293,6 @@ namespace Graphite.WindowCore
 			}
 
 			return await openPicker.PickSingleFileAsync();
-		}
-
-		public void ShowMessageDialog(string title, string message)
-		{
-			var dialog = new ContentDialog
-			{
-				Title = title,
-				Content = message,
-				CloseButtonText = "OK"
-			};
-
-			dialog.XamlRoot = MainWindow.Content.XamlRoot;
-			_ = dialog.ShowAsync();
 		}
 
 		public void EnableDragToMove()

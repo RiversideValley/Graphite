@@ -64,9 +64,19 @@ public partial class App : Application
 		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
 	}
 
+
 	protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
 	{
 		MainWindow = new MainWindow();
+		WindowHandler.Initialize(MainWindow);
+
+		// Set up the window properties
+		WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
+		WindowHandler.RestoreWindowPosition();
+		WindowHandler.SetIcon("Logo.ico");
+		WindowHandler.SetWindowSize(1250, 1050); // Set your desired default size
+
+		// Activate the window
 		MainWindow.Activate();
 
 		AppInstance currentInstance = AppInstance.GetCurrent();
@@ -84,7 +94,5 @@ public partial class App : Application
 			}
 		}
 	}
-	
-
 }
 

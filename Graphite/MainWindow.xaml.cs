@@ -24,23 +24,13 @@ public sealed partial class MainWindow : Window
 	private readonly HttpClient _httpClient;
 	private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 	private bool _disposedValue;
-	private WindowHandler _windowHandler;
 
 
 	public MainWindow()
 	{
 		this.InitializeComponent();
-		_windowHandler = new WindowHandler();
-		_windowHandler.Initialize(this);
-		_windowHandler.SetTitle("Graphite Login");
-		_windowHandler.SetIcon("Logo.ico");
-		_windowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
-		_windowHandler.SetWindowSize(800,800);
-		_windowHandler.RestoreWindowPosition();
-
 
 		InitializeAsync();
-		TitleTop();
 
 		_httpClient = new HttpClient();
 
@@ -52,52 +42,10 @@ public sealed partial class MainWindow : Window
 		_weatherTimer.Tick += WeatherTimer_Tick;
 		_weatherTimer.Start();
 
-		this.Closed += MainWindow_Closed;
 	}
 
-	private void MainWindow_Closed(object sender, WindowEventArgs args)
-	{
-		Dispose();
-	}
 
-	private void Dispose(bool disposing)
-	{
-		if (!_disposedValue)
-		{
-			if (disposing)
-			{
-				_windowHandler.Dispose();
-			}
-
-			_disposedValue = true;
-		}
-	}
-
-	public void Dispose()
-	{
-		Dispose(disposing: true);
-		GC.SuppressFinalize(this);
-	}
-
-	public void TitleTop()
-	{
-		nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		appWindow = AppWindow.GetFromWindowId(windowId);
-
-		if (!AppWindowTitleBar.IsCustomizationSupported())
-		{
-			throw new Exception("Unsupported OS version.");
-		}
-
-		AppWindowTitleBar titleBar = appWindow.TitleBar;
-		titleBar.ExtendsContentIntoTitleBar = true;
-		Windows.UI.Color btnColor = Colors.Transparent;
-		titleBar.BackgroundColor = titleBar.ButtonBackgroundColor =
-			titleBar.InactiveBackgroundColor = titleBar.ButtonInactiveBackgroundColor =
-			titleBar.ButtonHoverBackgroundColor = btnColor;
-	}
-
+	
 	private async void InitializeAsync()
 	{
 		await UserManager.InitializeAsync();
