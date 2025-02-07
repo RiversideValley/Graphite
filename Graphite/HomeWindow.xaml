@@ -479,7 +479,7 @@
                 Height="32"
                 Margin="4,0,4,0"
                 VerticalAlignment="Center">
-                <AutoSuggestBox x:Name="SearchBox" x:Uid="SearchBar" x:FieldModifier="Public" BorderBrush="{ThemeResource ControlElevationBorderBrush}" CornerRadius="16" MaxSuggestionListHeight="500" Style="{ThemeResource PortalBarStyle}" TabIndex="1"/>
+                <AutoSuggestBox x:Name="SearchBox" x:Uid="SearchBar" x:FieldModifier="Public" PlaceholderText="Search or Enter a address here " BorderBrush="{ThemeResource ControlElevationBorderBrush}" CornerRadius="16" MaxSuggestionListHeight="500" Style="{ThemeResource PortalBarStyle}" TabIndex="1"/>
                 <Button
                     x:Name="Secure"
                     Margin="2,0"

@@ -107,8 +107,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Graphite.Controls\Graphite.Controls.csproj" />
+    <ProjectReference Include="..\Graphite.QrCode\Graphite.QrCode.csproj" />
     <ProjectReference Include="..\Graphite.Setup\Graphite.Setup.csproj" />
     <ProjectReference Include="..\Graphite.UserSys\Graphite.UserSys.csproj" />
+    <ProjectReference Include="..\Graphite.WindowCore\Graphite.WindowCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="HomeWindow.xaml">

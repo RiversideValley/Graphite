@@ -29,6 +29,7 @@ public sealed partial class HomeWindow : Window
 		{
 			QRCodeTypeComboBox.SelectedIndex = 0;
 		}
+		UserName.Text = _currentUser.Username;
 		Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
 		TitleTop();
 	}
