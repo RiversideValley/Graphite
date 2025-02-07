@@ -68,9 +68,9 @@ public partial class App : Application
 	protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
 	{
 		MainWindow = new MainWindow();
-		WindowHandler.Initialize(MainWindow);
 
 		// Set up the window properties
+		WindowHandler.Initialize(MainWindow);
 		WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
 		WindowHandler.RestoreWindowPosition();
 		WindowHandler.SetIcon("Logo.ico");
