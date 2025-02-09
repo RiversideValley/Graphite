@@ -258,11 +258,6 @@ public sealed partial class MainWindow : Window
 			// Get location
 			var location = await GetLocationAsync();
 			Loading.Visibility = Visibility.Visible;
-			WeatherLocationText.Visibility = Visibility.Collapsed;
-			WeatherDescriptionText.Visibility = Visibility.Collapsed;
-			WeatherTemperatureText.Visibility = Visibility.Collapsed;
-			WeatherHumidityText.Visibility = Visibility.Collapsed;
-			WeatherWindText.Visibility = Visibility.Collapsed ;
 			// Call weather API
 			using (var response = await _httpClient.GetAsync(
 				$"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={location.Latitude},{location.Longitude}"))
@@ -290,11 +285,6 @@ public sealed partial class MainWindow : Window
 
 
 					Loading.Visibility = Visibility.Collapsed;
-					WeatherLocationText.Visibility = Visibility.Visible;
-					WeatherDescriptionText.Visibility = Visibility.Visible;
-					WeatherTemperatureText.Visibility = Visibility.Visible;
-					WeatherHumidityText.Visibility = Visibility.Visible;
-					WeatherWindText.Visibility = Visibility.Visible;
 				}
 			}
 		}
