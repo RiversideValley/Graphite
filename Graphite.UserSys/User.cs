@@ -16,4 +16,6 @@ public class User
     public bool HasPassword { get; set; }
     public List<string> Profiles { get; set; }
     public string ActiveProfile { get; set; }
+	public string SessionId { get; set; }
+
 }
