@@ -11,8 +11,8 @@
 
   <Identity
     Name="1aa4ddcc-fd7f-4d8f-a10d-287de5564a7c"
-    Publisher="CN=JPJM-"
-    Version="1.0.1.0" />
+    Publisher="CN=graphite"
+    Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="1aa4ddcc-fd7f-4d8f-a10d-287de5564a7c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
