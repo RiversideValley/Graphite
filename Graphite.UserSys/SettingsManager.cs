@@ -325,7 +325,7 @@ namespace Graphite.UserSys
             }
         }
 
-        private static Dictionary<string, object> GetDefaultSettings()
+        public static Dictionary<string, object> GetDefaultSettings()
         {
             return new Dictionary<string, object>
             {

@@ -14,13 +14,15 @@ using System.Text.Json;
 using Windows.Devices.Geolocation;
 using Graphite.ViewModels;
 using Graphite.WindowCore;
+using Microsoft.Extensions.Logging;
+using Graphite.UserSys.Windows;
+using System.ComponentModel;
 
 namespace Graphite;
 public sealed partial class MainWindow : Window
 {
 	private ObservableCollection<UserViewModel> Users { get; set; }
 	private AppWindow appWindow;
-	private readonly DispatcherTimer _weatherTimer;
 	private readonly HttpClient _httpClient;
 	private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 	private bool _disposedValue;
@@ -34,18 +36,28 @@ public sealed partial class MainWindow : Window
 
 		_httpClient = new HttpClient();
 
-		UpdateWeather();
-		_weatherTimer = new DispatcherTimer
+		bool fireBrowserExists = DetectFireBrowserUserCore();
+		if (fireBrowserExists)
 		{
-			Interval = TimeSpan.FromMinutes(30)
-		};
-		_weatherTimer.Tick += WeatherTimer_Tick;
-		_weatherTimer.Start();
-
+			Migrate.Visibility = Visibility.Visible;
+		}
+		else
+		{
+			Migrate.Visibility = Visibility.Collapsed;		
+		}
 	}
 
 
-	
+	public static bool DetectFireBrowserUserCore()
+	{
+		string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+		string fireBrowserPath = Path.Combine(documentsPath, "FireBrowserUserCore");
+
+		return Directory.Exists(fireBrowserPath);
+	}
+
+
+
 	private async void InitializeAsync()
 	{
 		await UserManager.InitializeAsync();
@@ -238,45 +250,85 @@ public sealed partial class MainWindow : Window
 		}
 	}
 
-	// Weather-related methods
-	private async void WeatherTimer_Tick(object sender, object e)
-	{
-		await UpdateWeather();
-	}
 
-	private async Task UpdateWeather()
+	private async Task UpdateWeatherAsync()
 	{
 		try
 		{
-			// Update day
-			DayText.Text = DateTime.Now.ToString("dddd");
-
 			// Get location
 			var location = await GetLocationAsync();
-
+			Loading.Visibility = Visibility.Visible;
+			WeatherLocationText.Visibility = Visibility.Collapsed;
+			WeatherDescriptionText.Visibility = Visibility.Collapsed;
+			WeatherTemperatureText.Visibility = Visibility.Collapsed;
+			WeatherHumidityText.Visibility = Visibility.Collapsed;
+			WeatherWindText.Visibility = Visibility.Collapsed ;
 			// Call weather API
-			var response = await _httpClient.GetAsync(
-				$"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={location.Latitude},{location.Longitude}");
-
-			if (response.IsSuccessStatusCode)
+			using (var response = await _httpClient.GetAsync(
+				$"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={location.Latitude},{location.Longitude}"))
 			{
+				response.EnsureSuccessStatusCode();
 				var json = await response.Content.ReadAsStringAsync();
-				var weatherData = JsonDocument.Parse(json);
-				var current = weatherData.RootElement.GetProperty("current");
-				var temp = current.GetProperty("temp_c").GetDouble();
-				var conditionCode = current.GetProperty("condition").GetProperty("code").GetInt32();
+				using (var weatherData = JsonDocument.Parse(json))
+				{
+					var current = weatherData.RootElement.GetProperty("current");
+					var temp = current.GetProperty("temp_c").GetDouble();
+					var conditionCode = current.GetProperty("condition").GetProperty("code").GetInt32();
+					var conditionText = current.GetProperty("condition").GetProperty("text").GetString();
 
-				// Update temperature
-				TemperatureText.Text = $"{Math.Round(temp)}°";
+					// Update UI elements
+				   
+						WeatherIcon.Glyph = GetWeatherIconGlyph(conditionCode);
+						WeatherSummaryText.Text = $"{Math.Round(temp)}°C";
 
+						// Update flyout content
+						WeatherLocationText.Text = $"{weatherData.RootElement.GetProperty("location").GetProperty("name").GetString()}, {weatherData.RootElement.GetProperty("location").GetProperty("country").GetString()}";
+						WeatherDescriptionText.Text = conditionText;
+						WeatherTemperatureText.Text = $"{Math.Round(temp)}°C";
+						WeatherHumidityText.Text = $"Humidity: {current.GetProperty("humidity").GetInt32()}%";
+						WeatherWindText.Text = $"Wind: {current.GetProperty("wind_kph").GetDouble()} km/h";
+
+
+					Loading.Visibility = Visibility.Collapsed;
+					WeatherLocationText.Visibility = Visibility.Visible;
+					WeatherDescriptionText.Visibility = Visibility.Visible;
+					WeatherTemperatureText.Visibility = Visibility.Visible;
+					WeatherHumidityText.Visibility = Visibility.Visible;
+					WeatherWindText.Visibility = Visibility.Visible;
+				}
 			}
 		}
 		catch (Exception ex)
 		{
 			// Handle error gracefully
-			DayText.Text = DateTime.Now.ToString("dddd");
-			TemperatureText.Text = "--°";
+			
+				WeatherIcon.Glyph = "\uE9C8"; // Question mark icon
+				WeatherSummaryText.Text = "Weather Unavailable";
+
+				// Update flyout content to show error
+				WeatherLocationText.Text = "Error";
+				WeatherDescriptionText.Text = "Unable to fetch weather data";
+				WeatherTemperatureText.Text = "--°C";
+				WeatherHumidityText.Text = "Humidity: --";
+				WeatherWindText.Text = "Wind: --";
+			
+
+			// Log the error
+			System.Diagnostics.Debug.WriteLine($"Weather update failed: {ex.Message}");
 		}
+	}
+
+	private string GetWeatherIconGlyph(int conditionCode)
+	{
+		// This is a simplified mapping. You might want to expand this based on the API's condition codes.
+		return conditionCode switch
+		{
+			1000 => "\uE706", // Sunny
+			1003 => "\uE753", // Partly cloudy
+			1006 => "\uE9C0", // Cloudy
+			1183 => "\uE9C4", // Light rain
+			_ => "\uE9C8"     // Default/Unknown
+		};
 	}
 
 	private async Task<BasicGeoposition> GetLocationAsync()
@@ -298,6 +350,17 @@ public sealed partial class MainWindow : Window
 	private void RestoreBackup_Click(object sender, RoutedEventArgs e)
 	{
 
+	}
+
+	private void Migrate_Click(object sender, RoutedEventArgs e)
+	{
+		MigrationProgress s = new MigrationProgress();
+		s.Activate();
+	}
+
+	private async void WeatherButton_Click(object sender, RoutedEventArgs e)
+	{
+		await UpdateWeatherAsync();
 	}
 }
 
