@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Security;
+using System.Text.Json;
 
 namespace Graphite.UserSys
 {
@@ -40,6 +42,64 @@ namespace Graphite.UserSys
 
 		private const string MainDbName = "UserCore.db";
 		private static readonly string MainDbPath = Path.Combine(GraphiteDataPath, MainDbName);
+
+		// Login attempt tracking for brute force protection
+		private static readonly ConcurrentDictionary<string, (int Attempts, DateTime LastAttempt)> _loginAttempts =
+			new ConcurrentDictionary<string, (int Attempts, DateTime LastAttempt)>();
+		private const int MaxLoginAttempts = 5;
+		private const int LockoutMinutes = 15;
+
+		// Session management
+		private static readonly ConcurrentDictionary<string, (string Username, DateTime ExpirationTime)> _activeSessions =
+			new ConcurrentDictionary<string, (string Username, DateTime ExpirationTime)>();
+		private const int SessionExpirationMinutes = 30;
+
+		public static async Task InitializeAsync()
+		{
+			try
+			{
+				await EnsureEncryptionKeysAsync();
+				Directory.CreateDirectory(GraphiteDataPath);
+
+				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
+
+				var command = connection.CreateCommand();
+				command.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS Users (
+                        Username TEXT PRIMARY KEY,
+                        PasswordHash TEXT,
+                        Email TEXT,
+                        WindowsUserName TEXT,
+                        IsFirstLaunch INTEGER,
+                        ProfileImagePath TEXT,
+                        HasPassword INTEGER
+                    );
+                    CREATE TABLE IF NOT EXISTS Profiles (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Username TEXT,
+                        ProfileName TEXT,
+                        IsActive INTEGER DEFAULT 0,
+                        UNIQUE(Username, ProfileName)
+                    );
+                    CREATE TABLE IF NOT EXISTS UserSecurity (
+                        Username TEXT PRIMARY KEY,
+                        Hash TEXT,
+                        Salt TEXT,
+                        FOREIGN KEY(Username) REFERENCES Users(Username)
+                    );
+                    CREATE TABLE IF NOT EXISTS blobs (
+                        Username TEXT PRIMARY KEY,
+                        Metadata TEXT,
+                        FOREIGN KEY(Username) REFERENCES Users(Username)
+                    );";
+				await command.ExecuteNonQueryAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Failed to initialize application.", ex);
+			}
+		}
 
 		private static async Task EnsureEncryptionKeysAsync()
 		{
@@ -204,42 +264,6 @@ namespace Graphite.UserSys
 			}
 		}
 
-		public static async Task InitializeAsync()
-		{
-			try
-			{
-				await EnsureEncryptionKeysAsync();
-				Directory.CreateDirectory(GraphiteDataPath);
-
-				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-				await connection.OpenAsync();
-
-				var command = connection.CreateCommand();
-				command.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Username TEXT PRIMARY KEY,
-                        PasswordHash TEXT,
-                        Email TEXT,
-                        WindowsUserName TEXT,
-                        IsFirstLaunch INTEGER,
-                        ProfileImagePath TEXT,
-                        HasPassword INTEGER
-                    );
-                    CREATE TABLE IF NOT EXISTS Profiles (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Username TEXT,
-                        ProfileName TEXT,
-                        IsActive INTEGER DEFAULT 0,
-                        UNIQUE(Username, ProfileName)
-                    );";
-				await command.ExecuteNonQueryAsync();
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("Failed to initialize application.", ex);
-			}
-		}
-
 		public static async Task<List<User>> GetAllUsersAsync()
 		{
 			var users = new List<User>();
@@ -330,9 +354,15 @@ namespace Graphite.UserSys
 
 				// Only encrypt password if it's provided
 				string encryptedPassword = null;
+				string passwordHash = null;
+				string passwordSalt = null;
 				if (!string.IsNullOrEmpty(password))
 				{
+					(passwordHash, passwordSalt) = HashPassword(password);
 					encryptedPassword = EncryptPassword(password);
+
+					// Store hash and salt in a separate, more secure database
+					await StoreSecurityInfoAsync(username, passwordHash, passwordSalt);
 				}
 
 				// Create user folder structure
@@ -348,33 +378,23 @@ namespace Graphite.UserSys
 					Directory.CreateDirectory(Path.Combine(userFolderPath, folder));
 				}
 
+				// Create necessary .db files
+				string userDbPath = Path.Combine(userFolderPath, "Database", "user_data.db");
+				await using (var connection = new SqliteConnection($"Data Source={userDbPath}"))
+				{
+					await connection.OpenAsync(); // This will create the file if it doesn't exist
+				}
+
 				// Handle profile image
 				string profileImagePath = Path.Combine(userFolderPath, "profile_image.jpg");
+				user.ProfileImagePath = profileImagePath;
 				if (profileImageStream != null)
 				{
 					try
 					{
-						using (var randomAccessStream = new InMemoryRandomAccessStream())
+						using (var fileStream = File.Create(profileImagePath))
 						{
-							await RandomAccessStream.CopyAsync(profileImageStream.AsInputStream(), randomAccessStream);
-							BitmapDecoder decoder = await BitmapDecoder.CreateAsync(randomAccessStream);
-
-							using (var resizedStream = new InMemoryRandomAccessStream())
-							{
-								BitmapEncoder encoder = await BitmapEncoder.CreateForTranscodingAsync(resizedStream, decoder);
-								encoder.BitmapTransform.ScaledWidth = 200;
-								encoder.BitmapTransform.ScaledHeight = 200;
-								encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Linear;
-								await encoder.FlushAsync();
-
-								StorageFolder userFolder = await StorageFolder.GetFolderFromPathAsync(userFolderPath);
-								StorageFile profileFile = await userFolder.CreateFileAsync("profile_image.jpg", CreationCollisionOption.ReplaceExisting);
-
-								using (var fileStream = await profileFile.OpenAsync(FileAccessMode.ReadWrite))
-								{
-									await RandomAccessStream.CopyAsync(resizedStream, fileStream);
-								}
-							}
+							await profileImageStream.CopyToAsync(fileStream);
 						}
 					}
 					catch (Exception ex)
@@ -403,32 +423,68 @@ namespace Graphite.UserSys
 					}
 				}
 
-				user.ProfileImagePath = profileImagePath;
-
 				try
 				{
 					await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
 					await connection.OpenAsync();
 
-					var command = connection.CreateCommand();
-					command.CommandText = @"
-                    INSERT INTO Users (Username, PasswordHash, Email, WindowsUserName, IsFirstLaunch, ProfileImagePath, HasPassword)
-                    VALUES ($username, $passwordHash, $email, $windowsUserName, $isFirstLaunch, $profileImagePath, $hasPassword)";
+					using var transaction = await connection.BeginTransactionAsync();
 
-					command.Parameters.AddWithValue("$username", user.Username);
-					command.Parameters.AddWithValue("$passwordHash", (object)encryptedPassword ?? DBNull.Value);
-					command.Parameters.AddWithValue("$email", (object)user.Email ?? DBNull.Value);
-					command.Parameters.AddWithValue("$windowsUserName", user.WindowsUserName);
-					command.Parameters.AddWithValue("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
-					command.Parameters.AddWithValue("$profileImagePath", user.ProfileImagePath);
-					command.Parameters.AddWithValue("$hasPassword", user.HasPassword ? 1 : 0);
+					try
+					{
+						var command = connection.CreateCommand();
+						command.CommandText = @"
+                INSERT INTO Users (Username, PasswordHash, Email, WindowsUserName, IsFirstLaunch, ProfileImagePath, HasPassword)
+                VALUES ($username, $passwordHash, $email, $windowsUserName, $isFirstLaunch, $profileImagePath, $hasPassword)";
 
-					await command.ExecuteNonQueryAsync();
+						command.Parameters.AddWithValue("$username", user.Username);
+						command.Parameters.AddWithValue("$passwordHash", (object)encryptedPassword ?? DBNull.Value);
+						command.Parameters.AddWithValue("$email", (object)user.Email ?? DBNull.Value);
+						command.Parameters.AddWithValue("$windowsUserName", user.WindowsUserName);
+						command.Parameters.AddWithValue("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
+						command.Parameters.AddWithValue("$profileImagePath", user.ProfileImagePath);
+						command.Parameters.AddWithValue("$hasPassword", user.HasPassword ? 1 : 0);
 
-					// Initialize user's settings
-					await SettingsManager.InitializeUserSettingsAsync(username);
+						await command.ExecuteNonQueryAsync();
 
-					return user;
+						//if (!string.IsNullOrEmpty(passwordHash))
+						//{
+						//    var securityCommand = connection.CreateCommand();
+						//    securityCommand.CommandText = @"
+						//INSERT INTO UserSecurity (Username, Hash, Salt)
+						//VALUES ($username, $hash, $salt)";
+						//    securityCommand.Parameters.AddWithValue("$username", user.Username);
+						//    securityCommand.Parameters.AddWithValue("$hash", passwordHash);
+						//    securityCommand.Parameters.AddWithValue("$salt", passwordSalt);
+						//    await securityCommand.ExecuteNonQueryAsync();
+						//}
+
+						// Insert metadata into blobs table
+						var metadataCommand = connection.CreateCommand();
+						metadataCommand.CommandText = @"
+                INSERT INTO blobs (Username, Metadata)
+                VALUES ($username, $metadata)";
+						metadataCommand.Parameters.AddWithValue("$username", user.Username);
+						metadataCommand.Parameters.AddWithValue("$metadata", JsonSerializer.Serialize(new
+						{
+							CreationDate = DateTime.UtcNow,
+							LastLogin = DateTime.UtcNow,
+							HasPassword = user.HasPassword
+						}));
+						await metadataCommand.ExecuteNonQueryAsync();
+
+						await transaction.CommitAsync();
+
+						// Initialize user's settings
+						await SettingsManager.InitializeUserSettingsAsync(username);
+
+						return user;
+					}
+					catch
+					{
+						await transaction.RollbackAsync();
+						throw;
+					}
 				}
 				catch (Exception ex)
 				{
@@ -453,8 +509,36 @@ namespace Graphite.UserSys
 			}
 		}
 
-		public static async Task<User> AuthenticateAsync(string username, string password = null)
+		private static (string Hash, string Salt) HashPassword(string password)
 		{
+			byte[] salt = new byte[16];
+			using (var rng = new RNGCryptoServiceProvider())
+			{
+				rng.GetBytes(salt);
+			}
+
+			using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000))
+			{
+				byte[] hash = pbkdf2.GetBytes(20);
+				return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
+			}
+		}
+
+		public static async Task<User> AuthenticateAsync(string username, string password)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("Username cannot be empty", nameof(username));
+			}
+
+			username = username.Trim();
+
+			// Check if the account is locked
+			if (IsAccountLocked(username))
+			{
+				throw new SecurityException($"Account is locked. Please try again after {LockoutMinutes} minutes.");
+			}
+
 			try
 			{
 				await SettingsManager.InitializeUserSettingsAsync(username);
@@ -477,28 +561,43 @@ namespace Graphite.UserSys
 						throw new SecurityException("Database integrity compromised. Please contact support.");
 					}
 
-					if (!hasPassword || (hasPassword && password != null && storedEncryptedPassword != null && DecryptPassword(storedEncryptedPassword) == password))
+					var securityInfo = await GetSecurityInfoAsync(username);
+					if (securityInfo.HasValue)
 					{
-						var user = new User
+						var (storedHash, storedSalt) = securityInfo.Value;
+						if (!hasPassword || (hasPassword && password != null && storedEncryptedPassword != null && VerifyPassword(password, storedHash, storedSalt)))
 						{
-							Username = username,
-							Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
-							WindowsUserName = reader.GetString(reader.GetOrdinal("WindowsUserName")),
-							IsFirstLaunch = reader.GetInt32(reader.GetOrdinal("IsFirstLaunch")) == 1,
-							ProfileImagePath = reader.GetString(reader.GetOrdinal("ProfileImagePath")),
-							HasPassword = hasPassword
-						};
+							// Reset login attempts on successful login
+							ResetLoginAttempts(username);
 
-						// Get user profiles
-						user.Profiles = await GetUserProfilesAsync(username);
+							var user = new User
+							{
+								Username = username,
+								Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
+								WindowsUserName = reader.GetString(reader.GetOrdinal("WindowsUserName")),
+								IsFirstLaunch = reader.GetInt32(reader.GetOrdinal("IsFirstLaunch")) == 1,
+								ProfileImagePath = reader.GetString(reader.GetOrdinal("ProfileImagePath")),
+								HasPassword = hasPassword
+							};
 
-						return user;
+							// Get user profiles
+							user.Profiles = await GetUserProfilesAsync(username);
+
+							// Generate and store session ID
+							user.SessionId = GenerateSessionId(username);
+
+							return user;
+						}
 					}
+
 				}
+
+				// Increment failed login attempts
+				IncrementLoginAttempts(username);
 
 				return null;
 			}
-			catch (SecurityException ex)
+			catch (SecurityException)
 			{
 				// Rethrow SecurityException to be handled by the caller
 				throw;
@@ -509,7 +608,70 @@ namespace Graphite.UserSys
 			}
 		}
 
+		private static bool IsAccountLocked(string username)
+		{
+			if (_loginAttempts.TryGetValue(username, out var attempts))
+			{
+				if (attempts.Attempts >= MaxLoginAttempts)
+				{
+					if (DateTime.UtcNow - attempts.LastAttempt < TimeSpan.FromMinutes(LockoutMinutes))
+					{
+						return true;
+					}
+					else
+					{
+						// Reset attempts after lockout period
+						ResetLoginAttempts(username);
+					}
+				}
+			}
+			return false;
+		}
 
+		private static void IncrementLoginAttempts(string username)
+		{
+			_loginAttempts.AddOrUpdate(
+				username,
+				(key) => (1, DateTime.UtcNow),
+				(key, existing) => (existing.Attempts + 1, DateTime.UtcNow)
+			);
+		}
+
+		private static void ResetLoginAttempts(string username)
+		{
+			_loginAttempts.TryRemove(username, out _);
+		}
+
+		private static string GenerateSessionId(string username)
+		{
+			string sessionId = Guid.NewGuid().ToString();
+			_activeSessions[sessionId] = (username, DateTime.UtcNow.AddMinutes(SessionExpirationMinutes));
+			return sessionId;
+		}
+
+		public static bool ValidateSession(string sessionId)
+		{
+			if (_activeSessions.TryGetValue(sessionId, out var sessionInfo))
+			{
+				if (DateTime.UtcNow < sessionInfo.ExpirationTime)
+				{
+					// Extend session
+					_activeSessions[sessionId] = (sessionInfo.Username, DateTime.UtcNow.AddMinutes(SessionExpirationMinutes));
+					return true;
+				}
+				else
+				{
+					// Session expired, remove it
+					_activeSessions.TryRemove(sessionId, out _);
+				}
+			}
+			return false;
+		}
+
+		public static void EndSession(string sessionId)
+		{
+			_activeSessions.TryRemove(sessionId, out _);
+		}
 
 		public static async Task<bool> DeleteUserAsync(string username, string password = null)
 		{
@@ -547,7 +709,16 @@ namespace Graphite.UserSys
 							throw new UnauthorizedAccessException("Password required for user deletion.");
 						}
 
-						if (!VerifyPassword(password, storedEncryptedPassword))
+						var securityInfo = await GetSecurityInfoAsync(username);
+						if (securityInfo.HasValue)
+						{
+							var (storedHash, storedSalt) = securityInfo.Value;
+							if (!VerifyPassword(password, storedHash, storedSalt))
+							{
+								throw new UnauthorizedAccessException("Incorrect password provided for user deletion.");
+							}
+						}
+						else
 						{
 							throw new UnauthorizedAccessException("Incorrect password provided for user deletion.");
 						}
@@ -598,12 +769,21 @@ namespace Graphite.UserSys
 
 		private static bool VerifyPassword(string inputPassword, string storedEncryptedPassword)
 		{
-			// Implement your password verification logic here
-			// This should securely compare the input password with the stored encrypted password
-			// Return true if the password is correct, false otherwise
-			throw new NotImplementedException("Password verification logic needs to be implemented.");
-		}
+			if (string.IsNullOrEmpty(inputPassword) || string.IsNullOrEmpty(storedEncryptedPassword))
+			{
+				return false;
+			}
 
+			try
+			{
+				string decryptedPassword = DecryptPassword(storedEncryptedPassword);
+				return inputPassword == decryptedPassword;
+			}
+			catch
+			{
+				return false;
+			}
+		}
 
 		public static async Task SetPasswordAsync(string username, string newPassword)
 		{
@@ -687,7 +867,7 @@ namespace Graphite.UserSys
 				await CreateGuestFolderStructureAsync(guestUsername);
 
 				// Authenticate and return the guest user
-				return await AuthenticateAsync(guestUsername);
+				return await AuthenticateAsync(guestUsername, null);
 			}
 			catch (Exception ex)
 			{
@@ -870,8 +1050,7 @@ namespace Graphite.UserSys
 			int rowsAffected = await activateCommand.ExecuteNonQueryAsync();
 
 			if (rowsAffected > 0)
-			{
-				// Load profile-specific settings
+			{                // Load profile-specific settings
 				await SettingsManager.GetAllSettingsAsync(username);
 			}
 
@@ -890,5 +1069,69 @@ namespace Graphite.UserSys
 			var result = await command.ExecuteScalarAsync();
 			return result?.ToString();
 		}
+
+
+		private static async Task StoreSecurityInfoAsync(string username, string passwordHash, string passwordSalt)
+		{
+			string securityDbPath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+				"Graphite",
+				"Security",
+				"UserSecurity.db");
+
+			await using var connection = new SqliteConnection($"Data Source={securityDbPath}");
+			await connection.OpenAsync();
+
+			var command = connection.CreateCommand();
+			command.CommandText = @"
+        CREATE TABLE IF NOT EXISTS UserSecurity (
+            Username TEXT PRIMARY KEY,
+            Hash TEXT,
+            Salt TEXT
+        );
+        INSERT OR REPLACE INTO UserSecurity (Username, Hash, Salt)
+        VALUES ($username, $hash, $salt)";
+			command.Parameters.AddWithValue("$username", username);
+			command.Parameters.AddWithValue("$hash", passwordHash);
+			command.Parameters.AddWithValue("$salt", passwordSalt);
+
+			await command.ExecuteNonQueryAsync();
+		}
+
+		private static async Task<(string Hash, string Salt)?> GetSecurityInfoAsync(string username)
+		{
+			string securityDbPath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+				"Graphite",
+				"Security",
+				"UserSecurity.db");
+
+			await using var connection = new SqliteConnection($"Data Source={securityDbPath}");
+			await connection.OpenAsync();
+
+			var command = connection.CreateCommand();
+			command.CommandText = "SELECT Hash, Salt FROM UserSecurity WHERE Username = $username";
+			command.Parameters.AddWithValue("$username", username);
+
+			await using var reader = await command.ExecuteReaderAsync();
+			if (await reader.ReadAsync())
+			{
+				return (reader.GetString(0), reader.GetString(1));
+			}
+
+			return null;
+		}
+
+		private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
+		{
+			byte[] saltBytes = Convert.FromBase64String(storedSalt);
+			using (var pbkdf2 = new Rfc2898DeriveBytes(inputPassword, saltBytes, 10000))
+			{
+				byte[] hashBytes = pbkdf2.GetBytes(20);
+				return Convert.ToBase64String(hashBytes) == storedHash;
+			}
+		}
 	}
+
 }
+
