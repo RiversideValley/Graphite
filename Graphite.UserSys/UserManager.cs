@@ -1024,7 +1024,7 @@ namespace Graphite.UserSys
 				}
 
 				// Initialize profile settings
-				await SettingsManager.InitializeUserSettingsAsync(username);
+				await SettingsManager.InitializeUserSettingsAsync(profileName);
 			}
 
 			return rowsAffected > 0;
@@ -1051,7 +1051,7 @@ namespace Graphite.UserSys
 
 			if (rowsAffected > 0)
 			{                // Load profile-specific settings
-				await SettingsManager.GetAllSettingsAsync(username);
+				await SettingsManager.GetAllSettingsAsync(profileName);
 			}
 
 			return rowsAffected > 0;
