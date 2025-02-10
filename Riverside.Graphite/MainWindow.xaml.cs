@@ -728,7 +728,7 @@ public sealed partial class MainWindow : Window
 		}
 	}
 
-	private async Task HandleNormalUrlOrSearch(string input)
+	public Task HandleNormalUrlOrSearch(string input)
 	{
 		Uri browserTo = UrlValidater.GetValidateUrl(input);
 
@@ -740,6 +740,7 @@ public sealed partial class MainWindow : Window
 		{
 			PerformSearch(input);
 		}
+		return Task.CompletedTask;	
 	}
 
 	private void PerformSearch(string query)

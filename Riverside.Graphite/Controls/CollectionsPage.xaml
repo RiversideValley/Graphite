@@ -23,6 +23,8 @@
         <helpers:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter" />
         <helpers:InverseVisiblityToBoolConverter x:Key="InverseBooleanFromVisible" />
         <helpers:CollectionNameIdConverter x:Key="CollectionNameIdConverter" />
+
+
     </Page.Resources>
 
     <Grid
@@ -30,8 +32,10 @@
         Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
         BorderBrush="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
         BorderThickness="2">
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="150" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -68,10 +72,10 @@
                     BorderBrush="Transparent"
                     Canvas.ZIndex="1"
                     Command="{x:Bind ViewModel.OpenViewNewWindowCommand}"
-                    Content="{firebrowser:FluentIcon Glyph=&#xE8A7;}"
+                    Content="{firebrowser:FluentIcon Glyph=&#xE8AD;}"
                     Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
                     ToolTipService.Placement="Bottom"
-                    ToolTipService.ToolTip="Open External Window" />
+                    ToolTipService.ToolTip="Pop Out" />
                 <Button
                     x:Name="AddCollectionButton"
                     Width="32"
@@ -159,6 +163,22 @@
                         </TextBlock>
                     </TeachingTip.Content>
                 </TeachingTip>
+                <Button
+                    x:Name="OpenNewWindowButton"
+                    Width="32"
+                    Height="32"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    Padding="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Canvas.ZIndex="1"
+                    Command="{x:Bind ViewModel.OpenInstanceNewWindowCommand}"
+                    Content="{firebrowser:FluentIcon Glyph=&#xE8A7;}"
+                    Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    ToolTipService.Placement="Bottom"
+                    ToolTipService.ToolTip="Open External Window" />
             </StackPanel>
         </Grid>
         <StackPanel VerticalAlignment="Bottom" Orientation="Vertical">
@@ -181,13 +201,35 @@
                 IsIndeterminate="{x:Bind ViewModel.IsWebViewLoaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="{ThemeResource SmallTopMargin}">
+        <Grid
+            x:Name="GridColletView"
+            Grid.Row="1"
+            Margin="{ThemeResource SmallTopMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
+            <interactivity:Interaction.Behaviors>
+                <core:DataTriggerBehavior
+                    Binding="{Binding ActualWidth, ElementName=GridColletView}"
+                    ComparisonCondition="LessThan"
+                    Value="768">
+                    <core:ChangePropertyAction
+                        PropertyName="Visibility"
+                        TargetObject="{Binding ElementName=WebGrid}"
+                        Value="Collapsed" />
+                </core:DataTriggerBehavior>
+                <core:DataTriggerBehavior
+                    Binding="{Binding ActualWidth, ElementName=GridColletView}"
+                    ComparisonCondition="GreaterThanOrEqual"
+                    Value="768">
+                    <core:ChangePropertyAction
+                        PropertyName="Visibility"
+                        TargetObject="{Binding ElementName=WebGrid}"
+                        Value="Visible" />
+                </core:DataTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
             <GridView
                 x:Name="GridCollections"
                 Grid.Column="0"
@@ -253,7 +295,8 @@
                                 <Grid
                                     Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                                     Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
-                                    RightTapped="Grid_RightTapped">
+                                    RightTapped="Grid_RightTapped"
+                                    ToolTipService.ToolTip="{Binding title}">
                                     <StackPanel Orientation="Horizontal" Spacing="2">
                                         <Image
                                             Width="32"
@@ -286,30 +329,16 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid MaximumRowsOrColumns="5" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
                 </ListView>
 
             </Grid>
 
-            <Grid
-                Grid.Column="2"
-                Width="NaN"
-                Height="NaN"
-                Margin="{ThemeResource XSmallLeftTopRightBottomMargin}"
-                Padding="2"
-                ui:UIElementExtensions.ClipToBounds="True"
-                Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
-                BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
-                BorderThickness=".5"
-                CornerRadius="6"
-                Visibility="{x:Bind ViewModel.WebViewVisible, Mode=OneWay}">
-                <WebView2
-                    x:Name="WebViewHistoryItem"
-                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                    CoreWebView2Initialized="WebViewHistoryItem_CoreWebView2Initialized"
-                    NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
-                    NavigationStarting="WebViewHistoryItem_NavigationStarting"
-                    Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </Grid>
+
 
 
             <!--<TeachingTip
@@ -367,6 +396,26 @@
                     </TeachingTip.Content>
                 </TeachingTip>-->
 
+        </Grid>
+        <Grid
+            x:Name="WebGrid"
+            Grid.Row="2"
+            Width="NaN"
+            Height="NaN"
+            Margin="{ThemeResource SmallLeftRightMargin}"
+            ui:UIElementExtensions.ClipToBounds="True"
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
+            BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
+            BorderThickness=".5"
+            CornerRadius="6"
+            Visibility="{x:Bind ViewModel.WebViewVisible, Mode=OneWay}">
+            <WebView2
+                x:Name="WebViewHistoryItem"
+                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                CoreWebView2Initialized="WebViewHistoryItem_CoreWebView2Initialized"
+                NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
+                NavigationStarting="WebViewHistoryItem_NavigationStarting"
+                Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </Grid>
     <!--<GridView ItemsSource="{x:Bind ViewModel.GroupedItems.View, Mode=OneWay}">

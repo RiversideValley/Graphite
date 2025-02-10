@@ -76,12 +76,34 @@ namespace Riverside.Graphite.Controls
 				Text = "Open in New Tab",
 				Icon = new FontIcon { Glyph = "\uE8AD" }
 			};
+			MenuFlyoutItem newCurrentMenuItem = new()
+			{
+				Text = "Open in Current Tab",
+				Icon = new FontIcon { Glyph = "\uE7AD" }
+			};
+
+			newCurrentMenuItem.Click += (s, args) =>
+			{
+				if (App.Current.m_window is MainWindow window)
+				{
+					int current = window.TabViewContainer.SelectedIndex;
+					if (window.TabViewContainer.SelectedIndex == current)
+					{
+						window.HandleNormalUrlOrSearch(selectedHistoryItem);
+					}
+					else
+					{
+						window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem));
+					}
+
+				}
+			};
 
 			newTabMenuItem.Click += (s, args) =>
 			{
 				if (App.Current.m_window is MainWindow window)
 				{
-					window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem));
+					window.DispatcherQueue?.TryEnqueue(() => window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem)));
 				}
 			};
 
@@ -117,6 +139,7 @@ namespace Riverside.Graphite.Controls
 
 			};
 			flyout.Items.Add(newTabMenuItem);
+			flyout.Items.Add(newCurrentMenuItem);
 			flyout.Items.Add(deleteMenuItem);
 			flyout.ShowAt(sender, position);
 		}

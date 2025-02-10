@@ -63,8 +63,25 @@ public sealed partial class NewTab : Page
 			ViewModel.CancellationTokenClock = cancel.Token;
 
 		};
-	
+
+		
+
+
 		InitializeComponent();
+		
+		DispatcherQueue.TryEnqueue(() => {
+
+			if (App.Current.m_window is MainWindow win)
+			{
+				win.SizeChanged += async (s, e) => {
+
+						ViewModel.SplitViewWidth = (win.Bounds.Width * .33) >= 333 ? (win.Bounds.Width * .33) : 333;
+						await Task.Delay(200);
+						return;
+				};
+			}
+		});
+		
 
 		ViewModel.RightPaneService.Initialize(RightFrame, SplitViewer);
 

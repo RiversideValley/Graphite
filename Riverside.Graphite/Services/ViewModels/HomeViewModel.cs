@@ -106,7 +106,6 @@ public partial class HomeViewModel : ObservableRecipient
 	[ObservableProperty]
 	private string _splitViewLabel;
 
-	
 	private DispatcherTimer timer { get; set; }
 
 	public CancellationToken CancellationTokenTimer { get; set; }
