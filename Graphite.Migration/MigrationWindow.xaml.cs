@@ -24,14 +24,18 @@ namespace Graphite.Migration
 				var titleBar = m_AppWindow.TitleBar;
 				titleBar.ButtonBackgroundColor = Colors.Transparent;
 				titleBar.ButtonForegroundColor = Colors.Transparent;
+				titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+				titleBar.ButtonInactiveForegroundColor = Colors.Transparent;
 				Windows.Graphics.PointInt32 position = m_AppWindow.Position;
-				m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 500, 725));
+				m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 750, 1075));
 				titleBar.ExtendsContentIntoTitleBar = true;
 			}
 			else
 			{
 				AppTitleBar.Visibility = Visibility.Collapsed;
 			}
+
+			ReceiverButton.IsEnabled = false;
 		}
 
 		private AppWindow GetAppWindowForCurrentWindow()
@@ -58,12 +62,16 @@ namespace Graphite.Migration
 		{
 			var receiverWindow = new ReceiverWindow();
 			receiverWindow.Activate();
+			this.Close();
+			SenderButton.IsEnabled = true;
+
 		}
 
 		private void SenderButton_Click(object sender, RoutedEventArgs e)
 		{
 			var senderWindow = new SenderWindow();
 			senderWindow.Activate();
+			ReceiverButton.IsEnabled = true;
 		}
 
 		private void ImportFromFireBrowserButton_Click(object sender, RoutedEventArgs e)

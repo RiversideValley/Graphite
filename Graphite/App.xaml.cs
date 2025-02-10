@@ -74,7 +74,7 @@ public partial class App : Application
 		WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
 		WindowHandler.RestoreWindowPosition();
 		WindowHandler.SetIcon("Logo.ico");
-		WindowHandler.SetWindowSize(850, 850); // Set your desired default size
+		WindowHandler.SetWindowSize(1250, 1200); // Set your desired default size
 
 		// Activate the window
 		MainWindow.Activate();

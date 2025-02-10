@@ -34,11 +34,13 @@ namespace Graphite.Migration
 			{
 				var titleBar = m_AppWindow.TitleBar;
 				titleBar.ExtendsContentIntoTitleBar = true;
+				titleBar.ButtonBackgroundColor = Colors.Transparent;
+				titleBar.ButtonForegroundColor = Colors.Transparent;
 				titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 				titleBar.ButtonInactiveForegroundColor = Colors.Transparent;
 				AppTitleBar.Loaded += AppTitleBar_Loaded;
 				AppTitleBar.SizeChanged += AppTitleBar_SizeChanged;
-				m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(100, 100, 625, 1025));
+				m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(100, 100, 700, 1100));
 			}
 			else
 			{
@@ -70,16 +72,17 @@ namespace Graphite.Migration
 			if (AppTitleBar != null)
 			{
 				Windows.Graphics.RectInt32[] dragRects = new Windows.Graphics.RectInt32[] {
-				new Windows.Graphics.RectInt32(
-					0,
-					0,
-					(int)(AppTitleBar.ActualWidth),
-					(int)(AppTitleBar.ActualHeight)
-				)
-			};
+			new Windows.Graphics.RectInt32(
+				0,
+				0,
+				(int)(AppTitleBar.ActualWidth),
+				(int)(AppTitleBar.ActualHeight)
+			)
+		};
 				appWindow.TitleBar.SetDragRectangles(dragRects);
 			}
 		}
+
 
 		private async void StartListening()
 		{
@@ -92,11 +95,12 @@ namespace Graphite.Migration
 				listener = new StreamSocketListener();
 				listener.ConnectionReceived += Listener_ConnectionReceived;
 
-				await listener.BindServiceNameAsync("8888");
+				// Use port 8080 directly
+				await listener.BindServiceNameAsync("8080");
 
 				DispatcherQueue.TryEnqueue(() =>
 				{
-					StatusTextBlock.Text = "Listening for senders...";
+					StatusTextBlock.Text = "Listening for senders on port 8080...";
 				});
 			}
 			catch (Exception ex)
@@ -108,6 +112,26 @@ namespace Graphite.Migration
 					LoadingProgressRing.Visibility = Visibility.Collapsed;
 				});
 			}
+		}
+
+
+		private async Task<int> FindAvailablePortAsync()
+		{
+			for (int port = 8080; port <= 8888; port++)
+			{
+				try
+				{
+					var tempListener = new StreamSocketListener();
+					await tempListener.BindServiceNameAsync(port.ToString());
+					tempListener.Dispose();
+					return port;
+				}
+				catch
+				{
+					// Port is not available, continue to the next one
+				}
+			}
+			throw new Exception("No available ports found between 8080 and 8888.");
 		}
 
 		private async void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)

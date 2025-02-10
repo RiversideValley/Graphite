@@ -37,12 +37,16 @@ namespace Graphite.Migration
 
 			// Set the window size to 350x1000
 			Windows.Graphics.PointInt32 position = m_AppWindow.Position;
-			m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 650, 1050));
+			m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 700, 1100));
 
 			if (AppWindowTitleBar.IsCustomizationSupported())
 			{
 				var titleBar = m_AppWindow.TitleBar;
 				titleBar.ExtendsContentIntoTitleBar = true;
+				titleBar.ButtonBackgroundColor = Colors.Transparent;
+				titleBar.ButtonForegroundColor = Colors.Transparent;
+				titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+				titleBar.ButtonInactiveForegroundColor = Colors.Transparent;
 				AppTitleBar.Loaded += AppTitleBar_Loaded;
 				AppTitleBar.SizeChanged += AppTitleBar_SizeChanged;
 			}
@@ -143,7 +147,8 @@ namespace Graphite.Migration
 					throw new Exception("Unable to find a suitable local IP address.");
 				}
 
-				await socket.ConnectAsync(localHostName, "8888");
+				// Use port 8080 directly instead of scanning
+				await socket.ConnectAsync(localHostName, "8080");
 				protocol = new GraphiteTransferProtocol(socket);
 
 				UpdateStatus("Connected to receiver. Waiting for verification...", StatusType.Progress);
@@ -163,6 +168,26 @@ namespace Graphite.Migration
 			}
 		}
 
+
+		private async Task<int> FindAvailablePortAsync()
+		{
+			for (int port = 8080; port <= 8888; port++)
+			{
+				try
+				{
+					var listener = new StreamSocketListener();
+					await listener.BindServiceNameAsync(port.ToString());
+					listener.Dispose();
+					return port;
+				}
+				catch
+				{
+					// Port is not available, continue to the next one
+				}
+			}
+			throw new Exception("No available ports found between 8080 and 8888.");
+		}
+
 		private async Task HandleVerificationAndTransfer()
 		{
 			try
@@ -172,7 +197,10 @@ namespace Graphite.Migration
 				if (receivedCode == verificationCode)
 				{
 					await protocol.SendMessageAsync("Verification successful");
-					StatusTextBlock.Text = "Verification successful. Sending data...";
+					StatusTextBlock.Text = "Verification successful. Collecting data...";
+
+					await dataTransfer.CollectDataAsync();
+					StatusTextBlock.Text = "Data collected. Sending data...";
 
 					await TransferData();
 				}

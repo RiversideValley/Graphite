@@ -2,8 +2,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Windows.Networking.Sockets;
 using System.Linq;
+using Windows.Networking.Sockets;
+using System.Threading;
 
 namespace Graphite.Migration
 {
@@ -16,43 +17,143 @@ namespace Graphite.Migration
 		public static readonly string GraphiteSecurityPath = @"C:\ProgramData\Graphite\Security";
 
 		private const string TransferFolderName = "GraphiteTransfer";
+		private const int MaxRetries = 3;
+		private const int RetryDelayMs = 1000;
 
 		public delegate void ProgressChangedHandler(double percentage);
 		public event ProgressChangedHandler ProgressChanged;
 
-		public async Task SendDataAsync(GraphiteTransferProtocol protocol)
+		private Dictionary<string, byte[]> collectedData = new Dictionary<string, byte[]>();
+
+		public async Task CollectDataAsync()
 		{
-			long totalSize = CalculateTotalSize();
-			long transferredSize = 0;
-
-			transferredSize += await SendFromPath(GraphiteDataPath, protocol, transferredSize, totalSize);
-			transferredSize += await SendFromPath(GraphiteSecurityPath, protocol, transferredSize, totalSize);
-
-			await protocol.SendMessageAsync("TRANSFER_COMPLETE");
+			await CollectFromPath(GraphiteDataPath);
+			await CollectFromPath(GraphiteSecurityPath);
 		}
 
-		private async Task<long> SendFromPath(string sourcePath, GraphiteTransferProtocol protocol, long currentTransferredSize, long totalSize)
+		private async Task CollectFromPath(string sourcePath)
 		{
-			long pathTransferredSize = 0;
-
 			if (Directory.Exists(sourcePath))
 			{
 				foreach (string filePath in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
 				{
 					string relativePath = Path.GetRelativePath(sourcePath, filePath);
-					byte[] fileContent = await File.ReadAllBytesAsync(filePath);
+					byte[] fileContent = await ReadFileWithRetryAsync(filePath);
+					if (fileContent != null)
+					{
+						collectedData[Path.Combine(sourcePath, relativePath)] = fileContent;
+					}
+				}
+			}
+		}
 
-					await protocol.SendMessageAsync(sourcePath);
-					await protocol.SendMessageAsync(relativePath);
-					await protocol.SendDataAsync(fileContent);
+		private async Task<byte[]> ReadFileWithRetryAsync(string filePath)
+		{
+			for (int attempt = 0; attempt < MaxRetries; attempt++)
+			{
+				try
+				{
+					if (!IsFileLocked(filePath))
+					{
+						using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+						{
+							byte[] buffer = new byte[fileStream.Length];
+							await fileStream.ReadAsync(buffer, 0, buffer.Length);
+							return buffer;
+						}
+					}
+				}
+				catch (IOException)
+				{
+					if (attempt < MaxRetries - 1)
+					{
+						await Task.Delay(RetryDelayMs);
+						continue;
+					}
+				}
+				catch (Exception)
+				{
+					// Skip this file if we can't read it
+					return null;
+				}
+			}
+			return null;
+		}
 
-					pathTransferredSize += fileContent.Length;
-					double progress = (double)(currentTransferredSize + pathTransferredSize) / totalSize * 100;
+		private bool IsFileLocked(string filePath)
+		{
+			try
+			{
+				using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+				{
+					stream.Close();
+				}
+			}
+			catch (IOException)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		private async Task WriteFileWithRetryAsync(string filePath, byte[] content)
+		{
+			for (int attempt = 0; attempt < MaxRetries; attempt++)
+			{
+				try
+				{
+					string directory = Path.GetDirectoryName(filePath);
+					if (!Directory.Exists(directory))
+					{
+						Directory.CreateDirectory(directory);
+					}
+
+					if (!IsFileLocked(filePath))
+					{
+						using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+						{
+							await fileStream.WriteAsync(content, 0, content.Length);
+							await fileStream.FlushAsync();
+						}
+						return;
+					}
+				}
+				catch (IOException)
+				{
+					if (attempt < MaxRetries - 1)
+					{
+						await Task.Delay(RetryDelayMs);
+						continue;
+					}
+					throw;
+				}
+			}
+			throw new IOException($"Unable to write to file {filePath} after {MaxRetries} attempts");
+		}
+
+		public async Task SendDataAsync(GraphiteTransferProtocol protocol)
+		{
+			long totalSize = collectedData.Sum(kvp => kvp.Value.Length);
+			long transferredSize = 0;
+
+			foreach (var kvp in collectedData)
+			{
+				try
+				{
+					await protocol.SendMessageAsync(kvp.Key);
+					await protocol.SendDataAsync(kvp.Value);
+
+					transferredSize += kvp.Value.Length;
+					double progress = (double)transferredSize / totalSize * 100;
 					ProgressChanged?.Invoke(progress);
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"Error sending file {kvp.Key}: {ex.Message}", ex);
 				}
 			}
 
-			return pathTransferredSize;
+			await protocol.SendMessageAsync("TRANSFER_COMPLETE");
 		}
 
 		public async Task ReceiveDataAsync(GraphiteTransferProtocol protocol)
@@ -60,38 +161,46 @@ namespace Graphite.Migration
 			string transferPath = Path.Combine(Path.GetTempPath(), TransferFolderName);
 			Directory.CreateDirectory(transferPath);
 
-			while (true)
+			try
 			{
-				string sourcePath = await protocol.ReceiveMessageAsync();
-				if (sourcePath == "TRANSFER_COMPLETE")
-					break;
-
-				string relativePath = await protocol.ReceiveMessageAsync();
-				byte[] fileContent = await protocol.ReceiveDataAsync();
-
-				string tempFilePath = Path.Combine(transferPath, relativePath);
-				string tempDirectory = Path.GetDirectoryName(tempFilePath);
-
-				if (!Directory.Exists(tempDirectory))
+				while (true)
 				{
-					Directory.CreateDirectory(tempDirectory);
+					string filePath = await protocol.ReceiveMessageAsync();
+					if (filePath == "TRANSFER_COMPLETE")
+						break;
+
+					byte[] fileContent = await protocol.ReceiveDataAsync();
+					string tempFilePath = Path.Combine(transferPath, Path.GetFileName(filePath));
+
+					await WriteFileWithRetryAsync(tempFilePath, fileContent);
+
+					double progress = CalculateProgress(transferPath);
+					ProgressChanged?.Invoke(progress);
 				}
 
-				await File.WriteAllBytesAsync(tempFilePath, fileContent);
-
-				double progress = CalculateProgress(transferPath);
-				ProgressChanged?.Invoke(progress);
+				await MoveFilesToFinalLocation(transferPath);
 			}
-
-			await MoveFilesToFinalLocation(transferPath);
+			finally
+			{
+				if (Directory.Exists(transferPath))
+				{
+					try
+					{
+						Directory.Delete(transferPath, true);
+					}
+					catch
+					{
+						// Ignore cleanup errors
+					}
+				}
+			}
 		}
 
-		private long CalculateTotalSize()
+		private double CalculateProgress(string transferPath)
 		{
-			long totalSize = 0;
-			totalSize += CalculateDirectorySize(GraphiteDataPath);
-			totalSize += CalculateDirectorySize(GraphiteSecurityPath);
-			return totalSize;
+			long transferredSize = CalculateDirectorySize(transferPath);
+			long totalSize = collectedData.Sum(kvp => kvp.Value.Length);
+			return totalSize > 0 ? (double)transferredSize / totalSize * 100 : 0;
 		}
 
 		private long CalculateDirectorySize(string path)
@@ -99,23 +208,37 @@ namespace Graphite.Migration
 			if (!Directory.Exists(path))
 				return 0;
 
-			return Directory.GetFiles(path, "*", SearchOption.AllDirectories)
-				.Sum(file => new FileInfo(file).Length);
-		}
-
-		private double CalculateProgress(string transferPath)
-		{
-			long transferredSize = CalculateDirectorySize(transferPath);
-			long totalSize = CalculateTotalSize();
-			return (double)transferredSize / totalSize * 100;
+			try
+			{
+				return Directory.GetFiles(path, "*", SearchOption.AllDirectories)
+					.Sum(file =>
+					{
+						try
+						{
+							return new FileInfo(file).Length;
+						}
+						catch
+						{
+							return 0;
+						}
+					});
+			}
+			catch
+			{
+				return 0;
+			}
 		}
 
 		private async Task MoveFilesToFinalLocation(string transferPath)
 		{
-			await MoveFiles(transferPath, GraphiteDataPath);
-			await MoveFiles(transferPath, GraphiteSecurityPath);
-
-			Directory.Delete(transferPath, true);
+			foreach (var sourcePath in new[] { GraphiteDataPath, GraphiteSecurityPath })
+			{
+				string sourceTransferPath = Path.Combine(transferPath, Path.GetFileName(sourcePath));
+				if (Directory.Exists(sourceTransferPath))
+				{
+					await MoveFiles(sourceTransferPath, sourcePath);
+				}
+			}
 		}
 
 		private async Task MoveFiles(string sourcePath, string destinationPath)
@@ -129,11 +252,36 @@ namespace Graphite.Migration
 			foreach (string filePath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
 			{
 				string newPath = filePath.Replace(sourcePath, destinationPath);
-				if (File.Exists(newPath))
+
+				for (int attempt = 0; attempt < MaxRetries; attempt++)
 				{
-					File.Delete(newPath);
+					try
+					{
+						if (File.Exists(newPath))
+						{
+							if (!IsFileLocked(newPath))
+							{
+								File.Delete(newPath);
+							}
+							else
+							{
+								if (attempt < MaxRetries - 1)
+								{
+									await Task.Delay(RetryDelayMs);
+									continue;
+								}
+								throw new IOException($"Destination file is locked: {newPath}");
+							}
+						}
+
+						File.Move(filePath, newPath);
+						break;
+					}
+					catch (IOException) when (attempt < MaxRetries - 1)
+					{
+						await Task.Delay(RetryDelayMs);
+					}
 				}
-				File.Move(filePath, newPath);
 			}
 		}
 	}
