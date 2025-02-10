@@ -202,7 +202,7 @@ namespace Graphite.UserSys
 		{
 			// Migrate specific folders and databases
 			string[] foldersToMigrate = { "Browser", "Database", "Permissions", "Settings" };
-			string[] databasesToMigrate = { "history.db", "favorites.db", "downloads.db" };
+			string[] databasesToMigrate = { "History.db", "Favorites.db", "Downloads.db" };
 
 			foreach (var folder in foldersToMigrate)
 			{
@@ -250,7 +250,7 @@ namespace Graphite.UserSys
 		{
 			_logger.LogInformation($"Applying fixes to settings.db for user: {username}");
 
-			string settingsDbPath = Path.Combine(_newBasePath, username, "Settings", "settings.db");
+			string settingsDbPath = Path.Combine(_newBasePath, username, "Settings", "Settings.db");
 
 			if (!File.Exists(settingsDbPath))
 			{

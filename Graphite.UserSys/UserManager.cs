@@ -447,17 +447,7 @@ namespace Graphite.UserSys
 
 						await command.ExecuteNonQueryAsync();
 
-						//if (!string.IsNullOrEmpty(passwordHash))
-						//{
-						//    var securityCommand = connection.CreateCommand();
-						//    securityCommand.CommandText = @"
-						//INSERT INTO UserSecurity (Username, Hash, Salt)
-						//VALUES ($username, $hash, $salt)";
-						//    securityCommand.Parameters.AddWithValue("$username", user.Username);
-						//    securityCommand.Parameters.AddWithValue("$hash", passwordHash);
-						//    securityCommand.Parameters.AddWithValue("$salt", passwordSalt);
-						//    await securityCommand.ExecuteNonQueryAsync();
-						//}
+					
 
 						// Insert metadata into blobs table
 						var metadataCommand = connection.CreateCommand();

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Graphite.UserSys.Windows.BrowserImportScreen"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.UserSys.Windows"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Browser Import">
+
+
+    <Grid Padding="20">
+        <StackPanel Spacing="20">
+            <TextBlock Text="Import Browser Data" Style="{StaticResource TitleTextBlockStyle}"/>
+
+            <ComboBox x:Name="BrowserSelector" Header="Select Browser" HorizontalAlignment="Stretch">
+                <ComboBoxItem Content="Microsoft Edge"/>
+                <ComboBoxItem Content="Google Chrome"/>
+                <ComboBoxItem Content="Mozilla Firefox"/>
+                <ComboBoxItem Content="Arc"/>
+                <ComboBoxItem Content="Brave"/>
+            </ComboBox>
+
+            <TextBox x:Name="UsernameInput" Header="Username" PlaceholderText="Enter your username Of they browser choosen"/>
+
+            <StackPanel Orientation="Vertical" Spacing="10">
+                <CheckBox x:Name="HistoryCheckbox" Content="Import History"/>
+                <CheckBox x:Name="DownloadsCheckbox" Content="Import Downloads"/>
+                <CheckBox x:Name="FavoritesCheckbox" Content="Import Favorites"/>
+            </StackPanel>
+
+            <Button x:Name="ImportButton" Content="Import" Click="ImportButton_Click" HorizontalAlignment="Stretch"/>
+
+            <ProgressBar x:Name="ImportProgress" Visibility="Collapsed"/>
+            <TextBlock x:Name="StatusMessage" Visibility="Collapsed"/>
+        </StackPanel>
+    </Grid>
+</Window>

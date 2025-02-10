@@ -322,8 +322,10 @@
                         <TextBlock x:Name="WeatherSummaryText" Text="Weather" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Button>
+                <Button Padding="4" x:Name="Import" Click="Import_Click" Content="Import Data Other Browsers"/>
             </StackPanel>
 
+            
 
             <CheckBox Grid.Column="3"
                       Content="Show on startup"

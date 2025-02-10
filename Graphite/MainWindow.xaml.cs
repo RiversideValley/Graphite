@@ -352,6 +352,12 @@ public sealed partial class MainWindow : Window
 	{
 		await UpdateWeatherAsync();
 	}
+
+	private void Import_Click(object sender, RoutedEventArgs e)
+	{
+		BrowserImportScreen browserImportScreen = new BrowserImportScreen();
+		browserImportScreen.Activate();
+    }
 }
 
 public class UserViewModel

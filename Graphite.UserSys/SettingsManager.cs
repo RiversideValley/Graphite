@@ -20,7 +20,7 @@ namespace Graphite.UserSys
 
         private static string GetUserSettingsDbPath(string username)
         {
-            return Path.Combine(UserManager.GraphiteDataPath, username, "Settings", "settings.db");
+            return Path.Combine(UserManager.GraphiteDataPath, username, "Settings", "Settings.db");
         }
 
 		public static async Task InitializeUserSettingsAsync(string username)
