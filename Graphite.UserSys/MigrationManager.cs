@@ -53,9 +53,6 @@ namespace Graphite.UserSys
 					await MigrateUserAsync(users[i]);
 				}
 
-				// Zip the old folder, delete it, and keep the zip file
-				await ZipAndDeleteOldFolderAsync();
-
 				_logger.LogInformation("Full migration process completed");
 			}
 			finally
@@ -66,42 +63,7 @@ namespace Graphite.UserSys
 		}
 
 
-		private async Task ZipAndDeleteOldFolderAsync()
-		{
-			try
-			{
-				_logger.LogInformation("Starting to zip the old folder");
-
-				string oldFolderName = "FireBrowserUserCore";
-				string newFolderName = "GraphiteOld";
-				string parentDir = Path.GetDirectoryName(_oldBasePath);
-				string newPath = Path.Combine(parentDir, newFolderName);
-				string zipPath = Path.Combine(parentDir, $"{newFolderName}.zip");
-
-				// Rename the folder
-				if (Directory.Exists(newPath))
-				{
-					Directory.Delete(newPath, true);
-				}
-				Directory.Move(_oldBasePath, newPath);
-				_logger.LogInformation($"Renamed '{oldFolderName}' to '{newFolderName}'");
-
-				// Create a zip file of the renamed folder
-				ZipFile.CreateFromDirectory(newPath, zipPath);
-				_logger.LogInformation($"Old folder zipped successfully to: {zipPath}");
-
-				// Delete the renamed folder
-				Directory.Delete(newPath, true);
-				_logger.LogInformation($"'{newFolderName}' folder deleted successfully");
-
-				await Task.CompletedTask; // Since ZipFile.CreateFromDirectory is synchronous
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError($"Error during zipping and deleting old folder: {ex.Message}");
-				throw;
-			}
-		}
+	
 
 		private async Task InitializeNewDatabaseAsync()
 		{

@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     Title="Graphite - Login">
 
-    <Grid >
+    <Grid>
         <Grid.Resources>
             <Style x:Key="TextButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
@@ -122,7 +122,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-
         <Button x:Name="SettingsButton"
                 Style="{StaticResource TextButtonStyle}"
                 VerticalAlignment="Top"
@@ -155,6 +154,13 @@
                    Opacity="0.8"
                    MaxWidth="800"/>
 
+        <Grid x:Name="NoUsersGrid" Visibility="Collapsed" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Spacing="16" HorizontalAlignment="Center">
+                <FontIcon Glyph="&#xE9CE;" FontSize="48" HorizontalAlignment="Center"/>
+                <TextBlock Text="New To Graphite" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Start Migration" Click="StartMigration_Click" Style="{StaticResource AccentButtonStyle}"/>
+            </StackPanel>
+        </Grid>
 
         <GridView Grid.Row="2" 
                   x:Name="UserListView" 
@@ -171,11 +177,11 @@
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="200" Height="240"
-                              Background="{ThemeResource CardBackgroundFillColorDefault}"
-                              BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                              BorderThickness="1"
-                              CornerRadius="8"
-                              Margin="8">
+                          Background="{ThemeResource CardBackgroundFillColorDefault}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefault}"
+                          BorderThickness="1"
+                          CornerRadius="8"
+                          Margin="8">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -183,15 +189,15 @@
                         </Grid.RowDefinitions>
 
                         <Button Style="{StaticResource TextButtonStyle}"
-                                    HorizontalAlignment="Right"
-                                    Margin="8,8,8,0">
+                                HorizontalAlignment="Right"
+                                Margin="8,8,8,0">
                             <Button.Flyout>
                                 <Flyout Placement="Bottom">
                                     <StackPanel>
                                         <ToggleSwitch Header="Sync Data" 
-                                                          />
+                                                      />
                                         <Button Click="Delete_Click"
-                                                    DataContext="{Binding}">
+                                                DataContext="{Binding}">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <SymbolIcon Symbol="Delete"/>
                                                 <TextBlock Text="Delete User"/>
@@ -204,22 +210,20 @@
                         </Button>
 
                         <PersonPicture Grid.Row="1"
-                                           ProfilePicture="{Binding ProfileImageSource}"
-                                           DisplayName="{Binding Username}"
-                                           Height="100" Width="100"
-                                           Margin="0,16"/>
+                                       ProfilePicture="{Binding ProfileImageSource}"
+                                       DisplayName="{Binding Username}"
+                                       Height="100" Width="100"
+                                       Margin="0,16"/>
 
                         <TextBlock Grid.Row="2"
-                                       Text="{Binding Username}"
-                                       FontWeight="SemiBold"
-                                       HorizontalAlignment="Center"
-                                       Margin="16,8,16,24"/>
+                                   Text="{Binding Username}"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   Margin="16,8,16,24"/>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
-
-       
 
         <Grid Grid.Row="3" 
               Padding="32,16" 
@@ -235,14 +239,14 @@
 
             <StackPanel Orientation="Horizontal">
                 <Button
-        x:Name="CreateNewUser"
-        Padding="4"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Left"
-        Background="Transparent"
-        BorderBrush="Transparent"
-        Click="CreateNewUser_Click"
-        Margin="0,0,10,0">
+                    x:Name="CreateNewUser"
+                    Padding="4"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="CreateNewUser_Click"
+                    Margin="0,0,10,0">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE710;"/>
                         <TextBlock Text="Add New User" Margin="4,0,0,0"/>
@@ -250,14 +254,14 @@
                 </Button>
 
                 <Button
-        x:Name="OpenGuestUser"
-        Padding="4"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Left"
-        Background="Transparent"
-        BorderBrush="Transparent"
-        Click="OpenGuestUser_Click"
-        Margin="0,0,10,0">
+                    x:Name="OpenGuestUser"
+                    Padding="4"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="OpenGuestUser_Click"
+                    Margin="0,0,10,0">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEE57;"/>
                         <TextBlock Text="Open In Guest" Margin="4,0,0,0"/>
@@ -265,14 +269,14 @@
                 </Button>
 
                 <Button
-        x:Name="RestoreBackup"
-        Padding="4"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Left"
-        Background="Transparent"
-        BorderBrush="Transparent"
-        Click="RestoreBackup_Click"
-        Margin="0,0,10,0">
+                    x:Name="RestoreBackup"
+                    Padding="4"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="RestoreBackup_Click"
+                    Margin="0,0,10,0">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72C;"/>
                         <TextBlock Text="Restore Backup" Margin="4,0,0,0"/>
@@ -280,29 +284,14 @@
                 </Button>
 
                 <Button
-        x:Name="Migrate"
-        Padding="4"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Left"
-        Background="Transparent"
-        BorderBrush="Transparent"
-        Click="Migrate_Click"
-        Margin="0,0,10,0">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8DE;"/>
-                        <TextBlock Text="Migrate Data" Margin="4,0,0,0"/>
-                    </StackPanel>
-                </Button>
-
-                <Button
-            x:Name="WeatherButton"
-            Padding="4"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Left"
-            Background="Transparent"
-            BorderBrush="Transparent"
+                    x:Name="WeatherButton"
+                    Padding="4"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
                     Click="WeatherButton_Click"
-            Margin="0,0,10,0">
+                    Margin="0,0,10,0">
                     <Button.Flyout>
                         <Flyout Placement="Top">
                             <StackPanel>
@@ -322,10 +311,22 @@
                         <TextBlock x:Name="WeatherSummaryText" Text="Weather" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Button>
-                <Button Padding="4" x:Name="Import" Click="Import_Click" Content="Import Data Other Browsers"/>
-            </StackPanel>
 
-            
+                <Button
+      x:Name="MigrateSys"
+      Padding="4"
+      VerticalAlignment="Center"
+      HorizontalAlignment="Left"
+      Background="Transparent"
+      BorderBrush="Transparent"
+      Click="MigrateSys_Click"
+      Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8DE;"/>
+                        <TextBlock Text="Migration" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
 
             <CheckBox Grid.Column="3"
                       Content="Show on startup"
@@ -334,3 +335,4 @@
         </Grid>
     </Grid>
 </Window>
+

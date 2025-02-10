@@ -17,147 +17,169 @@ using Graphite.WindowCore;
 using Microsoft.Extensions.Logging;
 using Graphite.UserSys.Windows;
 using System.ComponentModel;
+using Graphite.Migration;
+using System.Linq;
 
-namespace Graphite;
-public sealed partial class MainWindow : Window
+namespace Graphite
 {
-	private ObservableCollection<UserViewModel> Users { get; set; }
-	private AppWindow appWindow;
-	private readonly HttpClient _httpClient;
-	private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
-	private bool _disposedValue;
-
-
-	public MainWindow()
+	public sealed partial class MainWindow : Window
 	{
-		this.InitializeComponent();
+		private ObservableCollection<UserViewModel> Users { get; set; }
+		private AppWindow appWindow;
+		private readonly HttpClient _httpClient;
+		private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
+		private bool _disposedValue;
 
-		InitializeAsync();
-
-		_httpClient = new HttpClient();
-
-		bool fireBrowserExists = DetectFireBrowserUserCore();
-		if (fireBrowserExists)
+		public MainWindow()
 		{
-			Migrate.Visibility = Visibility.Visible;
+			this.InitializeComponent();
+
+			InitializeAsync();
+
+			_httpClient = new HttpClient();
 		}
-		else
+
+		
+		private async void InitializeAsync()
 		{
-			Migrate.Visibility = Visibility.Collapsed;		
+			await UserManager.InitializeAsync();
+			await LoadUsersAsync();
 		}
-	}
 
-
-	public static bool DetectFireBrowserUserCore()
-	{
-		string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-		string fireBrowserPath = Path.Combine(documentsPath, "FireBrowserUserCore");
-
-		return Directory.Exists(fireBrowserPath);
-	}
-
-
-
-	private async void InitializeAsync()
-	{
-		await UserManager.InitializeAsync();
-		await LoadUsersAsync();
-	}
-
-	private async Task LoadUsersAsync()
-	{
-		try
+		private async Task LoadUsersAsync()
 		{
-			Users = new ObservableCollection<UserViewModel>();
-			string graphiteDataPath = UserManager.GraphiteDataPath;
-
-			// Create the directory if it doesn't exist
-			Directory.CreateDirectory(graphiteDataPath);
-
-			// Get all user directories
-			var userDirs = Directory.GetDirectories(graphiteDataPath);
-			foreach (var userDir in userDirs)
+			try
 			{
-				var username = Path.GetFileName(userDir);
-				if (!username.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+				Users = new ObservableCollection<UserViewModel>();
+				string graphiteDataPath = UserManager.GraphiteDataPath;
+
+				// Create the directory if it doesn't exist
+				Directory.CreateDirectory(graphiteDataPath);
+
+				// Get all user directories
+				var userDirs = Directory.GetDirectories(graphiteDataPath);
+				foreach (var userDir in userDirs)
 				{
-					var profileImagePath = Path.Combine(userDir, "profile_image.jpg");
-
-					var userViewModel = new UserViewModel
+					var username = Path.GetFileName(userDir);
+					if (!username.Equals("Guest", StringComparison.OrdinalIgnoreCase))
 					{
-						Username = username,
-						ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
-					};
+						var profileImagePath = Path.Combine(userDir, "profile_image.jpg");
 
-					Users.Add(userViewModel);
+						var userViewModel = new UserViewModel
+						{
+							Username = username,
+							ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
+						};
+
+						Users.Add(userViewModel);
+					}
 				}
+
+				UserListView.ItemsSource = Users;
+
+				// Show or hide the NoUsersGrid based on whether there are any users
+				NoUsersGrid.Visibility = Users.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+				UserListView.Visibility = Users.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 			}
-
-			UserListView.ItemsSource = Users;
-		}
-		catch (Exception ex)
-		{
-			await ShowErrorMessageAsync($"Failed to load users: {ex.Message}");
-		}
-	}
-
-	private async Task<BitmapImage> LoadProfileImageAsync(string imagePath)
-	{
-		try
-		{
-			var bitmap = new BitmapImage();
-			if (File.Exists(imagePath))
+			catch (Exception ex)
 			{
-				using (var stream = File.OpenRead(imagePath))
+				await ShowErrorMessageAsync($"Failed to load users: {ex.Message}");
+			}
+		}
+
+		private async Task<BitmapImage> LoadProfileImageAsync(string imagePath)
+		{
+			try
+			{
+				var bitmap = new BitmapImage();
+				if (File.Exists(imagePath))
 				{
-					using (var randomAccessStream = new InMemoryRandomAccessStream())
+					using (var stream = File.OpenRead(imagePath))
 					{
-						await RandomAccessStream.CopyAsync(stream.AsInputStream(), randomAccessStream);
-						randomAccessStream.Seek(0);
-						await bitmap.SetSourceAsync(randomAccessStream);
+						using (var randomAccessStream = new InMemoryRandomAccessStream())
+						{
+							await RandomAccessStream.CopyAsync(stream.AsInputStream(), randomAccessStream);
+							randomAccessStream.Seek(0);
+							await bitmap.SetSourceAsync(randomAccessStream);
+						}
+					}
+				}
+				return bitmap;
+			}
+			catch
+			{
+				return new BitmapImage();
+			}
+		}
+
+		private void UserListView_ItemClick(object sender, ItemClickEventArgs e)
+		{
+			if (e.ClickedItem is UserViewModel selectedUser)
+			{
+				AttemptLoginAsync(selectedUser.Username);
+			}
+		}
+
+		private async Task AttemptLoginAsync(string username)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(username))
+				{
+					await ShowErrorMessageAsync("Please enter a username.");
+					return;
+				}
+
+				var user = await UserManager.GetUserAsync(username);
+				if (user == null)
+				{
+					await ShowErrorMessageAsync("User not found.");
+					return;
+				}
+
+				if (user.HasPassword)
+				{
+					await ShowPasswordDialogAsync(user);
+				}
+				else
+				{
+					var authenticatedUser = await UserManager.AuthenticateAsync(username, null);
+					if (authenticatedUser != null)
+					{
+						// Open the Welcome window
+						HomeWindow welcomeWindow = new HomeWindow(authenticatedUser);
+						welcomeWindow.Activate();
+						this.Close(); // Close the login window
+					}
+					else
+					{
+						await ShowErrorMessageAsync("Login failed.");
 					}
 				}
 			}
-			return bitmap;
-		}
-		catch
-		{
-			return new BitmapImage();
-		}
-	}
-
-	private void UserListView_ItemClick(object sender, ItemClickEventArgs e)
-	{
-		if (e.ClickedItem is UserViewModel selectedUser)
-		{
-			AttemptLoginAsync(selectedUser.Username);
-		}
-	}
-
-	private async Task AttemptLoginAsync(string username)
-	{
-		try
-		{
-			if (string.IsNullOrWhiteSpace(username))
+			catch (Exception ex)
 			{
-				await ShowErrorMessageAsync("Please enter a username.");
-				return;
+				await ShowErrorMessageAsync($"Login failed: {ex.Message}");
 			}
+		}
 
-			var user = await UserManager.GetUserAsync(username);
-			if (user == null)
+		private async Task ShowPasswordDialogAsync(User user)
+		{
+			var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
+			var dialog = new ContentDialog
 			{
-				await ShowErrorMessageAsync("User not found.");
-				return;
-			}
+				Title = $"Enter password for {user.Username}",
+				PrimaryButtonText = "Login",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary,
+				Content = passwordBox,
+				XamlRoot = Content.XamlRoot
+			};
 
-			if (user.HasPassword)
+			var result = await dialog.ShowAsync();
+			if (result == ContentDialogResult.Primary)
 			{
-				await ShowPasswordDialogAsync(user);
-			}
-			else
-			{
-				var authenticatedUser = await UserManager.AuthenticateAsync(username, null);
+				var authenticatedUser = await UserManager.AuthenticateAsync(user.Username, passwordBox.Password);
 				if (authenticatedUser != null)
 				{
 					// Open the Welcome window
@@ -167,112 +189,75 @@ public sealed partial class MainWindow : Window
 				}
 				else
 				{
-					await ShowErrorMessageAsync("Login failed.");
+					await ShowErrorMessageAsync("Invalid password.");
 				}
 			}
 		}
-		catch (Exception ex)
-		{
-			await ShowErrorMessageAsync($"Login failed: {ex.Message}");
-		}
-	}
 
-	private async Task ShowPasswordDialogAsync(User user)
-	{
-		var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
-		var dialog = new ContentDialog
+		private async Task ShowErrorMessageAsync(string message)
 		{
-			Title = $"Enter password for {user.Username}",
-			PrimaryButtonText = "Login",
-			CloseButtonText = "Cancel",
-			DefaultButton = ContentDialogButton.Primary,
-			Content = passwordBox,
-			XamlRoot = Content.XamlRoot
-		};
-
-		var result = await dialog.ShowAsync();
-		if (result == ContentDialogResult.Primary)
-		{
-			var authenticatedUser = await UserManager.AuthenticateAsync(user.Username, passwordBox.Password);
-			if (authenticatedUser != null)
+			var dialog = new ContentDialog
 			{
-				// Open the Welcome window
-				HomeWindow welcomeWindow = new HomeWindow(authenticatedUser);
-				welcomeWindow.Activate();
-				this.Close(); // Close the login window
-			}
-			else
-			{
-				await ShowErrorMessageAsync("Invalid password.");
-			}
+				Title = "Error",
+				Content = message,
+				CloseButtonText = "OK",
+				XamlRoot = Content.XamlRoot
+			};
+			await dialog.ShowAsync();
 		}
-	}
 
-	private async Task ShowErrorMessageAsync(string message)
-	{
-		var dialog = new ContentDialog
+		private void CreateNewUser_Click(object sender, RoutedEventArgs e)
 		{
-			Title = "Error",
-			Content = message,
-			CloseButtonText = "OK",
-			XamlRoot = Content.XamlRoot
-		};
-		await dialog.ShowAsync();
-	}
-
-	private void CreateNewUser_Click(object sender, RoutedEventArgs e)
-	{
-		Graphite.Setup.OOBE.SetupWelcome setupWelcome = new Setup.OOBE.SetupWelcome();
-		setupWelcome.Activate();
-		this.Close();
-	}
-
-	private async void Delete_Click(object sender, RoutedEventArgs e)
-	{
-		if (sender is Button deleteButton && deleteButton.DataContext is User user)
-		{
-			await UserManager.DeleteUserAsync(user.Username);
-		}
-	}
-	private async void OpenGuestUser_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			var guestUser = await UserManager.LoginAsGuestAsync();
-			// Navigate to the main application window or page for the guest user
-			HomeWindow welcome = new HomeWindow(guestUser);
-			welcome.Activate();
+			Graphite.Setup.OOBE.SetupWelcome setupWelcome = new Setup.OOBE.SetupWelcome();
+			setupWelcome.Activate();
 			this.Close();
 		}
-		catch (Exception ex)
-		{
-			await ShowErrorMessageAsync($"Failed to login as Guest: {ex.Message}");
-		}
-	}
 
-
-	private async Task UpdateWeatherAsync()
-	{
-		try
+		private async void Delete_Click(object sender, RoutedEventArgs e)
 		{
-			// Get location
-			var location = await GetLocationAsync();
-			Loading.Visibility = Visibility.Visible;
-			// Call weather API
-			using (var response = await _httpClient.GetAsync(
-				$"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={location.Latitude},{location.Longitude}"))
+			if (sender is Button deleteButton && deleteButton.DataContext is User user)
 			{
-				response.EnsureSuccessStatusCode();
-				var json = await response.Content.ReadAsStringAsync();
-				using (var weatherData = JsonDocument.Parse(json))
-				{
-					var current = weatherData.RootElement.GetProperty("current");
-					var temp = current.GetProperty("temp_c").GetDouble();
-					var conditionCode = current.GetProperty("condition").GetProperty("code").GetInt32();
-					var conditionText = current.GetProperty("condition").GetProperty("text").GetString();
+				await UserManager.DeleteUserAsync(user.Username);
+			}
+		}
 
-					// Update UI elements
-				   
+		private async void OpenGuestUser_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				var guestUser = await UserManager.LoginAsGuestAsync();
+				// Navigate to the main application window or page for the guest user
+				HomeWindow welcome = new HomeWindow(guestUser);
+				welcome.Activate();
+				this.Close();
+			}
+			catch (Exception ex)
+			{
+				await ShowErrorMessageAsync($"Failed to login as Guest: {ex.Message}");
+			}
+		}
+
+		private async Task UpdateWeatherAsync()
+		{
+			try
+			{
+				// Get location
+				var location = await GetLocationAsync();
+				Loading.Visibility = Visibility.Visible;
+				// Call weather API
+				using (var response = await _httpClient.GetAsync(
+					$"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={location.Latitude},{location.Longitude}"))
+				{
+					response.EnsureSuccessStatusCode();
+					var json = await response.Content.ReadAsStringAsync();
+					using (var weatherData = JsonDocument.Parse(json))
+					{
+						var current = weatherData.RootElement.GetProperty("current");
+						var temp = current.GetProperty("temp_c").GetDouble();
+						var conditionCode = current.GetProperty("condition").GetProperty("code").GetInt32();
+						var conditionText = current.GetProperty("condition").GetProperty("text").GetString();
+
+						// Update UI elements
 						WeatherIcon.Glyph = GetWeatherIconGlyph(conditionCode);
 						WeatherSummaryText.Text = $"{Math.Round(temp)}°C";
 
@@ -283,15 +268,13 @@ public sealed partial class MainWindow : Window
 						WeatherHumidityText.Text = $"Humidity: {current.GetProperty("humidity").GetInt32()}%";
 						WeatherWindText.Text = $"Wind: {current.GetProperty("wind_kph").GetDouble()} km/h";
 
-
-					Loading.Visibility = Visibility.Collapsed;
+						Loading.Visibility = Visibility.Collapsed;
+					}
 				}
 			}
-		}
-		catch (Exception ex)
-		{
-			// Handle error gracefully
-			
+			catch (Exception ex)
+			{
+				// Handle error gracefully
 				WeatherIcon.Glyph = "\uE9C8"; // Question mark icon
 				WeatherSummaryText.Text = "Weather Unavailable";
 
@@ -301,69 +284,77 @@ public sealed partial class MainWindow : Window
 				WeatherTemperatureText.Text = "--°C";
 				WeatherHumidityText.Text = "Humidity: --";
 				WeatherWindText.Text = "Wind: --";
-			
 
-			// Log the error
-			System.Diagnostics.Debug.WriteLine($"Weather update failed: {ex.Message}");
+				// Log the error
+				System.Diagnostics.Debug.WriteLine($"Weather update failed: {ex.Message}");
+			}
+		}
+
+		private string GetWeatherIconGlyph(int conditionCode)
+		{
+			// This is a simplified mapping. You might want to expand this based on the API's condition codes.
+			return conditionCode switch
+			{
+				1000 => "\uE706", // Sunny
+				1003 => "\uE753", // Partly cloudy
+				1006 => "\uE9C0", // Cloudy
+				1183 => "\uE9C4", // Light rain
+				_ => "\uE9C8"     // Default/Unknown
+			};
+		}
+
+		private async Task<BasicGeoposition> GetLocationAsync()
+		{
+			var accessStatus = await Geolocator.RequestAccessAsync();
+			if (accessStatus == GeolocationAccessStatus.Allowed)
+			{
+				var geolocator = new Geolocator { DesiredAccuracyInMeters = 1000 };
+				var position = await geolocator.GetGeopositionAsync();
+				return position.Coordinate.Point.Position;
+			}
+			else
+			{
+				// Default to a fixed location if permission is not granted
+				return new BasicGeoposition { Latitude = 51.5074, Longitude = -0.1278 }; // London
+			}
+		}
+
+		private void RestoreBackup_Click(object sender, RoutedEventArgs e)
+		{
+			// Implement restore backup functionality
+		}
+
+		private void Migrate_Click(object sender, RoutedEventArgs e)
+		{
+			MigrationProgress s = new MigrationProgress();
+			s.Activate();
+		}
+
+		private async void WeatherButton_Click(object sender, RoutedEventArgs e)
+		{
+			await UpdateWeatherAsync();
+		}
+
+		private void StartMigration_Click(object sender, RoutedEventArgs e)
+		{
+			MigrationWindow ws = new MigrationWindow();
+			ws.Activate();
+			this.Close();
+		}
+
+		private void MigrateSys_Click(object sender, RoutedEventArgs e)
+		{
+			MigrationWindow ws = new MigrationWindow();
+			ws.Activate();
+			this.Close();
 		}
 	}
 
-	private string GetWeatherIconGlyph(int conditionCode)
+	public class UserViewModel
 	{
-		// This is a simplified mapping. You might want to expand this based on the API's condition codes.
-		return conditionCode switch
-		{
-			1000 => "\uE706", // Sunny
-			1003 => "\uE753", // Partly cloudy
-			1006 => "\uE9C0", // Cloudy
-			1183 => "\uE9C4", // Light rain
-			_ => "\uE9C8"     // Default/Unknown
-		};
+		public string Username { get; set; }
+		public string Email { get; set; }
+		public BitmapImage ProfileImageSource { get; set; }
 	}
-
-	private async Task<BasicGeoposition> GetLocationAsync()
-	{
-		var accessStatus = await Geolocator.RequestAccessAsync();
-		if (accessStatus == GeolocationAccessStatus.Allowed)
-		{
-			var geolocator = new Geolocator { DesiredAccuracyInMeters = 1000 };
-			var position = await geolocator.GetGeopositionAsync();
-			return position.Coordinate.Point.Position;
-		}
-		else
-		{
-			// Default to a fixed location if permission is not granted
-			return new BasicGeoposition { Latitude = 51.5074, Longitude = -0.1278 }; // London
-		}
-	}
-
-	private void RestoreBackup_Click(object sender, RoutedEventArgs e)
-	{
-
-	}
-
-	private void Migrate_Click(object sender, RoutedEventArgs e)
-	{
-		MigrationProgress s = new MigrationProgress();
-		s.Activate();
-	}
-
-	private async void WeatherButton_Click(object sender, RoutedEventArgs e)
-	{
-		await UpdateWeatherAsync();
-	}
-
-	private void Import_Click(object sender, RoutedEventArgs e)
-	{
-		BrowserImportScreen browserImportScreen = new BrowserImportScreen();
-		browserImportScreen.Activate();
-    }
-}
-
-public class UserViewModel
-{
-	public string Username { get; set; }
-	public string Email { get; set; }
-	public BitmapImage ProfileImageSource { get; set; }
 }
 

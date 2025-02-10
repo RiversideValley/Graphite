@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphite.QrCode", "Graphite
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphite.WindowCore", "Graphite.WindowCore\Graphite.WindowCore.csproj", "{DA71E817-7DFC-4867-A403-7BDBDB45BE38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphite.Migration", "Graphite.Migration\Graphite.Migration.csproj", "{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -103,6 +105,18 @@ Global
 		{DA71E817-7DFC-4867-A403-7BDBDB45BE38}.Release|x64.Build.0 = Release|x64
 		{DA71E817-7DFC-4867-A403-7BDBDB45BE38}.Release|x86.ActiveCfg = Release|Any CPU
 		{DA71E817-7DFC-4867-A403-7BDBDB45BE38}.Release|x86.Build.0 = Release|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Debug|x64.ActiveCfg = Debug|x64
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Debug|x64.Build.0 = Debug|x64
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Debug|x86.Build.0 = Debug|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Release|ARM64.Build.0 = Release|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Release|x64.ActiveCfg = Release|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Release|x64.Build.0 = Release|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Release|x86.ActiveCfg = Release|Any CPU
+		{4C8CDD72-EF06-430E-A60B-26C4F3AAE900}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

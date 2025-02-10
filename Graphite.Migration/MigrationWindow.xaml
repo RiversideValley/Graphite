@@ -1,0 +1,221 @@
+<Window
+    x:Class="Graphite.Migration.MigrationWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Graphite Migration Tool">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Grid x:Name="AppTitleBar" Height="32" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="/Assets/AppLogo.png" Width="24" Height="24" Margin="8,0,0,0"/>
+            <TextBlock x:Name="AppTitleTextBlock" Text="Graphite Migration Tool" 
+                       Style="{StaticResource CaptionTextBlockStyle}" 
+                       VerticalAlignment="Center" 
+                       Grid.Column="1" Margin="8,0,0,0"/>
+        </Grid>
+
+        <!-- Main content -->
+        <ScrollViewer Grid.Row="1" Padding="24">
+            <StackPanel MaxWidth="600" Margin="0,20" HorizontalAlignment="Center">
+                <!-- Header -->
+                <StackPanel HorizontalAlignment="Center" Spacing="8" Margin="0,0,0,32">
+                    <Image Source="/Assets/AppLogo.png" Width="64" Height="64"/>
+                    <TextBlock Text="Graphite Migration" 
+                             Style="{StaticResource TitleTextBlockStyle}"
+                             HorizontalAlignment="Center"/>
+                    <TextBlock Text="Choose how you want to migrate your data" 
+                             Style="{StaticResource BodyTextBlockStyle}"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             TextAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Main Options Card -->
+                <Grid x:Name="MainOptionsPanel" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="24">
+                    <StackPanel Spacing="16">
+                        <!-- Transfer Option -->
+                        <Button x:Name="TransferButton" 
+                                Click="TransferButton_Click"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Height="80"
+                                HorizontalAlignment="Stretch">
+                            <Grid Width="250">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE8C8;"
+                                         FontFamily="Segoe Fluent Icons"
+                                         FontSize="24"
+                                         Margin="0,0,16,0"/>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="Transfer to New PC"
+                                             Style="{StaticResource SubtitleTextBlockStyle}"/>
+                                    <TextBlock Text="Move your data to another Graphite PC"
+                                             Style="{StaticResource CaptionTextBlockStyle}"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <!-- Import Option -->
+                        <Button x:Name="ImportButton" 
+                                Click="ImportButton_Click"
+                                Height="80"
+                                HorizontalAlignment="Stretch">
+                            <Grid Width="250">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE8B5;"
+                                         FontFamily="Segoe Fluent Icons"
+                                         FontSize="24"
+                                         Margin="0,0,16,0"/>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="Import Browser Data"
+                                             Style="{StaticResource SubtitleTextBlockStyle}"/>
+                                    <TextBlock Text="Import data from other browsers"
+                                             Style="{StaticResource CaptionTextBlockStyle}"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <!-- New Option: Import From Old FireBrowserWinUi3 App -->
+                        <Button x:Name="ImportFromFireBrowserButton" 
+                                Click="ImportFromFireBrowserButton_Click"
+                                Height="80"
+                                HorizontalAlignment="Stretch">
+                            <Grid Width="250">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE8B5;"
+                                         FontFamily="Segoe Fluent Icons"
+                                         FontSize="24"
+                                         Margin="0,0,16,0"/>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="Import From Old App"
+                                             Style="{StaticResource SubtitleTextBlockStyle}"/>
+                                    <TextBlock Text="Migrate data from the previous version"
+                                             Style="{StaticResource CaptionTextBlockStyle}"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Transfer Options Panel (Initially Hidden) -->
+                <Grid x:Name="TransferOptionsPanel" 
+                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="24"
+                      Margin="0,16,0,0"
+                      Visibility="Collapsed">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Choose Transfer Mode"
+                                 Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                        <!-- Sender Option -->
+                        <Button x:Name="SenderButton" 
+                                Click="SenderButton_Click"
+                                Height="80"
+                                HorizontalAlignment="Stretch">
+                            <Grid Width="250">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE724;"
+                                         FontFamily="Segoe Fluent Icons"
+                                         FontSize="24"
+                                         Margin="0,0,16,0"/>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="Send Data"
+                                             Style="{StaticResource SubtitleTextBlockStyle}"/>
+                                    <TextBlock Text="Send data from this PC"
+                                             Style="{StaticResource CaptionTextBlockStyle}"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <!-- Receiver Option -->
+                        <Button x:Name="ReceiverButton" 
+                                Click="ReceiverButton_Click"
+                                Height="80"
+                                HorizontalAlignment="Stretch">
+                            <Grid Width="250">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xEA63;"
+                                         FontFamily="Segoe Fluent Icons"
+                                         FontSize="24"
+                                         Margin="0,0,16,0"/>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="Receive Data"
+                                             Style="{StaticResource SubtitleTextBlockStyle}"/>
+                                    <TextBlock Text="Receive data on this PC"
+                                             Style="{StaticResource CaptionTextBlockStyle}"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Security Notice -->
+                <Grid Background="{ThemeResource LayerFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="16"
+                      Margin="0,16,0,0"
+                      VerticalAlignment="Bottom"
+                      HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <FontIcon Glyph="&#xE72E;"
+                             FontFamily="Segoe Fluent Icons"
+                             Margin="0,0,12,0"/>
+
+                    <TextBlock Grid.Column="1"
+                             Text="All data transfers are encrypted and secure. Only transfer data between trusted devices."
+                             Style="{StaticResource CaptionTextBlockStyle}"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             TextWrapping="Wrap"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
+
