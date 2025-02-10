@@ -35,7 +35,6 @@ namespace Graphite.Migration
 				AppTitleBar.Visibility = Visibility.Collapsed;
 			}
 
-			ReceiverButton.IsEnabled = false;
 		}
 
 		private AppWindow GetAppWindowForCurrentWindow()
@@ -63,7 +62,6 @@ namespace Graphite.Migration
 			var receiverWindow = new ReceiverWindow();
 			receiverWindow.Activate();
 			this.Close();
-			SenderButton.IsEnabled = true;
 
 		}
 
@@ -71,7 +69,6 @@ namespace Graphite.Migration
 		{
 			var senderWindow = new SenderWindow();
 			senderWindow.Activate();
-			ReceiverButton.IsEnabled = true;
 		}
 
 		private void ImportFromFireBrowserButton_Click(object sender, RoutedEventArgs e)
