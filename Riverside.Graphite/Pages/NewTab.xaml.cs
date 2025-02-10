@@ -51,7 +51,7 @@ public sealed partial class NewTab : Page
 		ViewModel = App.GetService<HomeViewModel>();
 
 		// init to load controls from settings, and start clock . 
-		_ = ViewModel.Intialize().GetAwaiter();
+		_ = ViewModel.Initialize().GetAwaiter();
 		// assign to ViewModel, and or new instance.  
 		ViewModel.SettingsService.Initialize();
 		userSettings = ViewModel.SettingsService.CoreSettings;
@@ -63,8 +63,11 @@ public sealed partial class NewTab : Page
 			ViewModel.CancellationTokenClock = cancel.Token;
 
 		};
-
+	
 		InitializeComponent();
+
+		ViewModel.RightPaneService.Initialize(RightFrame, SplitViewer);
+
 	}
 
 
@@ -227,7 +230,7 @@ public sealed partial class NewTab : Page
 	private async void NewTab_Loaded(object sender, RoutedEventArgs e)
 	{
 		// round-robin if one or more newTab's are open apply settings. 
-		await ViewModel.Intialize();
+		await ViewModel.Initialize();
 		userSettings = ViewModel.SettingsService.CoreSettings;
 
 		//NO need to load because property is attached to viewModel, and also if you select the tab it will call the load event may we can refresh the page... 
@@ -371,7 +374,7 @@ public sealed partial class NewTab : Page
 		try
 		{
 			ViewModel.NtpTimeEnabled = userSettings.NtpDateTime;
-			_ = ViewModel.Intialize();
+			_ = ViewModel.Initialize();
 		}
 		catch (Exception ex)
 		{

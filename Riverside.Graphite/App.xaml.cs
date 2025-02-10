@@ -5,6 +5,7 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.UpdateService;
 using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.ViewModels;
@@ -17,6 +18,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using WebDive.Services;
 using Path = System.IO.Path;
 
 namespace Riverside.Graphite;
@@ -52,15 +54,19 @@ public partial class App : Application
 		_ = services.AddSingleton<MsalAuthService>();
 		_ = services.AddSingleton<GraphService>();
 		_ = services.AddSingleton<BackgroundManager>();
+		_ = services.AddSingleton<IRightPaneService, RightPaneService>();
+		_ = services.AddSingleton<IPageService, PageService>();
+		_ = services.AddSingleton<INavigationService, NavigationService>();
+		_ = services.AddTransient<SettingsService>();
 		_ = services.AddTransient<AdBlockerWrapper>();
 		_ = services.AddTransient<DownloadsViewModel>();
 		_ = services.AddTransient<HomeViewModel>();
-		_ = services.AddTransient<SettingsService>();
 		_ = services.AddTransient<MainWindowViewModel>();
 		_ = services.AddTransient<UploadBackupViewModel>();
 		_ = services.AddTransient<CollectionsPageViewModel>();
 		_ = services.AddTransient<GraphiteUpdateClient>();
 		_ = services.AddTransient<UpdateManager>();
+		
 		//_ = services.AddSignalR(options =>
 		//{
 		//	options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(120000);

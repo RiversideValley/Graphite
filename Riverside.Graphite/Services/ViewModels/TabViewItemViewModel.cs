@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System.Runtime.CompilerServices;
 
 namespace Riverside.Graphite.ViewModels;
-public partial class TabViewItemViewModel : ObservableObject
+public partial class TabViewItemViewModel : ObservableRecipient
 {
 	[ObservableProperty] public bool _IsTooltipEnabled;
 	[ObservableProperty] public BitmapImage _webPreview;

@@ -31,12 +31,12 @@
                             <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{Binding FileName}" />
                             <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{Binding Status}" />
                         </StackPanel>
-                        <Button
+                        <!--<Button
                             Grid.Column="2"
                             Click="Button_Click"
                             Style="{ThemeResource TextBlockButtonStyle}">
                             <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE74D;" />
-                        </Button>
+                        </Button>-->
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

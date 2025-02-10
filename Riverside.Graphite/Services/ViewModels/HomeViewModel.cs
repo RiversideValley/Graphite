@@ -16,8 +16,10 @@ using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Models;
+using Riverside.Graphite.Services.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -83,6 +85,27 @@ public partial class HomeViewModel : ObservableRecipient
 	[ObservableProperty]
 	private SearchProviders _SearchProvider;
 	public SettingsService SettingsService { get; set; }
+
+	public INavigationService NavigationService { get; }
+
+	public IRightPaneService RightPaneService { get; }
+
+	[ObservableProperty]
+	private SplitViewDisplayMode _splitViewDisplayMode;
+
+	[ObservableProperty]
+	private string _fullScreenLabel; 
+
+	[ObservableProperty]
+	private bool _isShellPaneOpen;
+
+	[ObservableProperty]
+	private double _splitViewWidth;
+
+	[ObservableProperty]
+	private string _splitViewLabel;
+
+	
 	private DispatcherTimer timer { get; set; }
 
 	public CancellationToken CancellationTokenTimer { get; set; }
@@ -217,9 +240,12 @@ public partial class HomeViewModel : ObservableRecipient
 		}
 	}
 
-	public HomeViewModel(IMessenger messenger)
+	public HomeViewModel(INavigationService navigationService, IRightPaneService rightPaneService, IMessenger messenger)
 		: base(messenger)
 	{
+		_splitViewLabel = "Dock View";
+		FullScreenLabel = "Full Screen";
+
 		FavoriteItems = new ObservableCollection<FavItem>();
 		FavoriteItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FavoriteItems));
 
@@ -229,9 +255,50 @@ public partial class HomeViewModel : ObservableRecipient
 		// LOAD settings service 
 		SettingsService = App.GetService<SettingsService>();
 		SettingsService.Initialize();
+
+		RightPaneService = rightPaneService;
+		NavigationService = navigationService; 
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
+
+	[RelayCommand]
+	private void ClosePane() => IsShellPaneOpen = !IsShellPaneOpen;
+
+	[RelayCommand]
+	private void StickyPane()
+	{
+
+		string namechanged = SplitViewLabel;
+		switch (SplitViewDisplayMode)
+		{
+			case SplitViewDisplayMode.Overlay:
+				SplitViewDisplayMode = SplitViewDisplayMode.Inline;
+				break;
+			case SplitViewDisplayMode.Inline:
+				SplitViewDisplayMode = SplitViewDisplayMode.Overlay;
+				break;
+			case SplitViewDisplayMode.CompactOverlay:
+				break;
+			case SplitViewDisplayMode.CompactInline:
+				break;
+			default:
+				SplitViewDisplayMode = SplitViewDisplayMode.Overlay;
+				break;
+		}
+		if (SplitViewLabel.ToString() == "Dock View")
+		{
+			namechanged = "Float View";
+		}
+		else if (SplitViewLabel == "Float View")
+		{
+			namechanged = "Dock View";
+		}
+		SplitViewLabel = namechanged;
+		OnPropertyChanged(nameof(SplitViewDisplayMode));
+		OnPropertyChanged(nameof(SplitViewLabel));
+	}
+
 	[RelayCommand]
 	private void GetCollections(Button sender)
 	{
@@ -290,8 +357,10 @@ public partial class HomeViewModel : ObservableRecipient
 							break;
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";
-							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-							(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Downloads";
+							RightPaneService.OpenInRightPane(typeof(DownloadsViewModel).FullName);
+							
+							//_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
+							//(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Downloads";
 							break;
 						case "History":
 							window.UrlBox.Text = "firebrowser://history";
@@ -308,7 +377,7 @@ public partial class HomeViewModel : ObservableRecipient
 			}));
 		}
 	}
-	public Task Intialize()
+	public Task Initialize()
 	{
 		UpdateUIControls();
 		if (NtpTimeEnabled)
