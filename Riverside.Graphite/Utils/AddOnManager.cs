@@ -31,7 +31,7 @@ namespace Riverside.Graphite.Utils
 		{
 			if (!_isInitialized)
 			{
-				throw new InvalidOperationException("AddonManager is not initialized. Call Initialize first.");
+				throw new InvalidOperationException("AddonManager is not initialized. Call LoadFavorites first.");
 			}
 		}
 

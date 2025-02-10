@@ -11,26 +11,30 @@
             AlwaysExpanded="True"
             Placement="BottomEdgeAlignedLeft">
             <AppBarButton
-                Click="FavContextItem_Click"
+                Command="{x:Bind ViewModel.FavoriteItemContextClickCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                 Tag="OpenLnkInNewWindow"
                 ToolTipService.ToolTip="Open link in new window">
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE17C;" />
             </AppBarButton>
             <AppBarButton
-                Click="FavContextItem_Click"
+                Command="{x:Bind ViewModel.FavoriteItemContextClickCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                 Tag="Copy"
                 ToolTipService.ToolTip="Copy link">
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE16F;" />
             </AppBarButton>
             <AppBarButton
-                Click="FavContextItem_Click"
+                Command="{x:Bind ViewModel.FavoriteItemContextClickCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                 Tag="DeleteSingleRecord"
                 ToolTipService.ToolTip="Delete Record">
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE74D;" />
             </AppBarButton>
             <CommandBarFlyout.SecondaryCommands>
                 <AppBarButton
-                    Click="FavContextItem_Click"
+                    Command="{x:Bind ViewModel.FavoriteItemContextClickCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
                     Label="Copy Text"
                     Tag="CopyText">
                     <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE16F;" />
@@ -39,38 +43,51 @@
         </CommandBarFlyout>
     </Page.Resources>
 
-    <Grid ColumnDefinitions="340,*">
-        <StackPanel BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,1,0">
-            <TextBlock Margin="24,24,0,16" Style="{ThemeResource TitleTextBlockStyle}">Favorites</TextBlock>
-            <TextBox
-                Width="250"
-                Margin="24,0,0,0"
-                KeyDown="TextBox_KeyDown"
-                PlaceholderText="Search Favorites" />
-        </StackPanel>
-
-        <Grid
-            Grid.Column="1"
-            Margin="24,24,24,0"
-            RowDefinitions="Auto,*">
+    <Grid Padding="4" Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel
+                    HorizontalAlignment="Left"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,1,0"
+                    Orientation="Vertical">
+                    <TextBlock Margin="24,24,0,16" Style="{ThemeResource TitleTextBlockStyle}">Favorites</TextBlock>
+                    <TextBox
+                        Width="250"
+                        Margin="24,0,0,0"
+                        PlaceholderText="Search Favorites"
+                        Text="{x:Bind ViewModel.SearchFilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
             <Button
                 HorizontalAlignment="Right"
-                Click="Button_Click"
+                Command="{x:Bind ViewModel.DeleteAllFavoritesCommand}"
                 Style="{ThemeResource TextBlockButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE107;" />
                     <TextBlock>Delete all favorites</TextBlock>
                 </StackPanel>
             </Button>
+        </Grid>
 
+        <Grid Grid.Row="1" HorizontalAlignment="Center">
             <ListView
                 x:Name="FavoritesListView"
-                Grid.Row="1"
-                RightTapped="FavoritesListView_RightTapped"
-                SelectionChanged="FavoritesListView_SelectionChanged">
+                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                Padding="4"
+                ItemsSource="{x:Bind ViewModel.Favorites, Mode=OneWay}"
+                RightTapped="{x:Bind ViewModel.RightTappedFavoriteItem}"
+                SelectedItem="{x:Bind ViewModel.SelectedFavoriteItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="firebrowserfavorites:FavItem">
-                        <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="12">
+                        <Grid
+                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                            ColumnDefinitions="Auto,Auto,*"
+                            ColumnSpacing="12">
                             <Image
                                 Height="24"
                                 Source="{Binding IconUrlPath, Mode=OneWay}"

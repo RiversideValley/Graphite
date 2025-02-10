@@ -17,7 +17,6 @@ public class DownloadsViewModel : ObservableRecipient, IDownloadsViewModel, INav
 	public DownloadsViewModel()
 	{
 		DataCore = App.GetService<DownloadService>();
-		
 	}
 
 	private async void DataCore_Handler_DownItemsChange(object sender, Riverside.Graphite.Services.Events.DownloadItemStatusEventArgs e)

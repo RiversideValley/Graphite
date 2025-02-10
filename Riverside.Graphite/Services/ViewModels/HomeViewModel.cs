@@ -358,9 +358,6 @@ public partial class HomeViewModel : ObservableRecipient
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";
 							RightPaneService.OpenInRightPane(typeof(DownloadsViewModel).FullName);
-							
-							//_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-							//(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Downloads";
 							break;
 						case "History":
 							window.UrlBox.Text = "firebrowser://history";
@@ -369,8 +366,7 @@ public partial class HomeViewModel : ObservableRecipient
 							break;
 						case "Favorites":
 							window.UrlBox.Text = "firebrowser://favorites";
-							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-							(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Favorites";
+							RightPaneService.OpenInRightPane(typeof(FavoritesViewModel).FullName);
 							break;
 					}
 				}
