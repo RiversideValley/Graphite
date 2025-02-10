@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Graphite.Controls;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -304,8 +305,7 @@ public partial class HomeViewModel : ObservableRecipient
 	{
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
-			_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Controls.CollectionsPage));
-			(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Collections";
+			RightPaneService.OpenInRightPane(typeof(CollectionsPageViewModel).FullName); 
 		}
 	}
 	[RelayCommand]

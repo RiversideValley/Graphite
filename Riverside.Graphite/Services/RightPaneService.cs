@@ -27,6 +27,14 @@ using Riverside.Graphite.Services.Contracts;
 			_frame.Navigated += OnNavigated;
 		}
 
+		/*
+		 *  1. PageService Registers the ViewModels, and Pages. -> static ListofAllPages. 
+		 *  2. Viewmodels must inherit INavigationAware. -> tracks side frame navigation, and allows for event handlers to be either (init/disposed)
+		 *  3. RightPane never opens a type that is already in the frame -> content of pageType. 
+		 *  4. Could add nav buttons to pan if needed. 
+		 *  5. Cross Reference previos ViewModels to kill processes or event handlers with 'vmBeforeNavigatioin';
+		 *  2025-02-10 jd. 
+		 */
 		public void OpenInRightPane(string pageKey, object parameter = null)
 		{
 			// Don't open the same page multiple times

@@ -30,10 +30,11 @@ using static Riverside.Graphite.MainWindow;
 using Riverside.Graphite.Services;
 using System.Threading;
 using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services.Contracts;
 
 namespace Riverside.Graphite.ViewModels
 {
-    public partial class CollectionsPageViewModel : ObservableRecipient
+    public partial class CollectionsPageViewModel : ObservableRecipient, INavigationAware
     {
 		#region dp_injection_services
 			private readonly HistoryActions _historyActions;
@@ -213,6 +214,15 @@ namespace Riverside.Graphite.ViewModels
 			OnPropertyChanged(propertyName);
 		}
 
+		public void OnNavigatedTo(object parameter)
+		{
+			;
+		}
+
+		public void OnNavigatedFrom()
+		{
+			;
+		}
 	}
 
     

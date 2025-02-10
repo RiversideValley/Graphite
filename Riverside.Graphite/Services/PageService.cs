@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Controls;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Pages.TimeLinePages;
 using Riverside.Graphite.Services.Contracts;
@@ -19,7 +20,8 @@ namespace Riverside.Graphite.Services
 		{
 			Configure<HomeViewModel, NewTab>();
 			Configure<DownloadsViewModel, DownloadsTimeLine>(); 
-			Configure<FavoritesViewModel, FavoritesTimeLine>();	
+			Configure<FavoritesViewModel, FavoritesTimeLine>();
+			Configure<CollectionsPageViewModel, CollectionsPage>(); 
 		}
 
 		Dictionary<string, Type> IPageService.Pages => Pages;
