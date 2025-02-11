@@ -119,7 +119,11 @@ namespace Graphite.Migration
 
 		private async void ConnectButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (ReceiverListView.SelectedItem is ReceiverInfo selectedReceiver)
+			if (isConnected)
+			{
+				await DisconnectAsync();
+			}
+			else if (ReceiverListView.SelectedItem is ReceiverInfo selectedReceiver)
 			{
 				await ConnectToReceiverAsync(selectedReceiver);
 			}
@@ -161,7 +165,7 @@ namespace Graphite.Migration
 			try
 			{
 				await protocol.SendMessageAsync(verificationCode);
-				UpdateStatus("Verification code sent. Waiting for receiver to verify and start transfer...", StatusType.Info);
+				UpdateStatus("Verification code sent. Waiting for receiver to verify...", StatusType.Info);
 
 				string response = await protocol.ReceiveMessageAsync();
 
@@ -206,6 +210,7 @@ namespace Graphite.Migration
 			{
 				ProgressBar.Visibility = Visibility.Collapsed;
 				ProgressTextBlock.Visibility = Visibility.Collapsed;
+				await DisconnectAsync();
 			}
 		}
 
@@ -235,7 +240,7 @@ namespace Graphite.Migration
 			isConnected = false;
 			UpdateConnectButtonState();
 
-			UpdateStatus("Disconnected. Firewall rules remain in place for future use.", StatusType.Info);
+			UpdateStatus("Disconnected. Ready for new connection.", StatusType.Info);
 		}
 
 		private string GenerateVerificationCode()
@@ -424,6 +429,9 @@ namespace Graphite.Migration
 				UpdateStatus($"Found {_discoveredReceivers.Count} receiver(s)", StatusType.Info);
 			});
 		}
+
+		
+		
 	}
 
 	public class ReceiverInfo

@@ -200,12 +200,13 @@ namespace Graphite.Migration
 			protocol = new GraphiteTransferProtocol(connectedSocket);
 
 			await UpdateStatusAsync("Connected to sender. Waiting for verification code...", StatusType.Success);
-			
+			LoadingProgressRing.IsActive = false;
+			LoadingProgressRing.Visibility = Visibility.Collapsed;
 
 			try
 			{
 				string receivedCode = await protocol.ReceiveMessageAsync();
-			   DispatcherQueue.TryEnqueue(() =>
+				 DispatcherQueue.TryEnqueue(() =>
 				{
 					VerificationCodeTextBox.Text = receivedCode;
 					VerifyButton.IsEnabled = true;
@@ -264,6 +265,7 @@ namespace Graphite.Migration
 			{
 				ProgressBar.Visibility = Visibility.Collapsed;
 				ProgressTextBlock.Visibility = Visibility.Collapsed;
+				await DisconnectAsync();
 			}
 		}
 
@@ -274,6 +276,30 @@ namespace Graphite.Migration
 				ProgressBar.Value = percentage;
 				ProgressTextBlock.Text = $"{percentage:F1}%";
 			});
+		}
+
+		private async Task DisconnectAsync()
+		{
+			if (protocol != null)
+			{
+				protocol.Dispose();
+				protocol = null;
+			}
+
+			if (connectedSocket != null)
+			{
+				connectedSocket.Dispose();
+				connectedSocket = null;
+			}
+
+			 DispatcherQueue.TryEnqueue(() =>
+			{
+				VerifyButton.IsEnabled = false;
+				VerificationCodeTextBox.Text = string.Empty;
+			});
+
+			UpdateStatus("Disconnected. Waiting for new connection.", StatusType.Info);
+			StartListening();
 		}
 
 		private async Task UpdateStatusAsync(string message, StatusType type)
@@ -311,7 +337,6 @@ namespace Graphite.Migration
 			}
 		}
 
-		
 	}
 
 
