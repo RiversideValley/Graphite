@@ -1,11 +1,12 @@
-using Microsoft.UI;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
+using WinRT.Interop;
+using Windows.Graphics;
 using System;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
-using WinRT.Interop;
 
 namespace Graphite.Migration
 {
@@ -20,10 +21,10 @@ namespace Graphite.Migration
 		public ReceiverWindow()
 		{
 			this.InitializeComponent();
+			InitializeWindow();
 			StartListening();
 			dataTransfer = new GraphiteDataTransfer();
 			dataTransfer.ProgressChanged += DataTransfer_ProgressChanged;
-			InitializeWindow();
 		}
 
 		private void InitializeWindow()
@@ -72,26 +73,28 @@ namespace Graphite.Migration
 			if (AppTitleBar != null)
 			{
 				Windows.Graphics.RectInt32[] dragRects = new Windows.Graphics.RectInt32[] {
-			new Windows.Graphics.RectInt32(
-				0,
-				0,
-				(int)(AppTitleBar.ActualWidth),
-				(int)(AppTitleBar.ActualHeight)
-			)
-		};
+					new Windows.Graphics.RectInt32(
+						0,
+						0,
+						(int)(AppTitleBar.ActualWidth),
+						(int)(AppTitleBar.ActualHeight)
+					)
+				};
 				appWindow.TitleBar.SetDragRectangles(dragRects);
 			}
 		}
-
 
 		private async void StartListening()
 		{
 			LoadingProgressRing.IsActive = true;
 			LoadingProgressRing.Visibility = Visibility.Visible;
-			StatusTextBlock.Text = "Waiting for sender...";
+			StatusTextBlock.Text = "Creating firewall rules...";
 
 			try
 			{
+				await FirewallManager.CreateFirewallRulesAsync();
+				StatusTextBlock.Text = "Firewall rules created. Waiting for sender...";
+
 				listener = new StreamSocketListener();
 				listener.ConnectionReceived += Listener_ConnectionReceived;
 
@@ -112,26 +115,6 @@ namespace Graphite.Migration
 					LoadingProgressRing.Visibility = Visibility.Collapsed;
 				});
 			}
-		}
-
-
-		private async Task<int> FindAvailablePortAsync()
-		{
-			for (int port = 8080; port <= 8888; port++)
-			{
-				try
-				{
-					var tempListener = new StreamSocketListener();
-					await tempListener.BindServiceNameAsync(port.ToString());
-					tempListener.Dispose();
-					return port;
-				}
-				catch
-				{
-					// Port is not available, continue to the next one
-				}
-			}
-			throw new Exception("No available ports found between 8080 and 8888.");
 		}
 
 		private async void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
@@ -231,6 +214,8 @@ namespace Graphite.Migration
 				ProgressTextBlock.Text = $"{percentage:F1}%";
 			});
 		}
+
+			
 	}
 }
 

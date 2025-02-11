@@ -37,16 +37,12 @@ namespace Graphite.Migration
 
 			// Set the window size to 350x1000
 			Windows.Graphics.PointInt32 position = m_AppWindow.Position;
-			m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 700, 1100));
+			m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 350, 1000));
 
 			if (AppWindowTitleBar.IsCustomizationSupported())
 			{
 				var titleBar = m_AppWindow.TitleBar;
 				titleBar.ExtendsContentIntoTitleBar = true;
-				titleBar.ButtonBackgroundColor = Colors.Transparent;
-				titleBar.ButtonForegroundColor = Colors.Transparent;
-				titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-				titleBar.ButtonInactiveForegroundColor = Colors.Transparent;
 				AppTitleBar.Loaded += AppTitleBar_Loaded;
 				AppTitleBar.SizeChanged += AppTitleBar_SizeChanged;
 			}
@@ -93,7 +89,7 @@ namespace Graphite.Migration
 			}
 		}
 
-	
+		
 
 		private void CreateCodeButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -129,11 +125,22 @@ namespace Graphite.Migration
 
 		private async Task ConnectToReceiverAsync()
 		{
-			UpdateStatus("Connecting to receiver...", StatusType.Progress);
+			UpdateStatus("Ensuring firewall rules...", StatusType.Progress);
 			DisableControls();
 
 			try
 			{
+				bool rulesExist = await FirewallManager.EnsureFirewallRulesExistAsync();
+				if (!rulesExist)
+				{
+					UpdateStatus("Failed to create firewall rules. Connection may not work properly.", StatusType.Warning);
+					await ShowErrorDialogAsync("Firewall Rules", "Failed to create firewall rules. The connection may not work properly. Do you want to continue anyway?");
+				}
+				else
+				{
+					UpdateStatus("Firewall rules ensured. Connecting to receiver...", StatusType.Progress);
+				}
+
 				socket = new StreamSocket();
 
 				var icp = NetworkInformation.GetInternetConnectionProfile();
@@ -147,7 +154,6 @@ namespace Graphite.Migration
 					throw new Exception("Unable to find a suitable local IP address.");
 				}
 
-				// Use port 8080 directly instead of scanning
 				await socket.ConnectAsync(localHostName, "8080");
 				protocol = new GraphiteTransferProtocol(socket);
 
@@ -156,6 +162,10 @@ namespace Graphite.Migration
 				UpdateConnectButtonState();
 
 				await HandleVerificationAndTransfer();
+			}
+			catch (OperationCanceledException)
+			{
+				UpdateStatus("User canceled the UAC prompt. Firewall rules were not created.", StatusType.Warning);
 			}
 			catch (Exception ex)
 			{
@@ -166,26 +176,6 @@ namespace Graphite.Migration
 			{
 				EnableControls();
 			}
-		}
-
-
-		private async Task<int> FindAvailablePortAsync()
-		{
-			for (int port = 8080; port <= 8888; port++)
-			{
-				try
-				{
-					var listener = new StreamSocketListener();
-					await listener.BindServiceNameAsync(port.ToString());
-					listener.Dispose();
-					return port;
-				}
-				catch
-				{
-					// Port is not available, continue to the next one
-				}
-			}
-			throw new Exception("No available ports found between 8080 and 8888.");
 		}
 
 		private async Task HandleVerificationAndTransfer()
@@ -248,7 +238,6 @@ namespace Graphite.Migration
 			});
 		}
 
-
 		private async Task DisconnectAsync()
 		{
 			if (protocol != null)
@@ -265,6 +254,8 @@ namespace Graphite.Migration
 
 			isConnected = false;
 			UpdateConnectButtonState();
+
+			UpdateStatus("Disconnected. Firewall rules remain in place for future use.", StatusType.Info);
 		}
 
 		private string GenerateVerificationCode()
@@ -338,6 +329,25 @@ namespace Graphite.Migration
 				CreateCodeButton.IsEnabled = !isConnected;
 				ConnectButton.IsEnabled = true;
 			});
+		}
+
+		private async Task ShowErrorDialogAsync(string title, string message)
+		{
+			ContentDialog dialog = new ContentDialog
+			{
+				Title = title,
+				Content = message,
+				PrimaryButtonText = "Continue",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary,
+				XamlRoot = Content.XamlRoot
+			};
+
+			var result = await dialog.ShowAsync();
+			if (result != ContentDialogResult.Primary)
+			{
+				throw new OperationCanceledException("User chose not to continue after firewall rule creation failure.");
+			}
 		}
 	}
 
