@@ -200,8 +200,7 @@ namespace Graphite.Migration
 			protocol = new GraphiteTransferProtocol(connectedSocket);
 
 			await UpdateStatusAsync("Connected to sender. Waiting for verification code...", StatusType.Success);
-			LoadingProgressRing.IsActive = false;
-			LoadingProgressRing.Visibility = Visibility.Collapsed;
+
 
 			try
 			{
