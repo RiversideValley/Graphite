@@ -53,8 +53,7 @@ namespace Graphite.Migration
 
 		private void ImportButton_Click(object sender, RoutedEventArgs e)
 		{
-			var importWindow = new ImportWindow();
-			importWindow.Activate();
+			
 		}
 
 		private void ReceiverButton_Click(object sender, RoutedEventArgs e)

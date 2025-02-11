@@ -3,14 +3,19 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Windowing;
 using WinRT.Interop;
-using Windows.UI;
+using Microsoft.UI;
 using System;
 using System.Threading.Tasks;
 using Windows.Networking;
 using Windows.Networking.Connectivity;
 using Windows.Networking.Sockets;
 using System.Linq;
-using Microsoft.UI;
+using System.Net;
+using System.Threading;
+using Microsoft.UI.Xaml.Input;
+using System.Collections.ObjectModel;
+using System.Net.Sockets;
+using System.Text;
 
 namespace Graphite.Migration
 {
@@ -22,6 +27,11 @@ namespace Graphite.Migration
 		private GraphiteTransferProtocol protocol;
 		private GraphiteDataTransfer dataTransfer;
 		private bool isConnected = false;
+		private CancellationTokenSource _discoveryCts;
+		private ObservableCollection<ReceiverInfo> _discoveredReceivers;
+		private const int DiscoveryPort = 8080;
+		private const string BroadcastMessage = "GRAPHITE_DISCOVERY";
+		private const string ResponsePrefix = "GRAPHITE_RECEIVER";
 
 		public SenderWindow()
 		{
@@ -29,13 +39,16 @@ namespace Graphite.Migration
 			InitializeWindow();
 			dataTransfer = new GraphiteDataTransfer();
 			dataTransfer.ProgressChanged += DataTransfer_ProgressChanged;
+			_discoveredReceivers = new ObservableCollection<ReceiverInfo>();
+			ReceiverListView.ItemsSource = _discoveredReceivers;
+			StartAutomaticDiscovery();
 		}
 
 		private void InitializeWindow()
 		{
 			m_AppWindow = GetAppWindowForCurrentWindow();
 
-			// Set the window size to 350x1000
+			// Set the window size
 			Windows.Graphics.PointInt32 position = m_AppWindow.Position;
 			m_AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(position.X, position.Y, 350, 1000));
 
@@ -81,22 +94,20 @@ namespace Graphite.Migration
 					new Windows.Graphics.RectInt32(
 						0,
 						0,
-						(int)(AppTitleBar.ActualWidth ),
-						(int)(AppTitleBar.ActualHeight )
+						(int)(AppTitleBar.ActualWidth),
+						(int)(AppTitleBar.ActualHeight)
 					)
 				};
 				appWindow.TitleBar.SetDragRectangles(dragRects);
 			}
 		}
 
-		
-
 		private void CreateCodeButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
 				verificationCode = GenerateVerificationCode();
-				VerificationCodeTextBox.Text = verificationCode;
+				VerificationCodeTextBlock.Text = verificationCode;
 				ConnectButton.IsEnabled = true;
 				UpdateStatus("Verification code created. Click 'Connect to Receiver' to start.", StatusType.Success);
 			}
@@ -108,101 +119,67 @@ namespace Graphite.Migration
 
 		private async void ConnectButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (string.IsNullOrEmpty(verificationCode))
+			if (ReceiverListView.SelectedItem is ReceiverInfo selectedReceiver)
 			{
-				UpdateStatus("Please create a verification code first.", StatusType.Warning);
-				return;
+				await ConnectToReceiverAsync(selectedReceiver);
 			}
-
-			if (isConnected)
+			else
 			{
-				await DisconnectAsync();
-				return;
+				UpdateStatus("Please select a receiver.", StatusType.Warning);
 			}
-
-			await ConnectToReceiverAsync();
 		}
 
-		private async Task ConnectToReceiverAsync()
+		private async Task ConnectToReceiverAsync(ReceiverInfo receiver)
 		{
-			UpdateStatus("Ensuring firewall rules...", StatusType.Progress);
-			DisableControls();
-
 			try
 			{
-				bool rulesExist = await FirewallManager.EnsureFirewallRulesExistAsync();
-				if (!rulesExist)
-				{
-					UpdateStatus("Failed to create firewall rules. Connection may not work properly.", StatusType.Warning);
-					await ShowErrorDialogAsync("Firewall Rules", "Failed to create firewall rules. The connection may not work properly. Do you want to continue anyway?");
-				}
-				else
-				{
-					UpdateStatus("Firewall rules ensured. Connecting to receiver...", StatusType.Progress);
-				}
+				UpdateStatus($"Connecting to {receiver.DeviceName} ({receiver.IP})...", StatusType.Progress);
 
 				socket = new StreamSocket();
-
-				var icp = NetworkInformation.GetInternetConnectionProfile();
-				var hostNames = NetworkInformation.GetHostNames();
-				var localHostName = hostNames.FirstOrDefault(hn =>
-					hn.IPInformation?.NetworkAdapter != null &&
-					hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
-
-				if (localHostName == null)
-				{
-					throw new Exception("Unable to find a suitable local IP address.");
-				}
-
-				await socket.ConnectAsync(localHostName, "8080");
+				await socket.ConnectAsync(new HostName(receiver.IP), DiscoveryPort.ToString());
 				protocol = new GraphiteTransferProtocol(socket);
 
-				UpdateStatus("Connected to receiver. Waiting for verification...", StatusType.Progress);
+				UpdateStatus("Connected to receiver. Sending verification code...", StatusType.Progress);
 				isConnected = true;
 				UpdateConnectButtonState();
 
+				// Stop discovery process
+				_discoveryCts?.Cancel();
+
 				await HandleVerificationAndTransfer();
-			}
-			catch (OperationCanceledException)
-			{
-				UpdateStatus("User canceled the UAC prompt. Firewall rules were not created.", StatusType.Warning);
 			}
 			catch (Exception ex)
 			{
 				UpdateStatus($"Connection error: {ex.Message}", StatusType.Error);
 				await DisconnectAsync();
 			}
-			finally
-			{
-				EnableControls();
-			}
 		}
+
 
 		private async Task HandleVerificationAndTransfer()
 		{
 			try
 			{
-				string receivedCode = await protocol.ReceiveMessageAsync();
+				await protocol.SendMessageAsync(verificationCode);
+				UpdateStatus("Verification code sent. Waiting for receiver to verify and start transfer...", StatusType.Info);
 
-				if (receivedCode == verificationCode)
+				string response = await protocol.ReceiveMessageAsync();
+
+				if (response == "VERIFY_AND_TRANSFER")
 				{
-					await protocol.SendMessageAsync("Verification successful");
-					StatusTextBlock.Text = "Verification successful. Collecting data...";
-
-					await dataTransfer.CollectDataAsync();
-					StatusTextBlock.Text = "Data collected. Sending data...";
-
+					UpdateStatus("Receiver verified. Starting data transfer...", StatusType.Success);
 					await TransferData();
 				}
 				else
 				{
-					await protocol.SendMessageAsync("Verification failed");
-					StatusTextBlock.Text = "Verification failed. Please try again.";
+					UpdateStatus("Verification failed or cancelled by receiver. Please try again.", StatusType.Error);
+					await DisconnectAsync();
 				}
 			}
 			catch (Exception ex)
 			{
-				StatusTextBlock.Text = $"Error during verification: {ex.Message}";
+				UpdateStatus($"Error during verification: {ex.Message}", StatusType.Error);
+				await DisconnectAsync();
 			}
 		}
 
@@ -210,6 +187,9 @@ namespace Graphite.Migration
 		{
 			try
 			{
+				StatusTextBlock.Text = "Collecting Graphite data...";
+				await dataTransfer.CollectDataAsync();
+
 				StatusTextBlock.Text = "Sending Graphite data...";
 				ProgressBar.Visibility = Visibility.Visible;
 				ProgressTextBlock.Visibility = Visibility.Visible;
@@ -269,37 +249,39 @@ namespace Graphite.Migration
 			}
 		}
 
+		private async Task UpdateStatusAsync(string message, StatusType type)
+		{
+			 DispatcherQueue.TryEnqueue(() => UpdateStatus(message, type));
+		}
+
 		private void UpdateStatus(string message, StatusType type)
 		{
-			DispatcherQueue.TryEnqueue(() =>
-			{
-				StatusTextBlock.Text = message;
+			StatusTextBlock.Text = message;
 
-				switch (type)
-				{
-					case StatusType.Success:
-						StatusIcon.Glyph = "\uE73E"; // Checkmark
-						StatusIcon.Foreground = new SolidColorBrush(Colors.Green);
-						break;
-					case StatusType.Error:
-						StatusIcon.Glyph = "\uE783"; // Error
-						StatusIcon.Foreground = new SolidColorBrush(Colors.Red);
-						break;
-					case StatusType.Warning:
-						StatusIcon.Glyph = "\uE7BA"; // Warning
-						StatusIcon.Foreground = new SolidColorBrush(Colors.Orange);
-						break;
-					case StatusType.Progress:
-						StatusIcon.Glyph = "\uE895"; // Sync
-						StatusIcon.Foreground = new SolidColorBrush(Colors.Blue);
-						break;
-					case StatusType.Info:
-					default:
-						StatusIcon.Glyph = "\uE946"; // Info
-						StatusIcon.Foreground = new SolidColorBrush(Colors.Gray);
-						break;
-				}
-			});
+			switch (type)
+			{
+				case StatusType.Success:
+					StatusIcon.Glyph = "\uE73E"; // Checkmark
+					StatusIcon.Foreground = new SolidColorBrush(Colors.Green);
+					break;
+				case StatusType.Error:
+					StatusIcon.Glyph = "\uE783"; // Error
+					StatusIcon.Foreground = new SolidColorBrush(Colors.Red);
+					break;
+				case StatusType.Warning:
+					StatusIcon.Glyph = "\uE7BA"; // Warning
+					StatusIcon.Foreground = new SolidColorBrush(Colors.Orange);
+					break;
+				case StatusType.Progress:
+					StatusIcon.Glyph = "\uE895"; // Sync
+					StatusIcon.Foreground = new SolidColorBrush(Colors.Blue);
+					break;
+				case StatusType.Info:
+				default:
+					StatusIcon.Glyph = "\uE946"; // Info
+					StatusIcon.Foreground = new SolidColorBrush(Colors.Gray);
+					break;
+			}
 		}
 
 		private void UpdateConnectButtonState()
@@ -349,6 +331,122 @@ namespace Graphite.Migration
 				throw new OperationCanceledException("User chose not to continue after firewall rule creation failure.");
 			}
 		}
+
+		private void StartDiscoveryButton_Click(object sender, RoutedEventArgs e)
+		{
+			StartAutomaticDiscovery();
+		}
+
+
+		private void StartAutomaticDiscovery()
+		{
+			if (!isConnected)
+			{
+				_discoveryCts?.Cancel();
+				_discoveryCts = new CancellationTokenSource();
+				_discoveredReceivers.Clear();
+				UpdateStatus("Starting automatic discovery...", StatusType.Progress);
+				_ = DiscoverReceiversAsync(_discoveryCts.Token);
+			}
+			else
+			{
+				UpdateStatus("Already connected to a receiver.", StatusType.Info);
+			}
+		}
+
+		private async Task DiscoverReceiversAsync(CancellationToken cancellationToken)
+		{
+			using (var udpClient = new UdpClient())
+			{
+				udpClient.EnableBroadcast = true;
+				var broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, DiscoveryPort);
+				var message = Encoding.UTF8.GetBytes(BroadcastMessage);
+
+				while (!cancellationToken.IsCancellationRequested)
+				{
+					try
+					{
+						await udpClient.SendAsync(message, message.Length, broadcastEndpoint);
+
+						while (udpClient.Available > 0)
+						{
+							var result = await udpClient.ReceiveAsync(cancellationToken);
+							var response = Encoding.UTF8.GetString(result.Buffer);
+
+							if (response.StartsWith(ResponsePrefix))
+							{
+								var parts = response.Split(',');
+								if (parts.Length == 3)
+								{
+									var ip = parts[1];
+									var deviceName = parts[2];
+									await AddOrUpdateReceiverAsync(ip, deviceName);
+								}
+							}
+						}
+					}
+					catch (OperationCanceledException)
+					{
+						// Normal cancellation, break the loop
+						break;
+					}
+					catch (Exception ex)
+					{
+						await UpdateStatusAsync($"Discovery error: {ex.Message}", StatusType.Error);
+					}
+
+					await Task.Delay(5000, cancellationToken); // Wait 5 seconds before next broadcast
+				}
+			}
+		}
+
+		private async Task AddOrUpdateReceiverAsync(string ip, string deviceName)
+		{
+			 DispatcherQueue.TryEnqueue(() =>
+			{
+				var existingReceiver = _discoveredReceivers.FirstOrDefault(r => r.IP == ip);
+				if (existingReceiver != null)
+				{
+					existingReceiver.LastSeen = DateTime.Now;
+				}
+				else
+				{
+					_discoveredReceivers.Add(new ReceiverInfo { IP = ip, DeviceName = deviceName, LastSeen = DateTime.Now });
+				}
+
+				// Remove receivers that haven't been seen in the last 30 seconds
+				var outdatedReceivers = _discoveredReceivers.Where(r => (DateTime.Now - r.LastSeen).TotalSeconds > 30).ToList();
+				foreach (var receiver in outdatedReceivers)
+				{
+					_discoveredReceivers.Remove(receiver);
+				}
+
+				UpdateStatus($"Found {_discoveredReceivers.Count} receiver(s)", StatusType.Info);
+			});
+		}
+
+		private void EnableDataTransferControls()
+		{
+			DispatcherQueue.TryEnqueue(() =>
+			{
+				StartTransferButton.IsEnabled = true;
+			});
+		}
+
+		private async void StartTransferButton_Click(object sender, RoutedEventArgs e)
+		{
+			UpdateStatus("Collecting data...", StatusType.Progress);
+			await dataTransfer.CollectDataAsync();
+			UpdateStatus("Data collected. Starting transfer...", StatusType.Progress);
+			await TransferData();
+		}
+	}
+
+	public class ReceiverInfo
+	{
+		public string IP { get; set; }
+		public string DeviceName { get; set; }
+		public DateTime LastSeen { get; set; }
 	}
 
 	public enum StatusType

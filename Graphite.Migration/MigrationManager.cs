@@ -28,12 +28,7 @@ namespace Graphite.Migration
             return await UserManager.GetAllUsersAsync();
         }
 
-        public async Task<bool> ImportFromBrowser(string username, string browserName)
-        {
-            var importer = new BrowserImport(_graphiteDataPath);
-            return await importer.ImportFromBrowserAsync(browserName, username);
-        }
-
+      
         public async Task<bool> SendMigrationData(string username, string password, string destinationIp)
         {
             if (!AuthenticateUser(username, password))
