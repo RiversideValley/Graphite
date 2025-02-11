@@ -424,22 +424,6 @@ namespace Graphite.Migration
 				UpdateStatus($"Found {_discoveredReceivers.Count} receiver(s)", StatusType.Info);
 			});
 		}
-
-		private void EnableDataTransferControls()
-		{
-			DispatcherQueue.TryEnqueue(() =>
-			{
-				StartTransferButton.IsEnabled = true;
-			});
-		}
-
-		private async void StartTransferButton_Click(object sender, RoutedEventArgs e)
-		{
-			UpdateStatus("Collecting data...", StatusType.Progress);
-			await dataTransfer.CollectDataAsync();
-			UpdateStatus("Data collected. Starting transfer...", StatusType.Progress);
-			await TransferData();
-		}
 	}
 
 	public class ReceiverInfo
