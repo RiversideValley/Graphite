@@ -18,9 +18,8 @@ using static Riverside.Graphite.MainWindow;
 namespace Riverside.Graphite.Pages.TimeLinePages;
 public sealed partial class HistoryTimeLine : Page
 {
-	private readonly User _user = AuthService.CurrentUser;
 	
-	public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> _browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
+	//public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> _browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
 
 	public HistoryViewModel ViewModel { get; set; }
 	public HistoryTimeLine()

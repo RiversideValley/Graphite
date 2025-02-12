@@ -118,10 +118,12 @@ namespace Riverside.Graphite.Services.ViewModels
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
 			MenuFlyout flyout = new();
-			flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+			flyout.Placement = FlyoutPlacementMode.LeftEdgeAlignedBottom;
 
-			var subMenu = new MenuFlyoutSubItem
+			var subMenu = new  MenuFlyoutSubItem
 			{
+				Margin = new Thickness(2),
+				Padding = new Thickness(1),
 				Text = "Collections",
 				Icon = new FontIcon { Glyph = "\xe71d" }, 
 			};

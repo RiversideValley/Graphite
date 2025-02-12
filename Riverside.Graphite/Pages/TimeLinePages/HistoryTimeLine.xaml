@@ -7,11 +7,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <CommandBarFlyout
-            x:Name="FlyDeleteItem"
-            x:FieldModifier="Public"
-            AlwaysExpanded="True"
-            Placement="BottomEdgeAlignedLeft">
+        <CommandBarFlyout x:Name="FlyDeleteItem" x:FieldModifier="Public">
             <AppBarButton
                 Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                 Command="{x:Bind ViewModel.DeleteItemCommand}"

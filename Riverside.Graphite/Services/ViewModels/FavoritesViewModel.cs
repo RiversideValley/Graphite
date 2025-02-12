@@ -1,15 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI.Behaviors;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json.Linq;
 using NuGet.Protocol.Plugins;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Favorites;
+using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,6 +24,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Media.Core;
 using Windows.System;
 
@@ -76,6 +83,97 @@ namespace Riverside.Graphite.Services.ViewModels
 				});	
 				
 			}
+		}
+
+		[RelayCommand]
+		private async Task CollectionShow(AppBarButton sender)
+		{
+
+
+			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
+
+			MenuFlyout flyout = new();
+
+			flyout.Placement = FlyoutPlacementMode.LeftEdgeAlignedTop;
+
+			var subMenu = new MenuFlyoutSubItem
+			{
+				Margin = new Thickness(2),
+				Padding = new Thickness(1),
+				Text = "Collections",
+				Icon = new FontIcon { Glyph = "\xe71d" },
+			};
+
+			var list = await historyActions.GetAllCollectionNamesItems();
+			foreach (var item in list)
+			{
+				var menuItem = new MenuFlyoutItem()
+				{
+					Text = item.Name,
+					Icon = new FontIcon { Glyph = $"{item.Name.Substring(0, 1)}", FontSize = 24, FontFamily = new FontFamily("Segoe UI"), FontStyle = Windows.UI.Text.FontStyle.Italic },
+					Background = RandomColors.GetRandomSolidColorBrush(),
+					Opacity = .9
+
+				};
+				menuItem.Click += async (s, args) =>
+				{
+					var items = await historyActions.GetAllHistoryItems();
+
+					var historyItem = items.FirstOrDefault(i => i.Url == InternalFavoriteItem.Url);
+
+					var answer = default(bool);
+
+					if (historyItem != null)
+					{
+						answer = await historyActions.InsertCollectionsItem(historyItem, item);
+					}
+
+					if (answer)
+					{
+						Notification note = new()
+						{
+							Title = $"Added To Collection",
+							Message = item.Name,
+							Severity = InfoBarSeverity.Informational,
+							Duration = TimeSpan.FromSeconds(1.5)
+						};
+
+						if (App.Current.m_window is MainWindow win)
+						{
+
+							_ = win.NotificationQueue.Show(note);
+							win.ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
+
+						}
+
+					}
+					else
+					{
+						Notification note = new()
+						{
+							Title = $"Already In Collection",
+							Message = item.Name,
+							Severity = InfoBarSeverity.Informational,
+							Duration = TimeSpan.FromSeconds(1.5)
+						};
+						if (App.Current.m_window is MainWindow win)
+						{
+							_ = win.NotificationQueue.Show(note);
+						}
+
+					};
+					flyout.Hide();
+				};
+				subMenu.Items.Add(menuItem);
+			}
+
+			GeneralTransform transform =  sender.TransformToVisual(sender);
+
+			Point point = transform.TransformPoint(new Point(0, 0));
+
+			flyout.Items.Add(subMenu);
+			flyout.ShowAt((FrameworkElement)sender, point);
+
 		}
 
 		[RelayCommand]

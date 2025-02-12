@@ -31,6 +31,15 @@
                 ToolTipService.ToolTip="Delete Record">
                 <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE74D;" />
             </AppBarButton>
+            <AppBarButton
+                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                Command="{x:Bind ViewModel.CollectionShowCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
+                <FontIcon
+                    FontFamily="{StaticResource FluentIcons}"
+                    FontSize="16"
+                    Glyph="&#xe71d;" />
+            </AppBarButton>
             <CommandBarFlyout.SecondaryCommands>
                 <AppBarButton
                     Command="{x:Bind ViewModel.FavoriteItemContextClickCommand}"

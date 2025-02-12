@@ -103,8 +103,8 @@ namespace Riverside.Graphite.ViewModels
 			{
 				if (AppService.FireWindows.Any(t=> t.Title == "Collections")){
 					var wHand = Windowing.FindWindow(null, "Collections");
-					if (wHand != IntPtr.Zero) { 
-						Windowing.ShowWindow(wHand, Windowing.WindowShowStyle.SW_SHOWNORMAL);
+					if (wHand != IntPtr.Zero) {
+						Windowing.SetWindowPos(wHand, IntPtr.Zero, 0, 0, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER | Windowing.AW_ACTIVATE);
 						return Task.CompletedTask; 
 					}
 				}
@@ -148,16 +148,22 @@ namespace Riverside.Graphite.ViewModels
 
 				var win = new Window();
 				var frame = new Frame();
-				frame.Margin = new Thickness(0, 32, 0, 0);
 				var web = new WebView2() { Source = SelectedUrl };
+
+
+				frame.Margin = new Thickness(0, 32, 0, 0);
 				frame.Content = web;
+
 				win.Content = frame;
+				win.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+				win.AppWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.png");
 				await web.EnsureCoreWebView2Async();
+			
 				web.CoreWebView2.NewWindowRequested += (sender, args) =>
 				{
 					sender.Navigate(args.Uri);
 				};
-
+				AppService.FireWindows.Add(win);
 				await AppService.ConfigureSettingsWindow(win);
 
 			}
