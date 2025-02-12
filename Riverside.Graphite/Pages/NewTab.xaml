@@ -17,6 +17,8 @@
     xmlns:local="using:Riverside.Graphite.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:provider="using:Riverside.Graphite.Services.Models"
+    xmlns:PROMOTION="using:Riverside.Graphite.Controls"
+
     Loaded="NewTab_Loaded"
     mc:Ignorable="d">
 
@@ -862,6 +864,11 @@
                     </VisualStateManager.VisualStateGroups>
                 </Grid>
 
+                <PROMOTION:PromotionBar
+    Content="CodeBeaver: A Amazing AI for software testing - Now With 50% Discount With Our Special Code FIREBROWSER50"
+    ButtonText="Go to Promotion"
+    PromotionUrl="https://www.codebeaver.ai/pricing?promo=FIREBROWSER50"/>
+                
                 <InfoBar
                     Margin="{ThemeResource MediumTopMargin}"
                     HorizontalAlignment="Right"

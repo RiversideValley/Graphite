@@ -164,6 +164,7 @@
     <None Remove="Controls\MsalAuth.xaml" />
     <None Remove="Controls\PopUpView.xaml" />
     <None Remove="Controls\ProfileCommander.xaml" />
+    <None Remove="Controls\PromotionBar.xaml" />
     <None Remove="Controls\ResetCore.xaml" />
     <None Remove="Controls\RestoreBackUp.xaml" />
     <None Remove="Pages\Patch\BackUpDialog.xaml" />
@@ -355,6 +356,9 @@
     <None Update="Assets\Navigation\DomainMap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Controls\PromotionBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UpdateChecker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
