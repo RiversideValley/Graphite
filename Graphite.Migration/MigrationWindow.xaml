@@ -82,7 +82,8 @@
                         <Button x:Name="ImportButton" 
                                 Click="ImportButton_Click"
                                 Height="80"
-                                HorizontalAlignment="Stretch">
+                                HorizontalAlignment="Stretch"
+                                IsEnabled="False">
                             <Grid Width="250">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
