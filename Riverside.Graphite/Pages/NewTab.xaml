@@ -865,6 +865,8 @@
                 </Grid>
 
                 <PROMOTION:PromotionBar
+                    VerticalAlignment="Bottom"
+                    Height="100"
     Content="CodeBeaver: A Amazing AI for software testing - Now With 50% Discount With Our Special Code FIREBROWSER50"
     ButtonText="Go to Promotion"
     PromotionUrl="https://www.codebeaver.ai/pricing?promo=FIREBROWSER50"/>
