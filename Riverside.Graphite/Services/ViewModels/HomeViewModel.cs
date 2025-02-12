@@ -13,6 +13,7 @@ using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Pages.Models;
+using Riverside.Graphite.Pages.TimeLinePages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
@@ -326,6 +327,24 @@ public partial class HomeViewModel : ObservableRecipient
 		}
 
 	}
+
+	[RelayCommand]
+	private void OpenCollections()
+	{
+		RightPaneService.OpenInRightPane(typeof(CollectionsPageViewModel).FullName);
+	}
+
+	[RelayCommand]
+	private void OpenHistory()
+	{
+		RightPaneService.OpenInRightPane(typeof(HistoryViewModel).FullName);
+	}
+	[RelayCommand]
+	private void OpenFavorites()
+	{
+		RightPaneService.OpenInRightPane(typeof(FavoritesViewModel).FullName);
+	}
+
 	[RelayCommand]
 	private void Logins(Button btn)
 	{
@@ -360,8 +379,7 @@ public partial class HomeViewModel : ObservableRecipient
 							break;
 						case "History":
 							window.UrlBox.Text = "firebrowser://history";
-							_ = window.TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-							(window.Tabs.SelectedItem as FireBrowserTabViewItem).Header = "History";
+							RightPaneService.OpenInRightPane(typeof(HistoryViewModel).FullName);
 							break;
 						case "Favorites":
 							window.UrlBox.Text = "firebrowser://favorites";

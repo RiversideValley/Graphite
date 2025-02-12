@@ -61,7 +61,8 @@ public partial class App : Application
 		_ = services.AddTransient<AdBlockerWrapper>();
 		_ = services.AddTransient<DownloadsViewModel>();
 		_ = services.AddTransient<HomeViewModel>();
-		_ = services.AddTransient<FavoritesViewModel>(); 
+		_ = services.AddTransient<FavoritesViewModel>();
+		_ = services.AddTransient<HistoryViewModel>();
 		_ = services.AddTransient<MainWindowViewModel>();
 		_ = services.AddTransient<UploadBackupViewModel>();
 		_ = services.AddTransient<CollectionsPageViewModel>();

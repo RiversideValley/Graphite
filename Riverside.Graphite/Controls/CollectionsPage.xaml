@@ -26,7 +26,6 @@
 
 
     </Page.Resources>
-
     <Grid
         Padding="2"
         Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondary}"
@@ -35,7 +34,6 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -277,8 +275,14 @@
             </GridView>
 
             <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <ListView
                     x:Name="ListCollectionHistoryItems"
+                    Grid.Row="0"
+                    Margin="{ThemeResource MediumBottomMargin}"
                     HorizontalAlignment="Left"
                     ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
                     SelectionChanged="ListView_SelectionChanged"
@@ -331,150 +335,34 @@
                     </ListView.ItemTemplate>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid MaximumRowsOrColumns="5" />
+                            <ItemsWrapGrid MaximumRowsOrColumns="4" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </ListView>
-
+                <Grid
+                    x:Name="WebGrid"
+                    Grid.Row="1"
+                    Width="NaN"
+                    Height="NaN"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    ui:UIElementExtensions.ClipToBounds="True"
+                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
+                    BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
+                    BorderThickness=".5"
+                    CornerRadius="6"
+                    Visibility="{x:Bind ViewModel.WebViewVisible, Mode=OneWay}">
+                    <WebView2
+                        x:Name="WebViewHistoryItem"
+                        Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                        CoreWebView2Initialized="WebViewHistoryItem_CoreWebView2Initialized"
+                        NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
+                        NavigationStarting="WebViewHistoryItem_NavigationStarting"
+                        Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
             </Grid>
-
-
-
-
-            <!--<TeachingTip
-                    x:Name="ViewSelectedUrl"
-                    Title="History Item"
-                    Grid.Column="2"
-                    IsLightDismissEnabled="True"
-                    IsOpen="{x:Bind ViewModel.IsHistoryViewing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    PlacementMargin="15"
-                    PreferredPlacement="Center"
-                    Subtitle="Graphite Collections..."
-                    Target="{Binding ElementName=PresentView}">
-                    <TeachingTip.Transitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
-                        </TransitionCollection>
-                    </TeachingTip.Transitions>
-                    <TeachingTip.HeroContent>
-
-                        <Grid
-                            Width="600"
-                            Height="800"
-                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                            Padding="2"
-                            HorizontalAlignment="Center"
-                            BorderBrush="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
-                            BorderThickness="1.5"
-                            CornerRadius="3">
-                            <ScrollViewer
-                                HorizontalScrollBarVisibility="Hidden"
-                                VerticalScrollBarVisibility="Visible"
-                                VerticalScrollMode="Auto">
-                                <WebView2
-                                    x:Name="WebViewHistoryItem"
-                                    NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
-                                    Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <WebView2.Transitions>
-                                        <TransitionCollection>
-                                            <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
-                                        </TransitionCollection>
-                                    </WebView2.Transitions>
-
-                                </WebView2>
-                            </ScrollViewer>
-                        </Grid>
-
-                    </TeachingTip.HeroContent>
-                    <TeachingTip.Content>
-                        <TextBlock
-                            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                            FontFamily="Arial"
-                            Foreground="{ThemeResource AccentAAFillColorSecondaryBrush}"
-                            Text="{x:Bind ViewModel.SelectedUrl.Host, Mode=OneWay}"
-                            TextWrapping="WrapWholeWords" />
-                    </TeachingTip.Content>
-                </TeachingTip>-->
-
         </Grid>
-        <Grid
-            x:Name="WebGrid"
-            Grid.Row="2"
-            Width="NaN"
-            Height="NaN"
-            Margin="{ThemeResource SmallLeftRightMargin}"
-            ui:UIElementExtensions.ClipToBounds="True"
-            Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
-            BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
-            BorderThickness=".5"
-            CornerRadius="6"
-            Visibility="{x:Bind ViewModel.WebViewVisible, Mode=OneWay}">
-            <WebView2
-                x:Name="WebViewHistoryItem"
-                Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                CoreWebView2Initialized="WebViewHistoryItem_CoreWebView2Initialized"
-                NavigationCompleted="WebViewHistoryItem_NavigationCompleted"
-                NavigationStarting="WebViewHistoryItem_NavigationStarting"
-                Source="{x:Bind ViewModel.SelectedUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </Grid>
+
     </Grid>
-    <!--<GridView ItemsSource="{x:Bind ViewModel.GroupedItems.View, Mode=OneWay}">
-        <GridView.GroupStyle>
-            <GroupStyle>
-                <GroupStyle.HeaderTemplate>
-                    <DataTemplate x:DataType="collect:CollectionGroup">
-                        <StackPanel>
-                            <ToggleButton
-                                Width="340"
-                                HorizontalAlignment="Center"
-                                Click="GroupHeader_Click"
-                                Content="{Binding Key}"
-                                IsChecked="False" />
-                        </StackPanel>
-                    </DataTemplate>
-                </GroupStyle.HeaderTemplate>
-                <GroupStyle.Panel>
-                    <ItemsPanelTemplate>
-                        <VariableSizedWrapGrid Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </GroupStyle.Panel>
-            </GroupStyle>
-        </GridView.GroupStyle>
-        <GridView.ItemTemplate>
-            <DataTemplate x:DataType="collect:Collection">
-                <ItemsRepeater x:Name="GroupItemsPanel" ItemsSource="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="collect:HistoryItem">
-                            <Grid
-                                Margin="5"
-                                Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
-                                ColumnDefinitions="Auto,*"
-                                RightTapped="Grid_RightTapped">
-                                <Image
-                                    Width="32"
-                                    Height="32"
-                                    Source="{Binding ImageSource}" />
-                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBlock
-                                        FontWeight="SemiBold"
-                                        Text="{Binding Title}"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        FontWeight="ExtraBold"
-                                        Foreground="{ThemeResource SystemAccentColor}"
-                                        MaxLines="2"
-                                        Text="{Binding Url}"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock
-                                        HorizontalAlignment="Right"
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{Binding LastVisitTime}" />
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsRepeater.ItemTemplate>
-                </ItemsRepeater>
-            </DataTemplate>
-        </GridView.ItemTemplate>
-    </GridView>-->
+
+
 </Page>

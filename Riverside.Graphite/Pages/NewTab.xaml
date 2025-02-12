@@ -61,6 +61,30 @@
                             Label="{x:Bind ViewModel.SplitViewLabel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             LabelPosition="Default"
                             ToolTipService.ToolTip="{Binding Label, RelativeSource={RelativeSource Mode=Self}}" />
+                        <AppBarSeparator />
+                        <StackPanel
+                            Margin="{ThemeResource MediumLeftRightMargin}"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.OpenCollectionsCommand, Mode=OneWay}"
+                                Icon="TwoPage"
+                                Label="Collections"
+                                LabelPosition="Default"
+                                ToolTipService.ToolTip="{Binding Label, RelativeSource={RelativeSource Mode=Self}}" />
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.OpenHistoryCommand, Mode=OneWay}"
+                                Icon="Globe"
+                                Label="History"
+                                LabelPosition="Default"
+                                ToolTipService.ToolTip="{Binding Label, RelativeSource={RelativeSource Mode=Self}}" />
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.OpenFavoritesCommand, Mode=OneWay}"
+                                Icon="SolidStar"
+                                Label="Favorites"
+                                LabelPosition="Default"
+                                ToolTipService.ToolTip="{Binding Label, RelativeSource={RelativeSource Mode=Self}}" />
+                        </StackPanel>
                     </StackPanel>
 
                 </Grid>

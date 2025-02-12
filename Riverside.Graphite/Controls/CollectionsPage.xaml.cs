@@ -168,7 +168,7 @@ namespace Riverside.Graphite.Controls
 
 				await view.EnsureCoreWebView2Async();
 				await view.CoreWebView2.ExecuteScriptWithResultAsync(@"
-					document.body.style.zoom='.75';
+					document.body.style.zoom='.65';
 				");
 
 				ViewModel.IsWebViewLoaded = false;

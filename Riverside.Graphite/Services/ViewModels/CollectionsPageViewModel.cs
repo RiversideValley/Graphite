@@ -99,31 +99,37 @@ namespace Riverside.Graphite.ViewModels
 		}
 		[RelayCommand]
 		private Task OpenInstanceNewWindow() {
-
-			if (AppService.FireWindows.Any(t=> t.Title == "Collections")){
-				var wHand = Windowing.FindWindow(null, "Collections");
-				if (wHand != IntPtr.Zero) { 
-					Windowing.ShowWindow(wHand, Windowing.WindowShowStyle.SW_SHOWNORMAL);
-					return Task.CompletedTask; 
+			try
+			{
+				if (AppService.FireWindows.Any(t=> t.Title == "Collections")){
+					var wHand = Windowing.FindWindow(null, "Collections");
+					if (wHand != IntPtr.Zero) { 
+						Windowing.ShowWindow(wHand, Windowing.WindowShowStyle.SW_SHOWNORMAL);
+						return Task.CompletedTask; 
+					}
 				}
+
+				var win = new Window();
+			
+				var frame = new Frame();
+				frame.Margin = new Thickness(1, 32, 1, 1); 
+				frame.Navigate(typeof(CollectionsPage));
+				frame.IsNavigationStackEnabled = false; 
+				win.Content = frame;
+				win.ExtendsContentIntoTitleBar = true;
+				win.Title = "Collections"; 
+				win.AppWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.png"); 
+				win.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+				win.AppWindow.MoveInZOrderAtTop();
+				win.AppWindow.Resize(new(720, 1024)); 
+				win.AppWindow.Show();
+				AppService.FireWindows.Add(win);
+			}
+			catch (Exception e)
+			{
+				ExceptionLogger.LogException(e);
 			}
 
-			var win = new Window();
-			
-			var frame = new Frame();
-			frame.Margin = new Thickness(1, 32, 1, 1); 
-			frame.Navigate(typeof(CollectionsPage));
-			frame.IsNavigationStackEnabled = false; 
-			win.Content = frame;
-			win.ExtendsContentIntoTitleBar = true;
-			win.Title = "Collections"; 
-			win.AppWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.png"); 
-			win.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-			win.AppWindow.MoveInZOrderAtTop();
-			win.AppWindow.Resize(new(720, 1024)); 
-			win.AppWindow.Show();
-			AppService.FireWindows.Add(win); 
-			
 			return Task.CompletedTask; 
 		}
 

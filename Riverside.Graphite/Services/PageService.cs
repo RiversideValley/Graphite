@@ -21,7 +21,9 @@ namespace Riverside.Graphite.Services
 			Configure<HomeViewModel, NewTab>();
 			Configure<DownloadsViewModel, DownloadsTimeLine>(); 
 			Configure<FavoritesViewModel, FavoritesTimeLine>();
-			Configure<CollectionsPageViewModel, CollectionsPage>(); 
+			Configure<CollectionsPageViewModel, CollectionsPage>();
+			Configure<HistoryViewModel, HistoryTimeLine>();
+			
 		}
 
 		Dictionary<string, Type> IPageService.Pages => Pages;
