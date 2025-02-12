@@ -68,7 +68,7 @@
                             Orientation="Horizontal">
                             <AppBarButton
                                 Command="{x:Bind ViewModel.OpenCollectionsCommand, Mode=OneWay}"
-                                Icon="TwoPage"
+                                Icon="{firebrowser:FluentIcon Glyph=&#xe71d;}"
                                 Label="Collections"
                                 LabelPosition="Default"
                                 ToolTipService.ToolTip="{Binding Label, RelativeSource={RelativeSource Mode=Self}}" />

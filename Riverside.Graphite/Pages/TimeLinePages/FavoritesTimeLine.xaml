@@ -9,6 +9,7 @@
         <CommandBarFlyout
             x:Name="FavoritesContextMenu"
             AlwaysExpanded="True"
+            LightDismissOverlayMode="Auto"
             Placement="BottomEdgeAlignedLeft">
             <AppBarButton
                 Command="{x:Bind ViewModel.FavoriteItemContextClickCommand}"
@@ -34,11 +35,10 @@
             <AppBarButton
                 Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                 Command="{x:Bind ViewModel.CollectionShowCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}">
-                <FontIcon
-                    FontFamily="{StaticResource FluentIcons}"
-                    FontSize="16"
-                    Glyph="&#xe71d;" />
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                ToolTipService.Placement="Bottom"
+                ToolTipService.ToolTip="Collections">
+                <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xe71d;" />
             </AppBarButton>
             <CommandBarFlyout.SecondaryCommands>
                 <AppBarButton
