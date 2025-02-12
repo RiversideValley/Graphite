@@ -473,6 +473,7 @@
                         <KeyboardAccelerator Key="H" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
+                <Button x:Name="savebtn" Click="savebtn_Click"/>
             </StackPanel>
             <Grid
                 Grid.Column="1"

@@ -8,6 +8,9 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="FileDialogs\LocationSelectionDialog.xaml" />
+    <None Remove="FileDialogs\OpenDialog.xaml" />
+    <None Remove="FileDialogs\SaveDialog.xaml" />
     <None Remove="SettingsControls\SettingsCard\SettingsCard.xaml" />
     <None Remove="SettingsControls\SettingsExpander\SettingsExpander.xaml" />
   </ItemGroup>
@@ -27,6 +30,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SettingsControls\SettingsCardExpander\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="FileDialogs\LocationSelectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="FileDialogs\SaveDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="FileDialogs\OpenDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   
 </Project>

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Graphite.Controls;
+using Graphite.Controls.FileDialogs;
 using Graphite.Helpers;
 using Graphite.Pages;
 using Graphite.UserSys;
@@ -235,5 +238,31 @@ public sealed partial class HomeWindow : Window
 	{
 		SettingsWindow settingsWindow = new SettingsWindow(_currentUser);
 		settingsWindow.Activate();
+	}
+
+	private void savebtn_Click(object sender, RoutedEventArgs e)
+	{
+		var saveDialog = new SaveDialog();
+		saveDialog.Activate();
+	}
+
+	private string GenerateRandomData()
+	{
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+
+		for (int i = 0; i < 10; i++) // Generate 10 lines of random data
+		{
+			sb.AppendLine($"Random number: {random.Next(1, 1000)}, Random string: {GenerateRandomString(random, 8)}");
+		}
+
+		return sb.ToString();
+	}
+
+	private string GenerateRandomString(Random random, int length)
+	{
+		const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		return new string(Enumerable.Repeat(chars, length)
+			.Select(s => s[random.Next(s.Length)]).ToArray());
 	}
 }
