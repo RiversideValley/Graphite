@@ -41,7 +41,7 @@
 		  Executable="$targetnametoken$.exe"
 		  EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
-			  DisplayName="FireBrowserWinUi"
+			  DisplayName="Graphite"
 			  Description="Elegant design meets blazing performance. Graphite does it all with speed, simplicity, and security."
 			  BackgroundColor="transparent"
 			  Square150x150Logo="Assets\AppTiles\Square150x150Logo.png"
@@ -144,7 +144,6 @@
 
 	<Capabilities>
 		<rescap:Capability Name="runFullTrust" />
-		<rescap:Capability Name="broadFileSystemAccess"/>
 		<Capability Name="privateNetworkClientServer"/>
 		<Capability Name="internetClient"/>
 		<Capability Name="internetClientServer"/>
