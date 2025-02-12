@@ -258,7 +258,10 @@ public partial class HomeViewModel : ObservableRecipient
 		SettingsService.Initialize();
 
 		RightPaneService = rightPaneService;
-		NavigationService = navigationService; 
+		NavigationService = navigationService;
+
+		SplitViewDisplayMode = SplitViewDisplayMode.Inline;
+
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
