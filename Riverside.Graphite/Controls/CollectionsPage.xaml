@@ -279,66 +279,71 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <ListView
-                    x:Name="ListCollectionHistoryItems"
-                    Grid.Row="0"
-                    Margin="{ThemeResource MediumBottomMargin}"
-                    HorizontalAlignment="Left"
-                    ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
-                    SelectionChanged="ListView_SelectionChanged"
-                    SelectionMode="Single">
-                    <ListView.Transitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
-                        </TransitionCollection>
-                    </ListView.Transitions>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="collect:DbHistoryItem">
-                            <Grid>
-                                <Grid
-                                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
-                                    RightTapped="Grid_RightTapped"
-                                    ToolTipService.ToolTip="{Binding title}">
-                                    <StackPanel Orientation="Horizontal" Spacing="2">
-                                        <Image
-                                            Width="32"
-                                            Height="32"
-                                            Margin="{ThemeResource SmallLeftMargin}"
-                                            Source="{Binding url, Converter={StaticResource UrlToImageSourceConverter}}" />
-                                        <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Vertical">
-                                            <TextBlock
-                                                FontWeight="SemiBold"
-                                                MaxLines="3"
-                                                Text="{Binding title}"
-                                                TextWrapping="WrapWholeWords" />
-                                            <TextBlock
-                                                MaxWidth="325"
-                                                FontWeight="ExtraBold"
-                                                Foreground="{ThemeResource SystemAccentColor}"
-                                                MaxLines="3"
-                                                Text="{Binding url}"
-                                                TextTrimming="CharacterEllipsis"
-                                                TextWrapping="Wrap" />
-                                            <TextBlock
-                                                HorizontalAlignment="Right"
-                                                Style="{ThemeResource CaptionTextBlockStyle}"
-                                                Text="{Binding last_visit_time}" />
+                <ScrollViewer>
+                    <ListView
+                        x:Name="ListCollectionHistoryItems"
+                        Grid.Row="0"
+                        MaxHeight="200"
+                        Margin="{ThemeResource MediumBottomMargin}"
+                        HorizontalAlignment="Left"
+                        ItemsSource="{x:Bind ViewModel.SubHistoryItems, Mode=OneWay}"
+                        SelectionChanged="ListView_SelectionChanged"
+                        SelectionMode="Single">
+                        <ListView.Transitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
+                            </TransitionCollection>
+                        </ListView.Transitions>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="collect:DbHistoryItem">
+                                <Grid>
+                                    <Grid
+                                        Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
+                                        RightTapped="Grid_RightTapped"
+                                        ToolTipService.ToolTip="{Binding title}">
+                                        <StackPanel Orientation="Horizontal" Spacing="2">
+                                            <Image
+                                                Width="32"
+                                                Height="32"
+                                                Margin="{ThemeResource SmallLeftMargin}"
+                                                Source="{Binding url, Converter={StaticResource UrlToImageSourceConverter}}" />
+                                            <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Vertical">
+                                                <TextBlock
+                                                    FontWeight="SemiBold"
+                                                    MaxLines="3"
+                                                    Text="{Binding title}"
+                                                    TextWrapping="WrapWholeWords" />
+                                                <TextBlock
+                                                    MaxWidth="325"
+                                                    FontWeight="ExtraBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    MaxLines="3"
+                                                    Text="{Binding url}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                                <TextBlock
+                                                    HorizontalAlignment="Right"
+                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                    Text="{Binding last_visit_time}" />
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
 
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid
-                                MaxHeight="400"
-                                Orientation="Horizontal"
-                                RequestedTheme="Default" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                </ListView>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid
+                                    ItemHeight="100"
+                                    ItemWidth="400"
+                                    Orientation="Horizontal"
+                                    RequestedTheme="Default"
+                                    ScrollViewer.IsScrollInertiaEnabled="True" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+                </ScrollViewer>
                 <Grid
                     x:Name="WebGrid"
                     Grid.Row="1"
