@@ -102,14 +102,12 @@ namespace Riverside.Graphite.ViewModels
 		private Task OpenInstanceNewWindow() {
 			try
 			{
-				if (AppService.FireWindows.Any(t=> t.Title == "Collections")){
-					var wHand = Windowing.FindWindow(null, "Collections");
-					if (wHand != IntPtr.Zero) {
-						Windowing.SetWindowPos(wHand, IntPtr.Zero, 0, 0, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER | Windowing.AW_ACTIVATE);
-						return Task.CompletedTask; 
-					}
+				var wHand = Windowing.FindWindow(null, "Collections");
+				if (wHand != IntPtr.Zero) {
+					Windowing.SetWindowPos(wHand, IntPtr.Zero, 0, 0, 0, 0, Windowing.SWP_NOSIZE | Windowing.SWP_NOZORDER | Windowing.AW_ACTIVATE);
+					return Task.CompletedTask; 
 				}
-
+				
 				var win = new Window();
 			
 				var frame = new Frame();
@@ -124,6 +122,10 @@ namespace Riverside.Graphite.ViewModels
 				win.AppWindow.MoveInZOrderAtTop();
 				win.AppWindow.Resize(new(720, 1024)); 
 				win.AppWindow.Show();
+				win.Closed += (sender, args) =>
+				{
+					AppService.FireWindows.Remove(win);
+				};
 				AppService.FireWindows.Add(win);
 			}
 			catch (Exception e)
@@ -215,6 +217,8 @@ namespace Riverside.Graphite.ViewModels
 							WebViewVisible = Visibility.Collapsed;
 							RaisePropertyChanges(nameof(WebViewVisible));
 						}
+						RaisePropertyChanges(nameof(SubHistoryItems));
+						RaisePropertyChanges(nameof(Items));
 					}
 					break;
 				case EnumMessageStatus.Updated:

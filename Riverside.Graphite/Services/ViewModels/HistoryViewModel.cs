@@ -146,6 +146,7 @@ namespace Riverside.Graphite.Services.ViewModels
 			};
 
 			var list = await historyActions.GetAllCollectionNamesItems();
+
 			foreach (var item in list)
 			{
 				var menuItem = new MenuFlyoutItem()
@@ -219,10 +220,12 @@ namespace Riverside.Graphite.Services.ViewModels
 			{
 				cmdBar.Hide();
 			}
-			InternalHistoryItem = null; 
-			FetchBrowserHistory();
 			// notify all instance of history and collections. 
-			Messenger.Send(new Message_Settings_Actions(EnumMessageStatus.Collections));
+			Messenger.Send(new Message_Settings_Actions(EnumMessageStatus.Collections, InternalHistoryItem));
+
+			InternalHistoryItem = null;
+			FetchBrowserHistory();
+
 		}
 		public void ShowContextMenu(object sender, RightTappedRoutedEventArgs e)
 		{

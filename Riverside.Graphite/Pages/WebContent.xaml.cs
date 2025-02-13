@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
 using Graphite.Controls;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -30,6 +31,7 @@ using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 using static Riverside.Graphite.MainWindow;
+
 
 namespace Riverside.Graphite.Pages
 {
@@ -319,8 +321,30 @@ namespace Riverside.Graphite.Pages
 			args.Handled = true;
 		}
 
-		private void WebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
+		private async void WebResourceRequested(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
 		{
+			var url = UrlValidater.GetValidateUrl(args.Request.Uri);
+			if (url is not null)
+			{
+				if (url.AbsoluteUri.Contains("http://localhost:5000"))
+				{
+					if (!await UrlValidater.IsLocalhostRunningAsync())
+					{
+						DispatcherQueue.TryEnqueue(async () =>
+						{
+							await App.Current.StartChannelsAsync().ConfigureAwait(false);
+							
+							if (await UrlValidater.IsLocalhostRunningAsync())
+							{
+								args.Response = sender.Environment.CreateWebResourceResponse(
+									null, 200, "OK", "Content-Type: text/html");
+							}
+						});
+					}
+				}
+					
+			}
+
 			if (IsLogoutRequest(args.Request))
 			{
 				AppService.IsAppUserAuthenicated = false;

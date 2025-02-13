@@ -123,6 +123,8 @@ public sealed partial class MainWindow : Window
 				}
 			}
 
+			App.Current.KillProcessByName("dotnet");
+
 		};
 		SizeChanged += async (s, e) =>
 		{
@@ -240,10 +242,12 @@ public sealed partial class MainWindow : Window
 					{
 						quickConfigurationDialog.Hide();
 
-						await Task.Delay(250);
 						DispatcherQueue?.TryEnqueue(() =>
 						{
 							Application.Current.Exit();
+
+							
+
 						});	
 					};
 					_ = await quickConfigurationDialog.ShowAsync();

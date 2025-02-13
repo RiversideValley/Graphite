@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.UI.Xaml;
@@ -46,7 +47,7 @@ namespace Riverside.Graphite.Services.ViewModels
 
 		public CommandBarFlyout FavoritesContextMenu { get; set; }
 		internal FavManager FavManager { get; set; }	
-		public FavoritesViewModel() {
+		public FavoritesViewModel(IMessenger messenger):base(messenger) {
 			FavManager = new();
 		}
 
@@ -142,7 +143,7 @@ namespace Riverside.Graphite.Services.ViewModels
 						{
 
 							_ = win.NotificationQueue.Show(note);
-							win.ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
+							Messenger.Send(new Message_Settings_Actions(EnumMessageStatus.Collections));
 
 						}
 

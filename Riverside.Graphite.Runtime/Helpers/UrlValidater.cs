@@ -41,6 +41,33 @@ namespace Riverside.Graphite.Runtime.Helpers
 			}
 		}
 
+		public static async Task<bool> IsLocalhostRunningAsync()
+		{
+			using HttpClient client = new HttpClient();
+			const int maxRetries = 2;
+			const int delayMilliseconds = 1000;
+
+			for (int i = 0; i < maxRetries; i++)
+			{
+				try
+				{
+					HttpResponseMessage response = await client.GetAsync("http://localhost:5000");
+					if (response.IsSuccessStatusCode)
+					{
+						return true;
+					}
+				}
+				catch (HttpRequestException)
+				{
+					// Ignore the exception and retry
+				}
+
+				await Task.Delay(delayMilliseconds);
+			}
+
+			return false;
+		}
+
 		public static Uri GetValidateUrl(string queryText)
 		{
 			if (string.IsNullOrWhiteSpace(queryText))

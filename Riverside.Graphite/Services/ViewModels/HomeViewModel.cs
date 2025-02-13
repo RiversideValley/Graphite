@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -318,15 +319,27 @@ public partial class HomeViewModel : ObservableRecipient
 			RightPaneService.OpenInRightPane(typeof(CollectionsPageViewModel).FullName); 
 		}
 	}
+
+	
+
 	[RelayCommand]
-	private void Chat(Button sender)
+	private async Task Chat(Button sender)
 	{
 
 		try
 		{
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-				window?.NavigateToUrl("http://localhost:5000/");
+				window.DispatcherQueue.TryEnqueue(()=> app.StartChannelsAsync().ConfigureAwait(false));
+
+				if (await UrlValidater.IsLocalhostRunningAsync())
+				{
+					window?.NavigateToUrl("http://localhost:5000/");
+				}
+				else
+				{
+					_ = Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
+				}	
 			}
 
 		}
