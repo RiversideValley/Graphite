@@ -289,7 +289,6 @@
                     SelectionMode="Single">
                     <ListView.Transitions>
                         <TransitionCollection>
-                            <AddDeleteThemeTransition />
                             <EntranceThemeTransition FromHorizontalOffset="100" FromVerticalOffset="100" />
                         </TransitionCollection>
                     </ListView.Transitions>
@@ -297,7 +296,6 @@
                         <DataTemplate x:DataType="collect:DbHistoryItem">
                             <Grid>
                                 <Grid
-                                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                                     Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
                                     RightTapped="Grid_RightTapped"
                                     ToolTipService.ToolTip="{Binding title}">
@@ -309,13 +307,12 @@
                                             Source="{Binding url, Converter={StaticResource UrlToImageSourceConverter}}" />
                                         <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Vertical">
                                             <TextBlock
-                                                MaxWidth="400"
                                                 FontWeight="SemiBold"
                                                 MaxLines="3"
                                                 Text="{Binding title}"
                                                 TextWrapping="WrapWholeWords" />
                                             <TextBlock
-                                                MaxWidth="400"
+                                                MaxWidth="325"
                                                 FontWeight="ExtraBold"
                                                 Foreground="{ThemeResource SystemAccentColor}"
                                                 MaxLines="3"
@@ -335,7 +332,10 @@
                     </ListView.ItemTemplate>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid MaximumRowsOrColumns="4" />
+                            <ItemsWrapGrid
+                                MaxHeight="400"
+                                Orientation="Horizontal"
+                                RequestedTheme="Default" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </ListView>

@@ -49,7 +49,24 @@ namespace Riverside.Graphite.Services.ViewModels
 		public HistoryTimeLine ParentHistoryTimeLine { get; set; }
 		public HistoryViewModel(IMessenger messenger): base(messenger) {
 
+			Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 			FetchBrowserHistory();
+		}
+
+		private  void ReceivedStatus(Message_Settings_Actions m)
+		{
+		
+            switch (m.Status)
+            {
+                case EnumMessageStatus.Collections:
+                    FetchBrowserHistory();
+                    OnPropertyChanged(nameof(FetchBrowserHistory));
+                    OnPropertyChanged(nameof(SelectedHistoryItem));
+                    break;
+                default:
+                    break;
+            }
+		
 		}
 
 		partial void OnFilterTextChanged(string value)
@@ -204,7 +221,8 @@ namespace Riverside.Graphite.Services.ViewModels
 			}
 			InternalHistoryItem = null; 
 			FetchBrowserHistory();
-		
+			// notify all instance of history and collections. 
+			Messenger.Send(new Message_Settings_Actions(EnumMessageStatus.Collections));
 		}
 		public void ShowContextMenu(object sender, RightTappedRoutedEventArgs e)
 		{

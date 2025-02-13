@@ -1116,8 +1116,10 @@ public sealed partial class MainWindow : Window
 		{
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			await historyActions.DeleteAllHistoryItems();
-
 			HistoryTemp.ItemsSource = null;
+
+			// send to other pages and viewmodel to update state if in view.. 
+			ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections)); 
 		}
 		catch (Exception ex)
 		{

@@ -39,6 +39,7 @@ namespace Riverside.Graphite.ViewModels
 		#region dp_injection_services
 			private readonly HistoryActions _historyActions;
 			private readonly CollectionsGroupData _collectionGroupData;
+			private readonly ISettingsService _settingsService;
 		#endregion
 
 		#region ui_props
@@ -189,8 +190,9 @@ namespace Riverside.Graphite.ViewModels
 			Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 			_historyActions = new HistoryActions(AuthService.CurrentUser?.Username);
 			_collectionGroupData = new CollectionsGroupData(_historyActions); 
+		
 			Initialize();
-				
+					
 		}
 
 		private async void ReceivedStatus(Message_Settings_Actions m)
