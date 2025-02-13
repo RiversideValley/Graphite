@@ -3,6 +3,7 @@
     x:Class="Riverside.Graphite.Pages.NewTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:PROMOTION="using:Riverside.Graphite.Controls"
     xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
     xmlns:button="using:Riverside.Graphite.Services"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
@@ -17,8 +18,6 @@
     xmlns:local="using:Riverside.Graphite.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:provider="using:Riverside.Graphite.Services.Models"
-    xmlns:PROMOTION="using:Riverside.Graphite.Controls"
-
     Loaded="NewTab_Loaded"
     mc:Ignorable="d">
 
@@ -864,13 +863,51 @@
                     </VisualStateManager.VisualStateGroups>
                 </Grid>
 
-                <PROMOTION:PromotionBar
+
+
+                <Button
+                    x:Name="PromoBtn"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Height="100"
-    Content="CodeBeaver: A Amazing AI for software testing - Now With 50% Discount With Our Special Code FIREBROWSER50"
-    ButtonText="Go to Promotion"
-    PromotionUrl="https://www.codebeaver.ai/pricing?promo=FIREBROWSER50"/>
-                
+                    Canvas.ZIndex="997"
+                    Command="{x:Bind ViewModel.PromoCommand}">
+                    <FontIcon
+                        FontFamily="{StaticResource FluentIcons}"
+                        FontSize="16"
+                        Glyph="&#xe7c1;" />
+                </Button>
+
+                <TeachingTip
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
+                    IsLightDismissEnabled="True"
+                    IsOpen="{x:Bind ViewModel.IsPromoOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlacementMargin="{ThemeResource MediumBottomMargin}">
+                    <TeachingTip.Transitions>
+                        <TransitionCollection>
+                            <PaneThemeTransition Edge="Left" />
+                        </TransitionCollection>
+                    </TeachingTip.Transitions>
+                    <TeachingTip.HeroContent>
+                        <Image Source="ms-appx:///Assets/Experience/ogInformation.png" Stretch="Fill" />
+
+
+                    </TeachingTip.HeroContent>
+                    <TeachingTip.Content>
+                        <Grid>
+                            <PROMOTION:PromotionBar
+                                Height="100"
+                                VerticalAlignment="Bottom"
+                                ButtonText="Go to Promotion"
+                                Content="CodeBeaver: A Amazing AI for software testing - Now With 50% Discount With Our Special Code FIREBROWSER50"
+                                PromotionUrl="https://www.codebeaver.ai/pricing?promo=FIREBROWSER50" />
+                        </Grid>
+
+                    </TeachingTip.Content>
+                </TeachingTip>
+
                 <InfoBar
                     Margin="{ThemeResource MediumTopMargin}"
                     HorizontalAlignment="Right"

@@ -64,6 +64,8 @@ public partial class HomeViewModel : ObservableRecipient
 	[ObservableProperty]
 	private bool _IsSelectBarEnabled;
 	[ObservableProperty]
+	private bool _isPromoOpen;
+	[ObservableProperty]
 	private Visibility _isFavoritesVisible;
 	[ObservableProperty]
 	private Visibility _isHistoryVisible;
@@ -264,6 +266,11 @@ public partial class HomeViewModel : ObservableRecipient
 
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
+	}
+	[RelayCommand]
+	private void Promo()
+	{
+		IsPromoOpen = !IsPromoOpen;	
 	}
 
 	[RelayCommand]

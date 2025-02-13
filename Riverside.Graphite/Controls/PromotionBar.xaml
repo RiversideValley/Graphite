@@ -4,54 +4,60 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="100" d:DesignWidth="800">
+    d:DesignHeight="100"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
-    <Border Background="#F87B5B">
+    <Border Background="#F87B5B" Opacity=".8">
         <Grid Margin="16,8">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Alert Icon -->
-            <Path Grid.Column="0"
-                  Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 15H13V17H11V15ZM11 7H13V13H11V7Z"
-                  Fill="White"
-                  Width="24"
-                  Height="24"
-                  Margin="0,0,12,0"/>
+            <!--  Alert Icon  -->
+            <Path
+                Grid.Column="0"
+                Width="24"
+                Height="24"
+                Margin="0,0,12,0"
+                Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 15H13V17H11V15ZM11 7H13V13H11V7Z"
+                Fill="White" />
 
-            <!-- Content Text -->
-            <TextBlock Grid.Column="1"
-                       Text="{x:Bind Content, Mode=OneWay}"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       TextWrapping="Wrap"
-                       Margin="0,0,16,0"/>
+            <!--  Content Text  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="0,0,16,0"
+                VerticalAlignment="Center"
+                FontWeight="Bold"
+                Foreground="White"
+                Text="{x:Bind Content, Mode=OneWay}"
+                TextWrapping="Wrap" />
 
-            <!-- Promotion Button -->
-            <Button Grid.Column="2"
-                    Content="{x:Bind ButtonText, Mode=OneWay}"
-                    Background="White"
-                    Foreground="#F87B5B"
-                    BorderBrush="White"
-                    Padding="16,8"
-                    Click="OnPromotionButtonClick">
+            <!--  Promotion Button  -->
+            <Button
+                Grid.Column="2"
+                Padding="16,8"
+                Background="White"
+                BorderBrush="White"
+                Click="OnPromotionButtonClick"
+                Content="{x:Bind ButtonText, Mode=OneWay}"
+                Foreground="DodgerBlue">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              Padding="{TemplateBinding Padding}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              AutomationProperties.AccessibilityView="Raw"/>
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}" />
                         </Grid>
                     </ControlTemplate>
                 </Button.Template>
