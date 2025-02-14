@@ -1111,7 +1111,7 @@
         <InfoBar
             MaxWidth="480"
             Margin="25"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
             <interactivity:Interaction.Behaviors>
