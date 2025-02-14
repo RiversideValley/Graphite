@@ -83,7 +83,7 @@ public sealed partial class NewTab : Page
 		});
 		
 
-		ViewModel.RightPaneService.Initialize(RightFrame, SplitViewer);
+		
 
 	}
 
@@ -248,8 +248,13 @@ public sealed partial class NewTab : Page
 	{
 		// round-robin if one or more newTab's are open apply settings. 
 		await ViewModel.Initialize();
+		ViewModel.RightPaneService.Initialize(RightFrame, SplitViewer);
+
 		userSettings = ViewModel.SettingsService.CoreSettings;
 
+		ViewModel.IsShellPaneOpen = SplitViewer.IsPaneOpen; 
+
+		ViewModel.RaisePropertyChanges(nameof(ViewModel.IsShellPaneOpen));
 		//NO need to load because property is attached to viewModel, and also if you select the tab it will call the load event may we can refresh the page... 
 		ViewModel.HistoryItems = await HistoryActions.GetAllHistoryItems();
 		ViewModel.RaisePropertyChanges(nameof(ViewModel.HistoryItems));
