@@ -94,7 +94,7 @@ public sealed partial class NewTab : Page
 		{
 			return;
 		}
-
+	
 		if (isAuto && Application.Current is App app && app.m_window is MainWindow window)
 		{
 			_ = window.DispatcherQueue.TryEnqueue(() =>

@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
@@ -649,10 +650,13 @@ public sealed partial class MainWindow : Window
 		_ = TabWebView.Focus(FocusState.Programmatic);
 	}
 
-	public async void NavigateToUrl(string uri)
+
+public async void NavigateToUrl(string uri)
 	{
 		try
 		{
+
+
 			if (TabContent.Content is not WebContent webContent)
 			{
 				launchurl ??= uri;
@@ -735,6 +739,7 @@ public sealed partial class MainWindow : Window
 	public Task HandleNormalUrlOrSearch(string input)
 	{
 		Uri browserTo = UrlValidater.GetValidateUrl(input);
+
 
 		if (browserTo != null)
 		{

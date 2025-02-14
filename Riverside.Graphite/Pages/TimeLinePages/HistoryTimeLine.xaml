@@ -23,7 +23,7 @@
         </CommandBarFlyout>
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -56,7 +56,7 @@
         <ListView
             x:Name="BigTemp"
             Grid.Row="1"
-            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+            Margin="{ThemeResource MediumLeftRightMargin}"
             ItemsSource="{x:Bind ViewModel.BrowserHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             RightTapped="{x:Bind ViewModel.ShowContextMenu}"
             SelectedItem="{x:Bind ViewModel.SelectedHistoryItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">

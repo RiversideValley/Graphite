@@ -118,7 +118,7 @@ namespace Riverside.Graphite.Services.ViewModels
 			{
 				var graphiteHistory = new BrowserHistoryCollection();
 				BrowserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
-				
+				OnPropertyChanged(nameof(BrowserHistory)); 
 
 			}
 			catch (Exception ex)

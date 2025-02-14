@@ -90,7 +90,7 @@
 
                 </Grid>
             </SplitView.Pane>
-            <Grid>
+            <Grid x:Name="MainGridContent" x:FieldModifier="Public">
                 <Grid x:Name="GridMain" x:FieldModifier="Public">
                     <Border Height="250" VerticalAlignment="Top">
                         <Border.Background>
@@ -920,9 +920,6 @@
                 </InfoBar>
             </Grid>
         </SplitView>
-
-
-
 
     </Grid>
 </Page>
