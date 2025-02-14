@@ -20,8 +20,8 @@ public sealed partial class FavoritesTimeLine : Page
 		ViewModel = App.GetService<FavoritesViewModel>();
 
 		InitializeComponent();
+		Loaded += (s,e) => ViewModel.LoadFavorites().ConfigureAwait(false);
 
-		ViewModel.LoadFavorites().ConfigureAwait(false);
 		ViewModel.FavoritesContextMenu = FavoritesContextMenu; 
 	}
 

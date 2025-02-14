@@ -194,6 +194,8 @@ public partial class HomeViewModel : ObservableRecipient
 		// - Use CoreSettings to save file access -> to Settings.json every 4 seconds handle in one place usings delegate...
 		await SettingsService?.SaveChangesToSettings(Riverside.Graphite.Core.AuthService.CurrentUser, SettingsService.CoreSettings);
 
+		OnPropertyChanged(nameof(IsShellPaneOpen));
+
 		//if (IstrendingEnabled)
 		//	UpdateTrending().ConfigureAwait(false).GetAwaiter().GetResult();
 	}
@@ -263,9 +265,7 @@ public partial class HomeViewModel : ObservableRecipient
 		RightPaneService = rightPaneService;
 		NavigationService = navigationService;
 
-		SplitViewDisplayMode = SplitViewDisplayMode.Inline;
-
-		// load ui settings from CoreSettings. 
+			// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
 	[RelayCommand]

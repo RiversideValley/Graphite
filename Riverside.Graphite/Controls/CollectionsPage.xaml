@@ -158,6 +158,8 @@
                             <Run Text="2. Add a Collection using + button" />
                             <LineBreak />
                             <Run Text="3. Right click on History Items in your Collection for more options." />
+                            <LineBreak />
+                            <Run Text="Collection Items depend on a History Item. " />
                         </TextBlock>
                     </TeachingTip.Content>
                 </TeachingTip>

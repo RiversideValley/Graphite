@@ -30,7 +30,7 @@
         </Grid.RowDefinitions>
         <StackPanel
             Grid.Row="0"
-            Margin="{ThemeResource MediumTopBottomMargin}"
+            Margin="{ThemeResource XSmallLeftTopRightBottomMargin}"
             HorizontalAlignment="Center"
             Orientation="Horizontal">
             <TextBox

@@ -24,7 +24,8 @@ public sealed partial class HistoryTimeLine : Page
 	public HistoryViewModel ViewModel { get; set; }
 	public HistoryTimeLine()
 	{
-		ViewModel = App.GetService<HistoryViewModel>();	
+		ViewModel = App.GetService<HistoryViewModel>();
+		Loaded += (s, e) => ViewModel.FetchBrowserHistory();
 		InitializeComponent();
 		ViewModel.ParentHistoryTimeLine = this;	
 	}

@@ -9,6 +9,8 @@ public sealed partial class DownloadsTimeLine : Page
 	{
 		// ViewModel is attached to DownloadServices that control the listView.  
 		ViewModel = App.GetService<DownloadsViewModel>();
+		Loaded += (s, e) => ViewModel.GetDownloadItems().ConfigureAwait(false);
+
 		InitializeComponent();
 		
 	}

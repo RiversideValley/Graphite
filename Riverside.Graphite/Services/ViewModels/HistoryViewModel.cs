@@ -50,7 +50,6 @@ namespace Riverside.Graphite.Services.ViewModels
 		public HistoryViewModel(IMessenger messenger): base(messenger) {
 
 			Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
-			FetchBrowserHistory();
 		}
 
 		private  void ReceivedStatus(Message_Settings_Actions m)
@@ -113,7 +112,7 @@ namespace Riverside.Graphite.Services.ViewModels
 		{
 			FilterBrowserHistory(FilterText);
 		}
-		private void FetchBrowserHistory()
+		public void FetchBrowserHistory()
 		{
 			try
 			{

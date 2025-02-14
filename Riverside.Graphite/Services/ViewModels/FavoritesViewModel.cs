@@ -120,13 +120,25 @@ namespace Riverside.Graphite.Services.ViewModels
 				{
 					var items = await historyActions.GetAllHistoryItems();
 
-					var historyItem = items.FirstOrDefault(i => i.Url == InternalFavoriteItem.Url);
+					var historyItem = items.Where(i => i.Url == InternalFavoriteItem.Url).FirstOrDefault();
 
 					var answer = default(bool);
 
 					if (historyItem != null)
 					{
 						answer = await historyActions.InsertCollectionsItem(historyItem, item);
+					}
+					else {
+
+						await historyActions.InsertHistoryItem(InternalFavoriteItem.Url, InternalFavoriteItem.Title, 0, 0, 0);
+						var items2 = await historyActions.GetAllHistoryItems();
+						var historyItem2 = items2.Where(i => i.Url == InternalFavoriteItem.Url).FirstOrDefault();
+
+						if (historyItem2 != null)
+						{
+							answer = await historyActions.InsertCollectionsItem(historyItem2, item);
+						}
+
 					}
 
 					if (answer)
@@ -234,9 +246,9 @@ namespace Riverside.Graphite.Services.ViewModels
 			InternalFavoriteItem = ((FrameworkElement)e.OriginalSource).DataContext as FavItem;
 				
 		}
-		public  void OnNavigatedTo(object parameter)
+		public async void OnNavigatedTo(object parameter)
 		{
-			;
+			await LoadFavorites();
 		}
 
 		public void OnNavigatedFrom()
