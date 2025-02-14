@@ -1,0 +1,213 @@
+<Window
+    x:Class="Graphite.Migration.SenderWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Grid x:Name="AppTitleBar" Height="32" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="/Assets/AppLogo.png" Width="24" Height="24" Margin="8,0,0,0"/>
+            <TextBlock x:Name="AppTitleTextBlock" Text="Graphite Data Sender" 
+                       Style="{StaticResource CaptionTextBlockStyle}" 
+                       VerticalAlignment="Center" 
+                       Grid.Column="1" Margin="8,0,0,0"/>
+        </Grid>
+
+        <!-- Main content -->
+        <ScrollViewer Grid.Row="1" Padding="24">
+            <StackPanel MaxWidth="600" Margin="0,20" HorizontalAlignment="Center">
+                <!-- Header -->
+                <StackPanel HorizontalAlignment="Center" Spacing="8" Margin="0,0,0,32">
+                    <Image Source="/Assets/AppLogo.png" Width="64" Height="64"/>
+                    <TextBlock Text="Secure Data Sender" 
+                               Style="{StaticResource TitleTextBlockStyle}"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Send your data securely to another Graphite device" 
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               TextAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Main Card -->
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="24">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Step 1: Create Code -->
+                    <StackPanel Grid.Row="0" Spacing="8">
+                        <TextBlock Text="Step 1: Generate Verification Code" 
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="Create a secure verification code to authenticate the connection"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <Button x:Name="CreateCodeButton" 
+                                Content="Create Verification Code" 
+                                Click="CreateCodeButton_Click"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <!-- Step 2: Verification Code Display -->
+                    <StackPanel Grid.Row="1" Margin="0,24,0,0" Spacing="8">
+                        <TextBlock Text="Step 2: Share Verification Code" 
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="Share this code with the receiver device"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <Grid Background="{ThemeResource LayerFillColorDefaultBrush}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                              BorderThickness="1"
+                              CornerRadius="4"
+                              Padding="16"
+                              Margin="0,8,0,0">
+                            <TextBlock x:Name="VerificationCodeTextBlock"
+                                       Text="--------"
+                                       Style="{StaticResource TitleLargeTextBlockStyle}"
+                                       FontFamily="Cascadia Code"
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Step 3: Discover Receivers -->
+                    <StackPanel Grid.Row="2" Margin="0,24,0,0" Spacing="8">
+                        <TextBlock Text="Step 3: Discover Receivers" 
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="Find available receivers on your network"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <Button x:Name="StartDiscoveryButton" 
+                                Content="Start Discovery" 
+                                Click="StartDiscoveryButton_Click"
+                                Margin="0,8,0,0"/>
+                        <ListView x:Name="ReceiverListView"
+                                  Height="150"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="1"
+                                  Margin="0,8,0,0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical" Margin="0,4">
+                                        <TextBlock Text="{Binding DeviceName}" 
+                                                   Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding IP}" 
+                                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                    <!-- Step 4: Connect and Transfer -->
+                    <StackPanel Grid.Row="3" Margin="0,24,0,0" Spacing="8">
+                        <TextBlock Text="Step 4: Connect and Transfer" 
+                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="Establish a secure connection with the receiver device and transfer data"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <Button x:Name="ConnectButton" 
+                                Content="Connect to Receiver" 
+                                Click="ConnectButton_Click"
+                                Margin="0,8,0,0"
+                                IsEnabled="False"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Status Card -->
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="24"
+                      Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <FontIcon x:Name="StatusIcon" 
+                              Glyph="&#xE946;"
+                              FontFamily="Segoe Fluent Icons"
+                              Margin="0,0,12,0"/>
+
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Text="Status" 
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <TextBlock x:Name="StatusTextBlock" 
+                                   Text="Ready to begin" 
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="24"
+                      Margin="0,16,0,0">
+                    <StackPanel Margin="0,16,0,0">
+                        <ProgressBar x:Name="ProgressBar" 
+                                     Visibility="Collapsed"
+                                     Minimum="0" 
+                                     Maximum="100" 
+                                     Height="20"/>
+                        <TextBlock x:Name="ProgressTextBlock" 
+                                   Visibility="Collapsed"
+                                   Text="0%" 
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Security Notice -->
+                <Grid Background="{ThemeResource LayerFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="16"
+                      Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <FontIcon Glyph="&#xE72E;"
+                              FontFamily="Segoe Fluent Icons"
+                              Margin="0,0,12,0"/>
+
+                    <TextBlock Grid.Column="1"
+                               Text="All data is encrypted during transfer. Only share the verification code with trusted devices."
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
+

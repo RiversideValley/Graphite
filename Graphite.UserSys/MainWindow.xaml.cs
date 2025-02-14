@@ -12,20 +12,18 @@ using Microsoft.UI;
 using System.Net.Http;
 using System.Text.Json;
 using Windows.Devices.Geolocation;
-using Graphite.ViewModels;
-using Graphite.WindowCore;
 using Microsoft.Extensions.Logging;
 using Graphite.UserSys.Windows;
 using System.ComponentModel;
-using Graphite.Migration;
 using System.Linq;
+using Graphite.Migration;
 
 namespace Graphite
 {
 	public sealed partial class MainWindow : Window
 	{
-		private ObservableCollection<UserViewModel> Users { get; set; }
-		private AppWindow appWindow;
+		private ObservableCollection<UserViewModel>? Users { get; set; }
+		private AppWindow? appWindow;
 		private readonly HttpClient _httpClient;
 		private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 		private bool _disposedValue;

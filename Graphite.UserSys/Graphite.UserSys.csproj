@@ -24,6 +24,11 @@
     <None Remove="Windows\MigrationProgress.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Graphite.Controls\Graphite.Controls.csproj" />
+    <None Include="Graphite.Migration\Graphite.Migration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.1" />
