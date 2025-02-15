@@ -208,23 +208,30 @@ public static class AppService
 			}
 			else
 			{
-				
+				//ActiveWindow = new UserCentral();
+				//ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
 
 				ActiveWindow = new UserDashBoard();
 
-				ActiveWindow.Closed += (s, e) => {
+				ActiveWindow.Closed += (s, e) =>
+				{
 
-					s.GetType().GetProperties().ToList().ForEach(p => ExceptionLogger.LogInformation(p.Name.ToString()));
-
-					if (ActiveWindow is UserDashBoard dash) {
+					if (ActiveWindow is UserDashBoard dash)
+					{
 
 						if (dash.AuthUser is not null)
 						{
 							_ = AuthService.Authenticate(dash.AuthUser.Username);
 						}
+						else {
+							Application.Current.Exit(); 
+						}
+
 					}
 					WindowsController(cancellationToken).ConfigureAwait(false);
-				}; 
+				};
+
+
 				ConfigureWindowAppearance();
 				ActiveWindow.Activate();
 				Windowing.Center(ActiveWindow);

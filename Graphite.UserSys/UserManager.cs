@@ -13,6 +13,8 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Security;
 using System.Text.Json;
+using Windows.Security.Credentials;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 
 namespace Graphite.UserSys
 {
@@ -467,7 +469,7 @@ namespace Graphite.UserSys
 
 						// Initialize user's settings
 						await SettingsManager.InitializeUserSettingsAsync(username);
-
+						connection.Close(); 
 						return user;
 					}
 					catch
@@ -1060,9 +1062,51 @@ namespace Graphite.UserSys
 			return result?.ToString();
 		}
 
+		
+		public static async Task<bool> ValidateSecurityDatabase()
+		{
+
+			try
+			{
+				string securityDbPath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+				"Graphite",
+				"Security",
+				"UserSecurity.db");
+
+				await using var connection = new SqliteConnection($"Data Source={securityDbPath}");
+				await connection.OpenAsync();
+
+				var command = connection.CreateCommand();
+
+				command.CommandText = @"
+					CREATE TABLE IF NOT EXISTS UserSecurity (
+						Username TEXT PRIMARY KEY,
+						Hash TEXT,
+						Salt TEXT
+					);";
+
+				var result = await command.ExecuteNonQueryAsync();
+				connection.Close();
+
+				if (result >= 0) return true;
+
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+
+			}
+			
+			return false; 
+
+		}
 
 		private static async Task StoreSecurityInfoAsync(string username, string passwordHash, string passwordSalt)
 		{
+
+			if (! await ValidateSecurityDatabase()) throw new NotImplementedException("Security Database isn't available");
+
 			string securityDbPath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
 				"Graphite",
@@ -1074,13 +1118,13 @@ namespace Graphite.UserSys
 
 			var command = connection.CreateCommand();
 			command.CommandText = @"
-        CREATE TABLE IF NOT EXISTS UserSecurity (
-            Username TEXT PRIMARY KEY,
-            Hash TEXT,
-            Salt TEXT
-        );
-        INSERT OR REPLACE INTO UserSecurity (Username, Hash, Salt)
-        VALUES ($username, $hash, $salt)";
+					CREATE TABLE IF NOT EXISTS UserSecurity (
+						Username TEXT PRIMARY KEY,
+						Hash TEXT,
+						Salt TEXT
+					);
+					INSERT OR REPLACE INTO UserSecurity (Username, Hash, Salt)
+					VALUES ($username, $hash, $salt)";
 			command.Parameters.AddWithValue("$username", username);
 			command.Parameters.AddWithValue("$hash", passwordHash);
 			command.Parameters.AddWithValue("$salt", passwordSalt);

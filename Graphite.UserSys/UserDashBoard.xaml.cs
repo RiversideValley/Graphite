@@ -53,8 +53,9 @@ namespace Graphite
 
 
 		private async void InitializeAsync()
-		{
+		 {
 			await UserManager.InitializeAsync();
+			await UserManager.ValidateSecurityDatabase(); // Validate the security database
 			await LoadUsersAsync();
 		}
 
@@ -220,8 +221,9 @@ namespace Graphite
 		private void CreateNewUser_Click(object sender, RoutedEventArgs e)
 		{
 			Graphite.Setup.OOBE.SetupWelcome setupWelcome = new Setup.OOBE.SetupWelcome();
+			setupWelcome.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 			setupWelcome.Activate();
-			this.Close();
+			
 		}
 
 		private async void Delete_Click(object sender, RoutedEventArgs e)
@@ -350,14 +352,14 @@ namespace Graphite
 		{
 			MigrationWindow ws = new MigrationWindow();
 			ws.Activate();
-			this.Close();
+			
 		}
 
 		private void MigrateSys_Click(object sender, RoutedEventArgs e)
 		{
 			MigrationWindow ws = new MigrationWindow();
 			ws.Activate();
-			this.Close();
+			
 		}
 
 		private void ExitSys_Click(object sender, RoutedEventArgs e)
