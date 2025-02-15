@@ -6,9 +6,9 @@ namespace Graphite.UserSys.Windows
 {
     public sealed partial class CreateProfile : Window
     {
-        private User _currentUser;
+        private UserV2 _currentUser;
 
-        public CreateProfile(User user)
+        public CreateProfile(UserV2 user)
         {
             this.InitializeComponent();
             _currentUser = user;

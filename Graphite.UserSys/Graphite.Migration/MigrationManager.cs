@@ -22,7 +22,7 @@ namespace Graphite.Migration
             _userCoreDbPath = Path.Combine(graphiteDataPath, "UserCore.db");
         }
 
-        public async Task<List<User>> GetAvailableUsersAsync()
+        public async Task<List<UserV2>> GetAvailableUsersAsync()
         {
             // Use the provided method to get all Graphite users
             return await UserManager.GetAllUsersAsync();

@@ -264,9 +264,9 @@ namespace Graphite.UserSys
 			}
 		}
 
-		public static async Task<List<User>> GetAllUsersAsync()
+		public static async Task<List<UserV2>> GetAllUsersAsync()
 		{
-			var users = new List<User>();
+			var users = new List<UserV2>();
 
 			try
 			{
@@ -279,7 +279,7 @@ namespace Graphite.UserSys
 				await using var reader = await command.ExecuteReaderAsync();
 				while (await reader.ReadAsync())
 				{
-					users.Add(new User
+					users.Add(new UserV2
 					{
 						Username = reader.GetString(0),
 						Email = reader.IsDBNull(1) ? null : reader.GetString(1),
@@ -298,7 +298,7 @@ namespace Graphite.UserSys
 			return users;
 		}
 
-		public static async Task<User> GetUserAsync(string username)
+		public static async Task<UserV2> GetUserAsync(string username)
 		{
 			try
 			{
@@ -312,7 +312,7 @@ namespace Graphite.UserSys
 				await using var reader = await command.ExecuteReaderAsync();
 				if (await reader.ReadAsync())
 				{
-					return new User
+					return new UserV2
 					{
 						Username = reader.GetString(0),
 						Email = reader.IsDBNull(1) ? null : reader.GetString(1),
@@ -331,7 +331,7 @@ namespace Graphite.UserSys
 			return null;
 		}
 
-		public static async Task<User> CreateUserAsync(string username, string password = null, string email = null, Stream profileImageStream = null)
+		public static async Task<UserV2> CreateUserAsync(string username, string password = null, string email = null, Stream profileImageStream = null)
 		{
 			try
 			{
@@ -343,7 +343,7 @@ namespace Graphite.UserSys
 				// Sanitize username for folder name
 				string sanitizedUsername = string.Join("_", username.Split(Path.GetInvalidFileNameChars()));
 
-				var user = new User
+				var user = new UserV2
 				{
 					Username = username,
 					Email = email,
@@ -514,7 +514,7 @@ namespace Graphite.UserSys
 			}
 		}
 
-		public static async Task<User> AuthenticateAsync(string username, string password)
+		public static async Task<UserV2> AuthenticateAsync(string username, string password)
 		{
 			if (string.IsNullOrWhiteSpace(username))
 			{
@@ -560,7 +560,7 @@ namespace Graphite.UserSys
 							// Reset login attempts on successful login
 							ResetLoginAttempts(username);
 
-							var user = new User
+							var user = new UserV2
 							{
 								Username = username,
 								Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
@@ -822,7 +822,7 @@ namespace Graphite.UserSys
 			}
 		}
 
-		public static async Task<User> LoginAsGuestAsync()
+		public static async Task<UserV2> LoginAsGuestAsync()
 		{
 			const string guestUsername = "Guest";
 			const string guestEmail = "guest@app.com";

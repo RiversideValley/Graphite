@@ -17,18 +17,30 @@ using Graphite.UserSys.Windows;
 using System.ComponentModel;
 using System.Linq;
 using Graphite.Migration;
+using Windows.ApplicationModel.AppService;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Graphite
 {
-	public sealed partial class MainWindow : Window
+	public sealed partial class UserDashBoard : Window
 	{
+		public UserV2? AuthUser { get; set; }
 		private ObservableCollection<UserViewModel>? Users { get; set; }
 		private AppWindow? appWindow;
 		private readonly HttpClient _httpClient;
 		private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 		private bool _disposedValue;
+        private readonly ObservableRecipient? _recipient;
+		
 
-		public MainWindow()
+		public UserDashBoard(ObservableRecipient recipient)
+        {
+            this.InitializeComponent();
+            InitializeAsync();
+            _httpClient = new HttpClient();
+            _recipient = recipient;
+        }
+		public UserDashBoard()
 		{
 			this.InitializeComponent();
 
@@ -38,6 +50,8 @@ namespace Graphite
 		}
 
 		
+
+
 		private async void InitializeAsync()
 		{
 			await UserManager.InitializeAsync();
@@ -110,11 +124,11 @@ namespace Graphite
 			}
 		}
 
-		private void UserListView_ItemClick(object sender, ItemClickEventArgs e)
+		private async void UserListView_ItemClick(object sender, ItemClickEventArgs e)
 		{
 			if (e.ClickedItem is UserViewModel selectedUser)
 			{
-				AttemptLoginAsync(selectedUser.Username);
+				await AttemptLoginAsync(selectedUser.Username);
 			}
 		}
 
@@ -145,9 +159,9 @@ namespace Graphite
 					if (authenticatedUser != null)
 					{
 						// Open the Welcome window
-						HomeWindow welcomeWindow = new HomeWindow(authenticatedUser);
-						welcomeWindow.Activate();
-						this.Close(); // Close the login window
+						AuthUser = authenticatedUser; 
+						this.Close();
+						// Close the login window
 					}
 					else
 					{
@@ -161,7 +175,7 @@ namespace Graphite
 			}
 		}
 
-		private async Task ShowPasswordDialogAsync(User user)
+		private async Task ShowPasswordDialogAsync(UserV2 user)
 		{
 			var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
 			var dialog = new ContentDialog
@@ -180,9 +194,8 @@ namespace Graphite
 				var authenticatedUser = await UserManager.AuthenticateAsync(user.Username, passwordBox.Password);
 				if (authenticatedUser != null)
 				{
+					AuthUser = authenticatedUser;
 					// Open the Welcome window
-					HomeWindow welcomeWindow = new HomeWindow(authenticatedUser);
-					welcomeWindow.Activate();
 					this.Close(); // Close the login window
 				}
 				else
@@ -213,7 +226,7 @@ namespace Graphite
 
 		private async void Delete_Click(object sender, RoutedEventArgs e)
 		{
-			if (sender is Button deleteButton && deleteButton.DataContext is User user)
+			if (sender is Button deleteButton && deleteButton.DataContext is UserV2 user)
 			{
 				await UserManager.DeleteUserAsync(user.Username);
 			}

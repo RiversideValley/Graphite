@@ -42,6 +42,10 @@
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Riverside.Graphite.Core\Riverside.Graphite.Core.csproj" />
+    <ProjectReference Include="..\Riverside.Graphite.Data.Core\Riverside.Graphite.Data.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="Assets\applogo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

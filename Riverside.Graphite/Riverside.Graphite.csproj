@@ -193,6 +193,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Graphite.UserSys\Graphite.UserSys.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Assets\Riverside.Graphite.Assets.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Channels\Riverside.Graphite.Channels.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.IdentityClient\Riverside.Graphite.IdentityClient.csproj" />

@@ -30,7 +30,9 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Windows.ApplicationModel.UserDataAccounts.SystemAccess;
+using Graphite.UserSys;
+using Graphite;
 
 
 namespace Riverside.Graphite.ViewModels;
@@ -273,7 +275,13 @@ public partial class HomeViewModel : ObservableRecipient
 	{
 		IsPromoOpen = !IsPromoOpen;	
 	}
-
+	[RelayCommand]
+	private async Task OpenUserSys() {
+		
+		var win = new UserDashBoard();
+		await AppService.ConfigureSettingsWindow(win);
+		win.Activate();
+	}
 	[RelayCommand]
 	private void ClosePane() => IsShellPaneOpen = !IsShellPaneOpen;
 

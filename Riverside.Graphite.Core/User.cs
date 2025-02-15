@@ -19,9 +19,10 @@ public class User
 
 	public string WindowsUserName { get; set; }
 	public string Password { get; set; }
-
 	public bool IsFirstLaunch { get; set; }
 
 	[JsonPropertyName("UserSettings")]
 	public Settings UserSettings { get; set; }
+
+	
 }

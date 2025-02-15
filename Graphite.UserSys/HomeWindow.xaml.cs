@@ -18,12 +18,12 @@ namespace Graphite;
 
 public sealed partial class HomeWindow : Window
 {
-	private User _currentUser;
+	private UserV2 _currentUser;
 	private AppWindow appWindow;
 	private readonly int maxTabItems = 30;
 
 
-	public HomeWindow(User user)
+	public HomeWindow(UserV2 user)
 	{
 		this.InitializeComponent();
 		_currentUser = user;

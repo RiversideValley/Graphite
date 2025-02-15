@@ -878,6 +878,19 @@
                         Glyph="&#xe7c1;" />
                 </Button>
 
+                <Button
+                    x:Name="UserBtn"
+                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Canvas.ZIndex="997"
+                    Command="{x:Bind ViewModel.OpenUserSysCommand}">
+                    <FontIcon
+                        FontFamily="{StaticResource FluentIcons}"
+                        FontSize="16"
+                        Glyph="&#xE125;" />
+                </Button>
+
                 <TeachingTip
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"

@@ -10,7 +10,7 @@ namespace Graphite.Setup.OOBE
 {
     public sealed partial class OOBEPreferences : Page
     {
-        public User User { get; private set; }
+        public UserV2 User { get; private set; }
 
         public OOBEPreferences()
         {
@@ -21,9 +21,9 @@ namespace Graphite.Setup.OOBE
         {
             base.OnNavigatedTo(e);
 
-            if (e.Parameter is User user)
+            if (e.Parameter is UserV2 user)
             {
-                User = user;
+				User = user;
                 _ = LoadCurrentSettingsAsync();
             }
             else

@@ -29,9 +29,9 @@ namespace Graphite.Pages
     public sealed partial class SettingsWindow : Window
     {
 		private AppWindow appWindow;
-		private User USR;
+		private UserV2 USR;
 
-		public SettingsWindow(User user)
+		public SettingsWindow(UserV2 user)
         {
             this.InitializeComponent();
 			USR = user;

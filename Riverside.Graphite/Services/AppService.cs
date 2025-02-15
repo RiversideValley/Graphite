@@ -1,10 +1,12 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
+using Graphite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using NuGet.Protocol;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
@@ -14,6 +16,7 @@ using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.Setup;
 using System;
 using System.Collections.Generic;
@@ -43,6 +46,7 @@ public static class AppService
 	public static IAuthenticationService MsalService { get; set; }
 	public static IGraphService GraphService { get; set; }
 	public static DispatcherQueue Dispatcher { get; set; }
+	public static AppServiceViewModel AppServiceViewModel { get; set; } = new();
 
 	public static async Task WindowsController(CancellationToken cancellationToken)
 	{
@@ -204,8 +208,23 @@ public static class AppService
 			}
 			else
 			{
-				ActiveWindow = new UserCentral();
-				ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
+				
+
+				ActiveWindow = new UserDashBoard();
+
+				ActiveWindow.Closed += (s, e) => {
+
+					s.GetType().GetProperties().ToList().ForEach(p => ExceptionLogger.LogInformation(p.Name.ToString()));
+
+					if (ActiveWindow is UserDashBoard dash) {
+
+						if (dash.AuthUser is not null)
+						{
+							_ = AuthService.Authenticate(dash.AuthUser.Username);
+						}
+					}
+					WindowsController(cancellationToken).ConfigureAwait(false);
+				}; 
 				ConfigureWindowAppearance();
 				ActiveWindow.Activate();
 				Windowing.Center(ActiveWindow);
