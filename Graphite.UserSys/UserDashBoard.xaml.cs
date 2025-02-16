@@ -365,6 +365,7 @@ namespace Graphite
 		private void ExitSys_Click(object sender, RoutedEventArgs e)
 		{
 			Application.Current.Exit();	
+
 		}
 	}
 

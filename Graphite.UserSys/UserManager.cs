@@ -38,9 +38,9 @@ namespace Graphite.UserSys
 		private static byte[] _cachedKey;
 		private static byte[] _cachedIV;
 
-		public static readonly string GraphiteDataPath = Path.Combine(
-	   Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-	   @"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
+		public static readonly string GraphiteDataPath = Path.Combine(GetFullPathToExe(), "V2_UserData");	
+
+		//Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),@"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
 
 		private const string MainDbName = "UserCore.db";
 		private static readonly string MainDbPath = Path.Combine(GraphiteDataPath, MainDbName);
@@ -55,6 +55,13 @@ namespace Graphite.UserSys
 		private static readonly ConcurrentDictionary<string, (string Username, DateTime ExpirationTime)> _activeSessions =
 			new ConcurrentDictionary<string, (string Username, DateTime ExpirationTime)>();
 		private const int SessionExpirationMinutes = 30;
+
+		public static string GetFullPathToExe()
+		{
+			string path = AppDomain.CurrentDomain.BaseDirectory;
+			int pos = path.LastIndexOf("\\");
+			return path[..pos];
+		}
 
 		public static async Task InitializeAsync()
 		{
@@ -112,7 +119,7 @@ namespace Graphite.UserSys
 
 			try
 			{
-				string securityFolder = Path.GetDirectoryName(KeyFilePath);
+                string securityFolder = Path.GetDirectoryName(KeyFilePath) ?? throw new InvalidOperationException("KeyFilePath is invalid.");
 
 				// Ensure the security folder exists
 				if (!Directory.Exists(securityFolder))
@@ -198,14 +205,14 @@ namespace Graphite.UserSys
 			}
 		}
 
-		private static string EncryptPassword(string password)
+		private async static Task<string> EncryptPassword(string password)
 		{
 			if (string.IsNullOrEmpty(password))
-				return null;
+				return string.Empty;
 
 			try
 			{
-				EnsureEncryptionKeysAsync().GetAwaiter().GetResult();
+				await EnsureEncryptionKeysAsync();
 
 				using (Aes aes = Aes.Create())
 				{
@@ -284,7 +291,7 @@ namespace Graphite.UserSys
 					users.Add(new UserV2
 					{
 						Username = reader.GetString(0),
-						Email = reader.IsDBNull(1) ? null : reader.GetString(1),
+						Email = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
 						ProfileImagePath = reader.GetString(2),
 						HasPassword = reader.GetInt32(3) == 1,
 						WindowsUserName = Environment.UserName,
@@ -317,7 +324,7 @@ namespace Graphite.UserSys
 					return new UserV2
 					{
 						Username = reader.GetString(0),
-						Email = reader.IsDBNull(1) ? null : reader.GetString(1),
+						Email = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
 						ProfileImagePath = reader.GetString(2),
 						HasPassword = reader.GetInt32(3) == 1,
 						WindowsUserName = reader.GetString(4),
@@ -361,7 +368,7 @@ namespace Graphite.UserSys
 				if (!string.IsNullOrEmpty(password))
 				{
 					(passwordHash, passwordSalt) = HashPassword(password);
-					encryptedPassword = EncryptPassword(password);
+					encryptedPassword = await EncryptPassword(password);
 
 					// Store hash and salt in a separate, more secure database
 					await StoreSecurityInfoAsync(username, passwordHash, passwordSalt);
@@ -435,12 +442,11 @@ namespace Graphite.UserSys
 					try
 					{
 						var command = connection.CreateCommand();
-						command.CommandText = @"
-                INSERT INTO Users (Username, PasswordHash, Email, WindowsUserName, IsFirstLaunch, ProfileImagePath, HasPassword)
-                VALUES ($username, $passwordHash, $email, $windowsUserName, $isFirstLaunch, $profileImagePath, $hasPassword)";
+						command.CommandText = @"INSERT INTO Users (Username, PasswordHash, Email, WindowsUserName, IsFirstLaunch, ProfileImagePath, HasPassword)
+								VALUES ($username, $passwordHash, $email, $windowsUserName, $isFirstLaunch, $profileImagePath, $hasPassword)";
 
 						command.Parameters.AddWithValue("$username", user.Username);
-						command.Parameters.AddWithValue("$passwordHash", (object)encryptedPassword ?? DBNull.Value);
+						command.Parameters.AddWithValue("$passwordHash", string.IsNullOrEmpty(encryptedPassword) ? DBNull.Value : encryptedPassword);
 						command.Parameters.AddWithValue("$email", (object)user.Email ?? DBNull.Value);
 						command.Parameters.AddWithValue("$windowsUserName", user.WindowsUserName);
 						command.Parameters.AddWithValue("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
@@ -453,9 +459,7 @@ namespace Graphite.UserSys
 
 						// Insert metadata into blobs table
 						var metadataCommand = connection.CreateCommand();
-						metadataCommand.CommandText = @"
-                INSERT INTO blobs (Username, Metadata)
-                VALUES ($username, $metadata)";
+						metadataCommand.CommandText = @"INSERT INTO blobs (Username, Metadata) VALUES ($username, $metadata)";
 						metadataCommand.Parameters.AddWithValue("$username", user.Username);
 						metadataCommand.Parameters.AddWithValue("$metadata", JsonSerializer.Serialize(new
 						{
@@ -501,20 +505,17 @@ namespace Graphite.UserSys
 			}
 		}
 
-		private static (string Hash, string Salt) HashPassword(string password)
-		{
-			byte[] salt = new byte[16];
-			using (var rng = new RNGCryptoServiceProvider())
-			{
-				rng.GetBytes(salt);
-			}
+        private static (string Hash, string Salt) HashPassword(string password)
+        {
+            byte[] salt = new byte[16];
+            RandomNumberGenerator.Fill(salt);
 
-			using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000))
-			{
-				byte[] hash = pbkdf2.GetBytes(20);
-				return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
-			}
-		}
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
+            {
+                byte[] hash = pbkdf2.GetBytes(20);
+                return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
+            }
+        }
 
 		public static async Task<UserV2> AuthenticateAsync(string username, string password)
 		{
@@ -545,7 +546,7 @@ namespace Graphite.UserSys
 				if (await reader.ReadAsync())
 				{
 					bool hasPassword = reader.GetInt32(reader.GetOrdinal("HasPassword")) == 1;
-					string storedEncryptedPassword = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? null : reader.GetString(reader.GetOrdinal("PasswordHash"));
+                    string storedEncryptedPassword = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? string.Empty : reader.GetString(reader.GetOrdinal("PasswordHash"));
 
 					// Extra security check
 					if (!hasPassword && storedEncryptedPassword != null)
@@ -565,7 +566,7 @@ namespace Graphite.UserSys
 							var user = new UserV2
 							{
 								Username = username,
-								Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
+								Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
 								WindowsUserName = reader.GetString(reader.GetOrdinal("WindowsUserName")),
 								IsFirstLaunch = reader.GetInt32(reader.GetOrdinal("IsFirstLaunch")) == 1,
 								ProfileImagePath = reader.GetString(reader.GetOrdinal("ProfileImagePath")),
@@ -759,23 +760,15 @@ namespace Graphite.UserSys
 			}
 		}
 
-		private static bool VerifyPassword(string inputPassword, string storedEncryptedPassword)
-		{
-			if (string.IsNullOrEmpty(inputPassword) || string.IsNullOrEmpty(storedEncryptedPassword))
-			{
-				return false;
-			}
-
-			try
-			{
-				string decryptedPassword = DecryptPassword(storedEncryptedPassword);
-				return inputPassword == decryptedPassword;
-			}
-			catch
-			{
-				return false;
-			}
-		}
+        private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
+        {
+            byte[] saltBytes = Convert.FromBase64String(storedSalt);
+            using (var pbkdf2 = new Rfc2898DeriveBytes(inputPassword, saltBytes, 10000, HashAlgorithmName.SHA256))
+            {
+                byte[] hashBytes = pbkdf2.GetBytes(20);
+                return Convert.ToBase64String(hashBytes) == storedHash;
+            }
+        }
 
 		public static async Task SetPasswordAsync(string username, string newPassword)
 		{
@@ -784,7 +777,7 @@ namespace Graphite.UserSys
 				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
 				await connection.OpenAsync();
 
-				string encryptedPassword = EncryptPassword(newPassword);
+				string encryptedPassword = await EncryptPassword(newPassword);
 
 				var command = connection.CreateCommand();
 				command.CommandText = @"
@@ -1156,15 +1149,7 @@ namespace Graphite.UserSys
 			return null;
 		}
 
-		private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
-		{
-			byte[] saltBytes = Convert.FromBase64String(storedSalt);
-			using (var pbkdf2 = new Rfc2898DeriveBytes(inputPassword, saltBytes, 10000))
-			{
-				byte[] hashBytes = pbkdf2.GetBytes(20);
-				return Convert.ToBase64String(hashBytes) == storedHash;
-			}
-		}
+		
 	}
 
 }
