@@ -533,7 +533,7 @@ public class Windowing
 				appWindow.TitleBar.ButtonInactiveForegroundColor = Colors.Gray;
 
 				// Set window size
-				SizeInt32 size = new(600, 900);
+				SizeInt32 size = new(800, 1200);
 				appWindow.Resize(size);
 
 				// Remove default window chrome

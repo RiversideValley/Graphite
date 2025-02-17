@@ -25,7 +25,7 @@ namespace Graphite.UserSys
 		{
 			_logger = logger;
 			_oldBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
-			_newBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
+			_newBasePath = UserManager.GraphiteDataPath; // Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
 			_newDbPath = Path.Combine(_newBasePath, "UserCore.db");
 		}
 
@@ -57,7 +57,6 @@ namespace Graphite.UserSys
 			}
 			finally
 			{
-				
 				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
 		}
@@ -158,6 +157,7 @@ namespace Graphite.UserSys
 			command.Parameters.AddWithValue("$hasPassword", user.HasPassword ? 1 : 0);
 
 			await command.ExecuteNonQueryAsync();
+			connection.Close(); 
 		}
 
 		private async Task MigrateUserFilesAsync(string oldUserPath, string newUserPath)

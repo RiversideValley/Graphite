@@ -29,12 +29,13 @@ namespace Graphite.Setup.OOBE
         private readonly DispatcherTimer particleTimer;
         private Compositor _compositor;
         private AppWindow _appWindow;
-
-        public SetupWelcome()
+		public static SetupWelcome? Instance { get; private set; }	
+		public SetupWelcome()
         {
             this.InitializeComponent();
+			Instance = this;	
 
-            _compositor = ElementCompositionPreview.GetElementVisual(Content).Compositor;
+			_compositor = ElementCompositionPreview.GetElementVisual(Content).Compositor;
 
             // Get the AppWindow for the current window
             var windowHandle = WindowNative.GetWindowHandle(this);

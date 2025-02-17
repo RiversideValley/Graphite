@@ -19,6 +19,9 @@ using System.Linq;
 using Graphite.Migration;
 using Windows.ApplicationModel.AppService;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Riverside.Graphite.Core;
+using System.Threading;
+using Graphite.Helpers;
 
 namespace Graphite
 {
@@ -31,7 +34,8 @@ namespace Graphite
 		private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 		private bool _disposedValue;
         private readonly ObservableRecipient? _recipient;
-		
+		public CancellationToken CancellationToken { get; set; }
+		public static UserDashBoard? Instance { get; set; }
 
 		public UserDashBoard(ObservableRecipient recipient)
         {
@@ -43,13 +47,21 @@ namespace Graphite
 		public UserDashBoard()
 		{
 			this.InitializeComponent();
+			Instance = this;
 
 			InitializeAsync();
-
+			
 			_httpClient = new HttpClient();
 		}
 
-		
+		public Task CloseCancelToken(CancellationToken cancellationToken)
+		{
+			// need to assign reference token in order to cancel !
+			CancellationTokenSource cancel = new();
+			cancel.Cancel();
+			CancellationToken = cancellationToken = cancel.Token;
+			return Task.CompletedTask;
+		}
 
 
 		private async void InitializeAsync()
@@ -59,7 +71,7 @@ namespace Graphite
 			await LoadUsersAsync();
 		}
 
-		private async Task LoadUsersAsync()
+		public async Task LoadUsersAsync()
 		{
 			try
 			{
@@ -68,25 +80,35 @@ namespace Graphite
 
 				// Create the directory if it doesn't exist
 				Directory.CreateDirectory(graphiteDataPath);
-
-				// Get all user directories
-				var userDirs = Directory.GetDirectories(graphiteDataPath);
-				foreach (var userDir in userDirs)
+				var users = await UserManager.GetAllUsersAsync();
+				foreach (var user in users)
 				{
-					var username = Path.GetFileName(userDir);
-					if (!username.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+					var profileImagePath = Path.Combine(graphiteDataPath, user.Username, "profile_image.jpg");
+					var userViewModel = new UserViewModel
 					{
-						var profileImagePath = Path.Combine(userDir, "profile_image.jpg");
+						Username = user.Username,
+						ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
+					};
+					Users.Add(userViewModel);
+				}	
+				// Get all user directories
+				//var userDirs = Directory.GetDirectories(graphiteDataPath);
+				//foreach (var userDir in userDirs)
+				//{
+				//	var username = Path.GetFileName(userDir);
+				//	if (!username.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+				//	{
+				//		var profileImagePath = Path.Combine(userDir, "profile_image.jpg");
 
-						var userViewModel = new UserViewModel
-						{
-							Username = username,
-							ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
-						};
+				//		var userViewModel = new UserViewModel
+				//		{
+				//			Username = username,
+				//			ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
+				//		};
 
-						Users.Add(userViewModel);
-					}
-				}
+				//		Users.Add(userViewModel);
+				//	}
+				//}
 
 				UserListView.ItemsSource = Users;
 
@@ -129,6 +151,7 @@ namespace Graphite
 		{
 			if (e.ClickedItem is UserViewModel selectedUser)
 			{
+				UserManager.ActiveElement = (sender as UIElement);	
 				await AttemptLoginAsync(selectedUser.Username);
 			}
 		}
@@ -198,6 +221,7 @@ namespace Graphite
 					AuthUser = authenticatedUser;
 					// Open the Welcome window
 					this.Close(); // Close the login window
+					
 				}
 				else
 				{
@@ -221,16 +245,22 @@ namespace Graphite
 		private void CreateNewUser_Click(object sender, RoutedEventArgs e)
 		{
 			Graphite.Setup.OOBE.SetupWelcome setupWelcome = new Setup.OOBE.SetupWelcome();
-			setupWelcome.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+			Windowing.DialogWindow(setupWelcome); 
+
 			setupWelcome.Activate();
 			
 		}
 
 		private async void Delete_Click(object sender, RoutedEventArgs e)
 		{
-			if (sender is Button deleteButton && deleteButton.DataContext is UserV2 user)
+			if (sender is Button deleteButton && deleteButton.DataContext is UserViewModel vm)
 			{
-				await UserManager.DeleteUserAsync(user.Username);
+				UserManager.ActiveElement = (sender as UIElement);
+
+				if(await UserManager.DeleteUserAsync(vm.Username))
+					NotificationQueue.Show("User deleted successfully", TimeSpan.FromSeconds(3).Seconds, "Graphite Users");
+
+				await LoadUsersAsync();	
 			}
 		}
 
@@ -351,6 +381,7 @@ namespace Graphite
 		private void StartMigration_Click(object sender, RoutedEventArgs e)
 		{
 			MigrationWindow ws = new MigrationWindow();
+			Windowing.DialogWindow(ws);
 			ws.Activate();
 			
 		}
@@ -358,12 +389,14 @@ namespace Graphite
 		private void MigrateSys_Click(object sender, RoutedEventArgs e)
 		{
 			MigrationWindow ws = new MigrationWindow();
+			Windowing.DialogWindow(ws);
 			ws.Activate();
 			
 		}
 
 		private void ExitSys_Click(object sender, RoutedEventArgs e)
 		{
+			CloseCancelToken(CancellationToken);
 			Application.Current.Exit();	
 
 		}

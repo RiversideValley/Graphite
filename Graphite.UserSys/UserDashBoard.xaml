@@ -2,9 +2,12 @@
     x:Class="Graphite.UserDashBoard"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:graphite="using:Graphite.Helpers"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:Graphite"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Graphite - Login"
@@ -404,6 +407,17 @@
                 Margin="16,0,0,0"
                 Content="Show on startup"
                 IsChecked="True" />
+
+            <InfoBar
+                MaxWidth="480"
+                Margin="25"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
+                <interactivity:Interaction.Behaviors>
+                    <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
+                </interactivity:Interaction.Behaviors>
+            </InfoBar>
         </Grid>
     </Grid>
 </Window>

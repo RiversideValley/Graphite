@@ -212,23 +212,36 @@ public static class AppService
 				//ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
 
 				ActiveWindow = new UserDashBoard();
+				await ConfigureSettingsWindow(ActiveWindow).ConfigureAwait(false);
 
-				ActiveWindow.Closed += (s, e) =>
+				ActiveWindow.Closed += async (s, e) =>
 				{
-
 					if (ActiveWindow is UserDashBoard dash)
 					{
 
 						if (dash.AuthUser is not null)
 						{
-							_ = AuthService.Authenticate(dash.AuthUser.Username);
+							AuthService.AddUser(new User
+							{
+								Email = dash.AuthUser.Email,
+								Id = Guid.Parse(dash.AuthUser.SessionId),
+								IsFirstLaunch = dash.AuthUser.IsFirstLaunch,
+								Password = dash.AuthUser.HasPassword.ToString(),
+								Username = dash.AuthUser.Username,
+								WindowsUserName = dash.AuthUser.WindowsUserName
+							});
+							AuthService.Authenticate(dash.AuthUser.Username);	
 						}
 						else {
-							Application.Current.Exit(); 
+							if (dash.CancellationToken.IsCancellationRequested)
+							{
+								IsAppGoingToClose = true;
+							}
 						}
 
 					}
-					WindowsController(cancellationToken).ConfigureAwait(false);
+
+					await WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 
 
@@ -296,7 +309,9 @@ public static class AppService
 
 		CheckNormal(AuthService.CurrentUser.Username);
 
-		ActiveWindow?.Close();
+		if (Windowing.IsWindow(WindowNative.GetWindowHandle(ActiveWindow!)))	
+			ActiveWindow?.Close();
+
 		await ShowMainWindow(cancellationToken);
 	}
 

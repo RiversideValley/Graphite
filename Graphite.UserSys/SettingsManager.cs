@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 
 namespace Graphite.UserSys
 {
@@ -49,6 +50,7 @@ namespace Graphite.UserSys
 			{
 				_semaphore.Release();
 			}
+
 		}
 
 
@@ -118,27 +120,31 @@ namespace Graphite.UserSys
             await ExecuteWithRetryAsync(username, async connection =>
             {
                 using var transaction = await connection.BeginTransactionAsync();
-                try
-                {
-                    var command = connection.CreateCommand();
-                    command.CommandText = @"
+				try
+				{
+					var command = connection.CreateCommand();
+					command.CommandText = @"
                         INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
                         VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
                             COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
 
-                    command.Parameters.AddWithValue("$key", key);
-                    command.Parameters.AddWithValue("$value", value?.ToString() ?? "");
-                    command.Parameters.AddWithValue("$type", value?.GetType().FullName ?? "");
+					command.Parameters.AddWithValue("$key", key);
+					command.Parameters.AddWithValue("$value", value?.ToString() ?? "");
+					command.Parameters.AddWithValue("$type", value?.GetType().FullName ?? "");
 
-                    await command.ExecuteNonQueryAsync();
-                    await transaction.CommitAsync();
-                    return true;
-                }
-                catch
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
+					await command.ExecuteNonQueryAsync();
+					await transaction.CommitAsync();
+					return true;
+				}
+				catch
+				{
+					await transaction.RollbackAsync();
+					throw;
+				}
+				finally { 
+					
+					connection.Close();	
+				}
             });
         }
 
@@ -180,7 +186,12 @@ namespace Graphite.UserSys
                     await transaction.RollbackAsync();
                     throw;
                 }
-            });
+				finally
+				{
+
+					connection.Close();
+				}
+			});
         }
 
         public static async Task<T> GetSettingAsync<T>(string username, string key, T defaultValue = default)
@@ -208,7 +219,12 @@ namespace Graphite.UserSys
                     {
                         return defaultValue;
                     }
-                }
+					finally
+					{
+						reader.Close();
+						connection.Close();
+					}
+				}
 
                 return defaultValue;
             });
@@ -218,37 +234,46 @@ namespace Graphite.UserSys
         {
             return await ExecuteWithRetryAsync(username, async connection =>
             {
-                var settings = new Dictionary<string, object>();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT Key, Value, Type FROM Settings";
+				try
+				{
+					var settings = new Dictionary<string, object>();
+					var command = connection.CreateCommand();
+					command.CommandText = "SELECT Key, Value, Type FROM Settings";
 
-                using var reader = await command.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
-                {
-                    try
-                    {
-                        string key = reader.GetString(0);
-                        string value = reader.GetString(1);
-                        string typeName = reader.GetString(2);
+					using var reader = await command.ExecuteReaderAsync();
+					while (await reader.ReadAsync())
+					{
+						try
+						{
+							string key = reader.GetString(0);
+							string value = reader.GetString(1);
+							string typeName = reader.GetString(2);
 
-                        var type = Type.GetType(typeName);
-                        if (type != null)
-                        {
-                            settings[key] = Convert.ChangeType(value, type);
-                        }
-                        else
-                        {
-                            settings[key] = value;
-                        }
-                    }
-                    catch
-                    {
-                        continue; // Skip invalid settings
-                    }
-                }
+							var type = Type.GetType(typeName);
+							if (type != null)
+							{
+								settings[key] = Convert.ChangeType(value, type);
+							}
+							else
+							{
+								settings[key] = value;
+							}
+						}
+						catch
+						{
+							continue; // Skip invalid settings
+						}
+					}
+					
+					return settings;
+				}
+				catch (Exception)
+				{
 
-                return settings;
-            });
+					throw;
+				}
+				finally { connection.Close(); }	
+			});
         }
 
         public static async Task UpdateEncryptionSettingAsync(string username, string key, bool value)
@@ -264,29 +289,41 @@ namespace Graphite.UserSys
                 await ExecuteWithRetryAsync(username, async connection =>
                 {
                     using var transaction = await connection.BeginTransactionAsync();
-                    try
-                    {
-                        var command = connection.CreateCommand();
-                        command.CommandText = @"
+					try
+					{
+						var command = connection.CreateCommand();
+						command.CommandText = @"
                             INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
                             VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
                                 COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
 
-                        command.Parameters.AddWithValue("$key", key);
-                        command.Parameters.AddWithValue("$value", value.ToString());
-                        command.Parameters.AddWithValue("$type", typeof(bool).FullName);
-
-                        await command.ExecuteNonQueryAsync();
-                        await transaction.CommitAsync();
-
-                        await EncryptionManager.HandleEncryptionSettingChangeAsync(username, key, value);
-                        return true;
-                    }
-                    catch
-                    {
-                        await transaction.RollbackAsync();
-                        throw;
-                    }
+						command.Parameters.AddWithValue("$key", key);
+						command.Parameters.AddWithValue("$value", value.ToString());
+						command.Parameters.AddWithValue("$type", typeof(bool).FullName);
+						
+						await command.ExecuteNonQueryAsync();
+						await transaction.CommitAsync();
+						
+						try
+						{
+							await EncryptionManager.HandleEncryptionSettingChangeAsync(username, key, value);
+						}
+						catch (Exception ex)
+						{
+							ExceptionLogger.LogException(ex);
+							return false;
+						}
+						
+						return true;
+					}
+					catch
+					{
+						await transaction.RollbackAsync();
+						throw;
+					}
+					finally {
+						connection.Close(); 
+					}
                 });
             }
             finally

@@ -15,6 +15,11 @@ using System.Security;
 using System.Text.Json;
 using Windows.Security.Credentials;
 using Riverside.Graphite.Runtime.Helpers.Logging;
+using Windows.Devices.Bluetooth.Advertisement;
+using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
+using Windows.ApplicationModel.Store;
+using Microsoft.UI.Xaml;
 
 namespace Graphite.UserSys
 {
@@ -56,6 +61,8 @@ namespace Graphite.UserSys
 			new ConcurrentDictionary<string, (string Username, DateTime ExpirationTime)>();
 		private const int SessionExpirationMinutes = 30;
 
+		public static UIElement? ActiveElement { get; set; }	
+
 		public static string GetFullPathToExe()
 		{
 			string path = AppDomain.CurrentDomain.BaseDirectory;
@@ -95,12 +102,12 @@ namespace Graphite.UserSys
                         Username TEXT PRIMARY KEY,
                         Hash TEXT,
                         Salt TEXT,
-                        FOREIGN KEY(Username) REFERENCES Users(Username)
+                        FOREIGN KEY(Username) REFERENCES Users(Username) ON DELETE CASCADE
                     );
                     CREATE TABLE IF NOT EXISTS blobs (
                         Username TEXT PRIMARY KEY,
                         Metadata TEXT,
-                        FOREIGN KEY(Username) REFERENCES Users(Username)
+                        FOREIGN KEY(Username) REFERENCES Users(Username) ON DELETE CASCADE
                     );";
 				await command.ExecuteNonQueryAsync();
 			}
@@ -298,12 +305,15 @@ namespace Graphite.UserSys
 						IsFirstLaunch = false
 					});
 				}
+
+				reader.Close();
+				connection.Close(); 
 			}
 			catch (Exception ex)
 			{
 				throw new Exception("Failed to retrieve users.", ex);
 			}
-
+			
 			return users;
 		}
 
@@ -340,170 +350,237 @@ namespace Graphite.UserSys
 			return null;
 		}
 
-		public static async Task<UserV2> CreateUserAsync(string username, string password = null, string email = null, Stream profileImageStream = null)
-		{
+		public static async Task<UserV2> UpdateUserInUserData(UserV2 user, string encryptedPassword) {
+
 			try
 			{
-				if (string.IsNullOrWhiteSpace(username))
-				{
-					throw new ArgumentException("Username is required.", nameof(username));
-				}
+				
+				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
 
-				// Sanitize username for folder name
-				string sanitizedUsername = string.Join("_", username.Split(Path.GetInvalidFileNameChars()));
-
-				var user = new UserV2
-				{
-					Username = username,
-					Email = email,
-					WindowsUserName = Environment.UserName,
-					IsFirstLaunch = true,
-					HasPassword = !string.IsNullOrEmpty(password)
-				};
-
-				// Only encrypt password if it's provided
-				string encryptedPassword = null;
-				string passwordHash = null;
-				string passwordSalt = null;
-				if (!string.IsNullOrEmpty(password))
-				{
-					(passwordHash, passwordSalt) = HashPassword(password);
-					encryptedPassword = await EncryptPassword(password);
-
-					// Store hash and salt in a separate, more secure database
-					await StoreSecurityInfoAsync(username, passwordHash, passwordSalt);
-				}
-
-				// Create user folder structure
-				string userFolderPath = Path.Combine(GraphiteDataPath, sanitizedUsername);
-				if (Directory.Exists(userFolderPath))
-				{
-					throw new Exception($"User folder already exists for username: {username}");
-				}
-
-				Directory.CreateDirectory(userFolderPath);
-				foreach (var folder in new[] { "Browser", "Database", "Permissions", "Settings" })
-				{
-					Directory.CreateDirectory(Path.Combine(userFolderPath, folder));
-				}
-
-				// Create necessary .db files
-				string userDbPath = Path.Combine(userFolderPath, "Database", "user_data.db");
-				await using (var connection = new SqliteConnection($"Data Source={userDbPath}"))
-				{
-					await connection.OpenAsync(); // This will create the file if it doesn't exist
-				}
-
-				// Handle profile image
-				string profileImagePath = Path.Combine(userFolderPath, "profile_image.jpg");
-				user.ProfileImagePath = profileImagePath;
-				if (profileImageStream != null)
-				{
-					try
-					{
-						using (var fileStream = File.Create(profileImagePath))
-						{
-							await profileImageStream.CopyToAsync(fileStream);
-						}
-					}
-					catch (Exception ex)
-					{
-						throw new Exception($"Failed to process profile image: {ex.Message}", ex);
-					}
-				}
-				else
-				{
-					try
-					{
-						string defaultImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "default_profile.jpg");
-						if (File.Exists(defaultImagePath))
-						{
-							File.Copy(defaultImagePath, profileImagePath, true);
-						}
-						else
-						{
-							// Create an empty file if default image doesn't exist
-							File.WriteAllBytes(profileImagePath, new byte[0]);
-						}
-					}
-					catch (Exception ex)
-					{
-						throw new Exception($"Failed to create default profile image: {ex.Message}", ex);
-					}
-				}
+				using var transaction = await connection.BeginTransactionAsync();
 
 				try
 				{
-					await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-					await connection.OpenAsync();
+					var command = connection.CreateCommand();
+				    command.CommandText = @"UPDATE Users 
+                    SET PasswordHash = $passwordHash, 
+                    Email = $email, 
+                    WindowsUserName = $windowsUserName, 
+                    IsFirstLaunch = $isFirstLaunch, 
+                    ProfileImagePath = $profileImagePath, 
+                    HasPassword = $hasPassword
+                    WHERE Username = $username";
 
-					using var transaction = await connection.BeginTransactionAsync();
+					command.Parameters.AddWithValue("$username", user.Username);
+					command.Parameters.AddWithValue("$passwordHash", string.IsNullOrEmpty(encryptedPassword) ? DBNull.Value : encryptedPassword);
+					command.Parameters.AddWithValue("$email", (object)user.Email ?? DBNull.Value);
+					command.Parameters.AddWithValue("$windowsUserName", user.WindowsUserName);
+					command.Parameters.AddWithValue("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
+					command.Parameters.AddWithValue("$profileImagePath", string.IsNullOrEmpty(user.ProfileImagePath) ? DBNull.Value : user.ProfileImagePath);
+					command.Parameters.AddWithValue("$hasPassword", string.IsNullOrEmpty(encryptedPassword) ? 0 : 1);
 
-					try
+					await command.ExecuteNonQueryAsync();
+
+					// Insert metadata into blobs table
+					var metadataCommand = connection.CreateCommand();
+                    metadataCommand.CommandText = @"UPDATE blobs SET Metadata = $metadata WHERE Username = $username";
+					metadataCommand.Parameters.AddWithValue("$username", user.Username);
+					metadataCommand.Parameters.AddWithValue("$metadata", JsonSerializer.Serialize(new
 					{
-						var command = connection.CreateCommand();
-						command.CommandText = @"INSERT INTO Users (Username, PasswordHash, Email, WindowsUserName, IsFirstLaunch, ProfileImagePath, HasPassword)
-								VALUES ($username, $passwordHash, $email, $windowsUserName, $isFirstLaunch, $profileImagePath, $hasPassword)";
+						CreationDate = DateTime.UtcNow,
+						LastLogin = DateTime.UtcNow,
+						HasPassword = user.HasPassword
+					}));
+					await metadataCommand.ExecuteNonQueryAsync();
 
-						command.Parameters.AddWithValue("$username", user.Username);
-						command.Parameters.AddWithValue("$passwordHash", string.IsNullOrEmpty(encryptedPassword) ? DBNull.Value : encryptedPassword);
-						command.Parameters.AddWithValue("$email", (object)user.Email ?? DBNull.Value);
-						command.Parameters.AddWithValue("$windowsUserName", user.WindowsUserName);
-						command.Parameters.AddWithValue("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
-						command.Parameters.AddWithValue("$profileImagePath", user.ProfileImagePath);
-						command.Parameters.AddWithValue("$hasPassword", user.HasPassword ? 1 : 0);
+					await transaction.CommitAsync();
 
-						await command.ExecuteNonQueryAsync();
-
-					
-
-						// Insert metadata into blobs table
-						var metadataCommand = connection.CreateCommand();
-						metadataCommand.CommandText = @"INSERT INTO blobs (Username, Metadata) VALUES ($username, $metadata)";
-						metadataCommand.Parameters.AddWithValue("$username", user.Username);
-						metadataCommand.Parameters.AddWithValue("$metadata", JsonSerializer.Serialize(new
-						{
-							CreationDate = DateTime.UtcNow,
-							LastLogin = DateTime.UtcNow,
-							HasPassword = user.HasPassword
-						}));
-						await metadataCommand.ExecuteNonQueryAsync();
-
-						await transaction.CommitAsync();
-
-						// Initialize user's settings
-						await SettingsManager.InitializeUserSettingsAsync(username);
-						connection.Close(); 
-						return user;
-					}
-					catch
-					{
-						await transaction.RollbackAsync();
-						throw;
-					}
+					connection.Close();
+					return user;
 				}
-				catch (Exception ex)
+				catch
 				{
-					// If database operations fail, clean up the created directories
-					try
-					{
-						if (Directory.Exists(userFolderPath))
-						{
-							Directory.Delete(userFolderPath, true);
-						}
-					}
-					catch
-					{
-						// Ignore cleanup errors
-					}
-					throw new Exception($"Failed to create user in database: {ex.Message}", ex);
+					await transaction.RollbackAsync();
+					throw;
 				}
 			}
 			catch (Exception ex)
 			{
-				throw new Exception($"Failed to create user: {ex.Message}", ex);
+				throw new Exception($"Failed to create user in database: {ex.Message}", ex);
+			}
+			
+
+		}
+		public static async Task<UserV2> CreateUserInUserData(UserV2 user, string encryptedPassword) {
+
+			try
+			{
+				var isUser = await GetUserAsync(user.Username);
+				if (isUser is UserV2)
+					return await UpdateUserInUserData(isUser, encryptedPassword); 
+
+				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
+
+				using var transaction = await connection.BeginTransactionAsync();
+
+				try
+				{
+					var command = connection.CreateCommand();
+					command.CommandText = @"INSERT INTO Users (Username, PasswordHash, Email, WindowsUserName, IsFirstLaunch, ProfileImagePath, HasPassword)
+								VALUES ($username, $passwordHash, $email, $windowsUserName, $isFirstLaunch, $profileImagePath, $hasPassword)";
+
+					command.Parameters.AddWithValue("$username", user.Username);
+					command.Parameters.AddWithValue("$passwordHash", string.IsNullOrEmpty(encryptedPassword) ? DBNull.Value : encryptedPassword);
+					command.Parameters.AddWithValue("$email", (object)user.Email ?? DBNull.Value);
+					command.Parameters.AddWithValue("$windowsUserName", user.WindowsUserName);
+					command.Parameters.AddWithValue("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
+					command.Parameters.AddWithValue("$profileImagePath", string.IsNullOrEmpty(user.ProfileImagePath) ? DBNull.Value : user.ProfileImagePath);
+					command.Parameters.AddWithValue("$hasPassword", user.HasPassword ? 1 : 0);
+
+					await command.ExecuteNonQueryAsync();
+
+
+
+					// Insert metadata into blobs table
+					var metadataCommand = connection.CreateCommand();
+					metadataCommand.CommandText = @"INSERT INTO blobs (Username, Metadata) VALUES ($username, $metadata)";
+					metadataCommand.Parameters.AddWithValue("$username", user.Username);
+					metadataCommand.Parameters.AddWithValue("$metadata", JsonSerializer.Serialize(new
+					{
+						CreationDate = DateTime.UtcNow,
+						LastLogin = DateTime.UtcNow,
+						HasPassword = user.HasPassword
+					}));
+					await metadataCommand.ExecuteNonQueryAsync();
+
+					await transaction.CommitAsync();
+
+					// Initialize user's settings
+					await SettingsManager.InitializeUserSettingsAsync(user.Username);
+					connection.Close();
+					return user;
+				}
+				catch
+				{
+					await transaction.RollbackAsync();
+					throw;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to create user in database: {ex.Message}", ex);
 			}
 		}
+		public static async Task<UserV2> CreateValidateUserFolders(UserV2 user,  string sanitizedUsername, Stream profileImageStream = null) {
+
+			string userFolderPath = Path.Combine(GraphiteDataPath, sanitizedUsername);
+			if (Directory.Exists(userFolderPath))
+			{
+				return user; 
+			}
+
+			Directory.CreateDirectory(userFolderPath);
+			foreach (var folder in new[] { "Browser", "Database", "Permissions", "Settings" })
+			{
+				Directory.CreateDirectory(Path.Combine(userFolderPath, folder));
+			}
+
+			// Create necessary .db files
+			string userDbPath = Path.Combine(userFolderPath, "Database", "user_data.db");
+			await using (var connection = new SqliteConnection($"Data Source={userDbPath}"))
+			{
+				await connection.OpenAsync(); // This will create the file if it doesn't exist
+			}
+
+			// Handle profile image
+			string profileImagePath = Path.Combine(userFolderPath, "profile_image.jpg");
+			user.ProfileImagePath = profileImagePath;
+			if (profileImageStream != null)
+			{
+				try
+				{
+					using (var fileStream = File.Create(profileImagePath))
+					{
+						await profileImageStream.CopyToAsync(fileStream);
+					}
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"Failed to process profile image: {ex.Message}", ex);
+				}
+			}
+			else
+			{
+				try
+				{
+					string defaultImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "default_profile.jpg");
+					if (File.Exists(defaultImagePath))
+					{
+						File.Copy(defaultImagePath, profileImagePath, true);
+					}
+					else
+					{
+						// Create an empty file if default image doesn't exist
+						File.WriteAllBytes(profileImagePath, new byte[0]);
+					}
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"Failed to create default profile image: {ex.Message}", ex);
+				}
+			}
+
+			return user; 
+
+		}
+
+        public static async Task<UserV2> CreateUserAsync(string username, string password = null, string email = null, Stream profileImageStream = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    throw new ArgumentException("Username is required.", nameof(username));
+                }
+
+                // Sanitize username for folder name
+                string sanitizedUsername = string.Join("_", username.Split(Path.GetInvalidFileNameChars()));
+
+                var user = new UserV2
+                {
+                    Username = username,
+                    Email = email,
+                    WindowsUserName = Environment.UserName,
+                    IsFirstLaunch = true,
+                    HasPassword = !string.IsNullOrEmpty(password)
+                };
+
+                // Only encrypt password if it's provided
+                string? encryptedPassword = default;
+                string? passwordHash = default;
+                string? passwordSalt = default;
+
+                if (!string.IsNullOrEmpty(password))
+                {
+                    (passwordHash, passwordSalt) = HashPassword(password);
+                    encryptedPassword = await EncryptPassword(password);
+                    // Store hash and salt in a separate, more secure database
+                    await StoreSecurityInfoAsync(username, passwordHash, passwordSalt);
+                }
+
+                // Create user folder structure
+				var UserAndInfo =  await CreateValidateUserFolders(user, sanitizedUsername, profileImageStream);
+				// Create user in database
+				return await CreateUserInUserData(UserAndInfo, encryptedPassword ?? string.Empty);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to create user: {ex.Message}", ex);
+            }
+        }
 
         private static (string Hash, string Salt) HashPassword(string password)
         {
@@ -535,55 +612,89 @@ namespace Graphite.UserSys
 			try
 			{
 				await SettingsManager.InitializeUserSettingsAsync(username);
-				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-				await connection.OpenAsync();
-
-				var command = connection.CreateCommand();
-				command.CommandText = "SELECT * FROM Users WHERE Username = $username";
-				command.Parameters.AddWithValue("$username", username);
-
-				await using var reader = await command.ExecuteReaderAsync();
-				if (await reader.ReadAsync())
+				
+				var existingUser = await GetUserAsync(username);
+				if (existingUser is UserV2 user)
 				{
-					bool hasPassword = reader.GetInt32(reader.GetOrdinal("HasPassword")) == 1;
-                    string storedEncryptedPassword = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? string.Empty : reader.GetString(reader.GetOrdinal("PasswordHash"));
-
-					// Extra security check
-					if (!hasPassword && storedEncryptedPassword != null)
+					if (user.HasPassword)
 					{
-						throw new SecurityException("Database integrity compromised. Please contact support.");
-					}
-
-					var securityInfo = await GetSecurityInfoAsync(username);
-					if (securityInfo.HasValue)
-					{
-						var (storedHash, storedSalt) = securityInfo.Value;
-						if (!hasPassword || (hasPassword && password != null && storedEncryptedPassword != null && VerifyPassword(password, storedHash, storedSalt)))
+						var securityInfo = await GetSecurityInfoAsync(username);
+						if (securityInfo.HasValue)
 						{
-							// Reset login attempts on successful login
-							ResetLoginAttempts(username);
-
-							var user = new UserV2
+							var (storedHash, storedSalt) = securityInfo.Value;
+							if (VerifyPassword(password, storedHash, storedSalt))
 							{
-								Username = username,
-								Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
-								WindowsUserName = reader.GetString(reader.GetOrdinal("WindowsUserName")),
-								IsFirstLaunch = reader.GetInt32(reader.GetOrdinal("IsFirstLaunch")) == 1,
-								ProfileImagePath = reader.GetString(reader.GetOrdinal("ProfileImagePath")),
-								HasPassword = hasPassword
-							};
-
-							// Get user profiles
-							user.Profiles = await GetUserProfilesAsync(username);
-
-							// Generate and store session ID
-							user.SessionId = GenerateSessionId(username);
-
-							return user;
+								// Reset login attempts on successful login
+								ResetLoginAttempts(username);
+								// Generate and store session ID
+								user.SessionId = GenerateSessionId(username);
+								return user;
+							}
 						}
 					}
+					else
+					{
+						if (!await MigrateUserToMandatoryPassword(existingUser))
+							throw new SecurityException("Database integrity compromised. Please contact support.");
+						// No password set, allow login
+						ResetLoginAttempts(username);
+						user.SessionId = GenerateSessionId(username);
+						return user;
+					}
+				}	
 
-				}
+				//await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				//await connection.OpenAsync();
+
+				//var command = connection.CreateCommand();
+				//command.CommandText = "SELECT * FROM Users WHERE Username = $username";
+				//command.Parameters.AddWithValue("$username", username);
+
+				//await using var reader = await command.ExecuteReaderAsync();
+				//if (await reader.ReadAsync())
+				//{
+				//	bool hasPassword = reader.GetInt32(reader.GetOrdinal("HasPassword")) == 1;
+    //                string storedEncryptedPassword = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? string.Empty : reader.GetString(reader.GetOrdinal("PasswordHash"));
+				//	reader.Close();
+				//	connection.Close(); 
+				//	// Extra security check
+				//	if (!hasPassword && storedEncryptedPassword != null)
+				//	{
+					
+				//		if (!await MigrateUserToMandatoryPassword(new UserV2 { Username = username }))
+				//			throw new SecurityException("Database integrity compromised. Please contact support.");
+				//	}
+
+				//	var securityInfo = await GetSecurityInfoAsync(username);
+				//	if (securityInfo.HasValue)
+				//	{
+				//		var (storedHash, storedSalt) = securityInfo.Value;
+				//		if (!hasPassword || (hasPassword && password != null && storedEncryptedPassword != null && VerifyPassword(password, storedHash, storedSalt)))
+				//		{
+				//			// Reset login attempts on successful login
+				//			ResetLoginAttempts(username);
+
+				//			var user = new UserV2
+				//			{
+				//				Username = username,
+				//				Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
+				//				WindowsUserName = reader.GetString(reader.GetOrdinal("WindowsUserName")),
+				//				IsFirstLaunch = reader.GetInt32(reader.GetOrdinal("IsFirstLaunch")) == 1,
+				//				ProfileImagePath = reader.GetString(reader.GetOrdinal("ProfileImagePath")),
+				//				HasPassword = hasPassword
+				//			};
+
+				//			// Get user profiles
+				//			user.Profiles = await GetUserProfilesAsync(username);
+
+				//			// Generate and store session ID
+				//			user.SessionId = GenerateSessionId(username);
+
+				//			return user;
+				//		}
+				//	}
+
+				//}
 
 				// Increment failed login attempts
 				IncrementLoginAttempts(username);
@@ -666,6 +777,63 @@ namespace Graphite.UserSys
 			_activeSessions.TryRemove(sessionId, out _);
 		}
 
+		public static async Task<bool> MigrateUserToMandatoryPassword(UserV2 user) {
+
+			var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
+			var dialog = new ContentDialog
+			{
+				Title = $"Migrated Users are required to have a Password",
+				PrimaryButtonText = "Login",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary,
+				Content = passwordBox,
+				XamlRoot = ActiveElement?.XamlRoot
+			};
+
+			var result = await dialog.ShowAsync();
+			if (result == ContentDialogResult.Primary)
+			{
+				// add to security table
+				var securityUser = await CreateUserAsync(
+					user.Username,
+					passwordBox.Password,
+					user.Email
+				);
+
+				if (securityUser is UserV2 userV2) {
+					var authenticatedUser = await UserManager.AuthenticateAsync(userV2.Username, passwordBox.Password);
+					if (authenticatedUser != null)
+						return true;
+				}
+				
+			}
+
+			return false;
+
+		}
+		public static async Task<bool> ValidatePassWord(UserV2 user) {
+			
+			var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
+			var dialog = new ContentDialog
+			{
+				Title = $"Enter password for {user.Username}",
+				PrimaryButtonText = "Login",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary,
+				Content = passwordBox,
+				XamlRoot = ActiveElement?.XamlRoot
+			};
+
+			var result = await dialog.ShowAsync();
+			if (result == ContentDialogResult.Primary)
+			{
+				var authenticatedUser = await UserManager.AuthenticateAsync(user.Username, passwordBox.Password);
+				if (authenticatedUser != null)
+					return true; 
+			}
+
+			return false;
+		}
 		public static async Task<bool> DeleteUserAsync(string username, string password = null)
 		{
 			try
@@ -680,9 +848,10 @@ namespace Graphite.UserSys
 					// Check if the user exists and has a password
 					var checkCommand = connection.CreateCommand();
 					checkCommand.CommandText = @"
-                SELECT HasPassword, PasswordHash 
-                FROM Users 
-                WHERE Username = $username";
+					SELECT HasPassword, PasswordHash 
+					FROM Users 
+					WHERE Username = $username";
+
 					checkCommand.Parameters.AddWithValue("$username", username);
 
 					using var reader = await checkCommand.ExecuteReaderAsync();
@@ -692,28 +861,15 @@ namespace Graphite.UserSys
 					}
 
 					bool hasPassword = reader.GetBoolean(0);
-					string storedEncryptedPassword = reader.IsDBNull(1) ? null : reader.GetString(1);
+					string storedEncryptedPassword = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
 
 					// If the user has a password, verify it
 					if (hasPassword)
 					{
 						if (string.IsNullOrEmpty(password))
 						{
-							throw new UnauthorizedAccessException("Password required for user deletion.");
-						}
-
-						var securityInfo = await GetSecurityInfoAsync(username);
-						if (securityInfo.HasValue)
-						{
-							var (storedHash, storedSalt) = securityInfo.Value;
-							if (!VerifyPassword(password, storedHash, storedSalt))
-							{
-								throw new UnauthorizedAccessException("Incorrect password provided for user deletion.");
-							}
-						}
-						else
-						{
-							throw new UnauthorizedAccessException("Incorrect password provided for user deletion.");
+							if (!await ValidatePassWord(new UserV2 { Username = username }))
+								throw new UnauthorizedAccessException("Password required for user deletion.");
 						}
 					}
 
@@ -753,11 +909,17 @@ namespace Graphite.UserSys
 					await transaction.RollbackAsync();
 					throw;
 				}
+				finally {
+				
+					connection.Close();
+				}
+
 			}
 			catch (Exception ex)
 			{
 				throw new Exception($"Failed to delete user: {ex.Message}", ex);
 			}
+			
 		}
 
         private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
@@ -982,6 +1144,8 @@ namespace Graphite.UserSys
 			{
 				profiles.Add(reader.GetString(0));
 			}
+			reader.Close();
+			connection.Close(); 
 
 			return profiles;
 		}

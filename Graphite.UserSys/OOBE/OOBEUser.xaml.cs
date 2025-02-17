@@ -16,7 +16,7 @@ namespace Graphite.Setup.OOBE;
 public sealed partial class OOBEUser : Page
 {
     private bool _isPasswordVisible = false;
-    private List<UserImageItem> userImages;
+    private List<UserImageItem>? userImages;
     public OOBEUser()
     {
         this.InitializeComponent();
@@ -72,9 +72,8 @@ public sealed partial class OOBEUser : Page
         string imagePath = (UserImageComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
         string emailAddress = EmailTextBox.Text;
 
-     
-            DisableInputs();
-            NextStepButton.Visibility = Visibility.Visible;
+        DisableInputs();
+        NextStepButton.Visibility = Visibility.Visible;
               
     }
 
@@ -137,8 +136,15 @@ public sealed partial class OOBEUser : Page
 
             if (authenticatedUser != null)
             {
-                // Navigate to the next page
-                Frame.Navigate(typeof(OOBEPreferences), authenticatedUser);
+				// Navigate to the next page
+				//Frame.Navigate(typeof(OOBEPreferences), authenticatedUser);
+
+				// moving to an Imessenger later on.......
+				SetupWelcome.Instance?.Close();
+				if (UserDashBoard.Instance is UserDashBoard dash) {
+					await dash.LoadUsersAsync(); 
+				}
+
             }
             else
             {
