@@ -393,7 +393,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Background="Transparent"
-                    BorderBrush="Transparent"
+                    BorderBrush="{ThemeResource AccentAAFillColorSecondaryBrush}"
+                    BorderThickness=".5"
                     Click="ExitSys_Click">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xe8bb;" />

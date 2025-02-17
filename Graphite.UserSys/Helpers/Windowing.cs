@@ -543,6 +543,9 @@ public class Windowing
 					presenter.SetBorderAndTitleBar(true, false);
 				}
 			}
+			
+			Center(hWnd);
+
 		}
 		catch (Exception ex)
 		{

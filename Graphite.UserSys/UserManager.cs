@@ -297,9 +297,9 @@ namespace Graphite.UserSys
 				{
 					users.Add(new UserV2
 					{
-						Username = reader.GetString(0),
+						Username = reader.IsDBNull(0) ? string.Empty : reader.GetString(0),
 						Email = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
-						ProfileImagePath = reader.GetString(2),
+						ProfileImagePath = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
 						HasPassword = reader.GetInt32(3) == 1,
 						WindowsUserName = Environment.UserName,
 						IsFirstLaunch = false
@@ -334,7 +334,7 @@ namespace Graphite.UserSys
 					return new UserV2
 					{
 						Username = reader.GetString(0),
-						Email = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+						Email = reader.IsDBNull(1) ? null : reader.GetString(1),
 						ProfileImagePath = reader.GetString(2),
 						HasPassword = reader.GetInt32(3) == 1,
 						WindowsUserName = reader.GetString(4),

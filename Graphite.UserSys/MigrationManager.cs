@@ -58,6 +58,7 @@ namespace Graphite.UserSys
 			finally
 			{
 				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
 		}
 

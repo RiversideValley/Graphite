@@ -4,5 +4,4 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    x:Name="TabViewItem">
-</TabViewItem>
+    x:Name="TabViewItem" />

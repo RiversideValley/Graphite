@@ -4,45 +4,47 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
     Title="Open File"
-    >
+    mc:Ignorable="d">
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBox x:Name="FileNameBox" 
-                     PlaceholderText="Enter file name" 
-                     Header="File name:"
-                     Margin="0,0,10,0"/>
+            <TextBox
+                x:Name="FileNameBox"
+                Margin="0,0,10,0"
+                Header="File name:"
+                PlaceholderText="Enter file name" />
 
-            <ComboBox x:Name="FileTypeComboBox" 
-                      Grid.Column="1" 
-                      Header="File type:"
-                      MinWidth="120"/>
+            <ComboBox
+                x:Name="FileTypeComboBox"
+                Grid.Column="1"
+                MinWidth="120"
+                Header="File type:" />
         </Grid>
 
-        <ListView x:Name="FileListView" 
-                  Grid.Row="1" 
-                  Margin="0,20,0,20"
-                  SelectionMode="Single"
-                  IsItemClickEnabled="True"
-                  ItemClick="FileListView_ItemClick">
+        <ListView
+            x:Name="FileListView"
+            Grid.Row="1"
+            Margin="0,20,0,20"
+            IsItemClickEnabled="True"
+            ItemClick="FileListView_ItemClick"
+            SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE8A5;" FontFamily="Segoe MDL2 Assets"/>
-                        <TextBlock Text="{Binding}"/>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A5;" />
+                        <TextBlock Text="{Binding}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -50,25 +52,29 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="OpenLocationButton" 
-                    Content="Open file location" 
-                    Click="OpenLocationButton_Click"/>
+            <Button
+                x:Name="OpenLocationButton"
+                Click="OpenLocationButton_Click"
+                Content="Open file location" />
 
-            <StackPanel Grid.Column="1" 
-                        Orientation="Horizontal" 
-                        HorizontalAlignment="Right" 
-                        Spacing="10">
-                <Button x:Name="OpenButton" 
-                        Content="Open" 
-                        Click="OpenButton_Click" 
-                        Style="{StaticResource AccentButtonStyle}"/>
-                <Button x:Name="CancelButton" 
-                        Content="Cancel" 
-                        Click="CancelButton_Click"/>
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="10">
+                <Button
+                    x:Name="OpenButton"
+                    Click="OpenButton_Click"
+                    Content="Open"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button
+                    x:Name="CancelButton"
+                    Click="CancelButton_Click"
+                    Content="Cancel" />
             </StackPanel>
         </Grid>
     </Grid>

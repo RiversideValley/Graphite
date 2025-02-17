@@ -22,6 +22,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Riverside.Graphite.Core;
 using System.Threading;
 using Graphite.Helpers;
+using Newtonsoft.Json;
+
 
 namespace Graphite
 {
@@ -71,7 +73,7 @@ namespace Graphite
 			await LoadUsersAsync();
 		}
 
-		public async Task LoadUsersAsync()
+		public  async Task LoadUsersAsync()
 		{
 			try
 			{
@@ -176,6 +178,7 @@ namespace Graphite
 				if (user.HasPassword)
 				{
 					await ShowPasswordDialogAsync(user);
+
 				}
 				else
 				{
@@ -218,10 +221,22 @@ namespace Graphite
 				var authenticatedUser = await UserManager.AuthenticateAsync(user.Username, passwordBox.Password);
 				if (authenticatedUser != null)
 				{
+					// open new window for the authenticated user
+					if (AuthService.CurrentUser is not null)
+					{
+						if (AuthService.CurrentUser.Username != authenticatedUser.Username)
+						{
+							AuthService.Authenticate(authenticatedUser.Username);	
+
+							await Windows.System.Launcher.LaunchUriAsync(new System.Uri($"firebrowseruser://{authenticatedUser.Username}"));
+						}
+					}
+
+					// set the authenticated user back to riverside.graphite.Appservice
+
 					AuthUser = authenticatedUser;
-					// Open the Welcome window
+					AuthService.Authenticate(AuthUser?.Username); 
 					this.Close(); // Close the login window
-					
 				}
 				else
 				{

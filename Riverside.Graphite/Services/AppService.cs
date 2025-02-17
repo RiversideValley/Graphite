@@ -309,8 +309,12 @@ public static class AppService
 
 		CheckNormal(AuthService.CurrentUser.Username);
 
-		if (Windowing.IsWindow(WindowNative.GetWindowHandle(ActiveWindow!)))	
-			ActiveWindow?.Close();
+		if (ActiveWindow is not null)
+		{
+			if (Windowing.IsWindow(WindowNative.GetWindowHandle(ActiveWindow)))
+				ActiveWindow?.Close();
+
+		}
 
 		await ShowMainWindow(cancellationToken);
 	}
@@ -318,11 +322,12 @@ public static class AppService
 	private static async Task ShowMainWindow(CancellationToken cancellationToken)
 	{
 		App.Current.m_window = new MainWindow();
+		
+
 		Windowing.Center(App.Current.m_window);
 		IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
 		_ = Windowing.AnimateWindow(hWnd, 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
 		App.Current.m_window.Activate();
-
 		App.Current.m_window.AppWindow.MoveInZOrderAtTop();
 
 		List<IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);
@@ -330,7 +335,6 @@ public static class AppService
 		{
 			Windowing.CascadeWindows(windows);
 		}
-
 
 		if (Windowing.IsWindowVisible(hWnd))
 		{
