@@ -169,6 +169,7 @@ namespace Graphite
 				}
 
 				var user = await UserManager.GetUserAsync(username);
+
 				if (user == null)
 				{
 					await ShowErrorMessageAsync("User not found.");

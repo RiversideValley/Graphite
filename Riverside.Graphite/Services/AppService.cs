@@ -245,7 +245,7 @@ public static class AppService
 				};
 
 
-				ConfigureWindowAppearance();
+				//ConfigureWindowAppearance();
 				ActiveWindow.Activate();
 				Windowing.Center(ActiveWindow);
 			}
