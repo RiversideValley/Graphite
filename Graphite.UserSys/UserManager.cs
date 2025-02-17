@@ -634,69 +634,15 @@ namespace Graphite.UserSys
 					}
 					else
 					{
-						if (!await MigrateUserToMandatoryPassword(existingUser))
-							throw new SecurityException("Database integrity compromised. Please contact support.");
-						// No password set, allow login
+						//if (!await MigrateUserToMandatoryPassword(existingUser))
+						//	throw new SecurityException("Database integrity compromised. Please contact support.");
+						//// No password set, allow login
 						ResetLoginAttempts(username);
 						user.SessionId = GenerateSessionId(username);
 						return user;
 					}
 				}	
 
-				//await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-				//await connection.OpenAsync();
-
-				//var command = connection.CreateCommand();
-				//command.CommandText = "SELECT * FROM Users WHERE Username = $username";
-				//command.Parameters.AddWithValue("$username", username);
-
-				//await using var reader = await command.ExecuteReaderAsync();
-				//if (await reader.ReadAsync())
-				//{
-				//	bool hasPassword = reader.GetInt32(reader.GetOrdinal("HasPassword")) == 1;
-    //                string storedEncryptedPassword = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? string.Empty : reader.GetString(reader.GetOrdinal("PasswordHash"));
-				//	reader.Close();
-				//	connection.Close(); 
-				//	// Extra security check
-				//	if (!hasPassword && storedEncryptedPassword != null)
-				//	{
-					
-				//		if (!await MigrateUserToMandatoryPassword(new UserV2 { Username = username }))
-				//			throw new SecurityException("Database integrity compromised. Please contact support.");
-				//	}
-
-				//	var securityInfo = await GetSecurityInfoAsync(username);
-				//	if (securityInfo.HasValue)
-				//	{
-				//		var (storedHash, storedSalt) = securityInfo.Value;
-				//		if (!hasPassword || (hasPassword && password != null && storedEncryptedPassword != null && VerifyPassword(password, storedHash, storedSalt)))
-				//		{
-				//			// Reset login attempts on successful login
-				//			ResetLoginAttempts(username);
-
-				//			var user = new UserV2
-				//			{
-				//				Username = username,
-				//				Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
-				//				WindowsUserName = reader.GetString(reader.GetOrdinal("WindowsUserName")),
-				//				IsFirstLaunch = reader.GetInt32(reader.GetOrdinal("IsFirstLaunch")) == 1,
-				//				ProfileImagePath = reader.GetString(reader.GetOrdinal("ProfileImagePath")),
-				//				HasPassword = hasPassword
-				//			};
-
-				//			// Get user profiles
-				//			user.Profiles = await GetUserProfilesAsync(username);
-
-				//			// Generate and store session ID
-				//			user.SessionId = GenerateSessionId(username);
-
-				//			return user;
-				//		}
-				//	}
-
-				//}
-
-				// Increment failed login attempts
 				IncrementLoginAttempts(username);
 
 				return null;
