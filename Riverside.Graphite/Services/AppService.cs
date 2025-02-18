@@ -208,12 +208,9 @@ public static class AppService
 			}
 			else
 			{
-				//ActiveWindow = new UserCentral();
-				//ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
-
 				ActiveWindow = new UserDashBoard();
 				await ConfigureSettingsWindow(ActiveWindow).ConfigureAwait(false);
-
+				
 				ActiveWindow.Closed += async (s, e) =>
 				{
 					if (ActiveWindow is UserDashBoard dash)
@@ -240,14 +237,10 @@ public static class AppService
 						}
 
 					}
-
+					
 					await WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 
-
-				//ConfigureWindowAppearance();
-				ActiveWindow.Activate();
-				Windowing.Center(ActiveWindow);
 			}
 		}
 		catch (Exception e)

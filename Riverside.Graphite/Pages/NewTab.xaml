@@ -883,7 +883,7 @@
                     Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
-                    Canvas.ZIndex="997"
+                    Canvas.ZIndex="996"
                     Command="{x:Bind ViewModel.OpenUserSysCommand}">
                     <FontIcon
                         FontFamily="{StaticResource FluentIcons}"

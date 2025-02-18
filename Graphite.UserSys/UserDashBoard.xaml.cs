@@ -236,7 +236,7 @@ namespace Graphite
 					// set the authenticated user back to riverside.graphite.Appservice
 
 					AuthUser = authenticatedUser;
-					AuthService.Authenticate(AuthUser?.Username); 
+					//AuthService.Authenticate(AuthUser?.Username); 
 					this.Close(); // Close the login window
 				}
 				else
