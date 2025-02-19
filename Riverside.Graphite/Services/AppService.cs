@@ -318,7 +318,7 @@ public static class AppService
 		await CloseCancelToken(ref cancellationToken);
 	}
 
-	public static string GetUsernameFromCoreFolderPath(string coreFolderPath, string userName = null)
+	public static string UserExistDatabase(string userName = null)
 	{
 		try
 		{
@@ -342,7 +342,7 @@ public static class AppService
 		}
 
 		string coreFolderPath = UserDataManager.CoreFolderPath;
-		string username = GetUsernameFromCoreFolderPath(coreFolderPath, userName);
+		string username = UserExistDatabase(userName);
 		/* store in the datacore project sql file. Going to need to put on cloud, and 
         1. Need function to create file in temp. 
         2. How we push new queries / maybe in cloud for new sql or need function to update 
@@ -518,7 +518,7 @@ public static class AppService
 		// folders might exist but user of "Private" doesn't validate & create
 		if (Directory.Exists(userFolderPath))
 		{
-			string username = GetUsernameFromCoreFolderPath(userFolderPath, "Private");
+			string username = UserExistDatabase(userFolderPath);
 			if (username is not null)
 				return;
 		}
