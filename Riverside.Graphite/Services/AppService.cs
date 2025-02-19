@@ -263,6 +263,7 @@ public static class AppService
 	private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
 	{
 		string userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
+		
 		if (!Directory.Exists(userExist))
 		{
 			UserFolderManager.CreateUserFolders(new User
@@ -321,8 +322,7 @@ public static class AppService
 	{
 		try
 		{
-			List<User> users = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(Path.Combine(coreFolderPath, "UsrCore.json")));
-			return users?.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
+			return  UserManager.GetAllUsersAsync().Result.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
 		}
 		catch (Exception ex)
 		{
