@@ -137,11 +137,18 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			{
 				if (sender is Button switchButton && switchButton.DataContext is string clickedUserName)
 				{
-					UserManager.ActiveElement = (sender as UIElement); 
-					UserDataManager.DeleteUser(clickedUserName);
-					UserListView.ItemsSource = null;
-					await LoadUsernames();
-					_ = (Messenger?.Send(new Message_Settings_Actions($"User: {clickedUserName} has been removed from FireBrowser", EnumMessageStatus.Removed)));
+					try
+					{
+						UserManager.ActiveElement = (sender as UIElement);
+						await UserDataManager.DeleteUser(clickedUserName);
+						UserListView.ItemsSource = null;
+						await LoadUsernames();
+						_ = (Messenger?.Send(new Message_Settings_Actions($"User: {clickedUserName} has been removed from FireBrowser", EnumMessageStatus.Removed)));
+					}
+					catch (Exception ex)
+					{
+						_ = (Messenger?.Send(new Message_Settings_Actions($"Deleting: {clickedUserName} failed\n{ex.Message}", EnumMessageStatus.Informational)));
+					}
 				}
 			}
 			catch (Exception ex)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Core;
 
@@ -16,7 +17,7 @@ public static class UserDataManager
 
 	public static readonly string CoreFolderPath =  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
 	public static readonly string UsersFolderPath = "Users";
-	public async static void DeleteUser(string username)
+	public async static Task DeleteUser(string username)
 	{
 		try
 		{
@@ -28,11 +29,12 @@ public static class UserDataManager
 			{
 				Directory.Delete(userFolderPath, true);
 			}
-	
+			
 		}
 		catch(Exception ex)
 		{
-			Helper.Logging.ExceptionLogger.LogException(ex);	
+			Helper.Logging.ExceptionLogger.LogException(ex);
+			throw;
 		}
 	}
 }
