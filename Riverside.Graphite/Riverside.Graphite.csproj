@@ -26,9 +26,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\Workers\**" />
+    <Compile Remove="V2UserSystem\Controls\**" />
     <EmbeddedResource Remove="Services\Workers\**" />
+    <EmbeddedResource Remove="V2UserSystem\Controls\**" />
     <None Remove="Services\Workers\**" />
+    <None Remove="V2UserSystem\Controls\**" />
     <Page Remove="Services\Workers\**" />
+    <Page Remove="V2UserSystem\Controls\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,7 +55,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.1" />
     <PackageReference Include="Microsoft.Graph" Version="5.68.0" />
     <PackageReference Include="Microsoft.Graph.Core" Version="3.2.2" />
@@ -495,5 +499,8 @@
   <ItemGroup>
     <None Include="V2UserSystem\Graphite.Controls\Graphite.Controls.csproj" />
     <None Include="V2UserSystem\Graphite.Migration\Graphite.Migration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="V2UserSystem\Controls\**" />
   </ItemGroup>
 </Project>

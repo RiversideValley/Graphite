@@ -137,6 +137,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			{
 				if (sender is Button switchButton && switchButton.DataContext is string clickedUserName)
 				{
+					UserManager.ActiveElement = (sender as UIElement); 
 					UserDataManager.DeleteUser(clickedUserName);
 					UserListView.ItemsSource = null;
 					await LoadUsernames();

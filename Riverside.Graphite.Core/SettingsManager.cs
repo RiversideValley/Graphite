@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;
-using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Core.Helper.Logging;
 
-namespace Graphite.UserSys
+namespace Riverside.Graphite.Core
 {
     public static class SettingsManager
     {

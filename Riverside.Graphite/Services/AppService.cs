@@ -351,7 +351,7 @@ public static class AppService
 
 		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql"); /* we will eventually not use this unless development */
 
-		_ = AuthService.Authenticate(username);
+		AuthService.Authenticate(username);
 
 		if (File.Exists(updateSql))
 		{
@@ -506,7 +506,7 @@ public static class AppService
 			HideDirectory(userFolderPath);
 		}
 
-		UserDataManager.SaveUsers(users);
+		//UserDataManager.SaveUsers(users);
 		AuthService.AddUser(newUser);
 		_ = AuthService.Authenticate(newUser.Username);
 	}

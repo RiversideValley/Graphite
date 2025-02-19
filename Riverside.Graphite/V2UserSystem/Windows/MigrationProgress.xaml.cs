@@ -6,6 +6,7 @@ using System;
 using Windows.Graphics;
 using WinRT.Interop;
 using System.Threading.Tasks;
+using Riverside.Graphite.Core;
 
 namespace Graphite.UserSys.Windows
 {

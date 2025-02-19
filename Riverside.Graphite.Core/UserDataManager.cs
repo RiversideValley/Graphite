@@ -7,47 +7,32 @@ namespace Riverside.Graphite.Core;
 
 public static class UserDataManager
 {
-	public static readonly string CoreFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
+	public static string GetFullPathToExe()
+	{
+		string path = AppDomain.CurrentDomain.BaseDirectory;
+		int pos = path.LastIndexOf("\\");
+		return path[..pos];
+	}
+
+	public static readonly string CoreFolderPath =  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
 	public static readonly string UsersFolderPath = "Users";
-	public static readonly string CoreFilePath = Path.Combine(CoreFolderPath, "UsrCore.json");
-
-	public static UserDataResult LoadUsers()
-	{
-		if (!File.Exists(CoreFilePath))
-		{
-			return new() { Users = [], CurrentUsername = string.Empty };
-		}
-
-		List<User> users = JsonSerializer.Deserialize<List<User>>(File.ReadAllText(CoreFilePath)) ?? [];
-		return new() { Users = users, CurrentUsername = AuthService.IsUserAuthenticated ? AuthService.CurrentUser.Username : "Guest" };
-	}
-
-	public static void SaveUsers(List<User> users)
-	{
-		_ = Directory.CreateDirectory(CoreFolderPath);
-		File.WriteAllText(CoreFilePath, JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
-	}
-
-	public static void DeleteUser(string username)
+	public async static void DeleteUser(string username)
 	{
 		try
 		{
-			UserDataResult userData = LoadUsers();
-			if (userData.Users.RemoveAll(u => u.Username == username) > 0)
-			{
-				string userFolderPath = Path.Combine(CoreFolderPath, UsersFolderPath, username);
-				if (Directory.Exists(userFolderPath))
-				{
-					Directory.Delete(userFolderPath, true);
-				}
+			await UserManager.DeleteUserAsync(username); 
 
-				SaveUsers(userData.Users);
-				AuthService.users = AuthService.LoadUsersFromJson();
+			string userFolderPath = Path.Combine(CoreFolderPath, UsersFolderPath, username);
+
+			if (Directory.Exists(userFolderPath))
+			{
+				Directory.Delete(userFolderPath, true);
 			}
+	
 		}
-		catch
+		catch(Exception ex)
 		{
-			throw;
+			Helper.Logging.ExceptionLogger.LogException(ex);	
 		}
 	}
 }

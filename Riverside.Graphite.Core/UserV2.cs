@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Graphite.UserSys;
+namespace Riverside.Graphite.Core;
 
 public class UserV2
 {

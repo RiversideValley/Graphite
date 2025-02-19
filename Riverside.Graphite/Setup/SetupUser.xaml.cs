@@ -143,7 +143,7 @@ namespace Riverside.Graphite
 
 			List<Riverside.Graphite.Core.User> users = new() { newUser };
 			UserFolderManager.CreateUserFolders(newUser);
-			UserDataManager.SaveUsers(users);
+			//UserDataManager.SaveUsers(users);
 			AuthService.AddUser(newUser);
 			_ = AuthService.Authenticate(newUser.Username);
 

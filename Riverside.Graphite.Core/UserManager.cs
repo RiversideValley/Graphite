@@ -6,22 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using System.Security.Cryptography;
 using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.Graphics.Imaging;
-using System.Text;
-using System.Security.Principal;
-using System.Security.AccessControl;
 using System.Security;
 using System.Text.Json;
-using Windows.Security.Credentials;
-using Riverside.Graphite.Runtime.Helpers.Logging;
-using Windows.Devices.Bluetooth.Advertisement;
 using Microsoft.UI.Xaml.Controls;
-using Riverside.Graphite.Core;
-using Windows.ApplicationModel.Store;
 using Microsoft.UI.Xaml;
+using Riverside.Graphite.Core.Helper.Logging;
+using Windows.UI.WindowManagement;
 
-namespace Graphite.UserSys
+namespace Riverside.Graphite.Core
 {
 	public static class UserManager
 	{
@@ -1197,7 +1189,7 @@ namespace Graphite.UserSys
 			}
 			catch (Exception ex)
 			{
-				ExceptionLogger.LogException(ex);
+				Helper.Logging.ExceptionLogger.LogException(ex);
 
 			}
 			

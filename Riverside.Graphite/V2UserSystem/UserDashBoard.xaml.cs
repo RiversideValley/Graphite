@@ -100,7 +100,8 @@ namespace Graphite
 						ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
 					};
 					Users.Add(userViewModel);
-				}	
+				}
+				#region obsolete gather users from firebrowsercore 
 				// Get all user directories
 				//var userDirs = Directory.GetDirectories(graphiteDataPath);
 				//foreach (var userDir in userDirs)
@@ -119,6 +120,7 @@ namespace Graphite
 				//		Users.Add(userViewModel);
 				//	}
 				//}
+				#endregion
 
 				UserListView.ItemsSource = Users;
 

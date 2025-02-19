@@ -8,6 +8,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using System.Text.RegularExpressions;
+using Riverside.Graphite.Core;
 
 namespace Graphite.UserSys
 {

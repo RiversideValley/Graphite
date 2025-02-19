@@ -2,6 +2,7 @@ using Graphite.UserSys;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

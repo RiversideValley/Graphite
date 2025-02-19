@@ -1,18 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using System.Windows;
-using Graphite.UserSys.Windows;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml;
-using Windows.ApplicationModel.Core;
 
-namespace Graphite.UserSys
+namespace Riverside.Graphite.Core
 {
 	public class MigrationManager
 	{

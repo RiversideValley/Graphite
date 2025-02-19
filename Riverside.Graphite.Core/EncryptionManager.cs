@@ -1,10 +1,9 @@
-﻿using Graphite.UserSys;
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Graphite.UserSys
+namespace Riverside.Graphite.Core
 {
     public static class EncryptionManager
     {

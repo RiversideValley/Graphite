@@ -1,49 +1,71 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Core;
-public class AuthService
+public class AuthService 
 {
-	private static readonly string UserDataFileName = "UsrCore.json";
-	private static readonly string UserDataFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore", UserDataFileName);
-	public static List<User> users { get; set; } = LoadUsersFromJson();
-
-	public static List<User> LoadUsersFromJson()
+	//private static readonly string UserDataFileName = "UsrCore.json";
+	//private static readonly string UserDataFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore", UserDataFileName);
+	private static List<User> users; 
+	public static List<User> Users
 	{
-		try
+		get
 		{
-			if (File.Exists(UserDataFilePath))
-			{
-				string json = File.ReadAllText(UserDataFilePath);
-				if (!string.IsNullOrWhiteSpace(json))
-				{
-					return JsonSerializer.Deserialize<List<User>>(json) ?? new List<User>();
-				}
-			}
+			return LoadUserFromDatabase().Result	; 
+			
 		}
-		catch (JsonException ex)
-		{
-			Console.WriteLine($"Error deserializing user data: {ex.Message}");
+		set { 
+			
+			users = value;	
 		}
-		catch (IOException ex)
-		{
-			Console.WriteLine($"Error reading user data file: {ex.Message}");
-		}
-		catch (UnauthorizedAccessException ex)
-		{
-			Console.WriteLine($"Unauthorized access to user data file: {ex.Message}");
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Unexpected error loading user data: {ex.Message}");
-		}
-
-		return new List<User>();
 	}
+
+	public  event PropertyChangedEventHandler PropertyChanged;
+
+	public async static Task<List<User>> LoadUserFromDatabase()
+    {
+        try
+        {
+            var tmp = await UserManager.GetAllUsersAsync();
+            var converted = tmp.Select(u => new User
+            {
+                Id = Guid.NewGuid(),
+                Username = u.Username,
+                Email = u.Email,
+                WindowsUserName = u.WindowsUserName,
+                Password = string.Empty, // Assuming password is not available in UserV2
+                IsFirstLaunch = u.IsFirstLaunch,
+                UserSettings = new Settings() // Assuming default settings
+            }).ToList();
+
+            return Users = converted;
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error deserializing user data: {ex.Message}");
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine($"Error reading user data file: {ex.Message}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Console.WriteLine($"Unauthorized access to user data file: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error loading user data: {ex.Message}");
+        }
+
+        return new List<User>();
+    }
 
 	public static User CurrentUser { get; private set; }
 
@@ -51,7 +73,7 @@ public class AuthService
 
 	public static bool SwitchUser(string username)
 	{
-		return (CurrentUser = users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase))) != null;
+		return (CurrentUser = Users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase))) != null;
 	}
 
 	public static bool Authenticate(string username)
@@ -61,35 +83,35 @@ public class AuthService
 
 	public static void AddUser(User newUser)
 	{
-		if (!users.Any(u => u.Username.Equals(newUser.Username, StringComparison.OrdinalIgnoreCase)))
+		if (!Users.Any(u => u.Username.Equals(newUser.Username, StringComparison.OrdinalIgnoreCase)))
 		{
-			users.Add(newUser);
+			Users.Add(newUser);
 			NewCreatedUser = newUser;
-			SaveUsers();
+			//SaveUsers();
 		}
 	}
 
-	[RequiresDynamicCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
-	[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
-	private static void SaveUsers()
-	{
-		try
-		{
-			File.WriteAllText(UserDataFilePath, JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Error saving user data: {ex.Message}");
-		}
-	}
+	//[RequiresDynamicCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
+	//[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
+	//private static void SaveUsers()
+	//{
+	//	try
+	//	{
+	//		File.WriteAllText(UserDataFilePath, JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		Console.WriteLine($"Error saving user data: {ex.Message}");
+	//	}
+	//}
 
 #nullable enable
 	public static User? UserExists(string userName)
 	{
 
-		if (users.Any(t => t.Username == userName))
+		if (Users.Any(t => t.Username == userName))
 		{
-			return users.Where(t => t.Username == userName).FirstOrDefault();
+			return Users.Where(t => t.Username == userName).FirstOrDefault();
 		}
 
 		return null;
@@ -98,7 +120,8 @@ public class AuthService
 
 	public static List<string> GetAllUsernames()
 	{
-		return users.Select(u => u.Username).ToList();
+		return LoadUserFromDatabase().Result.Select(t=> t.Username).ToList();
+
 	}
 
 	public static bool IsUserNameChanging { get; set; }
@@ -113,15 +136,15 @@ public class AuthService
 
 	public static bool ChangeUsername(string oldUsername, string newUsername)
 	{
-		User userToChange = users.FirstOrDefault(u => u.Username.Equals(oldUsername, StringComparison.OrdinalIgnoreCase));
-		if (userToChange == null || users.Any(u => u.Username.Equals(newUsername, StringComparison.OrdinalIgnoreCase)))
+		User userToChange = Users.FirstOrDefault(u => u.Username.Equals(oldUsername, StringComparison.OrdinalIgnoreCase));
+		if (userToChange == null || Users.Any(u => u.Username.Equals(newUsername, StringComparison.OrdinalIgnoreCase)))
 		{
 			return IsUserNameChanging = false;
 		}
 
 		userToChange.Username = newUsername;
 
-		SaveUsers();
+		//SaveUsers();
 
 		if (CurrentUser != null && CurrentUser.Username.Equals(oldUsername, StringComparison.OrdinalIgnoreCase))
 		{
