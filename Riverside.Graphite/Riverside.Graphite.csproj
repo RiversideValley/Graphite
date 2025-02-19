@@ -193,7 +193,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Graphite.UserSys\Graphite.UserSys.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Assets\Riverside.Graphite.Assets.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.Channels\Riverside.Graphite.Channels.csproj" />
     <ProjectReference Include="..\Riverside.Graphite.IdentityClient\Riverside.Graphite.IdentityClient.csproj" />
@@ -492,5 +491,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
     <PRIResource Remove="Services\Workers\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="V2UserSystem\Graphite.Controls\Graphite.Controls.csproj" />
+    <None Include="V2UserSystem\Graphite.Migration\Graphite.Migration.csproj" />
   </ItemGroup>
 </Project>

@@ -38,6 +38,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Assets\applogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="AddUserWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

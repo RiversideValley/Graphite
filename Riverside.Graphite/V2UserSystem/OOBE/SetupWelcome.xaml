@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Graphite.Setup.OOBE.SetupWelcome"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Setup.OOBE"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Welcome - To Graphite Browser">
+    <Grid>
+        <!-- Animated Background -->
+        <Canvas x:Name="ParticleCanvas" />
+
+        <!-- Main Content -->
+        <Grid>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#7B3AED" Offset="0.0" />
+                    <GradientStop Color="#FF6B00" Offset="0.33" />
+                    <GradientStop Color="#FF3D00" Offset="0.66" />
+                    <GradientStop Color="#4F46E5" Offset="1.0" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo and Title Section -->
+            <StackPanel Grid.Row="0" Margin="0,60,0,0" Spacing="24">
+                <Image x:Name="LogoImage" 
+                    Source="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Logo-Ns1wC6kFwJ343ke50EVxOs5EUbZT8E.png"
+                    Width="120" 
+                    Height="120" 
+                    HorizontalAlignment="Center">
+                    <Image.RenderTransform>
+                        <ScaleTransform x:Name="LogoScaleTransform" />
+                    </Image.RenderTransform>
+                </Image>
+
+                <TextBlock Text="Welcome to Graphite" 
+                        Style="{ThemeResource DisplayTextBlockStyle}"
+                        FontSize="32"
+                        FontWeight="SemiBold"
+                        HorizontalAlignment="Center"
+                        Foreground="White">
+                    <TextBlock.Shadow>
+                        <ThemeShadow />
+                    </TextBlock.Shadow>
+                </TextBlock>
+            </StackPanel>
+
+            <!-- Content Section -->
+            <StackPanel Grid.Row="1" 
+                     VerticalAlignment="Center" 
+                     HorizontalAlignment="Center" 
+                     Spacing="24"
+                     Margin="20">
+
+                <TextBlock Text="Experience the next generation of web browsing" 
+                        Style="{ThemeResource SubtitleTextBlockStyle}" 
+                        TextAlignment="Center"
+                        TextWrapping="Wrap"
+                        MaxWidth="500"
+                        Foreground="White"
+                        Opacity="0.9"/>
+
+                <ProgressRing x:Name="LoadingRing" 
+                           IsActive="True" 
+                           Width="40" 
+                           Height="40"
+                           Foreground="White"/>
+            </StackPanel>
+
+            <!-- Button Section -->
+            <StackPanel Grid.Row="2" 
+                     HorizontalAlignment="Center"
+                     Orientation="Horizontal"
+                     Spacing="20"
+                     Margin="0,0,0,60">
+                <Button x:Name="NextSetupButton" 
+                     Visibility="Collapsed"
+                     Click="NextSetupButton_Click">
+                    <Button.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+                                <Setter Property="CornerRadius" Value="20"/>
+                                <Setter Property="Padding" Value="24,12"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Get Started"/>
+                        <FontIcon Glyph="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="RestoreBackupButton" 
+                     Visibility="Collapsed"
+                     Click="RestoreBackupButton_Click">
+                    <Button.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+                                <Setter Property="CornerRadius" Value="20"/>
+                                <Setter Property="Padding" Value="24,12"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Background" Value="#4CAF50"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Restore Backup"/>
+                        <FontIcon Glyph="&#xE8DA;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

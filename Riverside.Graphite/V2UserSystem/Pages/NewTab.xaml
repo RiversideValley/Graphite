@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.NewTab"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:Graphite.Controls.SettingsControls"
+    xmlns:labs2="using:Graphite.Controls.Selectorbar"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1008" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainGrid.MaxWidth" Value="Infinity" />
+                        <Setter Target="FavoritesHistory.Orientation" Value="Vertical" />
+                        <Setter Target="TrendingPanel.(Grid.Row)" Value="3" />
+                        <Setter Target="TrendingPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="TrendingPanel.Width" Value="Auto" />
+                        <Setter Target="TrendingPanel.HorizontalAlignment" Value="Stretch" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top gradient -->
+        <Border Height="250" VerticalAlignment="Top">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#88000000" Offset="0"/>
+                    <GradientStop Color="#00000000" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Settings Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="32">
+                <Button x:Name="EditButton" Content="&#xE70F;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                <Button x:Name="EasyAccessButton" Content="&#xE890;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                <Button x:Name="SettingsButton" Content="&#xE713;" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+            </StackPanel>
+
+            <!-- Clock -->
+            <StackPanel Grid.Row="1" x:Name="ClockPanel" HorizontalAlignment="Center" Margin="0,25,0,0">
+                <TextBlock x:Name="TimeDisplay" FontSize="{ThemeResource HubHeaderThemeFontSize}" FontWeight="SemiBold" TextAlignment="Center"/>
+                <TextBlock x:Name="DateDisplay" Style="{ThemeResource BodyTextBlockStyle}" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Main Grid -->
+            <Grid Grid.Row="2" x:Name="MainGrid" Width="Auto" Height="Auto" MaxWidth="800" MaxHeight="400" Margin="12,96,12,12" Padding="15"
+                  Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="1" CornerRadius="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Search Box -->
+                <AutoSuggestBox
+                        x:Name="NewTabSearchBox"
+                        x:Uid="SearchBar"
+                        Grid.Row="1"
+                        Width="Auto"
+                        Height="40"
+                        MinWidth="600"
+                        MaxWidth="600"
+                        Margin="2,2,2,2"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        x:FieldModifier="Public"
+                        PlaceholderText="Search Or Enter a Web Address"
+                        BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                        CornerRadius="20"
+                        IsHoldingEnabled="True">
+                    <AutoSuggestBox.RenderTransform>
+                        <ScaleTransform x:Name="NewTabSearchBoxScaleTransform" ScaleX="1" />
+                    </AutoSuggestBox.RenderTransform>
+
+                    <AutoSuggestBox.QueryIcon>
+                        <FontIcon FontSize="16" Glyph="&#xE721;" />
+                    </AutoSuggestBox.QueryIcon>
+                </AutoSuggestBox>
+             
+                <!-- Quick Access Bar -->                      
+
+                <!-- Favorites and History -->
+                <StackPanel Grid.Row="2" x:Name="FavoritesHistory" Orientation="Horizontal" Spacing="8">
+                    <labs:SettingsExpander Header="My Favorites" Description="Favorites" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <labs:SettingsExpander.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE728;"/>
+                        </labs:SettingsExpander.Icon>
+                    </labs:SettingsExpander>
+
+                    <labs:SettingsExpander Header="My History" Description="Histories" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <labs:SettingsExpander.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;"/>
+                        </labs:SettingsExpander.Icon>
+                    </labs:SettingsExpander>
+                </StackPanel>
+
+                <!-- Footer -->
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                    <Image Width="24" Height="24" Source="/Assets/LogoApp.png"/>
+                    <TextBlock x:Uid="AppName" VerticalAlignment="Center" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- Trending Panel -->
+      
+    </Grid>
+</Page>
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Graphite.Pages.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Title="Browser Settings">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+    </Window.SystemBackdrop>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Grid x:Name="AppTitleBar" Height="32" Grid.Row="0">
+            <TextBlock x:Name="AppTitleTextBlock" Text="Browser Settings"
+                       VerticalAlignment="Center" Margin="48,0,0,0"
+                       Style="{StaticResource CaptionTextBlockStyle}"/>
+        </Grid>
+
+        <muxc:NavigationView x:Name="SettingsNav"
+                             Grid.Row="1"
+                             IsSettingsVisible="False"
+                             IsBackButtonVisible="Visible"
+                             PaneDisplayMode="Left"
+                             Background="Transparent"
+                             IsTitleBarAutoPaddingEnabled="False">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Icon="Globe" Content="General" Tag="GeneralPage"/>
+                <muxc:NavigationViewItem Icon="Permissions" Content="Privacy &amp; Security" Tag="PrivacyPage"/>
+                <muxc:NavigationViewItem Icon="FontColor" Content="Appearance" Tag="AppearancePage"/>
+                <muxc:NavigationViewItem Icon="Download" Content="Downloads" Tag="DownloadsPage"/>
+                <muxc:NavigationViewItem Icon="SetLockScreen" Content="Homepage" Tag="HomepagePage"/>
+                <muxc:NavigationViewItem Icon="Keyboard" Content="Shortcuts" Tag="ShortcutsPage"/>
+                <muxc:NavigationViewItem Icon="AllApps" Content="Extensions" Tag="ExtensionsPage"/>
+                <muxc:NavigationViewItem Icon="Admin" Content="Advanced" Tag="AdvancedPage"/>
+            </muxc:NavigationView.MenuItems>
+
+            <muxc:NavigationView.FooterMenuItems>
+                <muxc:NavigationViewItem Icon="Help" Content="About" Tag="AboutPage"/>
+            </muxc:NavigationView.FooterMenuItems>
+
+            <Frame x:Name="ContentFrame" Padding="24" Background="{ThemeResource NavigationViewContentBackground}">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition/>
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
+        </muxc:NavigationView>
+    </Grid>
+</Window>

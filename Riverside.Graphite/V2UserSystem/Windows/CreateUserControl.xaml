@@ -1,0 +1,85 @@
+<Window
+    x:Class="Graphite.UserSys.CreateUserWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.UserSys"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Create New User">
+
+
+    <Grid Padding="24">
+        <Grid.Resources>
+            <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+                <Setter Property="Margin" Value="0,0,0,16"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
+                <Setter Property="Background" Value="{ThemeResource TextControlBackground}"/>
+            </Style>
+
+            <Style x:Key="ModernPasswordBoxStyle" TargetType="PasswordBox">
+                <Setter Property="Margin" Value="0,0,0,16"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
+                <Setter Property="Background" Value="{ThemeResource TextControlBackground}"/>
+            </Style>
+
+            <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+                <Setter Property="Margin" Value="0,0,0,16"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}"/>
+                <Setter Property="Background" Value="{ThemeResource ComboBoxBackground}"/>
+            </Style>
+
+            <Style x:Key="ModernButtonStyle" TargetType="Button">
+                <Setter Property="Padding" Value="16,8"/>
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}"/>
+                <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}"/>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="UsernameBox" PlaceholderText="Username" Style="{StaticResource ModernTextBoxStyle}" TextChanged="RequiredField_Changed"/>
+        <PasswordBox x:Name="PasswordBox" PlaceholderText="Password (optional)" Grid.Row="1" Style="{StaticResource ModernPasswordBoxStyle}"/>
+        <TextBox x:Name="EmailBox" PlaceholderText="Email (optional)" Grid.Row="2" Style="{StaticResource ModernTextBoxStyle}"/>
+
+        <ComboBox x:Name="ProfileImageComboBox" Header="Select Profile Picture" PlaceholderText="Choose an image" 
+                  Grid.Row="3" Style="{StaticResource ModernComboBoxStyle}" SelectionChanged="ProfileImageComboBox_SelectionChanged"/>
+
+        <Grid Grid.Row="4" Margin="0,12,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border CornerRadius="4" BorderThickness="1" BorderBrush="{ThemeResource TextControlBorderBrush}">
+                <Image x:Name="SelectedImagePreview" Width="100" Height="100" Stretch="UniformToFill"/>
+            </Border>
+            <Button x:Name="SelectCustomImageButton" Content="Select Custom Image" 
+                    Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Bottom"
+                    Style="{StaticResource ModernButtonStyle}" Click="SelectCustomImageButton_Click"/>
+        </Grid>
+
+        <Button x:Name="ConfirmButton" Content="Create User" Grid.Row="5" 
+                Style="{StaticResource ModernButtonStyle}" Click="ConfirmButton_Click" IsEnabled="False"/>
+
+        <InfoBar x:Name="StatusInfoBar" Grid.Row="6" Margin="0,16,0,0" IsOpen="False"/>
+    </Grid>
+</Window>

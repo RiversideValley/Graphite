@@ -250,32 +250,7 @@ public static class AppService
 		}
 	}
 
-	public static void ConfigureWindowAppearance()
-	{
-		if (ActiveWindow is null)
-		{
-			return;
-		}
-		IntPtr hWnd = WindowNative.GetWindowHandle(ActiveWindow);
-		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		AppWindow appWindow = AppWindow.GetFromWindowId(wndId);
-		if (appWindow != null)
-		{
-			appWindow.MoveAndResize(new RectInt32(600, 600, 900, 700));
-			appWindow.MoveInZOrderAtTop();
-			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-			// need this for inquires down line for window placement. 
-			appWindow.Title = "UserCentral";
-			AppWindowTitleBar titleBar = appWindow.TitleBar;
-			Windows.UI.Color btnColor = Colors.Transparent;
-			titleBar.BackgroundColor = btnColor;
-			titleBar.ForegroundColor = Colors.LimeGreen;
-			titleBar.ButtonBackgroundColor = btnColor;
-			titleBar.ButtonInactiveBackgroundColor = btnColor;
-			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-			appWindow.SetIcon("Assets\\AppTiles\\Logo.ico");
-		}
-	}
+	
 
 	private static string ExtractUsernameFromUrl(string url)
 	{
