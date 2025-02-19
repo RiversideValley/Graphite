@@ -57,7 +57,10 @@ namespace Graphite
 			ViewModel.ParentWindow = this;
 			ViewModel.ParentGrid = UserListView; 
 			InitializeAsync();
-			
+			this.Closed += (s, e) =>
+			{
+				CloseCancelToken(CancellationToken);
+			};
 			_httpClient = new HttpClient();
 		}
 
