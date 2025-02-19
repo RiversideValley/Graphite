@@ -112,9 +112,7 @@ namespace Riverside.Graphite.Core
 				// If FireBrowserUserCore exists, delete it 
 				if (Directory.Exists(restorePath))
 				{
-					Directory.Delete(restorePath, true);
-					// Create the FireBrowserUserCore folder
-					_ = Directory.CreateDirectory(restorePath);
+					DirectoryHelper.DeleteAllFilesRecursive(restorePath);	
 
 					Console.WriteLine("Existing FireBrowserUserCore folder deleted.");
 				}
@@ -124,7 +122,28 @@ namespace Riverside.Graphite.Core
 				}
 
 				// Extract the backup file to FireBrowserUserCore
-				ZipFile.ExtractToDirectory(restorefile, restorePath, true);
+				using (ZipArchive archive = ZipFile.OpenRead(restorefile))
+				{
+					Console.WriteLine("Contents of the zip file:");
+					foreach (ZipArchiveEntry entry in archive.Entries)
+					{
+						Console.WriteLine($"- {entry.FullName}");
+					}
+
+					foreach (ZipArchiveEntry entry in archive.Entries)
+					{
+						string destinationPath = Path.Combine(restorePath, entry.FullName);
+
+						// Ensure the directory exists
+						Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+						// Log the file being extracted
+						Console.WriteLine($"Extracting {entry.FullName} to {destinationPath}");
+
+						// Extract the file
+						entry.ExtractToFile(destinationPath, true);
+					}
+				}
 
 				Console.WriteLine($"Backup restored successfully to: {restorePath}");
 				return Task.FromResult(true);

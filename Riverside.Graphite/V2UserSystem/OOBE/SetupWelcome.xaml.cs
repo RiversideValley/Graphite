@@ -14,6 +14,8 @@ using System.Numerics;
 using WinRT.Interop;
 using Microsoft.UI.Windowing;
 using Graphite.Helpers;
+using CommunityToolkit.Mvvm.Input;
+using Riverside.Graphite.Pages.Patch;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -180,11 +182,13 @@ namespace Graphite.Setup.OOBE
             rootFrame.Navigate(typeof(OOBEUser));
         }
 
-        private void RestoreBackupButton_Click(object sender, RoutedEventArgs e)
+        private async void RestoreBackupButton_Click(object sender, RoutedEventArgs e)
         {
-            //var backupRestoreWindow = new BackupRestoreWindow();
-
-            //backupRestoreWindow.Activate();
-        }
+			
+			RestoreBackupDialog dlg = new();
+			dlg.XamlRoot = this.Content.XamlRoot;
+			_ = await dlg.ShowAsync();
+			
+		}
     }
 }
