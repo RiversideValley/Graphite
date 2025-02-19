@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.NewTabFleunt"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:Graphite.Controls.SettingsControls"
+    xmlns:labs2="using:Graphite.Controls.Selectorbar"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <media:MicaBackdrop x:Key="MicaAlt"/>
+
+        <Storyboard x:Key="FadeInStoryboard">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                           From="0" To="1" Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
+    <Grid Background="Transparent">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1008" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="MediumState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="641" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainGrid.MaxWidth" Value="600" />
+                        <Setter Target="ContentArea.Padding" Value="16" />
+                        <Setter Target="FavoritesHistory.Orientation" Value="Vertical" />
+                        <Setter Target="SearchBox.Width" Value="Auto" />
+                        <Setter Target="QuickLinksGrid.Margin" Value="0,16" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainGrid.MaxWidth" Value="Infinity" />
+                        <Setter Target="ContentArea.Padding" Value="12" />
+                        <Setter Target="FavoritesHistory.Orientation" Value="Vertical" />
+                        <Setter Target="SearchBox.Width" Value="Auto" />
+                        <Setter Target="SearchBox.MaxWidth" Value="Infinity" />
+                        <Setter Target="QuickLinksGrid.Margin" Value="0,16" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Bar with MicaAlt -->
+        <Grid Height="48" Background="Transparent">
+            <Grid.Shadow>
+                <ThemeShadow />
+            </Grid.Shadow>
+
+            <Grid Padding="8,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Logo with animation -->
+                <Image Height="32" Source="/Assets/LogoApp.png" Margin="8,0">
+                    <Image.OpacityTransition>
+                        <ScalarTransition />
+                    </Image.OpacityTransition>
+                </Image>
+
+                <!-- Modern CommandBar -->
+                <CommandBar Grid.Column="2" 
+                           DefaultLabelPosition="Right"
+                           Background="Transparent">
+                    <AppBarButton Label="Edit">
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70F;"/>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Label="Quick Access">
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE735;"/>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Label="Settings">
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"/>
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                </CommandBar>
+            </Grid>
+        </Grid>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" Padding="0,0,0,24">
+            <Grid x:Name="ContentArea" 
+                  Padding="24" 
+                  RowSpacing="24"
+                  ContinuumNavigationTransitionInfo.IsEntranceElement="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Clock with animations -->
+                <StackPanel Grid.Row="0" 
+                          HorizontalAlignment="Center" 
+                          Spacing="4">
+                    <TextBlock x:Name="TimeDisplay" 
+                             Style="{ThemeResource TitleTextBlockStyle}"
+                             FontWeight="SemiBold">
+                        <TextBlock.OpacityTransition>
+                            <ScalarTransition />
+                        </TextBlock.OpacityTransition>
+                    </TextBlock>
+                    <TextBlock x:Name="DateDisplay" 
+                             Style="{ThemeResource BodyTextBlockStyle}"
+                             Opacity="0.8">
+                        <TextBlock.OpacityTransition>
+                            <ScalarTransition />
+                        </TextBlock.OpacityTransition>
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- Main Card with MicaAlt -->
+                <Grid x:Name="MainGrid" 
+                      Grid.Row="1"
+                      MaxWidth="800"
+                      Background="Transparent"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="24">
+                    <Grid.Shadow>
+                        <ThemeShadow />
+                    </Grid.Shadow>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Modern Search Box -->
+                    <Grid Grid.Row="0" HorizontalAlignment="Stretch">
+                        <AutoSuggestBox x:Name="SearchBox" 
+                                        Width="Auto"
+                                        MaxWidth="725"
+                                        x:FieldModifier="Public" 
+                                        PlaceholderText="Search or Enter an address here" 
+                                        BorderBrush="{ThemeResource ControlElevationBorderBrush}" 
+                                        CornerRadius="16" 
+                                        MaxSuggestionListHeight="500" 
+                                        TabIndex="1" 
+                                        Height="35"/>
+                    </Grid>
+
+                    <!-- Quick Links Grid -->
+                    <Grid x:Name="QuickLinksGrid"
+                          Grid.Row="1" 
+                          MaxWidth="600"
+                          Margin="0,24,0,24"
+                          HorizontalAlignment="Center">
+                        <ItemsRepeater>
+                            <ItemsRepeater.Layout>
+                                <UniformGridLayout MinItemWidth="80"
+                                                   MinItemHeight="80"
+                                                   MinRowSpacing="8"
+                                                   MinColumnSpacing="8"/>
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </Grid>
+
+                    <Expander
+                        Grid.Row="2"
+                        MinWidth="300"
+                        Margin="0,0,0,24"
+                        HorizontalAlignment="Stretch"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+
+                        <Expander.Header>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon
+                                    Grid.Column="0"
+                                    FontFamily="{StaticResource FluentIcons}"
+                                    Glyph="&#xE721;"
+                                    FontSize="20"/>
+
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Text="Search Engine"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                            </Grid>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <Grid Padding="12,8,12,12">
+                                <ComboBox
+                                    x:Name="SearchengineSelection"
+                                    HorizontalAlignment="Stretch">
+                                   
+                                </ComboBox>
+                            </Grid>
+                        </Expander.Content>
+
+                        <Expander.Resources>
+                            <ResourceDictionary>
+                                <x:Double x:Key="ExpanderChevronButtonSize">32</x:Double>
+                                <x:Double x:Key="ExpanderChevronGlyphSize">12</x:Double>
+                            </ResourceDictionary>
+                        </Expander.Resources>
+                    </Expander>
+
+                    <!-- Modern Favorites and History -->
+                    <StackPanel Grid.Row="3" 
+                                x:Name="FavoritesHistory"
+                                Orientation="Horizontal" 
+                                Spacing="16"
+                                HorizontalAlignment="Center">
+
+                        <!-- Favorites Expander -->
+                        <Expander Width="Auto"
+                                  MinWidth="280"
+                                  MaxWidth="360"
+                                  Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="1"
+                                  CornerRadius="8">
+                            <Expander.Header>
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                                              Glyph="&#xE734;"
+                                              FontSize="20"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="My Favorites"
+                                               Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                                </Grid>
+                            </Expander.Header>
+                            <Expander.Shadow>
+                                <ThemeShadow />
+                            </Expander.Shadow>
+                        </Expander>
+
+                        <!-- History Expander -->
+                        <Expander Width="Auto"
+                                  MinWidth="280"
+                                  MaxWidth="360"
+                                  Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="1"
+                                  CornerRadius="8">
+                            <Expander.Header>
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                                              Glyph="&#xE81C;"
+                                              FontSize="20"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="My History"
+                                               Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                                </Grid>
+                            </Expander.Header>
+                            <Expander.Shadow>
+                                <ThemeShadow />
+                            </Expander.Shadow>
+                        </Expander>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Modern Footer -->
+                <StackPanel Grid.Row="2" 
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <Image Width="24" Height="24" Source="/Assets/LogoApp.png"/>
+                    <TextBlock x:Uid="AppName" 
+                               VerticalAlignment="Center"
+                               Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

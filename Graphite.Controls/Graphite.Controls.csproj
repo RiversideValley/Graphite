@@ -32,6 +32,11 @@
     <Folder Include="SettingsControls\SettingsCardExpander\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Button\GraphiteButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="FileDialogs\LocationSelectionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

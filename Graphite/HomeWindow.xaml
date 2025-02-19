@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:graphite="using:Graphite.Controls"
     xmlns:graphitehelper="using:Graphite.Helpers"
-    Title="Graphite Home Page">
+    Title="Graphite Home Page"
+   >
 
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt"/>
@@ -16,9 +17,6 @@
                 x:Name="MoreFlyout"
                 x:FieldModifier="Public"
                 Placement="Bottom">
-                <Flyout.SystemBackdrop>
-                    <MicaBackdrop />
-                </Flyout.SystemBackdrop>
                 <StackPanel Width="250" Margin="-12,-12">
                     <StackPanel Name="menuheader">
                         <Button
@@ -424,7 +422,8 @@
             CanReorderTabs="True"
             Loaded="Tabs_Loaded"
             AddTabButtonClick="Tabs_AddTabButtonClick"
-            TabCloseRequested="Tabs_TabCloseRequested">
+            TabCloseRequested="Tabs_TabCloseRequested"
+                IsSplitViewActive="False">
 
             <graphite:GraphiteTabViewContainer.TabStripHeader>
                 <PersonPicture

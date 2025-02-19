@@ -35,9 +35,4 @@ public sealed partial class GraphiteTabViewItem : TabViewItem
 	typeof(string),
 	typeof(GraphiteTabViewItem),
 	null);
-
-
-
-
-
 }
