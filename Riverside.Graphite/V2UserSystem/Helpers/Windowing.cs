@@ -532,13 +532,10 @@ public class Windowing
 				appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 				appWindow.TitleBar.ButtonForegroundColor = Colors.White;
 				appWindow.TitleBar.ButtonInactiveForegroundColor = Colors.Gray;
-				SizeInt32? desktop = await SizeWindow();
-				appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .75), (int)(desktop?.Height * .75)));
-				appWindow.MoveInZOrderAtTop();
-				
+
 				// Set window size
-				//SizeInt32 size = new(800, 1200);
-				//appWindow.Resize(size);
+				SizeInt32 size = new(800, 1200);
+				appWindow.Resize(size);
 
 				// Remove default window chrome
 				if (appWindow.Presenter is OverlappedPresenter presenter)

@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Pages.Patch;
 using Riverside.Graphite.Runtime.Helpers;
@@ -64,8 +65,10 @@ namespace Riverside.Graphite
 			{
 				await AppService.MsalService?.SignOutAsync();
 				IsMsLogin = AppService.MsalService.IsSignedIn;
+				await Task.Delay(100);
 				RaisePropertyChanges(nameof(IsMsLoginVisibility));
 				RaisePropertyChanges(nameof(IsLoggedIn));
+				
 			}
 		}
 

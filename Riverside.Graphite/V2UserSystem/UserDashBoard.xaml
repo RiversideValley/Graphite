@@ -163,17 +163,17 @@
             HorizontalAlignment="Right"
             Visibility="{x:Bind ViewModel.IsMsLoginVisibility, Mode=OneWay}">
             <Button Background="Transparent" BorderBrush="Transparent">
-                <Button.Flyout>
-                    <Flyout>
-                        <MenuFlyoutItem Command="{x:Bind ViewModel.MsLogOutCommand}">LogOut</MenuFlyoutItem>
-                    </Flyout>
-                </Button.Flyout>
                 <PersonPicture
                     Width="36"
                     Height="36"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     ProfilePicture="{x:Bind ViewModel.MsProfilePicture, Mode=OneWay}" />
+                <Button.Flyout>
+                    <Flyout>
+                        <MenuFlyoutItem Command="{x:Bind ViewModel.MsLogOutCommand}">Log Out</MenuFlyoutItem>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
 
         </Grid>
