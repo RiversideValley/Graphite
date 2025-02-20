@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using Graphite.Controls;
-using Graphite.Controls.FileDialogs;
 using Graphite.Helpers;
 using Graphite.Pages;
 using Graphite.UserSys;
-using Graphite.ViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.Storage;
 using WinRT.Interop;
 
 namespace Graphite
@@ -34,8 +32,35 @@ namespace Graphite
 			}
 			UserName.Text = _currentUser.Username;
 			_tabManager = new TabManager(Tabs);
-			_tabManager.CreateNewTab(typeof(WebContent));
+			StartupTabCheckAsync();
 			TitleTop();
+			this.Closed += HomeWindow_Closed;
+		}
+
+		public async Task StartupTabCheckAsync()
+		{
+			var localSettings = ApplicationData.Current.LocalSettings;
+			string cacheKey = $"{_currentUser.Username}_{TabManager.TabStateKey}";
+
+			if (localSettings.Values.ContainsKey(cacheKey))
+			{
+				// Restore cache exists, attempt to restore tabs
+				await _tabManager.RestoreTabsAsync(_currentUser.Username);
+			}
+
+			// Check if there are any tabs after restoration attempt
+			if (Tabs.TabItems.Count == 0)
+			{
+				// No tabs, create a default tab
+				_tabManager.CreateNewTab(typeof(NewTab));
+			}
+
+			await _tabManager.StartPreloadingTabs();
+		}
+
+		private void HomeWindow_Closed(object sender, WindowEventArgs args)
+		{
+			_tabManager.SaveTabStateAsync(_currentUser.Username.ToString());
 		}
 
 		public void TitleTop()
@@ -166,46 +191,23 @@ namespace Graphite
 		{
 			if (sender.TabItems.Count < maxTabItems)
 			{
-				_tabManager.CreateNewTab(typeof(WebContent));
+				_tabManager.CreateNewTab(typeof(WebContent), null, false);
 			}
 		}
 
 		private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
 		{
-			//_tabManager.CloseTab(args.Tab as GraphiteTabViewItem);
+			if (args.Tab is GraphiteTabViewItem tabToClose)
+			{
+				_tabManager.CloseTab(tabToClose);
+			}
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			SettingsWindow settingsWindow = new SettingsWindow(_currentUser);
 			settingsWindow.Activate();
-		}
-
-		private void savebtn_Click(object sender, RoutedEventArgs e)
-		{
-			var saveDialog = new SaveDialog();
-			saveDialog.Activate();
-		}
-
-		private string GenerateRandomData()
-		{
-			StringBuilder sb = new StringBuilder();
-			Random random = new Random();
-
-			for (int i = 0; i < 10; i++) // Generate 10 lines of random data
-			{
-				sb.AppendLine($"Random number: {random.Next(1, 1000)}, Random string: {GenerateRandomString(random, 8)}");
-			}
-
-			return sb.ToString();
-		}
-
-		private string GenerateRandomString(Random random, int length)
-		{
-			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-			return new string(Enumerable.Repeat(chars, length)
-				.Select(s => s[random.Next(s.Length)]).ToArray());
-		}
+		}		
 	}
 }
 

@@ -42,6 +42,7 @@
                 <muxc:NavigationViewItem Icon="SetLockScreen" Content="Homepage" Tag="HomepagePage"/>
                 <muxc:NavigationViewItem Icon="Keyboard" Content="Shortcuts" Tag="ShortcutsPage"/>
                 <muxc:NavigationViewItem Icon="AllApps" Content="Extensions" Tag="ExtensionsPage"/>
+                <muxc:NavigationViewItem Icon="View" Content="Tabs" Tag="TabsSettings"/>
                 <muxc:NavigationViewItem Icon="Admin" Content="Advanced" Tag="AdvancedPage"/>
             </muxc:NavigationView.MenuItems>
 

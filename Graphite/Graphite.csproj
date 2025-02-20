@@ -17,8 +17,6 @@
     <Content Remove="Assets\Glyphs\SegoeFluentIcons2.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Controls\GraphiteTabViewContainer.xaml" />
-    <None Remove="Controls\GraphiteTabViewItem.xaml" />
     <None Remove="Controls\QRCodeFlyout.xaml" />
     <None Remove="HomeWindow.xaml" />
     <None Remove="Pages\NewTab.xaml" />

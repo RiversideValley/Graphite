@@ -1,38 +1,111 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage.Streams;
 
-namespace Graphite.Controls;
-
-public sealed partial class GraphiteTabViewItem : TabViewItem
+namespace Graphite.Controls
 {
-	public GraphiteTabViewItem() => InitializeComponent();
-
-
-	public BitmapImage BitViewWebContent { get; set; }
-	public string Value
+	public sealed partial class GraphiteTabViewItem : TabViewItem
 	{
-		get => (string)GetValue(ValueProperty);
-		set => SetValue(ValueProperty, value);
-	}
+		public GraphiteTabViewItem()
+		{
+			InitializeComponent();
+			InitializeContextMenu();
+		}
 
-	public static DependencyProperty ValueProperty = DependencyProperty.Register(
-	nameof(Value),
-	typeof(string),
-	typeof(GraphiteTabViewItem),
-	null);
+		public BitmapImage BitViewWebContent { get; set; }
+
+		public string Value
+		{
+			get => (string)GetValue(ValueProperty);
+			set => SetValue(ValueProperty, value);
+		}
+
+		public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+			nameof(Value),
+			typeof(string),
+			typeof(GraphiteTabViewItem),
+			null);
+
+		public bool IsPinned
+		{
+			get => (bool)GetValue(IsPinnedProperty);
+			set => SetValue(IsPinnedProperty, value);
+		}
+
+		public static readonly DependencyProperty IsPinnedProperty = DependencyProperty.Register(
+			nameof(IsPinned),
+			typeof(bool),
+			typeof(GraphiteTabViewItem),
+			new PropertyMetadata(false, OnIsPinnedChanged));
+
+		private static void OnIsPinnedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is GraphiteTabViewItem tabItem)
+			{
+				tabItem.UpdatePinnedAppearance();
+			}
+		}
+
+		private void UpdatePinnedAppearance()
+		{
+			if (IsPinned)
+			{
+				this.Style = (Style)Application.Current.Resources["PinnedTabStyle"];
+			}
+			else
+			{
+				this.Style = (Style)Application.Current.Resources["DefaultTabStyle"];
+			}
+			UpdatePinMenuItemText();
+		}
+
+		private void InitializeContextMenu()
+		{
+			var contextMenu = new MenuFlyout();
+
+			var pinMenuItem = new MenuFlyoutItem
+			{
+				Text = "Pin",
+				Icon = new SymbolIcon(Symbol.Pin)
+			};
+			pinMenuItem.Click += PinMenuItem_Click;
+
+			contextMenu.Items.Add(pinMenuItem);
+
+			this.ContextFlyout = contextMenu;
+		}
+
+		private void SleepMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			// Implement sleep logic here or call a method in TabManager
+		}
+
+		private void PinMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			UpdatePinMenuItemText();
+		}
+
+		private void UpdatePinMenuItemText()
+		{
+			if (ContextFlyout is MenuFlyout contextMenu)
+			{
+				var pinMenuItem = contextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(item => item.Text.StartsWith("Pin") || item.Text.StartsWith("Unpin"));
+				if (pinMenuItem != null)
+				{
+					pinMenuItem.Text = IsPinned ? "Unpin" : "Pin";
+				}
+			}
+		}
+
+		public void UpdatePinStatus(bool isPinned)
+		{
+			IsPinned = isPinned;
+			UpdatePinnedAppearance();
+		}
+
+		
+	}
 }
+
