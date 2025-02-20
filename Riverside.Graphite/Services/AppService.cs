@@ -134,16 +134,16 @@ public static class AppService
 			IActivatedEventArgs evt = AppInstance.GetActivatedEventArgs();
 			if (evt is ProtocolActivatedEventArgs protocolArgs && protocolArgs.Kind == ActivationKind.Protocol)
 			{
-                string url = protocolArgs.Uri.ToString();
+                string url = protocolArgs.Uri.Scheme.ToString();
 
                 var urlActions = new Dictionary<string, Action>
                 {
                     { "http", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
                     { "https", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
-                    { "firebrowserwinui://", () => { AppArguments.FireBrowserArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
-                    { "firebrowseruser://", async () => {
-                        AppArguments.FireUser = url;
-                        string username = ExtractUsernameFromUrl(url);
+                    { "firebrowserwinui", () => { AppArguments.FireBrowserArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+                    { "firebrowseruser", async () => {
+						AppArguments.FireUser = protocolArgs.Uri.AbsoluteUri;
+                        string username = ExtractUsernameFromUrl(protocolArgs.Uri.AbsoluteUri);
                         if (!string.IsNullOrEmpty(username))
                         {
                             CheckNormal(username);
@@ -151,7 +151,7 @@ public static class AppService
                             return;
                         }
                     }},
-                    { "firebrowserincog://", () => { AppArguments.FireBrowserIncog = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+                    { "firebrowserincog", () => { AppArguments.FireBrowserIncog = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
                     { ".pdf", () => { AppArguments.FireBrowserPdf = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } }
                 };
 
