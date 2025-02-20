@@ -1,50 +1,36 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
 using Microsoft.UI.Windowing;
+using Microsoft.UI;
 using Graphite.UserSys;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using WinRT.Interop;
 
 namespace Graphite.Pages
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SettingsWindow : Window
-    {
+	public sealed partial class SettingsWindow : Window
+	{
 		private AppWindow appWindow;
 		private User USR;
 
 		public SettingsWindow(User user)
-        {
-            this.InitializeComponent();
+		{
+			this.InitializeComponent();
 			USR = user;
 			TitleTop();
+			SettingsNav.ItemInvoked += SettingsNav_ItemInvoked;
+
+			// Navigate to default page
+			ContentFrame.Navigate(typeof(TabSettings), USR);
 		}
 
 		public void TitleTop()
 		{
-			nint hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+			nint hWnd = WindowNative.GetWindowHandle(this);
 			WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 			appWindow = AppWindow.GetFromWindowId(windowId);
 			appWindow.SetIcon("Logo.ico");
-			AppWindow.Title = $"Browser Settings - {USR.Username}";
+			appWindow.Title = $"Browser Settings - {USR.Username}";
 
 			if (!AppWindowTitleBar.IsCustomizationSupported())
 			{
@@ -57,9 +43,33 @@ namespace Graphite.Pages
 			titleBar.BackgroundColor = titleBar.ButtonBackgroundColor =
 				titleBar.InactiveBackgroundColor = titleBar.ButtonInactiveBackgroundColor =
 				titleBar.ButtonHoverBackgroundColor = btnColor;
-
 		}
-		
-		
+
+		private void SettingsNav_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+		{
+			if (args.InvokedItemContainer is NavigationViewItem item)
+			{
+				Type pageType = item.Tag.ToString() switch
+				{
+					"GeneralPage" => typeof(TabSettings),
+					"PrivacyPage" => typeof(TabSettings),
+					"AppearancePage" => typeof(TabSettings),
+					"DownloadsPage" => typeof(TabSettings),
+					"HomepagePage" => typeof(TabSettings),
+					"ShortcutsPage" => typeof(TabSettings),
+					"ExtensionsPage" => typeof(TabSettings),
+					"TabsSettings" => typeof(TabSettings),
+					"AdvancedPage" => typeof(TabSettings),
+					"AboutPage" => typeof(TabSettings),
+					_ => null
+				};
+
+				if (pageType != null)
+				{
+					ContentFrame.Navigate(pageType, USR);
+				}
+			}
+		}
 	}
 }
+

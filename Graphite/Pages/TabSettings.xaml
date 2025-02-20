@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.TabSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    >
+
+    <ScrollViewer>
+        <StackPanel Padding="20" Spacing="4">
+            <TextBlock Text="Tab Settings" 
+                       Style="{ThemeResource TitleLargeTextBlockStyle}" 
+                       Margin="0,0,0,12"/>
+
+            <controls:SettingsExpander Header="General Tab Settings"
+                                       Description="Configure general tab behavior"
+                                       IsExpanded="False">
+                <controls:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE777;" />
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard>
+                        <controls:SettingsCard.Header>
+                            Auto Restore Tabs
+                        </controls:SettingsCard.Header>
+                        <ToggleSwitch x:Name="AutoRestoreToggle"
+                                    
+                                      OnContent="Enabled"
+                                      OffContent="Disabled"/>
+                    </controls:SettingsCard>
+                    <controls:SettingsCard>
+                        <controls:SettingsCard.Header>
+                            Maximum Number of Tabs
+                        </controls:SettingsCard.Header>
+
+                        <NumberBox x:Name="MaxTabsBox"
+                                   Minimum="1"
+                                   Maximum="50"
+                                   Value="10"
+                                   SpinButtonPlacementMode="Inline"/>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+
+            <controls:SettingsExpander Header="Tab Sleep Settings"
+                                       Description="Configure tab sleep behavior"
+                                       IsExpanded="False">
+                <controls:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEBB6;" />
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard>
+                        <controls:SettingsCard.Header>
+                            Tab Sleep Timer (minutes)
+                        </controls:SettingsCard.Header>
+                        <NumberBox x:Name="SleepTimerBox"
+                 Minimum="1"
+                 Maximum="120"
+                 Value="30"
+                 SpinButtonPlacementMode="Inline"/>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+
+            <controls:SettingsExpander Header="Tab Preloading"
+                                       Description="Configure tab preloading options"
+                                       IsExpanded="False">
+                <controls:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEB9D;" />
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard>
+                        <controls:SettingsCard.Header>
+                            Nummer Of Preloads Max 5
+                        </controls:SettingsCard.Header>
+                        <NumberBox x:Name="PreloadedTabsBox"
+                                   Minimum="1"
+                                   Maximum="5"
+                                   Value="1"
+                                   SpinButtonPlacementMode="Inline"/>
+                    </controls:SettingsCard>
+                    <controls:SettingsCard>
+                        <controls:SettingsCard.Header>
+                            Enable PreLoading 
+                        </controls:SettingsCard.Header>
+                        <ToggleSwitch x:Name="PreloadTabsToggle"
+                                      OnContent="Enabled"
+                                      OffContent="Disabled"/>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+
+            <controls:SettingsExpander Header="Advanced Tab Features"
+                                       Description="Configure advanced tab options"
+                                       IsExpanded="False">
+                <controls:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE912;" />
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard>
+                        <controls:SettingsCard.Header>
+                            Enable Tab Grouping
+                        </controls:SettingsCard.Header>
+                        <ToggleSwitch x:Name="TabGroupingToggle"
+                   OnContent="Enabled"
+                   OffContent="Disabled"/>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+
+            <controls:SettingsExpander Header="Clear TabManager State And Manage"
+                                       Description="Reset all tab-related data And Manage"
+                                       IsExpanded="False">
+                <controls:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE90F;" />
+                </controls:SettingsExpander.HeaderIcon>
+                <controls:SettingsExpander.Content>
+                    <Button Content="Clear TabManager State"
+x:Name="ClearTabHistoryButton"
+Style="{ThemeResource AccentButtonStyle}"
+HorizontalAlignment="Stretch"/>
+                </controls:SettingsExpander.Content>
+                <controls:SettingsExpander.Items>
+                    
+                    <controls:SettingsCard>
+                        <ListView>
+                            
+                        </ListView>
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+
+               
+            </controls:SettingsExpander>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
+
