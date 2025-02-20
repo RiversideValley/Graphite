@@ -795,6 +795,21 @@ public class TabManager
 			_tabViewContainer.TabItems.Add(tab);
 		}
 	}
+
+	public static List<TabState> GetStoredTabStates(string username)
+	{
+		var localSettings = ApplicationData.Current.LocalSettings;
+		string cacheKey = $"{username}_{TabStateKey}";
+
+		if (localSettings.Values.TryGetValue(cacheKey, out object jsonObj))
+		{
+			var json = jsonObj as string;
+			return JsonSerializer.Deserialize<List<TabState>>(json) ?? new List<TabState>();
+		}
+
+		return new List<TabState>();
+	}
+
 }
 
 public class TabState
@@ -810,6 +825,9 @@ public class TabState
 	public bool IsPinned { get; set; }
 	public string CustomColor { get; set; }
 	public bool IsNewTab { get; set; }
+	public string PageType { get; set; } // Add this property to track the page type
+
+	public bool IsWebContent => !string.IsNullOrEmpty(Url) && PageType == "WebContent";
 }
 
 public class Passer
