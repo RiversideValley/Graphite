@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Graphite.UserSys;
 
-namespace Graphite.Pages
+namespace Graphite.Pages.SettingsPages
 {
 	public sealed partial class TabSettings : Page
 	{

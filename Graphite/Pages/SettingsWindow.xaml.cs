@@ -5,6 +5,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using Graphite.UserSys;
 using WinRT.Interop;
+using Graphite.Pages.SettingsPages;
 
 namespace Graphite.Pages
 {

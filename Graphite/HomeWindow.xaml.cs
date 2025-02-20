@@ -33,6 +33,7 @@ namespace Graphite
 			UserName.Text = _currentUser.Username;
 			_tabManager = new TabManager(Tabs);
 			StartupTabCheckAsync();
+
 			TitleTop();
 			this.Closed += HomeWindow_Closed;
 		}
