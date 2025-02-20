@@ -191,7 +191,7 @@ namespace Graphite
 		{
 			if (sender.TabItems.Count < maxTabItems)
 			{
-				_tabManager.CreateNewTab(typeof(WebContent), null, false);
+				_tabManager.CreateNewTab(typeof(NewTab), null, false);
 			}
 		}
 
