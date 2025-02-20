@@ -105,12 +105,7 @@ public sealed partial class MainWindow : Window
 
 
 		Closed += (s, e) =>
-		{
-			if (AuthService.CurrentUser.Username is not "__Admin__" and not "Private")
-			{
-				AppService.Admin_Delete_Account();
-			}
-
+		{	
 			foreach (Window win in AppService.FireWindows)
 			{
 

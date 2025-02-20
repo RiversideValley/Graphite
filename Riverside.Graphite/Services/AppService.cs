@@ -48,111 +48,77 @@ public static class AppService
 	public static DispatcherQueue Dispatcher { get; set; }
 	public static AppServiceViewModel AppServiceViewModel { get; set; } = new();
 
-	public static async Task WindowsController(CancellationToken cancellationToken)
-	{
-		try
-		{
-			string changeUsernameFilePath = Path.Combine(Path.GetTempPath(), "changeusername.json");
-			string resetFilePath = Path.Combine(Path.GetTempPath(), "Reset.set");
-			string backupFilePath = Path.Combine(Path.GetTempPath(), "backup.fireback");
-			string restoreFilePath = Path.Combine(Path.GetTempPath(), "restore.fireback");
-			string updateSql = Path.Combine(Path.GetTempPath(), "update.sql");
+    public static async Task WindowsController(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var OperationsPending = new Dictionary<string, Action>
+            {
+                { "changeusername.json", () => OpenWindow(new ChangeUsernameCore(), cancellationToken) },
+                { "Reset.set", () => OpenWindow(new ResetCore(), cancellationToken) },
+                { "backup.fireback", () => OpenWindow(new CreateBackup(), cancellationToken) },
+                { "restore.fireback", () => OpenWindow(new RestoreBackUp(), cancellationToken) }
+            };
 
-			if (IsAppGoingToClose)
-			{
-				//throw new ApplicationException("Exiting Application by user");
-				await CloseCancelToken(ref cancellationToken);
-				return;
-			}
+            if (IsAppGoingToClose)
+            {
+                await CloseCancelToken(ref cancellationToken);
+                return;
+            }
 
-			if (IsAppNewUser)
-			{
-				CreateNewUsersSettings();
-				return;
-			}
+            if (IsAppNewUser)
+            {
+                CreateNewUsersSettings();
+                return;
+            }
 
-			// check for restore first. 
+            foreach (var ops in OperationsPending)
+            {
+                if (File.Exists(Path.Combine(Path.GetTempPath(), ops.Key)))
+                {
+                    ops.Value.Invoke();
+                    return;
+                }
+            }
 
-			if (File.Exists(restoreFilePath))
-			{
-				AuthService.Logout();
-				ActiveWindow = new RestoreBackUp();
-				ActiveWindow.Closed += (s, e) =>
-				{
-					_ = WindowsController(cancellationToken).ConfigureAwait(false);
-				};
-				ActiveWindow.Activate();
-				return;
-			}
+            if (!Directory.Exists(UserDataManager.CoreFolderPath))
+            {
+                AppSettings = new Settings(true).Self;
+                ActiveWindow = new SetupWindow();
+                ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
+                await ConfigureSettingsWindow(ActiveWindow);
+                return;
+            }
 
-			if (!Directory.Exists(UserDataManager.CoreFolderPath))
-			{
-				AppSettings = new Settings(true).Self;
-				ActiveWindow = new SetupWindow();
-				ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
-				await ConfigureSettingsWindow(ActiveWindow);
-				return;
-			}
+            if (AuthService.CurrentUser == null)
+            {
+                await HandleProtocolActivation(cancellationToken);
+                return;
+            }
 
-			if (File.Exists(changeUsernameFilePath))
-			{
-				ActiveWindow = new ChangeUsernameCore();
-				ActiveWindow.Closed += (s, e) =>
-				{
-					AuthService.IsUserNameChanging = false;
-					_ = WindowsController(cancellationToken).ConfigureAwait(false);
-				};
-				ActiveWindow.Activate();
-				return;
-			}
+            if (AuthService.CurrentUser != null && AuthService.IsUserAuthenticated)
+            {
+                await HandleAuthenticatedUser(cancellationToken);
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            await CloseCancelToken(ref cancellationToken);
+            _ = await Task.FromException<CancellationToken>(e);
+            throw;
+        }
 
-			if (File.Exists(backupFilePath))
-			{
-				AuthService.Logout();
-				ActiveWindow = new CreateBackup();
-				ActiveWindow.Closed += (s, e) =>
-				{
-					_ = WindowsController(cancellationToken).ConfigureAwait(false);
-				};
-				ActiveWindow.Activate();
-				return;
-			}
+        await Task.FromCanceled(cancellationToken);
+    }
 
-
-			if (File.Exists(resetFilePath))
-			{
-				ActiveWindow = new ResetCore();
-				ActiveWindow.Closed += (s, e) =>
-				{
-					AuthService.IsUserNameChanging = false;
-					_ = WindowsController(cancellationToken).ConfigureAwait(false);
-				};
-				ActiveWindow.Activate();
-				return;
-			}
-
-			if (AuthService.CurrentUser == null)
-			{
-				await HandleProtocolActivation(cancellationToken);
-				return;
-			}
-
-			if (AuthService.CurrentUser != null && AuthService.IsUserAuthenticated)
-			{
-				await HandleAuthenticatedUser(cancellationToken);
-				return;
-			}
-		}
-		catch (Exception e)
-		{
-			await CloseCancelToken(ref cancellationToken);
-			_ = await Task.FromException<CancellationToken>(e);
-			throw;
-		}
-
-		await Task.FromCanceled(cancellationToken);
-	}
-
+    private static void OpenWindow(Window window, CancellationToken cancellationToken)
+    {
+        AuthService.Logout();
+        ActiveWindow = window;
+        ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
+        ActiveWindow.Activate();
+    }
 	public static Task CloseCancelToken(ref CancellationToken cancellationToken)
 	{
 		// need to assign reference token in order to cancel !
@@ -168,42 +134,35 @@ public static class AppService
 			IActivatedEventArgs evt = AppInstance.GetActivatedEventArgs();
 			if (evt is ProtocolActivatedEventArgs protocolArgs && protocolArgs.Kind == ActivationKind.Protocol)
 			{
-				string url = protocolArgs.Uri.ToString();
-				if (url.StartsWith("http") || url.StartsWith("https"))
-				{
-					AppArguments.UrlArgument = url;
-					ValidateCreatePrivateUser();
-					CheckNormal("Private");
-				}
-				else if (url.StartsWith("firebrowserwinui://"))
-				{
-					AppArguments.FireBrowserArgument = url;
-					ValidateCreatePrivateUser();
-					CheckNormal("Private");
-				}
-				else if (url.StartsWith("firebrowseruser://"))
-				{
-					AppArguments.FireUser = url;
-					string username = ExtractUsernameFromUrl(url);
-					if (!string.IsNullOrEmpty(username))
-					{
-						CheckNormal(username);
-						await WindowsController(cancellationToken).ConfigureAwait(false);
-						return;
-					}
-				}
-				else if (url.StartsWith("firebrowserincog://"))
-				{
-					AppArguments.FireBrowserIncog = url;
-					ValidateCreatePrivateUser();
-					CheckNormal("Private");
-				}
-				else if (url.Contains(".pdf"))
-				{
-					AppArguments.FireBrowserPdf = url;
-					ValidateCreatePrivateUser();
-					CheckNormal("Private");
-				}
+                string url = protocolArgs.Uri.ToString();
+
+                var urlActions = new Dictionary<string, Action>
+                {
+                    { "http", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+                    { "https", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+                    { "firebrowserwinui://", () => { AppArguments.FireBrowserArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+                    { "firebrowseruser://", async () => {
+                        AppArguments.FireUser = url;
+                        string username = ExtractUsernameFromUrl(url);
+                        if (!string.IsNullOrEmpty(username))
+                        {
+                            CheckNormal(username);
+                            await WindowsController(cancellationToken).ConfigureAwait(false);
+                            return;
+                        }
+                    }},
+                    { "firebrowserincog://", () => { AppArguments.FireBrowserIncog = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+                    { ".pdf", () => { AppArguments.FireBrowserPdf = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } }
+                };
+
+                foreach (var action in urlActions)
+                {
+                    if (url.StartsWith(action.Key) || url.Contains(action.Key))
+                    {
+                        action.Value.Invoke();
+                        return;
+                    }
+                }
 				await ShowMainWindow(cancellationToken);
 			}
 			else
@@ -334,95 +293,41 @@ public static class AppService
 
 	private static async void CheckNormal(string userName = null)
 	{
-		// no user return 
 		if (userName is null)
-		{
-			Admin_Create_Account();
-			userName = "__Admin__";
-		}
+			return;	
 
 		string coreFolderPath = UserDataManager.CoreFolderPath;
 		string username = UserExistDatabase(userName);
-		/* store in the datacore project sql file. Going to need to put on cloud, and 
-        1. Need function to create file in temp. 
-        2. How we push new queries / maybe in cloud for new sql or need function to update 
-        3. Migrations are for new and then Update with this new procedure for existing data... 
-        Need function after injection, before use logins, and when use authorized */
-
-		string updateSql = Path.Combine(Path.GetTempPath(), "update.sql"); /* we will eventually not use this unless development */
-
+	
 		AuthService.Authenticate(username);
 
-		if (File.Exists(updateSql))
+		if (!AuthService.IsUserAuthenticated) return; 
+
+		try
 		{
-			try
-			{
-				if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-				{
-					SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
-					string sqlIN = File.ReadAllText(updateSql);
-					_ = await settingsActions.SettingsContext.Database.ExecuteSqlRawAsync(sqlIN.Trim());
-					File.Delete(updateSql);
-				}
-			}
-			catch (Exception ex)
-			{
-				ExceptionLogger.LogException(ex);
-				IsAppGoingToClose = true;
-				throw;
+		DatabaseServices dbServer = new();
+
+		// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
+		_ = await dbServer.DatabaseCreationValidation();
+
+			_ = await dbServer.InsertUserSettings(); // new user add default from class
+
+			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
+
+			if (await historyActions.HistoryContext.Database.CanConnectAsync()) {
+
+				if (historyActions.HistoryContext.CollectionNames.Count() == 0)
+					dbServer.CreateCollections(); 
 			}
 		}
-
-		if (AuthService.IsUserAuthenticated)
+		catch (Exception ex)
 		{
-			DatabaseServices dbServer = new();
-
-			try
-			{
-				// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
-				_ = await dbServer.DatabaseCreationValidation();
-
-				_ = await dbServer.InsertUserSettings(); // new user add default from class
-
-				#region NEED HELP
-				/* 1. only do! when there is a version change.. 		
-				// 2. we need to store the version number as a tuple<int,int,int,int> so we can serialize it ;
-
-				var version = GetVersionDescription();
-				Application.Current.Resources.TryGetValue("Version", out object _version);
-				if (_version is not null)
-					if (version != (Tuple<int, int, int, int>)_version) {
-						// should be change in version->go.
-					}
-				*/
-				#endregion
-
-				HistoryActions historyActions = new(AuthService.CurrentUser.Username);
-
-				if (await historyActions.HistoryContext.Database.CanConnectAsync()) {
-
-					if (historyActions.HistoryContext.CollectionNames.Count() == 0)
-						dbServer.CreateCollections(); 
-				}
-
-				
-			}
-			catch (Exception ex)
-			{
-				ExceptionLogger.LogException(ex);
-				Console.WriteLine($"Creating Settings for user already exists\n {ex.Message}");
-			}
+			ExceptionLogger.LogException(ex);
+			Console.WriteLine($"Creating Settings for user already exists\n {ex.Message}");
 		}
 	}
 
-	private static Tuple<int, int, int, int> GetVersionDescription()
-	{
-		string appName = "AppDisplayName".GetLocalized();
-		Package package = Package.Current;
-		PackageId packageId = package.Id;
-		PackageVersion version = packageId.Version;
-		return new Tuple<int, int, int, int>(version.Major, version.Minor, version.Build, version.Revision);
-	}
+	
 	public static async void CreateNewUsersSettings()
 	{
 		ActiveWindow = new UserSettings();
@@ -491,26 +396,6 @@ public static class AppService
 		appWindow.ShowOnceWithRequestedStartupState();
 	}
 
-	public static void Admin_Create_Account()
-	{
-		Riverside.Graphite.Core.User newUser = new()
-		{
-			Username = "__Admin__",
-		};
-
-		List<Riverside.Graphite.Core.User> users = new() { newUser };
-		UserFolderManager.CreateUserFolders(newUser);
-		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, newUser.Username);
-		if (Directory.Exists(userFolderPath))
-		{
-			HideDirectory(userFolderPath);
-		}
-
-		//UserDataManager.SaveUsers(users);
-		AuthService.AddUser(newUser);
-		_ = AuthService.Authenticate(newUser.Username);
-	}
-
 	private static void ValidateCreatePrivateUser()
 	{
 		string userFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "Private");
@@ -522,7 +407,6 @@ public static class AppService
 			if (username is not null)
 				return;
 		}
-
 
 		if (AuthService.UserExists("Private") is null)
 		{
@@ -557,16 +441,5 @@ public static class AppService
 			throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
 		}
 	}
-
-	public static void Admin_Delete_Account()
-	{
-		try
-		{
-			UserDataManager.DeleteUser("__Admin__");
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-		}
-	}
+	
 }

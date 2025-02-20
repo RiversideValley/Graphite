@@ -457,7 +457,7 @@
                         Padding="15"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+                        Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="8"
