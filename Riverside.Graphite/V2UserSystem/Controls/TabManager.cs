@@ -45,7 +45,7 @@ public class TabManager
 		_tabViewContainer.TabItemsChanged += TabViewContainer_TabItemsChanged;
 		_tabViewContainer.SelectionChanged += TabViewContainer_SelectionChanged;
 		InitializeSleepTimer();
-		InitializePreviewTimer();
+		//InitializePreviewTimer();
 	}
 
 	private void TabViewContainer_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
