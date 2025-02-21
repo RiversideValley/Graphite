@@ -13,6 +13,10 @@
     Title="Graphite - Login"
     mc:Ignorable="d">
 
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+    </Window.SystemBackdrop>
+
     <Grid>
         <Grid.Resources>
             <Style x:Key="TextButtonStyle" TargetType="Button">
@@ -404,34 +408,7 @@
                         <TextBlock Margin="4,0,0,0" Text="Migration" />
                     </StackPanel>
                 </Button>
-                <Button
-                    Width="Auto"
-                    Margin="0,0,10,0"
-                    Padding="4"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Command="{x:Bind ViewModel.RestoreCoreCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE777;" />
-                        <TextBlock Margin="4,0,0,0" Text="Restore Backup" />
-                    </StackPanel>
-                </Button>
-                <Button
-                    Width="Auto"
-                    Margin="0,0,10,0"
-                    Padding="4"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Command="{x:Bind ViewModel.BackUpCoreCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE787;" />
-                        <TextBlock Margin="4,0,0,0" Text="Backup" />
-                    </StackPanel>
-                </Button>
+              
                 <Button
                     Width="Auto"
                     Margin="0,0,10,0"
@@ -460,21 +437,6 @@
                     <StackPanel Orientation="Horizontal">
                         <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE716;" />
                         <TextBlock Margin="4,0,0,0" Text="Sign-In Microsoft" />
-                    </StackPanel>
-                </Button>
-                <Button
-                    x:Name="ExitSys"
-                    Margin="0,0,10,0"
-                    Padding="4"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderBrush="{ThemeResource AccentAAFillColorSecondaryBrush}"
-                    BorderThickness=".5"
-                    Click="ExitSys_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xe8bb;" />
-                        <TextBlock Margin="4,0,0,0" Text="Exit" />
                     </StackPanel>
                 </Button>
             </StackPanel>

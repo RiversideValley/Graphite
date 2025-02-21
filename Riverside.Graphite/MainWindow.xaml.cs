@@ -3,6 +3,7 @@ using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
 using Graphite.ViewModels;
+using Graphite.WindowCore;
 using Microsoft.Build.Framework;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -80,7 +81,8 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.MainView = this;
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
 		Commander = new ProfileCommander(ViewModelMain);
-
+		
+		
 		InitializeComponent();
 		TabManager = new TabManager(this.Tabs);
 		_=	StartupTabCheckAsync();
