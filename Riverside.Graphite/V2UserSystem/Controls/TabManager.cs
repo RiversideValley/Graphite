@@ -55,7 +55,7 @@ public class TabManager
 			var newTab = sender.TabItems[(int)args.Index] as GraphiteTabViewItem;
 			if (newTab != null)
 			{
-				SetupTabPreview(newTab);
+				//SetupTabPreview(newTab);
 			}
 		}
 	}
@@ -68,154 +68,8 @@ public class TabManager
 		}
 	}
 
-	private void SetupTabPreview(GraphiteTabViewItem tab)
-	{
-		tab.PointerEntered += Tab_PointerEntered;
-		tab.PointerExited += Tab_PointerExited;
-		tab.PointerPressed += Tab_PointerPressed;
-	}
 
-	private void InitializePreviewTimer()
-	{
-		_previewTimer = _tabViewContainer.DispatcherQueue.CreateTimer();
-		_previewTimer.Interval = TimeSpan.FromSeconds(0.5);
-		_previewTimer.Tick += PreviewTimer_Tick;
-	}
-
-	private void Tab_PointerEntered(object sender, PointerRoutedEventArgs e)
-	{
-		_hoveredTab = sender as GraphiteTabViewItem;
-		_previewTimer.Start();
-	}
-
-	private void Tab_PointerExited(object sender, PointerRoutedEventArgs e)
-	{
-		_hoveredTab = null;
-		_previewTimer.Stop();
-		HideTabPreview(sender as GraphiteTabViewItem);
-	}
-
-	private void Tab_PointerPressed(object sender, PointerRoutedEventArgs e)
-	{
-		_previewTimer.Stop();
-		HideTabPreview(sender as GraphiteTabViewItem);
-	}
-
-	private void PreviewTimer_Tick(DispatcherQueueTimer sender, object args)
-	{
-		_previewTimer.Stop();
-		if (_hoveredTab != null)
-		{
-			ShowTabPreview(_hoveredTab);
-		}
-	}
-
-	private void ShowTabPreview(GraphiteTabViewItem tab)
-	{
-		tab.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
-		{
-			if (tab.Content is Frame frame && frame.Content is WebContent webContent)
-			{
-				var previewContent = new Grid
-				{
-					Width = 300,
-					RowDefinitions =
-					{
-						new RowDefinition { Height = GridLength.Auto },
-						new RowDefinition { Height = GridLength.Auto },
-						new RowDefinition { Height = GridLength.Auto }
-					},
-					Padding = new Thickness(16),
-					RowSpacing = 8
-				};
-
-				if (!string.IsNullOrEmpty(webContent.WebView.CoreWebView2?.FaviconUri))
-				{
-					try
-					{
-						var favicon = new Image { Width = 16, Height = 16, Margin = new Thickness(0, 0, 8, 0) };
-						favicon.Source = new BitmapImage(new Uri(webContent.WebView.CoreWebView2?.FaviconUri));
-
-						var titlePanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
-						titlePanel.Children.Add(favicon);
-
-						if (!string.IsNullOrEmpty(webContent.WebView.CoreWebView2?.DocumentTitle))
-						{
-							titlePanel.Children.Add(new TextBlock
-							{
-								Text = webContent.WebView.CoreWebView2?.DocumentTitle,
-								FontWeight = FontWeights.SemiBold,
-								TextTrimming = TextTrimming.CharacterEllipsis,
-								VerticalAlignment = VerticalAlignment.Center
-							});
-						}
-
-						Grid.SetRow(titlePanel, 0);
-						previewContent.Children.Add(titlePanel);
-					}
-					catch (UriFormatException)
-					{
-						// Invalid favicon URL, skip adding the favicon
-					}
-				}
-				else if (!string.IsNullOrEmpty(webContent.WebView.CoreWebView2?.DocumentTitle))
-				{
-					var titleBlock = new TextBlock
-					{
-						Text = webContent.WebView.CoreWebView2?.DocumentTitle,
-						FontWeight = FontWeights.SemiBold,
-						TextTrimming = TextTrimming.CharacterEllipsis,
-						Margin = new Thickness(0, 0, 0, 4)
-					};
-					Grid.SetRow(titleBlock, 0);
-					previewContent.Children.Add(titleBlock);
-				}
-
-				if (!string.IsNullOrEmpty(webContent.WebView.Source?.AbsoluteUri))
-				{
-					var urlBlock = new TextBlock
-					{
-						Text = webContent.WebView.Source.AbsoluteUri,
-						TextWrapping = TextWrapping.Wrap,
-						Opacity = 0.7,
-						MaxLines = 2,
-						TextTrimming = TextTrimming.CharacterEllipsis
-					};
-					Grid.SetRow(urlBlock, 1);
-					previewContent.Children.Add(urlBlock);
-				}
-
-				var separator = new Rectangle
-				{
-					Height = 1,
-					Fill = new SolidColorBrush(Colors.Gray),
-					Opacity = 0.2,
-					Margin = new Thickness(0, 8, 0, 8)
-				};
-				Grid.SetRow(separator, 2);
-				previewContent.Children.Add(separator);
-
-				var flyout = new Flyout
-				{
-					Content = previewContent,
-					Placement = FlyoutPlacementMode.Bottom,
-					ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway
-				};
-
-				flyout.ShowAt(tab);
-			}
-		});
-	}
-
-	private void HideTabPreview(GraphiteTabViewItem tab)
-	{
-		tab.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
-		{
-			FlyoutBase.GetAttachedFlyout(tab)?.Hide();
-		});
-	}
-
-	private async Task PreloadTabAsync()
+	private Task PreloadTabAsync()
 	{
 		if (_preloadedTabs.Count < MAX_PRELOADED_TABS && !_isRestoringTabs)
 		{
@@ -239,6 +93,7 @@ public class TabManager
 				System.Diagnostics.Debug.WriteLine($"Error preloading tab: {ex.Message}");
 			}
 		}
+		return Task.CompletedTask;
 	}
 
 	public async Task<GraphiteTabViewItem> CreateLazyLoadingTab(string url)
@@ -403,7 +258,7 @@ public class TabManager
 		return frame;
 	}
 
-	public async Task SaveTabStateAsync(string username)
+	public Task SaveTabStateAsync(string username)
 	{
 		var tabStates = new List<TabState>();
 
@@ -430,9 +285,11 @@ public class TabManager
 		var json = JsonSerializer.Serialize(tabStates);
 		var localSettings = ApplicationData.Current.LocalSettings;
 		localSettings.Values[$"{username}_{TabStateKey}"] = json;
+		
+		return Task.CompletedTask;	
 	}
 
-	public async Task RestoreTabsAsync(string username)
+	public Task RestoreTabsAsync(string username)
 	{
 		_isRestoringTabs = true;
 		var localSettings = ApplicationData.Current.LocalSettings;
@@ -483,6 +340,7 @@ public class TabManager
 			});
 		}
 		_isRestoringTabs = false;
+		return Task.CompletedTask;
 	}
 
 	private string GetTabUrl(GraphiteTabViewItem tab)
