@@ -279,11 +279,11 @@ public static class AppService
 			AppService.AppServiceWindowHandler = WindowHandler; 
 			WindowHandler.Initialize(App.Current.m_window);
 			WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
-			WindowHandler.RestoreWindowPosition();
 			WindowHandler.SetIcon("ms-appx:///Assets/Logo.ico");
-			SizeInt32? desktop = await Windowing.SizeWindow();
-			WindowHandler.SetWindowSize((int)(desktop?.Width * .75), (int)(desktop?.Height * .75));
-			WindowHandler.CenterOnScreen();
+			//SizeInt32? desktop = await Windowing.SizeWindow();
+			//WindowHandler.SetWindowSize((int)(desktop?.Width * .75), (int)(desktop?.Height * .75));
+			////WindowHandler.CenterOnScreen();
+			WindowHandler.RestoreWindowPosition();
 			WindowHandler.SetTitle("Graphite Browser");
 			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
 			App.Current.m_window.AppWindow.MoveInZOrderAtTop();

@@ -395,7 +395,7 @@ public class TabManager
 		{
 			HorizontalAlignment = HorizontalAlignment.Stretch,
 			VerticalAlignment = VerticalAlignment.Stretch,
-			Margin = new Thickness(4,48,4,0)
+			Margin = new Thickness(2,48,2,2)
 		};
 
 		frame.Navigate(pageType, parameter);

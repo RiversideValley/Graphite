@@ -299,7 +299,10 @@ public class WindowHandler : IWindowHandler, IDisposable
 			}
 		}
 	}
-
+	~WindowHandler()
+	{
+		Dispose(disposing: false);
+	}
 	public void Cleanup()
 	{
 		if (_disposedValue) return;
