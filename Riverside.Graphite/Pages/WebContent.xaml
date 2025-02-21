@@ -137,7 +137,10 @@
             </CommandBarFlyout.SecondaryCommands>
         </CommandBarFlyout>
     </Page.Resources>
-    <Grid x:Name="Main" Margin="4,8,4,0">
+    <Grid
+        x:Name="Main"
+        Margin="4,8,4,0"
+        CornerRadius="5">
         <Grid
             x:Name="offlinePage"
             Background="{ThemeResource LayerFillColorDefaultBrush}"

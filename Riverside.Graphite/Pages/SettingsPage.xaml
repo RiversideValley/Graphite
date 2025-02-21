@@ -7,7 +7,7 @@
 
         <NavigationView
             x:Name="NavView"
-            Margin="{ThemeResource LargeTopBottomMargin}"
+            Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
             HorizontalAlignment="Stretch"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="False"
@@ -64,6 +64,7 @@
                     x:Name="ContentFrame"
                     Margin="4,8,4,0"
                     Padding="{ThemeResource SmallLeftRightMargin}"
+                    CornerRadius="10"
                     IsTabStop="True"
                     NavigationFailed="ContentFrame_NavigationFailed" />
             </ScrollViewer>
