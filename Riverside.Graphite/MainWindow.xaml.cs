@@ -124,6 +124,7 @@ public sealed partial class MainWindow : Window
 			}
 
 			App.Current.KillProcessByName("dotnet");
+			AppService.IsAppGoingToClose = true;
 
 		};
 		SizeChanged += async (s, e) =>

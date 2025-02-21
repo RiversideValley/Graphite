@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Graphite.WindowCore;
+using Graphite.WindowCore.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -28,7 +30,7 @@ public partial class App : Application
 
 	private Process _webAppProcess;
 	public NotificationManager NotificationManager { get; set; }
-
+	public IWindowHandler WindowHandler { get; private set; }
 	private string AzureStorage { get; } = "DefaultEndpointsProtocol=https;AccountName=strorelearn;AccountKey=0pt8CYqrqXUluQE3/60q8wobkmYznb9ovHIzztGVOzNxlSa+U8NlY74uwfggd5DfTmGORBLtXpeKEvDYh2ynfQ==;EndpointSuffix=core.windows.net";
 
 	#region DependencyInjection
@@ -57,6 +59,7 @@ public partial class App : Application
 		_ = services.AddSingleton<IRightPaneService, RightPaneService>();
 		_ = services.AddSingleton<IPageService, PageService>();
 		_ = services.AddSingleton<INavigationService, NavigationService>();
+		_ = services.AddSingleton<IWindowHandler, WindowHandler>();
 		_ = services.AddTransient<SettingsService>();
 		_ = services.AddTransient<AdBlockerWrapper>();
 		_ = services.AddTransient<DownloadsViewModel>();
@@ -87,6 +90,19 @@ public partial class App : Application
 		return services.BuildServiceProvider();
 	}
 
+	public Task InitializeWindowHandler(Window window)
+	{
+		WindowHandler = App.GetService<IWindowHandler>();
+		return Task.FromResult(()=> WindowHandler.Initialize(window));
+	}
+
+	private void SetWebView2EnvironmentVariables()
+	{
+		Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
+		Environment.SetEnvironmentVariable("WEBVIEW2_CHANNEL_SEARCH_KIND", "1");
+		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--window-size=0,0 --window-position=40000,40000");
+		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
+	}
 	#endregion
 
 	public App()
@@ -94,17 +110,10 @@ public partial class App : Application
 		AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		InitializeComponent();
 		UnhandledException += Current_UnhandledException;
-
-		Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
-
-		Environment.SetEnvironmentVariable("WEBVIEW2_CHANNEL_SEARCH_KIND", "1");
-		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--window-size=0,0 --window-position=40000,40000");
-		Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-extensions");
+		SetWebView2EnvironmentVariables(); 
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
 		AppService.FireWindows = new HashSet<Window>();
-
-
 
 		try
 		{

@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Graphite;
+using Graphite.WindowCore;
+using Graphite.WindowCore.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -35,6 +37,25 @@ namespace Riverside.Graphite.Services;
 
 public static class AppService
 {
+	private static readonly object _lock = new();
+	private static IWindowHandler _appServiceWindowHandler;
+	public static IWindowHandler AppServiceWindowHandler
+	{
+		get
+		{
+			lock (_lock)
+			{
+				return _appServiceWindowHandler;
+			}
+		}
+		set
+		{
+			lock (_lock)
+			{
+				_appServiceWindowHandler = value;
+			}
+		}
+	}
 	public static Window ActiveWindow { get; set; }
 	public static HashSet<Window> FireWindows { get; set; }
 	public static Settings AppSettings { get; set; }
@@ -112,7 +133,7 @@ public static class AppService
         await Task.FromCanceled(cancellationToken);
     }
 
-    private static void OpenWindow(Window window, CancellationToken cancellationToken)
+	private static void OpenWindow(Window window, CancellationToken cancellationToken)
     {
         AuthService.Logout();
         ActiveWindow = window;
@@ -249,22 +270,34 @@ public static class AppService
 
 	private static async Task ShowMainWindow(CancellationToken cancellationToken)
 	{
+		 
 		App.Current.m_window = new MainWindow();
+		await App.Current.InitializeWindowHandler(App.Current.m_window);
 		
-
-		Windowing.Center(App.Current.m_window);
-		IntPtr hWnd = WindowNative.GetWindowHandle(App.Current.m_window);
-		_ = Windowing.AnimateWindow(hWnd, 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
-		App.Current.m_window.Activate();
-		App.Current.m_window.AppWindow.MoveInZOrderAtTop();
+		if (App.Current.WindowHandler is IWindowHandler WindowHandler)
+		{
+			AppService.AppServiceWindowHandler = WindowHandler; 
+			WindowHandler.Initialize(App.Current.m_window);
+			WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
+			WindowHandler.RestoreWindowPosition();
+			WindowHandler.SetIcon("ms-appx:///Assets/Logo.ico");
+			SizeInt32? desktop = await Windowing.SizeWindow();
+			WindowHandler.SetWindowSize((int)(desktop?.Width * .75), (int)(desktop?.Height * .75));
+			WindowHandler.CenterOnScreen();
+			WindowHandler.SetTitle("Graphite Browser");
+			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
+			App.Current.m_window.AppWindow.MoveInZOrderAtTop();
+			WindowHandler.AppWindow?.ShowOnceWithRequestedStartupState();
+		}
 
 		List<IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);
+
 		if (windows.Count > 1)
 		{
 			Windowing.CascadeWindows(windows);
 		}
 
-		if (Windowing.IsWindowVisible(hWnd))
+		if (Windowing.IsWindowVisible(WindowNative.GetWindowHandle(App.Current.m_window!)))
 		{
 			await Task.Delay(1000);
 			if (AuthService.IsUserAuthenticated)
