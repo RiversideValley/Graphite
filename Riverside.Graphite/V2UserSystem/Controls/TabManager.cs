@@ -17,8 +17,6 @@ using Microsoft.UI.Xaml.Shapes;
 using System.Collections.Concurrent;
 using Riverside.Graphite.Pages;
 using Graphite.ViewModels;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Drawing.Printing;
 
 namespace Graphite.Controls;
 
@@ -26,7 +24,7 @@ public class TabManager
 {
 	public GraphiteTabViewContainer _tabViewContainer;
 	public const string TabStateKey = "TabState";
-	private const int SleepTimeoutMinutes = 30;
+	private const int SleepTimeoutMinutes = 1;
 	public Dictionary<GraphiteTabViewItem, DateTime> _lastActivityTimes = new Dictionary<GraphiteTabViewItem, DateTime>();
 	private DispatcherQueueTimer _sleepTimer;
 	private DispatcherQueueTimer _previewTimer;
