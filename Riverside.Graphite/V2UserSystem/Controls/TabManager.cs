@@ -45,7 +45,7 @@ public class TabManager
 		_tabViewContainer.TabItemsChanged += TabViewContainer_TabItemsChanged;
 		_tabViewContainer.SelectionChanged += TabViewContainer_SelectionChanged;
 		InitializeSleepTimer();
-		//InitializePreviewTimer();
+		InitializePreviewTimer();
 	}
 
 	private void TabViewContainer_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
@@ -55,7 +55,7 @@ public class TabManager
 			var newTab = sender.TabItems[(int)args.Index] as GraphiteTabViewItem;
 			if (newTab != null)
 			{
-				//SetupTabPreview(newTab);
+				SetupTabPreview(newTab);
 			}
 		}
 	}

@@ -84,7 +84,7 @@ public sealed partial class MainWindow : Window
 		
 		
 		InitializeComponent();
-		TabManager = new TabManager(this.Tabs);
+		TabManager = new TabManager(Tabs);
 		_=	StartupTabCheckAsync();
 
 		TitleTop();
@@ -987,7 +987,7 @@ public async void NavigateToUrl(string uri)
 
 		list!.ForEach(async (tab) =>
 		{
-			FireBrowserTabViewItem CurrentTab = tab as FireBrowserTabViewItem;
+			GraphiteTabViewItem CurrentTab = tab as GraphiteTabViewItem;
 
 			// covers all tabs.- in future if we are selecting desired tab that's playing we could add a check NO TO Stop video from playing hence were selecting that tab.
 
@@ -1040,7 +1040,7 @@ public async void NavigateToUrl(string uri)
 			{
 				_ = e.RemovedItems.All((tab) =>
 				{
-					if (tab is FireBrowserTabViewItem viewedItem)
+					if (tab is GraphiteTabViewItem viewedItem)
 					{
 						if (SettingsService.CoreSettings.ResourceSave == true)
 						{
@@ -1121,7 +1121,7 @@ public async void NavigateToUrl(string uri)
 			case "Favorites":
 				UrlBox.Text = "firebrowser://favorites";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Favorites";
+				(Tabs.SelectedItem as GraphiteTabViewItem).Header = "Favorites";
 				break;
 			case "Ratings":
 				try
