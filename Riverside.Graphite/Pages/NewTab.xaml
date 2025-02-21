@@ -22,10 +22,7 @@
     mc:Ignorable="d">
 
 
-    <Grid
-        Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-        Background="{x:Bind ViewModel.NewTabBackGround, Mode=OneWay}"
-        CornerRadius="10">
+    <Grid Background="{x:Bind ViewModel.NewTabBackGround, Mode=OneWay}" CornerRadius="10">
         <SplitView
             x:Name="SplitViewer"
             Grid.Row="0"

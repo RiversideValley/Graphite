@@ -26,13 +26,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\Workers\**" />
-    <Compile Remove="V2UserSystem\Controls\**" />
     <EmbeddedResource Remove="Services\Workers\**" />
-    <EmbeddedResource Remove="V2UserSystem\Controls\**" />
     <None Remove="Services\Workers\**" />
-    <None Remove="V2UserSystem\Controls\**" />
     <Page Remove="Services\Workers\**" />
-    <Page Remove="V2UserSystem\Controls\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -190,6 +186,9 @@
     <None Remove="Setup\SetupWebView.xaml" />
     <None Remove="Styles\Thickness.xaml" />
     <None Remove="UpdateChecker.xaml" />
+    <None Remove="V2UserSystem\HomeWindow.xaml" />
+    <None Remove="V2UserSystem\Pages\NewTabFleunt.xaml" />
+    <None Remove="V2UserSystem\Pages\SettingsWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\AppTiles\Logo.ico">
@@ -497,10 +496,18 @@
     <PRIResource Remove="Services\Workers\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="V2UserSystem\Graphite.Controls\Graphite.Controls.csproj" />
-    <None Include="V2UserSystem\Graphite.Migration\Graphite.Migration.csproj" />
+    <Compile Remove="Services\ViewModels\ToolbarViewModel.cs" />
+    <Compile Remove="V2UserSystem\HomeWindow.xaml.cs" />
+    <Compile Remove="V2UserSystem\Pages\NewTabFleunt.xaml.cs" />
+    <Compile Remove="V2UserSystem\Pages\SettingsWindow.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Remove="V2UserSystem\Controls\**" />
+    <Page Remove="V2UserSystem\HomeWindow.xaml" />
+    <Page Remove="V2UserSystem\Pages\NewTabFleunt.xaml" />
+    <Page Remove="V2UserSystem\Pages\SettingsWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="V2UserSystem\Graphite.Controls\Graphite.Controls.csproj" />
+    <None Include="V2UserSystem\Graphite.Migration\Graphite.Migration.csproj" />
   </ItemGroup>
 </Project>

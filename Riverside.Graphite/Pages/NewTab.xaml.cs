@@ -1,4 +1,5 @@
 
+using Graphite.Controls;
 using Microsoft.Bing.WebSearch.Models;
 using Microsoft.Graph.Models.Security;
 using Microsoft.UI;
@@ -87,7 +88,22 @@ public sealed partial class NewTab : Page
 
 	}
 
+	public void Cleanup()
+	{
 
+		// Clear content
+		this.Content = null;
+
+		// Remove context flyout
+		this.ContextFlyout = null;
+
+		// Clear any other references or resources
+		// For example, if there are any other event handlers or resources, clear them here
+
+		// Force garbage collection
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+	}
 	private async void NewTabSearchBox_QuerySubmittedAsync(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 	{
 		if (string.IsNullOrEmpty(args.QueryText))

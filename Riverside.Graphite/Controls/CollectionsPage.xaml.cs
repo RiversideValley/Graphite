@@ -93,7 +93,7 @@ namespace Riverside.Graphite.Controls
 					}
 					else
 					{
-						window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem));
+						window.TabViewContainer.TabItems.Add(window.TabManager.CreateNewTab(typeof(WebContent), selectedHistoryItem));
 					}
 
 				}
@@ -103,7 +103,7 @@ namespace Riverside.Graphite.Controls
 			{
 				if (App.Current.m_window is MainWindow window)
 				{
-					window.DispatcherQueue?.TryEnqueue(() => window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), selectedHistoryItem)));
+					window.DispatcherQueue?.TryEnqueue(() => window.TabViewContainer.TabItems.Add(window.TabManager.CreateNewTab(typeof(WebContent), selectedHistoryItem)));
 				}
 			};
 
@@ -191,7 +191,7 @@ namespace Riverside.Graphite.Controls
 					e.Handled = true;
 					if (App.Current.m_window is MainWindow window)
 					{
-						window.TabViewContainer.TabItems.Add(window.CreateNewTab(typeof(WebContent), e.Uri));
+						window.TabViewContainer.TabItems.Add(window.TabManager.CreateNewTab(typeof(WebContent), e.Uri));
 					}
 				};
 			}

@@ -401,7 +401,7 @@ public partial class HomeViewModel : ObservableRecipient
 					switch (btn.Tag.ToString())
 					{
 						case "Settings":
-							window.Tabs.TabItems.Add(window.CreateNewTab(typeof(SettingsPage)));
+							window.Tabs.TabItems.Add(window.TabManager.CreateNewTab(typeof(SettingsPage)));
 							window.SelectNewTab();
 							break;
 						case "Downloads":

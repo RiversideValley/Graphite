@@ -2,6 +2,7 @@ using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
+using Graphite.ViewModels;
 using Microsoft.Build.Framework;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -63,6 +64,7 @@ public sealed partial class MainWindow : Window
 	public DownloadService ServiceDownloads { get; set; }
 	public SettingsService SettingsService { get; set; }
 	public MainWindowViewModel ViewModelMain { get; set; }
+	public TabManager TabManager { get; set; }
 
 	//public HubService HubService { get; set; }	
 	public string PicturePath { get; set; }
@@ -77,12 +79,14 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.IsActive = true;
 		ViewModelMain.MainView = this;
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
-
 		Commander = new ProfileCommander(ViewModelMain);
 
 		InitializeComponent();
+		TabManager = new TabManager(this.Tabs);
+		_=	StartupTabCheckAsync();
 
-		ArgsPassed();
+		TitleTop();
+		//ArgsPassed();
 		LoadUserDataAndSettings(); // Load data and settings for the new user
 		_ = LoadUserSettings();
 		Init();
@@ -180,6 +184,26 @@ public sealed partial class MainWindow : Window
 		appWindow.Closing += AppWindow_Closing;
 	}
 
+	public async Task StartupTabCheckAsync()
+	{
+		var localSettings = ApplicationData.Current.LocalSettings;
+		string cacheKey = $"{AuthService.CurrentUser.Username}_{TabManager.TabStateKey}";
+
+		if (localSettings.Values.ContainsKey(cacheKey))
+		{
+			// Restore cache exists, attempt to restore tabs
+			await TabManager.RestoreTabsAsync(AuthService.CurrentUser.Username);
+		}
+
+		// Check if there are any tabs after restoration attempt
+		if (Tabs.TabItems.Count == 0)
+		{
+			// No tabs, create a default tab
+			TabManager.CreateNewTab(typeof(NewTab));
+		}
+
+		await TabManager.StartPreloadingTabs();
+	}
 
 	public async void Init()
 	{
@@ -272,14 +296,16 @@ public sealed partial class MainWindow : Window
 		if (!string.IsNullOrEmpty(AppArguments.UrlArgument) &&
 			Uri.TryCreate(AppArguments.UrlArgument, UriKind.Absolute, out Uri uri))
 		{
-			Tabs.TabItems.Add(CreateNewTab(typeof(WebContent), uri));
+			await TabManager.CreateLazyLoadingTab(uri.ToString());
+			//Tabs.TabItems.Add(CreateNewTab(typeof(WebContent), uri));
 			return;
 		}
 
 		if (!string.IsNullOrEmpty(AppArguments.FireBrowserArgument) ||
 			!string.IsNullOrEmpty(AppArguments.FireUser))
 		{
-			Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
+			TabManager.CreateNewTab(typeof(NewTab));
+			//Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
 			return;
 		}
 
@@ -289,14 +315,16 @@ public sealed partial class MainWindow : Window
 			ReadOnlyCollection<IStorageItem> files = new List<IStorageItem> { file }.AsReadOnly();
 			if (files.Count > 0)
 			{
-				Tabs.TabItems.Add(CreateNewTab(typeof(WebContent), files[1]));
+				await TabManager.CreateLazyLoadingTab(files[1].Name);
+				//Tabs.TabItems.Add(CreateNewTab(typeof(WebContent), files[1]));
 			}
 			return;
 		}
 
 		if (!string.IsNullOrEmpty(AppArguments.FireBrowserIncog))
 		{
-			Tabs.TabItems.Add(CreateNewIncog(typeof(InPrivate)));
+			TabManager.CreateNewTab(typeof(InPrivate));
+			//Tabs.TabItems.Add(CreateNewIncog(typeof(InPrivate)));
 			Control[] controlsToDisable = new Control[] { Fav, His, History, Down, DownBtn, FavoritesButton, UserFrame };
 			foreach (Control control in controlsToDisable)
 			{
@@ -312,8 +340,8 @@ public sealed partial class MainWindow : Window
 			incog = true;
 			return;
 		}
-
-		Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
+		TabManager.CreateNewTab(typeof(NewTab));
+		//Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
 	}
 
 	public void LoadUsernames()
@@ -336,9 +364,9 @@ public sealed partial class MainWindow : Window
 	public void SmallUpdates()
 	{
 		string source = TabWebView.CoreWebView2.Source?.ToString() ?? string.Empty;
-		UrlBox.Text = ViewModel.Securitytype = source;
+		UrlBox.Text = ViewModel.SecurityType = source;
 
-		(ViewModel.SecurityIcon, ViewModel.SecurityIcontext, ViewModel.Securitytext) = source switch
+		(ViewModel.SecurityIcon, ViewModel.SecurityIconText, ViewModel.SecurityText) = source switch
 		{
 			string s when s.Contains("https") => ("\uE72E", "Https Secured Website",
 				"This Page Is Secured By A Valid SSL Certificate, Trusted By Root Authorities"),
@@ -367,7 +395,7 @@ public sealed partial class MainWindow : Window
 			titleBar.InactiveBackgroundColor = titleBar.ButtonInactiveBackgroundColor =
 			titleBar.ButtonHoverBackgroundColor = btnColor;
 
-		ViewModel = new() { CurrentAddress = "", SecurityIcon = "\uE946", SecurityIcontext = "FireBrowser NewTab", Securitytext = "This The Default Home Page Of FireBrowser Internal Pages Secure", Securitytype = "Link - FireBrowser://NewTab" };
+		ViewModel = new() { CurrentAddress = "", SecurityIcon = "\uE946", SecurityIconText = "FireBrowser NewTab", SecurityText = "This The Default Home Page Of FireBrowser Internal Pages Secure", SecurityType = "Link - FireBrowser://NewTab" };
 	}
 
 	public static string launchurl { get; set; }
@@ -464,72 +492,72 @@ public sealed partial class MainWindow : Window
 	{
 		if (sender.TabItems.Count < maxTabItems)
 		{
-			sender.TabItems.Add(incog == true ? CreateNewIncog(typeof(InPrivate)) : CreateNewTab(typeof(NewTab)));
+			sender.TabItems.Add(incog == true ? TabManager.CreateNewTab(typeof(InPrivate)) : TabManager.CreateNewTab(typeof(NewTab)));
 		}
 	}
 
 	#region toolbar
 
 	public ToolbarViewModel ViewModel { get; set; }
-	public class Passer
-	{
-		public FireBrowserTabViewItem Tab { get; set; }
-		public FireBrowserTabViewContainer TabView { get; set; }
-		public object Param { get; set; }
-		public ToolbarViewModel ViewModel { get; set; }
-	}
+	//public class Passer
+	//{
+	//	public FireBrowserTabViewItem Tab { get; set; }
+	//	public FireBrowserTabViewContainer TabView { get; set; }
+	//	public object Param { get; set; }
+	//	public ToolbarViewModel ViewModel { get; set; }
+	//}
 
 	#endregion
 
-	public FireBrowserTabViewItem CreateNewTab(Type? page = null, object param = null, int index = -1)
-	{
-		_ = Tabs.TabItems.Count;
+	//public FireBrowserTabViewItem CreateNewTab(Type? page = null, object param = null, int index = -1)
+	//{
+	//	_ = Tabs.TabItems.Count;
 
-		FireBrowserTabViewItem newItem = new()
-		{
-			Header = "NewTab",
-			IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.Home },
-			Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
+	//	FireBrowserTabViewItem newItem = new()
+	//	{
+	//		Header = "NewTab",
+	//		IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.Home },
+	//		Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
 		
-		};
+	//	};
 
-		//ToolTipService.SetToolTip(newItem, null);
-
-
-		Passer passer = new()
-		{
-			Tab = newItem,
-			TabView = Tabs,
-			ViewModel = new ToolbarViewModel(),
-			Param = param,
-		};
+	//	//ToolTipService.SetToolTip(newItem, null);
 
 
-		passer.ViewModel.CurrentAddress = "";
-
-		double margin = ClassicToolbar.Height;
-		Frame frame = new()
-		{
-			HorizontalAlignment = HorizontalAlignment.Stretch,
-			VerticalAlignment = VerticalAlignment.Stretch,
-			Margin = new Thickness(0, margin, 0, 0)
-		};
-
-		if (page != null)
-		{
-			_ = frame.Navigate(page, passer);
-		}
-
-		newItem.Content = frame;
-
-		return newItem;
-	}
+	//	Passer passer = new()
+	//	{
+	//		Tab = newItem,
+	//		TabView = Tabs,
+	//		ViewModel = new ToolbarViewModel(),
+	//		Param = param,
+	//	};
 
 
+	//	passer.ViewModel.CurrentAddress = "";
 
-	public Frame TabContent => (Tabs.SelectedItem as FireBrowserTabViewItem)?.Content as Frame;
+	//	double margin = ClassicToolbar.Height;
+	//	Frame frame = new()
+	//	{
+	//		HorizontalAlignment = HorizontalAlignment.Stretch,
+	//		VerticalAlignment = VerticalAlignment.Stretch,
+	//		Margin = new Thickness(0, margin, 0, 0)
+	//	};
+
+	//	if (page != null)
+	//	{
+	//		_ = frame.Navigate(page, passer);
+	//	}
+
+	//	newItem.Content = frame;
+
+	//	return newItem;
+	//}
+
+
+
+	public Frame TabContent => (Tabs.SelectedItem as GraphiteTabViewItem)?.Content as Frame;
 	public WebView2 TabWebView => (TabContent?.Content as WebContent)?.WebViewElement;
-	public FireBrowserTabViewContainer TabViewContainer => Tabs;
+	public GraphiteTabViewContainer TabViewContainer => Tabs;
 	private double GetScaleAdjustment()
 	{
 		nint hWnd = WindowNative.GetWindowHandle(this);
@@ -549,66 +577,61 @@ public sealed partial class MainWindow : Window
 	}
 
 
-	private void Tabs_Loaded(object sender, RoutedEventArgs e)
-	{
-		Apptitlebar.SizeChanged += Apptitlebar_SizeChanged;
-		Apptitlebar_LayoutUpdated(sender, e);
-	}
+	
+	//private void Apptitlebar_SizeChanged(object sender, SizeChangedEventArgs e)
+	//{
+	//	try
+	//	{
+	//		double scaleAdjustment = GetScaleAdjustment();
+	//		Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
+	//		Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
 
-	private void Apptitlebar_SizeChanged(object sender, SizeChangedEventArgs e)
-	{
-		try
-		{
-			double scaleAdjustment = GetScaleAdjustment();
-			Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
-			Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
+	//		Windows.Graphics.RectInt32[] dragRects = new Windows.Graphics.RectInt32[2];
 
-			Windows.Graphics.RectInt32[] dragRects = new Windows.Graphics.RectInt32[2];
+	//		for (int i = 0; i < 2; i++)
+	//		{
+	//			dragRects[i] = new Windows.Graphics.RectInt32
+	//			{
+	//				X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
+	//				Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
+	//				Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
+	//				Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
+	//			};
+	//		}
 
-			for (int i = 0; i < 2; i++)
-			{
-				dragRects[i] = new Windows.Graphics.RectInt32
-				{
-					X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
-					Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
-					Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
-					Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
-				};
-			}
+	//		appWindow.TitleBar?.SetDragRectangles(dragRects);
+	//	}
+	//	catch (Exception)
+	//	{
+	//		throw;
+	//	}
+	//}
 
-			appWindow.TitleBar?.SetDragRectangles(dragRects);
-		}
-		catch (Exception)
-		{
-			throw;
-		}
-	}
+	//private void Apptitlebar_LayoutUpdated(object sender, object e)
+	//{
+	//	double scaleAdjustment = GetScaleAdjustment();
+	//	Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
+	//	Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
 
-	private void Apptitlebar_LayoutUpdated(object sender, object e)
-	{
-		double scaleAdjustment = GetScaleAdjustment();
-		Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
-		Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
+	//	List<Windows.Graphics.RectInt32> dragRectsList = new();
 
-		List<Windows.Graphics.RectInt32> dragRectsList = new();
+	//	for (int i = 0; i < 2; i++)
+	//	{
+	//		Windows.Graphics.RectInt32 dragRect = new()
+	//		{
+	//			X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
+	//			Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
+	//			Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
+	//			Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
+	//		};
 
-		for (int i = 0; i < 2; i++)
-		{
-			Windows.Graphics.RectInt32 dragRect = new()
-			{
-				X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
-				Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
-				Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
-				Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
-			};
+	//		dragRectsList.Add(dragRect);
+	//	}
 
-			dragRectsList.Add(dragRect);
-		}
+	//	Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
 
-		Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
-
-		appWindow.TitleBar?.SetDragRectangles(dragRects);
-	}
+	//	appWindow.TitleBar?.SetDragRectangles(dragRects);
+	//}
 	private void Tabs_TabItemsChanged(TabView sender, IVectorChangedEventArgs args)
 	{
 		if (sender.TabItems.Count <= 0)
@@ -624,7 +647,7 @@ public sealed partial class MainWindow : Window
 	{
 		return new()
 		{
-			Tab = Tabs.SelectedItem as FireBrowserTabViewItem,
+			Tab = Tabs.SelectedItem as GraphiteTabViewItem,
 			TabView = Tabs,
 			ViewModel = ViewModel,
 			Param = parameter,
@@ -698,31 +721,37 @@ public async void NavigateToUrl(string uri)
 
 	private void HandleFireBrowserUrl(string url)
 	{
+		Passer passer = new()
+		{
+			Tab = Tabs.SelectedItem as GraphiteTabViewItem,
+			TabView = Tabs,
+			ViewModel = ViewModel
+		};
+
 		switch (url.ToLowerInvariant())
 		{
 			case "firebrowser://newtab":
-				Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
+				TabManager.CreateNewTab(typeof(NewTab));
 				SelectNewTab();
 				break;
 			case "firebrowser://settings":
-				Tabs.TabItems.Add(CreateNewTab(typeof(SettingsPage)));
-				SelectNewTab();
+				TabManager.CreateNewTab(typeof(SettingsPage), passer);
 				break;
 			case "firebrowser://modules":
-				Tabs.TabItems.Add(CreateNewTab(typeof(Pluginss)));
+				TabManager.CreateNewTab(typeof(Pluginss));
 				SelectNewTab();
 				break;
 			// Uncomment these cases if needed in the future
 			case "firebrowser://vault":
-				Tabs.TabItems.Add(CreateNewTab(typeof(SecureVault)));
+				TabManager.CreateNewTab(typeof(SecureVault));
 				SelectNewTab();
 				break;
 			case "firebrowser://collec":
-				Tabs.TabItems.Add(CreateNewTab(typeof(CollectionsPage)));
+				TabManager.CreateNewTab(typeof(CollectionsPage));
 				SelectNewTab();
 				break;
 			case "firebrowser://lock":
-				Tabs.TabItems.Add(CreateNewTab(typeof(LockScreen)));
+				TabManager.CreateNewTab(typeof(LockScreen));
 				GoFullScreenLock(isFull != true);
 				SelectNewTab();
 				break;
@@ -830,7 +859,7 @@ public async void NavigateToUrl(string uri)
 	{
 		Passer passer = new()
 		{
-			Tab = Tabs.SelectedItem as FireBrowserTabViewItem,
+			Tab = Tabs.SelectedItem as GraphiteTabViewItem,
 			TabView = Tabs,
 			ViewModel = ViewModel
 		};
@@ -839,11 +868,11 @@ public async void NavigateToUrl(string uri)
 		{
 			case "Back":
 				GoBack();
-				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = ((Tabs.SelectedItem as FireBrowserTabViewItem).Content as Frame).Content.GetType().Name;
+				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
 			case "Forward":
 				GoForward();
-				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = ((Tabs.SelectedItem as FireBrowserTabViewItem).Content as Frame).Content.GetType().Name;
+				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
 			case "Refresh" when TabContent.Content is WebContent:
 				TabWebView.CoreWebView2.Reload();
@@ -1044,7 +1073,7 @@ public async void NavigateToUrl(string uri)
 		switch ((sender as Button).Tag)
 		{
 			case "NewTab":
-				Tabs.TabItems.Add(CreateNewTab(typeof(NewTab)));
+				TabManager.CreateNewTab(typeof(NewTab));
 				SelectNewTab();
 				break;
 			case "NewWindow":
@@ -1060,7 +1089,7 @@ public async void NavigateToUrl(string uri)
 				}
 				break;
 			case "Settings":
-				Tabs.TabItems.Add(CreateNewTab(typeof(SettingsPage)));
+				TabManager.CreateNewTab(typeof(SettingsPage));
 				SelectNewTab();
 				break;
 			case "FullScreen":
@@ -1069,16 +1098,16 @@ public async void NavigateToUrl(string uri)
 			case "Downloads":
 				UrlBox.Text = "firebrowser://downloads";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Downloads";
+				(Tabs.SelectedItem as GraphiteTabViewItem).Header = "Downloads";
 				break;
 			case "History":
 				UrlBox.Text = "firebrowser://history";
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
-				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "History";
+				(Tabs.SelectedItem as GraphiteTabViewItem).Header = "History";
 				break;
 			case "Collections": 
 				_ = TabContent.Navigate(typeof(CollectionsPage));
-				(Tabs.SelectedItem as FireBrowserTabViewItem).Header = "Collections";
+				(Tabs.SelectedItem as GraphiteTabViewItem).Header = "Collections";
 				break;
 			case "InPrivate":
 				OpenNewWindow(new Uri("firebrowserincog://"));
@@ -1149,55 +1178,115 @@ public async void NavigateToUrl(string uri)
 
 	#endregion
 
-	public FireBrowserTabViewItem CreateNewIncog(Type? page = null, object? param = null, int index = -1)
+	//public FireBrowserTabViewItem CreateNewIncog(Type? page = null, object? param = null, int index = -1)
+	//{
+	//	_ = Tabs.TabItems.Count;
+	//	UrlBox.Text = "";
+
+	//	FireBrowserTabViewItem newItem = new()
+	//	{
+	//		Header = $"Incognito",
+	//		IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.BlockContact },
+	//		Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
+	//	};
+
+
+	//	Passer passer = new()
+	//	{
+	//		Tab = newItem,
+	//		TabView = Tabs,
+	//		ViewModel = new ToolbarViewModel(),
+	//		Param = param
+	//	};
+
+	//	Frame frame = new()
+	//	{
+	//		HorizontalAlignment = HorizontalAlignment.Stretch,
+	//		VerticalAlignment = VerticalAlignment.Stretch,
+	//		Margin = new Thickness(0, 37, 0, 0)
+	//	};
+
+	//	_ = page != null ? frame.Navigate(page, passer) : frame.Navigate(typeof(Riverside.Graphite.Pages.InPrivate), passer);
+
+	//	newItem.Content = frame;
+	//	return newItem;
+	//}
+	private void Apptitlebar_SizeChanged(object sender, SizeChangedEventArgs e)
 	{
-		_ = Tabs.TabItems.Count;
-		UrlBox.Text = "";
-
-		FireBrowserTabViewItem newItem = new()
+		try
 		{
-			Header = $"Incognito",
-			IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.BlockContact },
-			Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
-		};
+			double scaleAdjustment = GetScaleAdjustment();
+			Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
+			Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
 
+			Windows.Graphics.RectInt32[] dragRects = new Windows.Graphics.RectInt32[2];
 
-		Passer passer = new()
+			for (int i = 0; i < 2; i++)
+			{
+				dragRects[i] = new Windows.Graphics.RectInt32
+				{
+					X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
+					Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
+					Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
+					Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
+				};
+			}
+
+			appWindow.TitleBar?.SetDragRectangles(dragRects);
+		}
+		catch (Exception)
 		{
-			Tab = newItem,
-			TabView = Tabs,
-			ViewModel = new ToolbarViewModel(),
-			Param = param
-		};
+			throw;
+		}
+	}
 
-		Frame frame = new()
+	private void Apptitlebar_LayoutUpdated(object sender, object e)
+	{
+		double scaleAdjustment = GetScaleAdjustment();
+		Apptitlebar.Measure(new Windows.Foundation.Size(double.PositiveInfinity, double.PositiveInfinity));
+		Windows.Foundation.Point customDragRegionPosition = Apptitlebar.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(0, 0));
+
+		List<Windows.Graphics.RectInt32> dragRectsList = new();
+
+		for (int i = 0; i < 2; i++)
 		{
-			HorizontalAlignment = HorizontalAlignment.Stretch,
-			VerticalAlignment = VerticalAlignment.Stretch,
-			Margin = new Thickness(0, 37, 0, 0)
-		};
+			Windows.Graphics.RectInt32 dragRect = new()
+			{
+				X = (int)((customDragRegionPosition.X + (i * Apptitlebar.ActualWidth / 2)) * scaleAdjustment),
+				Y = (int)(customDragRegionPosition.Y * scaleAdjustment),
+				Height = (int)((Apptitlebar.ActualHeight - customDragRegionPosition.Y) * scaleAdjustment),
+				Width = (int)(Apptitlebar.ActualWidth / 2 * scaleAdjustment)
+			};
 
-		_ = page != null ? frame.Navigate(page, passer) : frame.Navigate(typeof(Riverside.Graphite.Pages.InPrivate), passer);
+			dragRectsList.Add(dragRect);
+		}
 
-		newItem.Content = frame;
-		return newItem;
+		Windows.Graphics.RectInt32[] dragRects = dragRectsList.ToArray();
+
+		appWindow.TitleBar?.SetDragRectangles(dragRects);
+	}
+	private void Tabs_Loaded(object sender, RoutedEventArgs e)
+	{
+		Apptitlebar.SizeChanged += Apptitlebar_SizeChanged;
+		Apptitlebar_LayoutUpdated(sender, e);
+	}
+
+	private void Tabs_AddTabButtonClick(TabView sender, object args)
+	{
+		if (sender.TabItems.Count < maxTabItems)
+		{
+			TabManager.CreateNewTab(typeof(NewTab), null, false);
+		}
 	}
 
 	private void Tabs_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
 	{
-		if (args.Tab?.Content is not Frame tabContent)
+		if (args.Tab is GraphiteTabViewItem tabToClose)
 		{
-			return;
+			TabManager.CloseTab(tabToClose);
 		}
-
-		if (tabContent.Content is WebContent webContent && webContent.WebViewElement != null)
-		{
-			webContent.WebViewElement.Close();
-		}
-
-		_ = (sender?.TabItems?.Remove(args.Tab));
 	}
-
+	
 	private string selectedHistoryItem;
 	private async void Grid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
 	{

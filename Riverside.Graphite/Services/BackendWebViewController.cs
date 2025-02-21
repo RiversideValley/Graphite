@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Graphite.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Runtime.Helpers;
@@ -84,7 +85,7 @@ namespace Riverside.Graphite.Services
 				e.Handled = true;
 			};
 		}
-		public async Task Intialize(MainWindow.Passer passer)
+		public async Task Intialize(Passer passer)
 		{
 			// any service that needs to tracking...
 			Uri url = UrlValidater.GetValidateUrl(passer.Param.ToString());

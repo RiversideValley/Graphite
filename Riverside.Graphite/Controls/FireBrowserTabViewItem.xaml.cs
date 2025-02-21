@@ -40,7 +40,7 @@ public sealed partial class FireBrowserTabViewItem : TabViewItem
 			return; // Do nothing if sender is null or not a FireBrowserTabViewItem
 		}
 
-		UserDashBoard win = (Window)(Application.Current as App)?.m_window as UserDashBoard;
+		MainWindow win = (Window)(Application.Current as App)?.m_window as MainWindow;
 		if (win == null)
 		{
 			return; // Do nothing if MainWindow is null

@@ -58,5 +58,7 @@ public partial class ToolbarViewModel : ObservableObject
 	{
 		HomeButtonVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
 	}
+
+
 }
 

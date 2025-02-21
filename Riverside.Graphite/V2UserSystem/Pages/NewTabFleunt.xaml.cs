@@ -21,28 +21,11 @@ namespace Graphite.Pages
 	/// <summary>
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
-	public sealed partial class NewTab : Page
+	public sealed partial class NewTabFleunt : Page
 	{
-		public NewTab()
+		public NewTabFleunt()
 		{
 			this.InitializeComponent();
-		}
-
-		public void Cleanup()
-		{
-		
-			// Clear content
-			this.Content = null;
-
-			// Remove context flyout
-			this.ContextFlyout = null;
-
-			// Clear any other references or resources
-			// For example, if there are any other event handlers or resources, clear them here
-
-			// Force garbage collection
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
 		}
 	}
 }

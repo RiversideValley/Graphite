@@ -30,7 +30,6 @@ using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
 using WinRT.Interop;
-using static Riverside.Graphite.MainWindow;
 
 
 namespace Riverside.Graphite.Pages
@@ -69,7 +68,20 @@ namespace Riverside.Graphite.Pages
 			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
 			Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 		}
+		public async Task UnloadContent()
+		{
+			await WebView.CoreWebView2.TrySuspendAsync();
+			offlinePage.Visibility = Visibility.Visible;
+			Grid.Visibility = Visibility.Collapsed;
+		}
 
+		public Task ReloadContent()
+		{
+			WebView.CoreWebView2.Resume();
+			offlinePage.Visibility = Visibility.Collapsed;
+			Grid.Visibility = Visibility.Visible;
+			return Task.CompletedTask; 
+		}
 		private async Task AfterComplete()
 		{
 			
@@ -99,7 +111,7 @@ namespace Riverside.Graphite.Pages
 			string isSecure = source.StartsWith("https://") ? "\uE72E" :
 							  source.StartsWith("http://") ? "\uE785" : "";
 			param.ViewModel.SecurityIcon = isSecure;
-			param.ViewModel.SecurityIcontext = isSecure switch
+			param.ViewModel.SecurityIconText = isSecure switch
 			{
 				"\uE72E" => "HTTPS Secured Website",
 				"\uE785" => "HTTP Unsecured Website",
@@ -317,7 +329,7 @@ namespace Riverside.Graphite.Pages
 		private void NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
 		{
 			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
-			param?.TabView.TabItems.Add(window.CreateNewTab(typeof(WebContent), args.Uri));
+			param?.TabView.TabItems.Add(window.TabManager.CreateNewTab(typeof(WebContent), args.Uri));
 			args.Handled = true;
 		}
 
@@ -677,13 +689,11 @@ namespace Riverside.Graphite.Pages
 					case "OpenInTab":
 						if (IsIncognitoModeEnabled)
 						{
-							FireBrowserTabViewItem newTab = mainWindow?.CreateNewIncog(typeof(WebContent), new Uri(SelectionText));
-							mainWindow?.Tabs.TabItems.Add(newTab);
+							mainWindow?.TabManager.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
 						}
 						else
 						{
-							FireBrowserTabViewItem newTab = mainWindow?.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
-							mainWindow?.Tabs.TabItems.Add(newTab);
+							mainWindow.TabManager.CreateNewTab(typeof(WebContent), new Uri(SelectionText));
 						}
 						if (SettingsService.CoreSettings.OpenTabHandel)
 						{

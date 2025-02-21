@@ -137,7 +137,7 @@
             </CommandBarFlyout.SecondaryCommands>
         </CommandBarFlyout>
     </Page.Resources>
-    <Grid x:Name="Main">
+    <Grid x:Name="Main" Margin="4,8,4,0">
         <Grid
             x:Name="offlinePage"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
@@ -215,10 +215,7 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
-        <Grid
-            x:Name="Grid"
-            Margin="4"
-            ui:UIElementExtensions.ClipToBounds="True">
+        <Grid x:Name="Grid" ui:UIElementExtensions.ClipToBounds="True">
             <ProgressBar
                 x:Name="ProgressLoading"
                 Height="2"

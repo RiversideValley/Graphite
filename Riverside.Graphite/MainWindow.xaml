@@ -12,6 +12,7 @@
     xmlns:local="using:Riverside.Graphite"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
+    xmlns:v2="using:Graphite.Controls"
     mc:Ignorable="d">
 
 
@@ -788,23 +789,20 @@
             </Flyout>
 
         </Grid.Resources>
-        <firebrowser:FireBrowserTabViewContainer
+        <v2:GraphiteTabViewContainer
             x:Name="Tabs"
-            Grid.Row="0"
             Margin="0,-10,0,0"
             Padding="0"
             VerticalAlignment="Stretch"
             x:FieldModifier="public"
-            AddTabButtonClick="TabView_AddTabButtonClick"
+            AddTabButtonClick="Tabs_AddTabButtonClick"
             CanDragTabs="True"
             CanReorderTabs="True"
-            IsPreviewEnabled="True"
+            IsSplitViewActive="False"
             Loaded="Tabs_Loaded"
             Mode="Modern"
-            SelectionChanged="Tabs_SelectionChanged"
-            TabCloseRequested="Tabs_TabCloseRequested"
-            TabItemsChanged="Tabs_TabItemsChanged">
-            <firebrowser:FireBrowserTabViewContainer.TabStripHeader>
+            TabCloseRequested="Tabs_TabCloseRequested">
+            <v2:GraphiteTabViewContainer.TabStripHeader>
                 <PersonPicture
                     x:Name="Profile"
                     Width="32"
@@ -812,19 +810,20 @@
                     Margin="10,20,10,0"
                     ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}"
                     Tapped="Profile_Tapped" />
-            </firebrowser:FireBrowserTabViewContainer.TabStripHeader>
-            <firebrowser:FireBrowserTabViewContainer.TabStripFooter>
+            </v2:GraphiteTabViewContainer.TabStripHeader>
+            <v2:GraphiteTabViewContainer.TabStripFooter>
                 <Grid
                     x:Name="Apptitlebar"
                     MinWidth="175"
-                    Margin="0,8,0,0"
+                    Margin="0,0,0,0"
                     IsHitTestVisible="False" />
-            </firebrowser:FireBrowserTabViewContainer.TabStripFooter>
-        </firebrowser:FireBrowserTabViewContainer>
+            </v2:GraphiteTabViewContainer.TabStripFooter>
+        </v2:GraphiteTabViewContainer>
         <Grid
             x:Name="ClassicToolbar"
-            Height="37"
-            Margin="4,44,4,0"
+            Height="35"
+            Margin="0,48,0,0"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             BorderThickness="0">
