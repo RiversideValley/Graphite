@@ -465,7 +465,7 @@ public sealed partial class MainWindow : Window
 		UserName.Text = currentUser.Username ?? "DefaultUser";
 	}
 
-	private void UpdateUIBasedOnSettings()
+	public void UpdateUIBasedOnSettings()
 	{
 		Settings coreSet = SettingsService.CoreSettings; //  UserFolderManager.LoadcoreSet(AuthService.CurrentUser);
 

@@ -329,7 +329,7 @@ namespace Riverside.Graphite.Pages
 		private void NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
 		{
 			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
-			param?.TabView.TabItems.Add(window.TabManager.CreateNewTab(typeof(WebContent), args.Uri));
+			window.TabManager.CreateNewTab(typeof(WebContent), args.Uri);
 			args.Handled = true;
 		}
 
