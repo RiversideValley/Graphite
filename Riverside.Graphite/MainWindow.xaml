@@ -12,7 +12,7 @@
     xmlns:local="using:Riverside.Graphite"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers"
-    xmlns:v2="using:Graphite.Controls"
+    xmlns:v2="using:Riverside.Graphite.Controls"
     mc:Ignorable="d">
 
 

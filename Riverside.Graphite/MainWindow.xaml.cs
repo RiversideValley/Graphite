@@ -3,7 +3,6 @@ using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
 using Graphite.ViewModels;
-using Graphite.WindowCore;
 using Microsoft.Build.Framework;
 using Microsoft.UI;
 using Microsoft.UI.Composition;

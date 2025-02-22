@@ -1,6 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Graphite.WindowCore;
-using Graphite.WindowCore.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -10,6 +8,8 @@ using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.UpdateService;
 using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.Services.WindowsHandler;
+using Riverside.Graphite.Services.WindowsHandler.Contracts;
 using Riverside.Graphite.ViewModels;
 using System;
 using System.Collections.Generic;

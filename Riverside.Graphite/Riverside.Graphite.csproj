@@ -186,9 +186,6 @@
     <None Remove="Setup\SetupWebView.xaml" />
     <None Remove="Styles\Thickness.xaml" />
     <None Remove="UpdateChecker.xaml" />
-    <None Remove="V2UserSystem\HomeWindow.xaml" />
-    <None Remove="V2UserSystem\Pages\NewTabFleunt.xaml" />
-    <None Remove="V2UserSystem\Pages\SettingsWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\AppTiles\Logo.ico">
@@ -484,6 +481,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\WebView\AppFrontend\src\" />
+    <Folder Include="Services\Migration\" />
   </ItemGroup>
   <PropertyGroup>
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
@@ -494,20 +492,5 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
     <PRIResource Remove="Services\Workers\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Services\ViewModels\ToolbarViewModel.cs" />
-    <Compile Remove="V2UserSystem\HomeWindow.xaml.cs" />
-    <Compile Remove="V2UserSystem\Pages\NewTabFleunt.xaml.cs" />
-    <Compile Remove="V2UserSystem\Pages\SettingsWindow.xaml.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Remove="V2UserSystem\HomeWindow.xaml" />
-    <Page Remove="V2UserSystem\Pages\NewTabFleunt.xaml" />
-    <Page Remove="V2UserSystem\Pages\SettingsWindow.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="V2UserSystem\Graphite.Controls\Graphite.Controls.csproj" />
-    <None Include="V2UserSystem\Graphite.Migration\Graphite.Migration.csproj" />
   </ItemGroup>
 </Project>

@@ -31,9 +31,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.UserDataAccounts.SystemAccess;
-using Graphite.UserSys;
-using Graphite;
-
 
 namespace Riverside.Graphite.ViewModels;
 public partial class HomeViewModel : ObservableRecipient

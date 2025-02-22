@@ -1,8 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Graphite;
-using Graphite.WindowCore;
-using Graphite.WindowCore.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -19,6 +17,8 @@ using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.Services.WindowsHandler;
+using Riverside.Graphite.Services.WindowsHandler.Contracts;
 using Riverside.Graphite.Setup;
 using System;
 using System.Collections.Generic;
