@@ -114,7 +114,12 @@ public sealed partial class SettingsPage : Page
 
 			NavView.Header =
 				((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
-			passer.Tab.Header = ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
+
+			if(passer is not null)
+			{
+				passer.Tab.Header = ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
+			}
+			
 		}
 	}
 

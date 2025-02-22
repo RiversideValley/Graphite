@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using NuGet.ContentModel;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
@@ -721,7 +722,7 @@ public async void NavigateToUrl(string uri)
 		}
 	}
 
-	private void HandleFireBrowserUrl(string url)
+	private async void HandleFireBrowserUrl(string url)
 	{
 		Passer passer = new()
 		{
@@ -737,7 +738,13 @@ public async void NavigateToUrl(string uri)
 				SelectNewTab();
 				break;
 			case "firebrowser://settings":
-				TabManager.CreateNewTab(typeof(SettingsPage), passer);
+				
+				Window window = new();
+				Frame frm = new();
+				_ = frm.Navigate(typeof(SettingsPage), passer);
+				window.Content = frm;
+				await AppService.ConfigureSettingsWindow(window);
+
 				break;
 			case "firebrowser://modules":
 				TabManager.CreateNewTab(typeof(Pluginss));
@@ -1068,7 +1075,7 @@ public async void NavigateToUrl(string uri)
 	}
 
 
-	private void TabMenuClick(object sender, RoutedEventArgs e)
+	private async void TabMenuClick(object sender, RoutedEventArgs e)
 	{
 		var messenger = new NotificationMessenger();
 
@@ -1091,8 +1098,14 @@ public async void NavigateToUrl(string uri)
 				}
 				break;
 			case "Settings":
-				TabManager.CreateNewTab(typeof(SettingsPage));
-				SelectNewTab();
+
+				Window win = new();
+				SettingsPage settingsPage = new();
+				win.Content = settingsPage;
+				win.Activate(); 
+				await AppService.ConfigureSettingsWindow(win);
+				 
+
 				break;
 			case "FullScreen":
 				GoFullScreen(isFull != true);

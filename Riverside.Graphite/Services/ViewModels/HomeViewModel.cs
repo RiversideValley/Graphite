@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Riverside.Graphite.Controls;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages;
@@ -391,15 +392,18 @@ public partial class HomeViewModel : ObservableRecipient
 	{
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
-			_ = (window.DispatcherQueue?.TryEnqueue(() =>
+			_ = (window.DispatcherQueue?.TryEnqueue(async () =>
 			{
 				if (sender is Button btn)
 				{
 					switch (btn.Tag.ToString())
 					{
 						case "Settings":
-							window.TabManager.CreateNewTab(typeof(SettingsPage));
-							window.SelectNewTab();
+							Window win = new();
+							SettingsPage settingsPage = new();
+							win.Content = settingsPage;
+							win.Activate();
+							await AppService.ConfigureSettingsWindow(win);
 							break;
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";

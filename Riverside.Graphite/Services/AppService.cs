@@ -411,15 +411,18 @@ public static class AppService
 
 		if (appWindow != null)
 		{
+			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
 			SizeInt32? desktop = await Windowing.SizeWindow();
 			appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .66), (int)(desktop?.Height * .66)));
+			appWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.ico");
 			appWindow.MoveInZOrderAtTop();
-			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-			appWindow.Title = "Settings for: " + AuthService.NewCreatedUser?.Username;
+			
+			appWindow.Title = "Settings for: " + AuthService.CurrentUser?.Username ?? AuthService.NewCreatedUser?.Username;
 			AppWindowTitleBar titleBar = appWindow.TitleBar;
 			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
-			titleBar.ForegroundColor = btnColor;
+			titleBar.ForegroundColor = Colors.WhiteSmoke;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
 			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
