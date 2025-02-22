@@ -137,10 +137,7 @@
             </CommandBarFlyout.SecondaryCommands>
         </CommandBarFlyout>
     </Page.Resources>
-    <Grid
-        x:Name="Main"
-        Margin="4,8,4,0"
-        CornerRadius="5">
+    <Grid x:Name="Main" Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}">
         <Grid
             x:Name="offlinePage"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
@@ -218,20 +215,22 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
-        <Grid x:Name="Grid" ui:UIElementExtensions.ClipToBounds="True">
+        <Grid
+            x:Name="Grid"
+            ui:UIElementExtensions.ClipToBounds="True"
+            CornerRadius="10">
             <ProgressBar
                 x:Name="ProgressLoading"
                 Height="2"
                 VerticalAlignment="Top"
                 Canvas.ZIndex="1"
                 IsIndeterminate="True" />
-            <Border ui:UIElementExtensions.ClipToBounds="True" CornerRadius="6">
+            <Border ui:UIElementExtensions.ClipToBounds="True" CornerRadius="10">
                 <WebView2
                     x:Name="WebViewElement"
                     x:FieldModifier="public"
                     AllowDrop="True"
                     Canvas.ZIndex="2" />
-
             </Border>
         </Grid>
     </Grid>

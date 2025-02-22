@@ -883,7 +883,7 @@ public async void NavigateToUrl(string uri)
 				GoForward();
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
-			case "Refresh" when TabContent.Content is WebContent:
+			case "Refresh" when TabContent is not null && TabContent.Content is WebContent:
 				TabWebView.CoreWebView2.Reload();
 				_ = NotificationQueue.Show("Refreshing...", 1200);
 
