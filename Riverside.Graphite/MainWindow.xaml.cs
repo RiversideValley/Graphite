@@ -676,7 +676,11 @@ public async void NavigateToUrl(string uri)
 	{
 		try
 		{
-
+			if (TabContent is null)
+			{
+				TabManager.CreateNewTab(typeof(WebContent) , CreatePasser(uri));
+				return; 
+			}
 
 			if (TabContent.Content is not WebContent webContent)
 			{
@@ -875,11 +879,11 @@ public async void NavigateToUrl(string uri)
 
 		switch ((sender as Button).Tag)
 		{
-			case "Back":
+			case "Back" when TabContent is not null:
 				GoBack();
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
-			case "Forward":
+			case "Forward" when TabContent is not null:
 				GoForward();
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
@@ -888,7 +892,7 @@ public async void NavigateToUrl(string uri)
 				_ = NotificationQueue.Show("Refreshing...", 1200);
 
 				break;
-			case "Home" when TabContent.Content is WebContent:
+			case "Home" when TabContent is not null && TabContent.Content is WebContent:
 				_ = incog == true ? TabContent.Navigate(typeof(InPrivate)) : TabContent.Navigate(typeof(NewTab));
 				UrlBox.Text = "";
 				passer.Tab.Header = WebContent.IsIncognitoModeEnabled ? "Incognito" : "NewTab";
@@ -897,6 +901,9 @@ public async void NavigateToUrl(string uri)
 					Symbol = WebContent.IsIncognitoModeEnabled ? Symbol.BlockContact : Symbol.Home
 				};
 				ViewModel.CurrentAddress = "";
+				break;
+			case "Home" when TabContent is null:
+				TabManager.CreateNewTab(typeof(NewTab));	
 				break;
 			case "Translate" when TabContent.Content is WebContent:
 				string url = (TabContent.Content as WebContent).WebViewElement.CoreWebView2.Source.ToString();

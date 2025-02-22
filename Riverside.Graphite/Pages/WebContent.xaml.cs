@@ -171,7 +171,9 @@ namespace Riverside.Graphite.Pages
 
 			if (param?.Param != null)
 			{
-				WebViewElement.CoreWebView2.Navigate(param.Param.ToString());
+				var uri = UrlValidater.GetValidateUrl(param.Param.ToString());
+				if (uri is not null)
+					WebViewElement.Source = (uri);
 			}
 
 			WebView2 s = WebViewElement;
