@@ -2,10 +2,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Riverside.Graphite.Setup.OOBE;
@@ -51,11 +54,7 @@ public sealed partial class OOBEUser : Page
         }
     }
 
-    public class UserImageItem
-    {
-        public string Name { get; set; }
-        public string ImagePath { get; set; }
-    }
+    
 
     private void UsernameTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
@@ -109,26 +108,28 @@ public sealed partial class OOBEUser : Page
                 return;
             }
 
-            // Convert the ms-appx URI to a StorageFile
-            var imageUri = new Uri(selectedImage.ImagePath);
-            var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
+			await UserManager.CreateUserAsync(
+					UsernameTextBox.Text,
+					PasswordBox.Password,
+					EmailTextBox.Text,
+					await UserImageHelper.GetImageStreamAsync(selectedImage)
+			);
 
-            // Open the file as a stream
-            using (var imageStream = await imageFile.OpenReadAsync())
-            {
-                // Create a MemoryStream from the file stream
-                var memoryStream = new MemoryStream();
-                await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
-                memoryStream.Position = 0; // Reset the position to the beginning of the stream
+			// Convert the ms-appx URI to a StorageFile
+			//var imageUri = new Uri(selectedImage.ImagePath);
+   //         var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
 
-                // Call CreateUserAsync with the MemoryStream
-                await UserManager.CreateUserAsync(
-                    UsernameTextBox.Text,
-                    PasswordBox.Password,
-                    EmailTextBox.Text,
-                    memoryStream
-                );
-            }
+   //         // Open the file as a stream
+   //         using (var imageStream = await imageFile.OpenReadAsync())
+   //         {
+   //             // Create a MemoryStream from the file stream
+   //             var memoryStream = new MemoryStream();
+   //             await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
+   //             memoryStream.Position = 0; // Reset the position to the beginning of the stream
+
+   //             // Call CreateUserAsync with the MemoryStream
+                
+   //         }
 
             var authenticatedUser = await UserManager.AuthenticateAsync(UsernameTextBox.Text, PasswordBox.Password);
 
@@ -194,4 +195,5 @@ public sealed partial class OOBEUser : Page
     {
         LiveEmailUpdate.Text = EmailTextBox.Text;
     }
+    
 }

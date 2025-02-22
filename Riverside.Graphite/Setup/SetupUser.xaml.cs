@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Assets;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Core.Models;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Helpers;
@@ -24,6 +26,7 @@ namespace Riverside.Graphite
 		{
 			databaseServices = new();
 			InitializeComponent();
+
 		}
 
 		private void ProfileImage_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -42,6 +45,7 @@ namespace Riverside.Graphite
 
 		private async void Create_Click(object sender, RoutedEventArgs e)
 		{
+			await UserManager.InitializeAsync(); // This is a static method, so it should be called on the class, not an instance
 			await CreateUserAndNavigate();
 		}
 
@@ -52,13 +56,13 @@ namespace Riverside.Graphite
 			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
-		private async void CreateCollections()
+		private async void CreateCollections(User User)
 		{
 
 			try
 			{
-				HistoryActions historyActions = new HistoryActions(AuthService.NewCreatedUser?.Username);
-				string historyPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Database", "History.db");
+				HistoryActions historyActions = new HistoryActions(User.Username);
+				string historyPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, User.Username, "Database", "History.db");
 				if (!File.Exists(historyPath))
 				{
 					await historyActions.HistoryContext.Database.MigrateAsync();
@@ -86,12 +90,12 @@ namespace Riverside.Graphite
 				throw;
 			}
 		}
-		private async void CreateNewSettings()
+		private async void CreateNewSettings(User user)
 		{
 			try
 			{
-				SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
-				string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
+				SettingsActions settingsActions = new(user.Username);
+				string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username, "Settings", "Settings.db");
 
 				if (!File.Exists(settingsPath))
 				{
@@ -111,10 +115,7 @@ namespace Riverside.Graphite
 				ExceptionLogger.LogException(ex);
 				Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
 			}
-			finally
-			{
-				AuthService.NewCreatedUser = null;
-			}
+			
 		}
 		private async Task InPrivateUser()
 		{
@@ -127,11 +128,11 @@ namespace Riverside.Graphite
 			};
 
 			AuthService.AddUser(newUser);
-			UserFolderManager.CreateUserFolders(newUser);
-			AuthService.CurrentUser.Username = newUser.Username;
+			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}", Name = newUser.Username }));
 			_ = AuthService.Authenticate(newUser.Username);
+			UserFolderManager.CreateUserFolders(newUser);
 			await CopyImageToUserDirectory(newUser);
-			await UserCreateDatabase();
+			await UserCreateDatabase(newUser);
 
 		}
 		private async Task CreateUserOnStartup()
@@ -141,26 +142,23 @@ namespace Riverside.Graphite
 				Username = UserName.Text,
 			};
 
-			List<Riverside.Graphite.Core.User> users = new() { newUser };
+			
+			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}", Name = newUser.Username }));
 			UserFolderManager.CreateUserFolders(newUser);
-			//UserDataManager.SaveUsers(users);
-			AuthService.AddUser(newUser);
 			_ = AuthService.Authenticate(newUser.Username);
 
 			await CopyImageToUserDirectory(newUser);
-
-			await UserCreateDatabase();
+		
+			await UserCreateDatabase(newUser);
 
 		}
 
-		async Task UserCreateDatabase()
+		async Task UserCreateDatabase(User user)
 		{
-			if (AuthService.IsUserAuthenticated)
-			{
-				_ = await databaseServices.DatabaseCreationValidation();
-				CreateCollections();
-				CreateNewSettings();
-			}
+				await databaseServices.DatabaseCreationValidation();
+				CreateCollections(user);
+				CreateNewSettings(user);
+			
 		}
 		private async Task CopyImageToUserDirectory(Riverside.Graphite.Core.User user)
 		{

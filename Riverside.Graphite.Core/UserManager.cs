@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
 using Riverside.Graphite.Core.Helper.Logging;
 using Windows.UI.WindowManagement;
+using Windows.System;
 
 namespace Riverside.Graphite.Core
 {
@@ -35,7 +36,9 @@ namespace Riverside.Graphite.Core
 		private static byte[] _cachedKey;
 		private static byte[] _cachedIV;
 
-		public static readonly string GraphiteDataPath = Path.Combine(GetFullPathToExe(), "V2_UserData");	
+		public static readonly string GraphiteDataPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "V2_UserData");//
+																																					  //
+																				//Path.Combine(GetFullPathToExe(), "V2_UserData");	
 
 		//Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),@"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
 
@@ -496,6 +499,7 @@ namespace Riverside.Graphite.Core
 					using (var fileStream = File.Create(profileImagePath))
 					{
 						await profileImageStream.CopyToAsync(fileStream);
+						profileImageStream.Close(); 
 					}
 				}
 				catch (Exception ex)
