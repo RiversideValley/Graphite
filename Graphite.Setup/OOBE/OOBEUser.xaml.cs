@@ -10,6 +10,7 @@ using System.Linq;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
+using User = Graphite.UserSys.User;
 
 namespace Graphite.Setup.OOBE;
 
@@ -94,71 +95,90 @@ public sealed partial class OOBEUser : Page
 
 
     }
-    private async void NextStepButton_Click(object sender, RoutedEventArgs e)
-    {
-        // Revalidate fields before proceeding
-        ValidateFields();
+	private async void NextStepButton_Click(object sender, RoutedEventArgs e)
+	{
+		// Revalidate fields before proceeding
+		ValidateFields();
 
-        if (!NextStepButton.IsEnabled)
-        {
-            return; // Don't proceed if validation fails
-        }
+		if (!NextStepButton.IsEnabled)
+		{
+			return; // Don't proceed if validation fails
+		}
 
-        try
-        {
-            var selectedImage = UserImageComboBox.SelectedItem as UserImageItem;
-            if (selectedImage == null)
-            {
-                return;
-            }
+		try
+		{
+			var selectedImage = UserImageComboBox.SelectedItem as UserImageItem;
+			if (selectedImage == null)
+			{
+				return;
+			}
 
-            // Convert the ms-appx URI to a StorageFile
-            var imageUri = new Uri(selectedImage.ImagePath);
-            var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
+			// Convert the ms-appx URI to a StorageFile
+			var imageUri = new Uri(selectedImage.ImagePath);
+			var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
 
-            // Open the file as a stream
-            using (var imageStream = await imageFile.OpenReadAsync())
-            {
-                // Create a MemoryStream from the file stream
-                var memoryStream = new MemoryStream();
-                await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
-                memoryStream.Position = 0; // Reset the position to the beginning of the stream
+			User createdUser;
 
-                // Call CreateUserAsync with the MemoryStream
-                await UserManager.CreateUserAsync(
-                    UsernameTextBox.Text,
-                    PasswordBox.Password,
-                    EmailTextBox.Text,
-                    memoryStream
-                );
-            }
+			// Open the file as a stream
+			using (var imageStream = await imageFile.OpenReadAsync())
+			{
+				// Create a MemoryStream from the file stream
+				var memoryStream = new MemoryStream();
+				await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
+				memoryStream.Position = 0; // Reset the position to the beginning of the stream
 
-            var authenticatedUser = await UserManager.AuthenticateAsync(UsernameTextBox.Text, PasswordBox.Password);
+				// Call CreateUserAsync with the MemoryStream
+				// Only pass password if it's not empty
+				string password = string.IsNullOrWhiteSpace(PasswordBox.Password) ? null : PasswordBox.Password;
 
-            if (authenticatedUser != null)
-            {
-                // Navigate to the next page
-                Frame.Navigate(typeof(OOBEPreferences), authenticatedUser);
-            }
-            else
-            {
-                // Show an error message if authentication failed
-                var dialog = new ContentDialog
-                {
-                    Title = "Authentication Failed",
-                    Content = "Invalid username or password. Please try again.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.XamlRoot
-                };
-                await dialog.ShowAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-        }
-    }
+				createdUser = await UserManager.CreateUserAsync(
+					UsernameTextBox.Text,
+					password,
+					EmailTextBox.Text,
+					memoryStream
+				);
+			}
 
-    private void HelpButton_Click(object sender, RoutedEventArgs e)
+			// If user was created successfully, authenticate them
+			// Pass the same password (or null) used during creation
+			var authenticatedUser = await UserManager.AuthenticateAsync(
+				UsernameTextBox.Text,
+				string.IsNullOrWhiteSpace(PasswordBox.Password) ? null : PasswordBox.Password
+			);
+
+			if (authenticatedUser != null)
+			{
+				// Navigate to the next page
+				Frame.Navigate(typeof(OOBEPreferences), authenticatedUser);
+			}
+			else
+			{
+				// Show an error message if authentication failed
+				var dialog = new ContentDialog
+				{
+					Title = "Authentication Failed",
+					Content = "Failed to authenticate the newly created user. Please try again.",
+					CloseButtonText = "OK",
+					XamlRoot = this.XamlRoot
+				};
+				await dialog.ShowAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			// Show error dialog with the specific error message
+			var dialog = new ContentDialog
+			{
+				Title = "Error",
+				Content = $"An error occurred: {ex.Message}",
+				CloseButtonText = "OK",
+				XamlRoot = this.XamlRoot
+			};
+			await dialog.ShowAsync();
+		}
+	}
+
+	private void HelpButton_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog helpDialog = new ContentDialog
         {

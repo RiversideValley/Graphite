@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="Graphite.Setup.OOBE.OOBEPreferences"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,6 +5,7 @@
     xmlns:local="using:Graphite.Setup.OOBE"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     Background="Transparent">
 
@@ -24,39 +24,113 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Back Button, Help Icon, Image Icon, and Text -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,5,5,0">
             <Button x:Name="HelpButton"
-         Background="Transparent"
-         BorderBrush="Transparent"
-         Margin="0,0,0,0"
-        Click="HelpButton_Click"
-         >
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Margin="0,0,0,0"
+                    Click="HelpButton_Click">
                 <SymbolIcon Symbol="Help" Foreground="White"/>
-                <ToolTipService.ToolTip>
-                    <ToolTip Content="Get help with account creation"/>
-                </ToolTipService.ToolTip>
             </Button>
             <TextBlock Text="Graphite - User Preferences" Foreground="White" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
-            <ComboBox x:Name="DisplayLanguageComboBox" Header="Display Language" Width="300">
-                <ComboBoxItem Content="English (US)" Tag="en-US"/>
-                <ComboBoxItem Content="Nederlands" Tag="nl-NL"/>
-            </ComboBox>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20" Spacing="20" HorizontalAlignment="Center" MaxWidth="600">
+                <controls:SettingsExpander Header="General Settings"
+                                           Description="Configure general application settings"
+                                           IsExpanded="True"
+                                           Width="600">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE713;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Display Language
+                            </controls:SettingsCard.Header>
+                            <ComboBox x:Name="DisplayLanguageComboBox" Width="300"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Use Light Mode
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="UseLightModeToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Backdrop Style
+                            </controls:SettingsCard.Header>
+                            <ComboBox x:Name="BackdropStyleComboBox" Width="300"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
 
-            <ToggleSwitch x:Name="EncryptPermissionsToggle" Header="Encrypt Permissions" OnContent="On" OffContent="Off"/>
+                <controls:SettingsExpander Header="Tab Management"
+                                           Description="Configure tab behavior settings"
+                                           IsExpanded="True"
+                                           Width="600">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE912;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Enable Tab Grouping
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="TabGroupingEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Enable Tab Preloading
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="TabPreloadingToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Tab Sleep Time (minutes)
+                            </controls:SettingsCard.Header>
+                            <NumberBox x:Name="TabSleepTimeBox"
+                                       Minimum="1"
+                                       Maximum="120"
+                                       Value="30"
+                                       SpinButtonPlacementMode="Inline"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Auto Restore Tabs
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="GeneralTabAutoRestoreToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Maximum Number of Tabs
+                            </controls:SettingsCard.Header>
+                            <NumberBox x:Name="GeneralTabMaxNumberBox"
+                                       Minimum="1"
+                                       Maximum="40"
+                                       Value="10"
+                                       SpinButtonPlacementMode="Inline"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
 
-            <ToggleSwitch x:Name="EncryptDatabaseToggle" Header="Encrypt Database" OnContent="On" OffContent="Off"/>
-
-            <ToggleSwitch x:Name="EncryptSettingsToggle" Header="Encrypt Settings" OnContent="On" OffContent="Off"/>
-
-            <ToggleSwitch x:Name="EncryptHistoryToggle" Header="Encrypt History" OnContent="On" OffContent="Off"/>
-
-            <ToggleSwitch x:Name="EncryptFavoritesToggle" Header="Encrypt Favorites" OnContent="On" OffContent="Off"/>
-
-            <Button x:Name="NextStep" Content="Next Step" Click="NextStep_Click"/>
-        </StackPanel>
+                <Button x:Name="NextStep" HorizontalAlignment="Center" Click="NextStep_Click">
+                    <Button.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+                                <Setter Property="CornerRadius" Value="20"/>
+                                <Setter Property="Padding" Value="24,12"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Next Step" VerticalAlignment="Center"/>
+                        <FontIcon Glyph="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
