@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Riverside.Graphite.Helpers
+namespace Riverside.Graphite.Services
 {
 	public class PermissionManager
 	{

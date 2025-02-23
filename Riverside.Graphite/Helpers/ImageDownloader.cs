@@ -8,7 +8,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace Riverside.Graphite.Controls;
+namespace Riverside.Graphite.Helpers;
 
 public class ImageDownloader
 {

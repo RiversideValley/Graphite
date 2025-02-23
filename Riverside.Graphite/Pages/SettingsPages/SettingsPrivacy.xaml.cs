@@ -4,7 +4,6 @@ using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Core;
-using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Services;
 using System;
 using System.Collections.ObjectModel;
