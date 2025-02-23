@@ -21,6 +21,11 @@
     <ProjectReference Include="..\Graphite.UserSys\Graphite.UserSys.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="fluent-emoji.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="OOBE\OOBEPreferences.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

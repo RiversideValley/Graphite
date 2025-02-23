@@ -1,15 +1,164 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="Graphite.Setup.OOBE.OOBEGenarel"
+    x:Class="Graphite.Setup.OOBE.OOBEGeneral"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Graphite.Setup.OOBE"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#7B3AED" Offset="0.0" />
+                <GradientStop Color="#FF6B00" Offset="0.33" />
+                <GradientStop Color="#FF3D00" Offset="0.66" />
+                <GradientStop Color="#4F46E5" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,5,5,0">
+            <Button x:Name="HelpButton"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Margin="0,0,0,0"
+                    Click="HelpButton_Click">
+                <SymbolIcon Symbol="Help" Foreground="White"/>
+            </Button>
+            <TextBlock Text="Graphite - General Settings" Foreground="White" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20" Spacing="20" HorizontalAlignment="Center" MaxWidth="600">
+                <controls:SettingsExpander Header="Startup"
+                                           Description="Configure browser startup behavior"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE7E8;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                On Startup
+                            </controls:SettingsCard.Header>
+                            <ComboBox x:Name="StartupBehaviorComboBox" Width="200">
+                                <ComboBoxItem Content="Open the New Tab page"/>
+                                <ComboBoxItem Content="Continue where you left off"/>
+                                <ComboBoxItem Content="Open specific page or set of pages"/>
+                            </ComboBox>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Home Page
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="HomePageTextBox" PlaceholderText="https://example.com" Width="300"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Appearance"
+                                           Description="Customize the browser's look and feel"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE771;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Theme
+                            </controls:SettingsCard.Header>
+                            <ComboBox x:Name="ThemeComboBox" Width="200">
+                                <ComboBoxItem Content="Light"/>
+                                <ComboBoxItem Content="Dark"/>
+                                <ComboBoxItem Content="System default"/>
+                            </ComboBox>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Show Home Button
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="ShowHomeButtonToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Show Bookmarks Bar
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="ShowBookmarksBarToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Search Engine"
+                                           Description="Set your default search engine"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE721;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Default Search Engine
+                            </controls:SettingsCard.Header>
+                            <ComboBox x:Name="SearchEngineComboBox" Width="200">
+                                <ComboBoxItem Content="Google"/>
+                                <ComboBoxItem Content="Bing"/>
+                                <ComboBoxItem Content="DuckDuckGo"/>
+                                <ComboBoxItem Content="Custom"/>
+                            </ComboBox>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Custom Search Engine URL
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="CustomSearchEngineTextBox" PlaceholderText="https://example.com/search?q=%s" Width="300"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Downloads"
+                                           Description="Configure download behavior"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE896;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Download Location
+                            </controls:SettingsCard.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBox x:Name="DownloadLocationTextBox" IsReadOnly="True" Width="200"/>
+                                <Button x:Name="BrowseButton" Content="Browse" Click="BrowseButton_Click"/>
+                            </StackPanel>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Ask where to save each file before downloading
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="AskBeforeDownloadToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <Button x:Name="NextStep" 
+                        HorizontalAlignment="Center" 
+                        Click="NextStep_Click"
+                        Style="{StaticResource AccentButtonStyle}"
+                        CornerRadius="20"
+                        Padding="24,12">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Next" VerticalAlignment="Center"/>
+                        <FontIcon Glyph="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

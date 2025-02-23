@@ -1,31 +1,70 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Windows.AppLifecycle;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.System;
 
 namespace Graphite.Setup.OOBE
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class OOBEFinish : Page
-    {
-        public OOBEFinish()
-        {
-            this.InitializeComponent();
-        }
-    }
+	public sealed partial class OOBEFinish : Page
+	{
+		private DispatcherTimer _countdownTimer;
+		private int _remainingSeconds = 5;
+
+		public OOBEFinish()
+		{
+			this.InitializeComponent();
+			StartCountdown();
+		}
+
+
+		private void StartCountdown()
+		{
+			_countdownTimer = new DispatcherTimer();
+			_countdownTimer.Tick += CountdownTimer_Tick;
+			_countdownTimer.Interval = TimeSpan.FromSeconds(1);
+			_countdownTimer.Start();
+		}
+
+		private void CountdownTimer_Tick(object sender, object e)
+		{
+			_remainingSeconds--;
+			UpdateCountdown();
+
+			if (_remainingSeconds <= 0)
+			{
+				_countdownTimer.Stop();
+				RestartAppAsync();
+			}
+		}
+
+		private void UpdateCountdown()
+		{
+			CountdownText.Text = $"Restarting in {_remainingSeconds} seconds...";
+			CountdownProgressBar.Value = _remainingSeconds;
+		}
+
+		public async Task RestartAppAsync()
+		{
+			Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+		}
+
+
+		private async void ShowErrorDialog(string message)
+		{
+			ContentDialog errorDialog = new ContentDialog
+			{
+				Title = "Error",
+				Content = message,
+				CloseButtonText = "OK",
+				XamlRoot = this.XamlRoot
+			};
+
+			await errorDialog.ShowAsync();
+		}
+	}
 }

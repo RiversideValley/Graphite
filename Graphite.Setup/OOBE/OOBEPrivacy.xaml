@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="Graphite.Setup.OOBE.OOBEPrivacy"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,10 +5,162 @@
     xmlns:local="using:Graphite.Setup.OOBE"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#7B3AED" Offset="0.0" />
+                <GradientStop Color="#FF6B00" Offset="0.33" />
+                <GradientStop Color="#FF3D00" Offset="0.66" />
+                <GradientStop Color="#4F46E5" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,5,5,0">
+            <Button x:Name="HelpButton"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Margin="0,0,0,0"
+                    Click="HelpButton_Click">
+                <SymbolIcon Symbol="Help" Foreground="White"/>
+            </Button>
+            <TextBlock Text="Graphite - Privacy Settings" Foreground="White" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20" Spacing="20" HorizontalAlignment="Center" MaxWidth="600">
+                <controls:SettingsExpander Header="Browsing Privacy"
+                                           Description="Configure your browsing privacy settings"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72E;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Do Not Track
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="DoNotTrackToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Third-Party Cookies
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockThirdPartyCookiesToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Clear Browsing Data on Exit
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="ClearBrowsingDataOnExitToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Content Blocking"
+                                           Description="Configure content blocking settings"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE88E;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Ads
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockAdsToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Trackers
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockTrackersToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Malicious Content
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockMaliciousContentToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Data Encryption"
+                                           Description="Configure data encryption settings"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72E;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Encrypt Saved Passwords
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="EncryptPasswordsToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Encrypt Browsing History
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="EncryptHistoryToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Encrypt Bookmarks
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="EncryptBookmarksToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Permissions"
+                                           Description="Manage website permissions"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8D7;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Location Access
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockLocationAccessToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Camera Access
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockCameraAccessToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Block Microphone Access
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="BlockMicrophoneAccessToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <Button x:Name="NextStep" 
+                        HorizontalAlignment="Center" 
+                        Click="NextStep_Click"
+                        Style="{StaticResource AccentButtonStyle}"
+                        CornerRadius="20"
+                        Padding="24,12">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Next Step" VerticalAlignment="Center"/>
+                        <FontIcon Glyph="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

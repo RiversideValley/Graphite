@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="Graphite.Setup.OOBE.OOBEFinish"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,10 +5,80 @@
     xmlns:local="using:Graphite.Setup.OOBE"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#7B3AED" Offset="0.0" />
+                <GradientStop Color="#FF6B00" Offset="0.33" />
+                <GradientStop Color="#FF3D00" Offset="0.66" />
+                <GradientStop Color="#4F46E5" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
+        <!-- Center Content -->
+        <Grid VerticalAlignment="Center" 
+              HorizontalAlignment="Center" 
+              MaxWidth="800">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Emoji GIF and Thank You Text -->
+            <StackPanel Grid.Row="0" 
+                        HorizontalAlignment="Center" 
+                        Spacing="24">
+
+             
+
+                <TextBlock Text="Thank You for Choosing Graphite!" 
+                          FontSize="36" 
+                          FontWeight="SemiBold" 
+                          Foreground="White"
+                          TextAlignment="Center"
+                          TextWrapping="Wrap"/>
+
+                <TextBlock Text="Your browser is being configured with your preferences" 
+                          FontSize="20" 
+                          Foreground="White" 
+                          Opacity="0.9"
+                          TextAlignment="Center"
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,40"/>
+            </StackPanel>
+
+            <!-- Progress Section -->
+            <StackPanel Grid.Row="1" 
+                        Spacing="12" 
+                        Margin="0,20,0,0">
+
+                <TextBlock x:Name="CountdownText"
+                           FontSize="18"
+                           Foreground="White"
+                           TextAlignment="Center"/>
+
+                <!-- Modern Progress Bar -->
+                <Border Background="#20FFFFFF" 
+                        CornerRadius="8" 
+                        Height="8" 
+                        Width="400"
+                        Margin="0,4,0,0">
+                    <ProgressBar x:Name="CountdownProgressBar"
+                                Background="{StaticResource ApplicationForegroundThemeBrush}"
+                                Foreground="White"
+                                MinHeight="8"
+                                Minimum="0"
+                                Maximum="5"
+                                Value="5"
+                                CornerRadius="8"/>
+                </Border>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

@@ -1,11 +1,15 @@
+// OOBEUi.cs
 using CommunityToolkit.WinUI;
 using Graphite.UserSys;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace Graphite.Setup.OOBE
 {
@@ -32,7 +36,7 @@ namespace Graphite.Setup.OOBE
 			}
 			else
 			{
-				ShowErrorAndGoBack();
+				await ShowErrorAndGoBackAsync();
 			}
 		}
 
@@ -69,7 +73,7 @@ namespace Graphite.Setup.OOBE
 				bool showDarkModeIcon = await SettingsManager.GetSettingAsync<bool>(User.Username, "ShowDarkModeIcon");
 				int fontSize = await SettingsManager.GetSettingAsync<int>(User.Username, "FontSize");
 
-				await DispatcherQueue.EnqueueAsync(() =>
+				DispatcherQueue.TryEnqueue(() =>
 				{
 					BackgroundColorTextBox.Text = backgroundColor;
 					ToolbarColorTextBox.Text = toolbarColor;
@@ -88,26 +92,107 @@ namespace Graphite.Setup.OOBE
 			{
 				_initializationComplete.TrySetException(ex);
 				System.Diagnostics.Debug.WriteLine($"Error initializing settings: {ex.Message}");
-				ShowErrorAndGoBack();
+				await ShowErrorAndGoBackAsync();
+			}
+		}
+
+		private void ColorTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (sender is TextBox textBox)
+			{
+				Border previewBorder = null;
+				switch (textBox.Name)
+				{
+					case "BackgroundColorTextBox":
+						previewBorder = BackgroundColorPreview;
+						break;
+					case "ToolbarColorTextBox":
+						previewBorder = ToolbarColorPreview;
+						break;
+					case "TabViewColorTextBox":
+						previewBorder = TabViewColorPreview;
+						break;
+				}
+
+				UpdateColorPreview(textBox, previewBorder);
+			}
+		}
+
+		private void UpdateColorPreview(TextBox textBox, Border previewBorder)
+		{
+			if (previewBorder != null)
+			{
+				if (TryParseColor(textBox.Text, out Color color))
+				{
+					previewBorder.Background = new SolidColorBrush(color);
+				}
+				else
+				{
+					previewBorder.Background = null;
+				}
+			}
+		}
+
+		private bool TryParseColor(string colorCode, out Color color)
+		{
+			color = Colors.Transparent;
+
+			if (string.IsNullOrWhiteSpace(colorCode) || !colorCode.StartsWith("#"))
+			{
+				return false;
+			}
+
+			colorCode = colorCode.Trim();
+
+			if (colorCode.Length != 7 && colorCode.Length != 9)
+			{
+				return false;
+			}
+
+			try
+			{
+				if (colorCode.Length == 7) // #RRGGBB
+				{
+					byte r = Convert.ToByte(colorCode.Substring(1, 2), 16);
+					byte g = Convert.ToByte(colorCode.Substring(3, 2), 16);
+					byte b = Convert.ToByte(colorCode.Substring(5, 2), 16);
+
+					color = Color.FromArgb(255, r, g, b);
+				}
+				else // #AARRGGBB
+				{
+					byte a = Convert.ToByte(colorCode.Substring(1, 2), 16);
+					byte r = Convert.ToByte(colorCode.Substring(3, 2), 16);
+					byte g = Convert.ToByte(colorCode.Substring(5, 2), 16);
+					byte b = Convert.ToByte(colorCode.Substring(7, 2), 16);
+
+					color = Color.FromArgb(a, r, g, b);
+				}
+
+				return true;
+			}
+			catch
+			{
+				return false;
 			}
 		}
 
 		private bool IsValidColorCode(string colorCode)
 		{
-			return Regex.IsMatch(colorCode, @"^#[0-9A-Fa-f]{6}$");
+			return TryParseColor(colorCode, out _);
 		}
 
 		private async void NextStep_Click(object sender, RoutedEventArgs e)
 		{
 			if (!_initializationComplete.Task.IsCompleted)
 			{
-				System.Diagnostics.Debug.WriteLine("Settings not initialized. Please try again.");
+				await ShowErrorDialogAsync("Settings not initialized. Please try again.");
 				return;
 			}
 
 			if (!ValidateColorInputs())
 			{
-				System.Diagnostics.Debug.WriteLine("Please enter valid color codes (format: #RRGGBB).");
+				await ShowErrorDialogAsync("Please enter valid color codes (format: #RRGGBB).");
 				return;
 			}
 
@@ -127,7 +212,7 @@ namespace Graphite.Setup.OOBE
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine($"An error occurred while saving settings: {ex.Message}");
+				await ShowErrorDialogAsync($"An error occurred while saving settings: {ex.Message}");
 			}
 			finally
 			{
@@ -142,24 +227,39 @@ namespace Graphite.Setup.OOBE
 				   IsValidColorCode(TabViewColorTextBox.Text);
 		}
 
-		private void ColorTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		private async void HelpButton_Click(object sender, RoutedEventArgs e)
 		{
-			// Color preview functionality removed
+			var helpDialog = new ContentDialog
+			{
+				Title = "UI Settings Help",
+				Content = "This page allows you to customize the appearance of the application. You can set colors for various UI elements, toggle visibility of certain features, and adjust the font size.",
+				CloseButtonText = "OK",
+				XamlRoot = this.Content.XamlRoot
+			};
+
+			await helpDialog.ShowAsync();
 		}
 
-		private void HelpButton_Click(object sender, RoutedEventArgs e)
+		private async Task ShowErrorAndGoBackAsync(string message = "An error occurred. Please try again.")
 		{
-			// Help dialog removed
-			System.Diagnostics.Debug.WriteLine("Help button clicked. Functionality removed.");
-		}
-
-		private void ShowErrorAndGoBack()
-		{
-			System.Diagnostics.Debug.WriteLine("An error occurred. Please try again.");
+			await ShowErrorDialogAsync(message);
 			if (Frame.CanGoBack)
 			{
 				Frame.GoBack();
 			}
+		}
+
+		private async Task ShowErrorDialogAsync(string message)
+		{
+			var errorDialog = new ContentDialog
+			{
+				Title = "Error",
+				Content = message,
+				CloseButtonText = "OK",
+				XamlRoot = this.Content.XamlRoot
+			};
+
+			await errorDialog.ShowAsync();
 		}
 	}
 }

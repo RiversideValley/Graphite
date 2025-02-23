@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="Graphite.Setup.OOBE.OOBEWebview"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,10 +5,192 @@
     xmlns:local="using:Graphite.Setup.OOBE"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#7B3AED" Offset="0.0" />
+                <GradientStop Color="#FF6B00" Offset="0.33" />
+                <GradientStop Color="#FF3D00" Offset="0.66" />
+                <GradientStop Color="#4F46E5" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,5,5,0">
+            <Button x:Name="HelpButton"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Margin="0,0,0,0"
+                    Click="HelpButton_Click">
+                <SymbolIcon Symbol="Help" Foreground="White"/>
+            </Button>
+            <TextBlock Text="Graphite - WebView2 Settings" Foreground="White" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20" Spacing="20" HorizontalAlignment="Center" MaxWidth="600">
+                <controls:SettingsExpander Header="General WebView2 Settings"
+                                           Description="Configure general WebView2 behavior"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE774;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Default Background Color
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="DefaultBackgroundColorTextBox" PlaceholderText="#RRGGBB" Width="120"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Default Script Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="DefaultScriptEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Default Web External Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="DefaultWebExternalEnabledToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Privacy and Security"
+                                           Description="Configure privacy and security settings"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE72E;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                User Agent
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="UserAgentTextBox" PlaceholderText="Custom User Agent" Width="300"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Are Host Objects Allowed
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="AreHostObjectsAllowedToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Built In Error Page Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsBuiltInErrorPageEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Script Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsScriptEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Status Bar Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsStatusBarEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Web Message Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsWebMessageEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Zoom Control Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsZoomControlEnabledToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Content Settings"
+                                           Description="Configure content-related settings"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE8E9;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Default Encoding
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="DefaultEncodingTextBox" PlaceholderText="e.g., UTF-8" Width="200"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Generic Font Families Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsGenericFontFamiliesEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Pinch Zoom Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsPinchZoomEnabledToggle"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Is Swipe Navigation Enabled
+                            </controls:SettingsCard.Header>
+                            <ToggleSwitch x:Name="IsSwipeNavigationEnabledToggle"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander Header="Advanced Settings"
+                                           Description="Configure advanced WebView2 settings"
+                                           IsExpanded="True">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE7C9;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Additional Browser Arguments
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="AdditionalBrowserArgumentsTextBox" PlaceholderText="e.g., --no-sandbox" Width="300"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Language
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="LanguageTextBox" PlaceholderText="e.g., en-US" Width="200"/>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                Target Compatible Browser Version
+                            </controls:SettingsCard.Header>
+                            <TextBox x:Name="TargetCompatibleBrowserVersionTextBox" PlaceholderText="e.g., 95.0.1020.30" Width="200"/>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <Button x:Name="NextStep" 
+                        HorizontalAlignment="Center" 
+                        Click="NextStep_Click"
+                        Style="{StaticResource AccentButtonStyle}"
+                        CornerRadius="20"
+                        Padding="24,12">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Finish Setup" VerticalAlignment="Center"/>
+                        <FontIcon Glyph="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

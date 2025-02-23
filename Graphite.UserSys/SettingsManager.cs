@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;
 using Graphite.UserSys;
@@ -68,7 +69,15 @@ namespace Graphite.UserSys
                 );
                 
                 CREATE INDEX IF NOT EXISTS idx_settings_key ON Settings(Key);
-                CREATE INDEX IF NOT EXISTS idx_settings_modified ON Settings(LastModified);";
+                CREATE INDEX IF NOT EXISTS idx_settings_modified ON Settings(LastModified);
+
+                CREATE TABLE IF NOT EXISTS PageConnections (
+                    SourcePage TEXT,
+                    TargetPage TEXT,
+                    PRIMARY KEY (SourcePage, TargetPage)
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_page_connections_source ON PageConnections(SourcePage);";
 
 			await command.ExecuteNonQueryAsync();
 		}
@@ -330,102 +339,102 @@ namespace Graphite.UserSys
 		{
 			return new Dictionary<string, object>
 			{
-                 // Browser Settings
-        { "PackageName", "FireBrowserWinUi3_" },
-		{ "DisableJavaScript", false },
-		{ "DisablePasswordSaving", false },
-		{ "DisableWebMessaging", false },
-		{ "DisableGeneralAutoFill", false },
-		{ "EnableBrowserKeys", true },
-		{ "EnableBrowserScripts", true },
-		{ "UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" },
-		{ "EnableOperatingSystemIntegration", true },
-		{ "DefaultSearchEngine", "Google" },
-		{ "SearchUrl", "https://www.google.com/search?q=" },
-		{ "EnablePictureInPictureMode", true },
-		{ "TrackingPreventionLevel", 2 },
-		{ "EnableResourceSaving", true },
-		{ "EnableAutoSave", true },
+                // Browser Settings
+                { "PackageName", "FireBrowserWinUi3_" },
+				{ "DisableJavaScript", false },
+				{ "DisablePasswordSaving", false },
+				{ "DisableWebMessaging", false },
+				{ "DisableGeneralAutoFill", false },
+				{ "EnableBrowserKeys", true },
+				{ "EnableBrowserScripts", true },
+				{ "UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" },
+				{ "EnableOperatingSystemIntegration", true },
+				{ "DefaultSearchEngine", "Google" },
+				{ "SearchUrl", "https://www.google.com/search?q=" },
+				{ "EnablePictureInPictureMode", true },
+				{ "TrackingPreventionLevel", 2 },
+				{ "EnableResourceSaving", true },
+				{ "EnableAutoSave", true },
 
-        // Tab Management Settings
-        { "TabGroupingEnabled", false },
-		{ "TabPreloading", true },
-		{ "TabSleepTime", "30" },  // Minutes before tab goes to sleep
-        { "GenaralTabAutoRestore", true },
-		{ "GenaralTabMaxNumber", "50" },
+                // Tab Management Settings
+                { "TabGroupingEnabled", false },
+				{ "TabPreloading", true },
+				{ "TabSleepTime", "30" },  // Minutes before tab goes to sleep
+                { "GenaralTabAutoRestore", true },
+				{ "GenaralTabMaxNumber", "50" },
 
-        // UI Settings
-        { "BackgroundColor", "#000000" },
-		{ "ToolbarColor", "#000000" },
-		{ "TabViewColor", "#000000" },
-		{ "NewTabPageTextColor", "#FFFFFF" },
-		{ "BackgroundType", 0 },
-		{ "UseLightMode", false },
-		{ "BackdropStyle", "Mica" },
-		{ "FontSize", 12 },
-		{ "DisplayLanguage", "en-US" },
+                // UI Settings
+                { "BackgroundColor", "#00FFFFFF" },
+				{ "ToolbarColor", "#00FFFFFF" },
+				{ "TabViewColor", "#00FFFFFF" },
+				{ "NewTabPageTextColor", "#00FFFFFF" },
+				{ "BackgroundType", 0 },
+				{ "UseLightMode", false },
+				{ "BackdropStyle", "Mica" },
+				{ "FontSize", 12 },
+				{ "DisplayLanguage", "en-US" },
 
-        // UI Visibility Settings
-        { "ShowStatusBar", true },
-		{ "ShowReadButton", true },
-		{ "ShowAdBlockButton", true },
-		{ "ShowDownloadsButton", true },
-		{ "ShowTranslateButton", true },
-		{ "ShowFavoritesButton", true },
-		{ "ShowHistoryButton", true },
-		{ "ShowQRCodeButton", true },
-		{ "ShowFavoritesList", true },
-		{ "ShowToolbarIcons", true },
-		{ "ShowDarkModeIcon", true },
-		{ "ShowDateTimeOnNewTab", true },
-		{ "ShowExitDialog", false },
-		{ "ShowConfirmCloseDialog", false },
-		{ "ShowBackButton", true },
-		{ "ShowForwardButton", true },
-		{ "ShowRefreshButton", true },
-		{ "ShowHomeButton", true },
-		{ "ShowBrowserLogo", true },
-		{ "ShowWelcomeMessage", true },
+                // UI Visibility Settings
+                { "ShowStatusBar", true },
+				{ "ShowReadButton", true },
+				{ "ShowAdBlockButton", true },
+				{ "ShowDownloadsButton", true },
+				{ "ShowTranslateButton", true },
+				{ "ShowFavoritesButton", true },
+				{ "ShowHistoryButton", true },
+				{ "ShowQRCodeButton", true },
+				{ "ShowFavoritesList", true },
+				{ "ShowToolbarIcons", true },
+				{ "ShowDarkModeIcon", true },
+				{ "ShowDateTimeOnNewTab", true },
+				{ "ShowExitDialog", false },
+				{ "ShowConfirmCloseDialog", false },
+				{ "ShowBackButton", true },
+				{ "ShowForwardButton", true },
+				{ "ShowRefreshButton", true },
+				{ "ShowHomeButton", true },
+				{ "ShowBrowserLogo", true },
+				{ "ShowWelcomeMessage", true },
 
-        // Panel States
-        { "IsHistoryPanelToggled", false },
-		{ "IsFavoritesPanelToggled", false },
-		{ "IsSearchBoxToggled", false },
-		{ "IsFavoritesPanelVisible", true },
-		{ "IsHistoryPanelVisible", true },
-		{ "IsSearchBarVisible", true },
+                // Panel States
+                { "IsHistoryPanelToggled", false },
+				{ "IsFavoritesPanelToggled", false },
+				{ "IsSearchBoxToggled", false },
+				{ "IsFavoritesPanelVisible", true },
+				{ "IsHistoryPanelVisible", true },
+				{ "IsSearchBarVisible", true },
 
-        // New Tab Settings
-        { "ShowNewTabPageCore", true },
-		{ "ShowTrendingContent", true },
-		{ "ShowDownloadsOnNewTab", false },
-		{ "ShowFavoritesOnNewTab", false },
-		{ "ShowHistoryOnNewTab", false },
-		{ "ShowQuickLinksOnNewTab", false },
-		{ "ShowNewTabSelectorBar", true },
-		{ "OpenNewTabsInBackground", false },
+                // New Tab Settings
+                { "ShowNewTabPageCore", true },
+				{ "ShowTrendingContent", true },
+				{ "ShowDownloadsOnNewTab", false },
+				{ "ShowFavoritesOnNewTab", false },
+				{ "ShowHistoryOnNewTab", false },
+				{ "ShowQuickLinksOnNewTab", false },
+				{ "ShowNewTabSelectorBar", true },
+				{ "OpenNewTabsInBackground", false },
 
-        // Security Settings
-        { "Enable2FA", true },
-		{ "EncryptFavorites", false },
-		{ "EncryptHistory", false },
-		{ "EncryptSettings", false },
-		{ "EncryptDatabase", false },
-		{ "EncryptPermissions", false },
+                // Security Settings
+                { "Enable2FA", true },
+				{ "EncryptFavorites", false },
+				{ "EncryptHistory", false },
+				{ "EncryptSettings", false },
+				{ "EncryptDatabase", false },
+				{ "EncryptPermissions", false },
 
-        // Ad Blocker Settings
-        { "EnableAdBlocker", true },
-		{ "AdBlockerType", 0 },
+                // Ad Blocker Settings
+                { "EnableAdBlocker", true },
+				{ "AdBlockerType", 0 },
 
-        // Sync Settings
-        { "SyncBookmarks", true },
-		{ "SyncHistory", false },
+                // Sync Settings
+                { "SyncBookmarks", true },
+				{ "SyncHistory", false },
 
-        // Misc Settings
-        { "DefaultDownloadPath", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") },
-		{ "ExceptionLoggingLevel", "Low" },
-		{ "EnableAutoMode", false },
-		{ "UserGender", "Unspecified" }
+                // Misc Settings
+                { "DefaultDownloadPath", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") },
+				{ "ExceptionLoggingLevel", "Low" },
+				{ "EnableAutoMode", false },
+				{ "UserGender", "Unspecified" }
 			};
 		}
 
@@ -441,6 +450,81 @@ namespace Graphite.UserSys
 				return Task.Run(() => handler(null, args));
 			}
 			return Task.CompletedTask;
+		}
+
+		// New method to add a page connection
+		public static async Task AddPageConnectionAsync(string username, string sourcePage, string targetPage)
+		{
+			await ExecuteWithRetryAsync(username, async connection =>
+			{
+				using var transaction = await connection.BeginTransactionAsync();
+				try
+				{
+					var command = connection.CreateCommand();
+					command.CommandText = @"
+                        INSERT OR REPLACE INTO PageConnections (SourcePage, TargetPage)
+                        VALUES ($sourcePage, $targetPage)";
+
+					command.Parameters.AddWithValue("$sourcePage", sourcePage);
+					command.Parameters.AddWithValue("$targetPage", targetPage);
+
+					await command.ExecuteNonQueryAsync();
+					await transaction.CommitAsync();
+
+					return true;
+				}
+				catch
+				{
+					await transaction.RollbackAsync();
+					throw;
+				}
+			});
+		}
+
+		// New method to get all page connections
+		public static async Task<Dictionary<string, List<string>>> GetAllPageConnectionsAsync(string username)
+		{
+			return await ExecuteWithRetryAsync(username, async connection =>
+			{
+				var connections = new Dictionary<string, List<string>>();
+				var command = connection.CreateCommand();
+				command.CommandText = "SELECT SourcePage, TargetPage FROM PageConnections";
+
+				using var reader = await command.ExecuteReaderAsync();
+				while (await reader.ReadAsync())
+				{
+					string sourcePage = reader.GetString(0);
+					string targetPage = reader.GetString(1);
+
+					if (!connections.ContainsKey(sourcePage))
+					{
+						connections[sourcePage] = new List<string>();
+					}
+					connections[sourcePage].Add(targetPage);
+				}
+
+				return connections;
+			});
+		}
+
+		// New method to get connections for a specific page
+		public static async Task<List<string>> GetPageConnectionsAsync(string username, string sourcePage)
+		{
+			return await ExecuteWithRetryAsync(username, async connection =>
+			{
+				var connections = new List<string>();
+				var command = connection.CreateCommand();
+				command.CommandText = "SELECT TargetPage FROM PageConnections WHERE SourcePage = $sourcePage";
+				command.Parameters.AddWithValue("$sourcePage", sourcePage);
+
+				using var reader = await command.ExecuteReaderAsync();
+				while (await reader.ReadAsync())
+				{
+					connections.Add(reader.GetString(0));
+				}
+
+				return connections;
+			});
 		}
 	}
 

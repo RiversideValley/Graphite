@@ -1,3 +1,5 @@
+// OOBEPreferences.cs
+using CommunityToolkit.WinUI;
 using Graphite.UserSys;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -60,7 +62,7 @@ namespace Graphite.Setup.OOBE
 			}
 			else
 			{
-				ShowErrorAndGoBack();
+				await ShowErrorAndGoBackAsync();
 			}
 		}
 
@@ -98,8 +100,8 @@ namespace Graphite.Setup.OOBE
 			catch (Exception ex)
 			{
 				_initializationComplete.TrySetException(ex);
-				await ShowErrorDialogAsync($"Error initializing settings: {ex.Message}", this.Content.XamlRoot);
-				ShowErrorAndGoBack();
+				await ShowErrorDialogAsync($"Error initializing settings: {ex.Message}");
+				await ShowErrorAndGoBackAsync();
 			}
 		}
 
@@ -107,7 +109,7 @@ namespace Graphite.Setup.OOBE
 		{
 			if (!_initializationComplete.Task.IsCompleted)
 			{
-				await ShowErrorDialogAsync("Settings not initialized. Please try again.", this.Content.XamlRoot);
+				await ShowErrorDialogAsync("Settings not initialized. Please try again.");
 				return;
 			}
 
@@ -130,11 +132,11 @@ namespace Graphite.Setup.OOBE
 				await SettingsManager.UpdateSettingAsync(User.Username, "GenaralTabAutoRestore", GeneralTabAutoRestoreToggle.IsOn);
 				await SettingsManager.UpdateSettingAsync(User.Username, "GenaralTabMaxNumber", (int)GeneralTabMaxNumberBox.Value);
 
-				Frame.Navigate(typeof(OOBEUi));
+				Frame.Navigate(typeof(OOBEUi), User);
 			}
 			catch (Exception ex)
 			{
-				await ShowErrorDialogAsync($"An error occurred while saving settings: {ex.Message}", this.Content.XamlRoot);
+				await ShowErrorDialogAsync($"An error occurred while saving settings: {ex.Message}");
 			}
 			finally
 			{
@@ -173,7 +175,7 @@ namespace Graphite.Setup.OOBE
 			}
 		}
 
-		private async Task ShowErrorDialogAsync(string message, XamlRoot xaml)
+		private async Task ShowErrorDialogAsync(string message)
 		{
 			try
 			{
@@ -182,7 +184,7 @@ namespace Graphite.Setup.OOBE
 					Title = "Error",
 					Content = message,
 					CloseButtonText = "OK",
-					XamlRoot = xaml
+					XamlRoot = this.XamlRoot
 				};
 
 				await errorDialog.ShowAsync();
@@ -190,6 +192,15 @@ namespace Graphite.Setup.OOBE
 			catch
 			{
 				System.Diagnostics.Debug.WriteLine($"Error showing dialog: {message}");
+			}
+		}
+
+		private async Task ShowErrorAndGoBackAsync()
+		{
+			await ShowErrorDialogAsync("An error occurred. Please try again.");
+			if (Frame.CanGoBack)
+			{
+				Frame.GoBack();
 			}
 		}
 
@@ -207,15 +218,6 @@ namespace Graphite.Setup.OOBE
 			public override string ToString()
 			{
 				return Name;
-			}
-		}
-
-		private void ShowErrorAndGoBack()
-		{
-			_ = ShowErrorDialogAsync("An error occurred. Please try again.", this.Content.XamlRoot);
-			if (Frame.CanGoBack)
-			{
-				Frame.GoBack();
 			}
 		}
 	}
