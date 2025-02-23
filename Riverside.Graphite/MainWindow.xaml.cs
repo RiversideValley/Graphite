@@ -465,24 +465,40 @@ public sealed partial class MainWindow : Window
 		UserName.Text = currentUser.Username ?? "DefaultUser";
 	}
 
-	public void UpdateUIBasedOnSettings()
+	public async void UpdateUIBasedOnSettings()
 	{
-		Settings coreSet = SettingsService.CoreSettings; //  UserFolderManager.LoadcoreSet(AuthService.CurrentUser);
 
-		SetVisibility(AdBlock, coreSet.AdblockBtn is not false);
-		SetVisibility(ReadBtn, coreSet.ReadButton is not false);
-		SetVisibility(BtnTrans, coreSet.Translate is not false);
-		SetVisibility(BtnDark, coreSet.DarkIcon is not false);
-		SetVisibility(ToolBoxMore, coreSet.ToolIcon is not false);
-		SetVisibility(AddFav, coreSet.FavoritesL is not false);
-		SetVisibility(FavoritesButton, coreSet.Favorites is not false);
-		SetVisibility(DownBtn, coreSet.Downloads is not false);
-		SetVisibility(History, coreSet.Historybtn is not false);
-		SetVisibility(QrBtn, coreSet.QrCode is not false);
-		SetVisibility(BackBtn, coreSet.BackButton is not false);
-		SetVisibility(ForwBtn, coreSet.ForwardButton is not false);
-		SetVisibility(ReloadBtn, coreSet.RefreshButton is not false);
-		SetVisibility(HomeBtn, coreSet.HomeButton is not false);
+        SemaphoreSlim semaphoreSlim = new(1, 1);
+
+        await semaphoreSlim.WaitAsync();
+
+        try
+        {
+            // Get the new changes. 
+            SettingsService.Initialize();
+
+            Settings coreSet = SettingsService.CoreSettings; 
+            SetVisibility(AdBlock, coreSet.AdblockBtn is not false);
+            SetVisibility(ReadBtn, coreSet.ReadButton is not false);
+            SetVisibility(BtnTrans, coreSet.Translate is not false);
+            SetVisibility(BtnDark, coreSet.DarkIcon is not false);
+            SetVisibility(ToolBoxMore, coreSet.ToolIcon is not false);
+            SetVisibility(AddFav, coreSet.FavoritesL is not false);
+            SetVisibility(FavoritesButton, coreSet.Favorites is not false);
+            SetVisibility(DownBtn, coreSet.Downloads is not false);
+            SetVisibility(History, coreSet.Historybtn is not false);
+            SetVisibility(QrBtn, coreSet.QrCode is not false);
+            SetVisibility(BackBtn, coreSet.BackButton is not false);
+            SetVisibility(ForwBtn, coreSet.ForwardButton is not false);
+            SetVisibility(ReloadBtn, coreSet.RefreshButton is not false);
+            SetVisibility(HomeBtn, coreSet.HomeButton is not false);
+        }
+        finally
+        {
+            semaphoreSlim.Release();
+        }
+		// get the new changes. 
+		
 	}
 
 	private void SetVisibility(UIElement element, bool isVisible)

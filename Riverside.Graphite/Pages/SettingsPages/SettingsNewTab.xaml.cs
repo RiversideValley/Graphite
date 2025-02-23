@@ -107,29 +107,34 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 		}
 
-		private void UpdateAppSetting(ToggleSwitch toggleSwitch, Action<bool> setter)
+		private  void UpdateAppSetting(ToggleSwitch toggleSwitch, Action<bool> setter)
 		{
 			setter(toggleSwitch.IsOn);
+			
 		}
 
-		private void TrendingHome_Toggled(object sender, RoutedEventArgs e)
+		private async void TrendingHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsTrendingVisible = value);
+			await ToggleSettingAsync(nameof(AppService.AppSettings.IsTrendingVisible), ((ToggleSwitch)(sender)).IsOn);
 		}
 
-		private void FavoritesHome_Toggled(object sender, RoutedEventArgs e)
+		private async void FavoritesHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsFavoritesVisible = value);
+			await ToggleSettingAsync(nameof(AppService.AppSettings.IsFavoritesVisible), ((ToggleSwitch)(sender)).IsOn);
 		}
 
-		private void HistoryHome_Toggled(object sender, RoutedEventArgs e)
+		private async void HistoryHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsHistoryVisible = value);
+			await ToggleSettingAsync(nameof(AppService.AppSettings.IsHistoryVisible), ((ToggleSwitch)(sender)).IsOn);
 		}
 
-		private void SearchHome_Toggled(object sender, RoutedEventArgs e)
+		private async void SearchHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsSearchVisible = value);
+			await ToggleSettingAsync(nameof(AppService.AppSettings.IsSearchVisible), ((ToggleSwitch)(sender)).IsOn);
 		}
 
 		private Task SaveSettingsAsync()
@@ -137,16 +142,17 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			return SettingsService.SaveChangesToSettings(AuthService.CurrentUser, SettingsService.CoreSettings);
 		}
 
-		private void SelectbarHome_Toggled(object sender, RoutedEventArgs e)
+		private async void SelectbarHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.NewTabSelectorBarVisible = value);
+			await ToggleSettingAsync(nameof(AppService.AppSettings.NewTabSelectorBarVisible), ((ToggleSwitch)(sender)).IsOn);
 
 		}
 
-		private void LogoHome_Toggled(object sender, RoutedEventArgs e)
+		private async void LogoHome_Toggled(object sender, RoutedEventArgs e)
 		{
 			UpdateAppSetting((ToggleSwitch)sender, value => AppService.AppSettings.IsLogoVisible = value);
-
+			await ToggleSettingAsync(nameof(AppService.AppSettings.IsLogoVisible), ((ToggleSwitch)(sender)).IsOn);
 		}
 	}
 }
