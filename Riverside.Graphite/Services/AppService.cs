@@ -181,7 +181,7 @@ public static class AppService
                     if (url.StartsWith(action.Key) || url.Contains(action.Key))
                     {
                         action.Value.Invoke();
-                        return;
+						break;
                     }
                 }
 				await ShowMainWindow(cancellationToken);
