@@ -8,19 +8,18 @@ namespace Riverside.Graphite.Services.Signalr
 {
 	public class HubService
 	{
+		public HubConnection _hubConnection { get; set; }
+
 		public HubService()
 		{
-
 			Initialize();
 		}
-		private HubConnection _hubConnection;
 		private async void Initialize()
 		{
 			try
 			{
 				_hubConnection = new HubConnectionBuilder()
-					//.WithUrl(@"https://energy.service.signalr.net/azurechat")
-					.WithUrl("http://localhost:5000/message")
+					.WithUrl(@"https://energy.service.signalr.net/azurechat")
 					.WithAutomaticReconnect()
 					.ConfigureLogging(logging => logging.AddConsole())
 					.Build();
@@ -36,7 +35,5 @@ namespace Riverside.Graphite.Services.Signalr
 			}
 		}
 		//(https://github.com/microsoft/WindowsAppSDK/discussions/3561)
-
-
 	}
 }

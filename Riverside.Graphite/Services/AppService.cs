@@ -1,8 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI;
 using Graphite;
-using Graphite.WindowCore;
-using Graphite.WindowCore.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
@@ -19,6 +17,8 @@ using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.ViewModels;
+using Riverside.Graphite.Services.WindowsHandler;
+using Riverside.Graphite.Services.WindowsHandler.Contracts;
 using Riverside.Graphite.Setup;
 using System;
 using System.Collections.Generic;
@@ -181,7 +181,7 @@ public static class AppService
                     if (url.StartsWith(action.Key) || url.Contains(action.Key))
                     {
                         action.Value.Invoke();
-                        return;
+						break;
                     }
                 }
 				await ShowMainWindow(cancellationToken);
@@ -341,9 +341,9 @@ public static class AppService
 		DatabaseServices dbServer = new();
 
 		// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
-		_ = await dbServer.DatabaseCreationValidation();
+		_ = await dbServer.DatabaseCreationValidation(AuthService.CurrentUser);
 
-			_ = await dbServer.InsertUserSettings(); // new user add default from class
+			//_ = await dbServer.InsertUserSettings(); // new user add default from class
 
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
@@ -364,6 +364,9 @@ public static class AppService
 	public static async void CreateNewUsersSettings()
 	{
 		ActiveWindow = new UserSettings();
+		
+		await Windowing.DialogWindow(ActiveWindow);	
+
 		ActiveWindow.Closed += async (s, e) =>
 		{
 			try
@@ -411,15 +414,17 @@ public static class AppService
 
 		if (appWindow != null)
 		{
+			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
 			SizeInt32? desktop = await Windowing.SizeWindow();
 			appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .66), (int)(desktop?.Height * .66)));
+			appWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.ico");
 			appWindow.MoveInZOrderAtTop();
-			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-			appWindow.Title = "Settings for: " + AuthService.NewCreatedUser?.Username;
+			appWindow.Title = "SettingsPage";
 			AppWindowTitleBar titleBar = appWindow.TitleBar;
 			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
-			titleBar.ForegroundColor = btnColor;
+			titleBar.ForegroundColor = Colors.WhiteSmoke;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
 			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);

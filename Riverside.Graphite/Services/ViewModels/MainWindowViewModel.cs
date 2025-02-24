@@ -312,7 +312,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 		fly.AllowFocusOnInteraction = true;
 		var frm = new Frame();
-		frm.Width = 420;
+		frm.Width = 480;
 		frm.Height = 480;
 		frm.CanBeScrollAnchor = true;
 		frm.Navigate(typeof(MsalAuth), this);

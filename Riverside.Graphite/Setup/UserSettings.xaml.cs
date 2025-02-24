@@ -2,9 +2,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Setup
 {
@@ -21,6 +24,13 @@ namespace Riverside.Graphite.Setup
 			InitializeComponent();
 			AppService.AppSettings = new Riverside.Graphite.Core.Settings(true).Self;
 			NavView.SelectedItem = NavView.MenuItems[0]; // Select the first item by default
+			this.Closed += async (s, e) => {
+
+				if(Windowing.FindWindow(null, nameof(SettingsPage)) > 0 ){
+					Windowing.ShowWindow(Windowing.FindWindow(null, nameof(SettingsPage)), Windowing.WindowShowStyle.SW_SHOWNORMAL); 
+				}
+				await Task.Delay(100); 
+			};
 		}
 
 		private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -62,6 +72,22 @@ namespace Riverside.Graphite.Setup
 			{
 				NavView.SelectedItem = item;
 			}
+		}
+
+		private void ContentFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+		{
+
+			if (e.SourcePageType != null)
+			{
+				string pageName = e.SourcePageType.Name;
+				NavigationViewItem item = NavView.MenuItems.OfType<NavigationViewItem>()
+									.FirstOrDefault(navItem => GetPageType(navItem.Tag as string)?.Name == pageName);
+				if (item != null)
+				{
+					NavView.SelectedItem = item;
+				}
+			}
+
 		}
 	}
 }

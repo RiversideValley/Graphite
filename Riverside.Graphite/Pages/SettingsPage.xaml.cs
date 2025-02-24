@@ -2,6 +2,7 @@ using Graphite.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Riverside.Graphite.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +114,12 @@ public sealed partial class SettingsPage : Page
 
 			NavView.Header =
 				((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
-			passer.Tab.Header = ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
+
+			if(passer is not null)
+			{
+				passer.Tab.Header = ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
+			}
+			
 		}
 	}
 

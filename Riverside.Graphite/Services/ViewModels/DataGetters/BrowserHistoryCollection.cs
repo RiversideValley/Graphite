@@ -24,7 +24,7 @@ public partial class BrowserHistoryCollection : ObservableObject, IIncrementalSo
     {
         HistoryActions historyActions = new(AuthService.CurrentUser.Username);
         ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
-        _historyItems = new ObservableCollection<HistoryItem>(allItems.OrderByDescending(t=> t.Id).Skip(pageIndex * pageSize).Take(pageSize));
+        _historyItems = new ObservableCollection<HistoryItem>(allItems.OrderByDescending(t=> t.LastVisitTime).Skip(pageIndex * pageSize).Take(pageSize));
 		//ExceptionLogger.LogInformation($"{DateTime.Now.ToLocalTime()} getItems: {pageSize} indexPage: {pageIndex} totalItems: {allItems.Count}"); 
 		return HistoryItems;
     }

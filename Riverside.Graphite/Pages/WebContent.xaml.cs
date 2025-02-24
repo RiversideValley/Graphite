@@ -12,7 +12,6 @@ using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.CoreUi;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
@@ -171,7 +170,9 @@ namespace Riverside.Graphite.Pages
 
 			if (param?.Param != null)
 			{
-				WebViewElement.CoreWebView2.Navigate(param.Param.ToString());
+				var uri = UrlValidater.GetValidateUrl(param.Param.ToString());
+				if (uri is not null)
+					WebViewElement.Source = (uri);
 			}
 
 			WebView2 s = WebViewElement;
@@ -329,7 +330,7 @@ namespace Riverside.Graphite.Pages
 		private void NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
 		{
 			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
-			param?.TabView.TabItems.Add(window.TabManager.CreateNewTab(typeof(WebContent), args.Uri));
+			window.TabManager.CreateNewTab(typeof(WebContent), args.Uri);
 			args.Handled = true;
 		}
 

@@ -1,0 +1,178 @@
+<Window
+    x:Class="Riverside.Graphite.Controls.FileDialogs.SaveDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Save File"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt" />
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Custom title bar  -->
+        <Grid
+            x:Name="AppTitleBar"
+            Height="32"
+            VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image
+                Width="24"
+                Height="24"
+                Margin="8,0,0,0"
+                Source="applogo.png" />
+            <TextBlock
+                x:Name="AppTitleTextBlock"
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="Save File" />
+        </Grid>
+
+        <!--  Main content  -->
+        <ScrollViewer Grid.Row="1" Padding="1">
+            <StackPanel
+                MaxWidth="600"
+                Margin="0,5"
+                HorizontalAlignment="Center">
+                <!--  Header  -->
+                <StackPanel
+                    Margin="0,0,0,32"
+                    HorizontalAlignment="Center"
+                    Spacing="8">
+                    <Image
+                        Width="64"
+                        Height="64"
+                        Source="applogo.png" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="Save File" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Choose a location and name for your file"
+                        TextAlignment="Center" />
+                </StackPanel>
+
+                <!--  Main Card  -->
+                <Grid
+                    Padding="24"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--  Save Location  -->
+                    <StackPanel Grid.Row="0" Spacing="8">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Save Location" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                x:Name="CurrentLocationTextBlock"
+                                VerticalAlignment="Center"
+                                Text="Current Is Documents" />
+                            <Button
+                                x:Name="ChangeLocationButton"
+                                Grid.Column="1"
+                                Click="ChangeLocationButton_Click">
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8B7;" />
+                                <ToolTipService.ToolTip>
+                                    <ToolTip Content="Change Location" />
+                                </ToolTipService.ToolTip>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+
+                    <!--  File Name Input  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Margin="0,16,0,0"
+                        Spacing="8">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="File Name" />
+                        <TextBox
+                            x:Name="FileNameBox"
+                            Width="400"
+                            HorizontalAlignment="Left"
+                            PlaceholderText="Enter file name" />
+                    </StackPanel>
+
+                    <!--  File Type Selection  -->
+                    <StackPanel
+                        Grid.Row="2"
+                        Margin="0,16,0,0"
+                        Spacing="8">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="File Type" />
+                        <ComboBox
+                            x:Name="FileTypeComboBox"
+                            Width="200"
+                            HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <!--  File List  -->
+                    <ListView
+                        x:Name="FileListView"
+                        Grid.Row="3"
+                        Height="300"
+                        MaxHeight="300"
+                        Margin="0,16,0,0"
+                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        IsItemClickEnabled="True"
+                        ItemClick="FileListView_ItemClick"
+                        SelectionMode="Single">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="{Binding IconGlyph}" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <!--  Action Buttons  -->
+                    <StackPanel
+                        Grid.Row="4"
+                        Margin="0,16,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Button
+                            x:Name="CancelButton"
+                            Click="CancelButton_Click"
+                            Content="Cancel" />
+                        <Button
+                            x:Name="SaveButton"
+                            Click="SaveButton_Click"
+                            Content="Save"
+                            Style="{StaticResource AccentButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -13,7 +13,7 @@ namespace Riverside.Graphite.Services;
 public class SettingsService : ISettingsService
 {
 	#region MemberProps
-	public SettingsActions Actions { get; set; }
+	//public SettingsActions Actions { get; set; }
 	public User CurrentUser { get; set; }
 	public Settings CoreSettings { get; set; }
 	#endregion
@@ -31,8 +31,12 @@ public class SettingsService : ISettingsService
 			if (AuthService.IsUserAuthenticated)
 			{
 				CurrentUser = AuthService.CurrentUser ?? null;
-				Actions = new SettingsActions(AuthService.CurrentUser.Username);
-				CoreSettings = await Actions?.GetSettingsAsync();
+		//		Actions = new SettingsActions(AuthService.CurrentUser.Username);
+				var settings = await SettingsManager.GetAllSettingsAsync(CurrentUser.Username);
+				CoreSettings = new(); 
+				CoreSettings.FromDictionary(settings);
+
+				//CoreSettings = await Actions?.GetSettingsAsync();
 			}
 		}
 		catch (Exception ex)
@@ -51,14 +55,24 @@ public class SettingsService : ISettingsService
 			}
 
 			AppService.AppSettings = settings;
-			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+			
+			//if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+			//{
+			//	await Actions?.SettingsContext.Database.MigrateAsync();
+			//}
+			if (!File.Exists(SettingsManager.GetUserSettingsDbPath(AuthService.CurrentUser.Username)))
 			{
-				await Actions?.SettingsContext.Database.MigrateAsync();
+				await SettingsManager.InitializeUserSettingsAsync(AuthService.CurrentUser.Username);	
 			}
 
-			_ = await Actions?.UpdateSettingsAsync(settings);
+			var dictionary = settings.ToDictionary();
+
+			await SettingsManager.UpdateSettingsAsync(user.Username, dictionary);	
+
+			//_ = await Actions?.UpdateSettingsAsync(settings);
 			// get new from database. 
-			CoreSettings = await Actions?.GetSettingsAsync();
+			//CoreSettings = await Actions?.GetSettingsAsync();
+			Initialize();
 
 			object obj = new();
 			lock (obj)

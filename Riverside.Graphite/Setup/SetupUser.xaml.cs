@@ -1,13 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Assets;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Core.Models;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Setup.UserCreateFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +29,7 @@ namespace Riverside.Graphite
 		{
 			databaseServices = new();
 			InitializeComponent();
+
 		}
 
 		private void ProfileImage_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -42,6 +48,14 @@ namespace Riverside.Graphite
 
 		private async void Create_Click(object sender, RoutedEventArgs e)
 		{
+			if (AuthService.UserExists(UserName.Text) is User)
+			{
+				NotificationQueue.Show("User already exists\nPlease choose a different username", 2000, "User Creation");
+				UserName.Text = string.Empty; 
+				return;
+			}
+
+			await UserManager.InitializeAsync(); // This is a static method, so it should be called on the class, not an instance
 			await CreateUserAndNavigate();
 		}
 
@@ -52,70 +66,7 @@ namespace Riverside.Graphite
 			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
-		private async void CreateCollections()
-		{
-
-			try
-			{
-				HistoryActions historyActions = new HistoryActions(AuthService.NewCreatedUser?.Username);
-				string historyPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Database", "History.db");
-				if (!File.Exists(historyPath))
-				{
-					await historyActions.HistoryContext.Database.MigrateAsync();
-				}
-
-				if (File.Exists(historyPath))
-				{
-					if (await historyActions.HistoryContext.Database.CanConnectAsync())
-					{
-						historyActions.HistoryContext.CollectionNames.AddRange(new List<CollectionName>
-					{
-						new CollectionName { Name = "Work", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
-						new CollectionName { Name = "Personal", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
-						new CollectionName { Name = "Hobbies", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() },
-						new CollectionName { Name = "Following", BackgroundBrush = RandomColors.GetRandomSolidColorBrush() }
-					});
-
-						await historyActions.HistoryContext.SaveChangesAsync();
-					}
-				}
-			}
-			catch (Exception)
-			{
-
-				throw;
-			}
-		}
-		private async void CreateNewSettings()
-		{
-			try
-			{
-				SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
-				string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
-
-				if (!File.Exists(settingsPath))
-				{
-					await settingsActions.SettingsContext.Database.MigrateAsync();
-				}
-
-				if (File.Exists(settingsPath))
-				{
-					if (await settingsActions.SettingsContext.Database.CanConnectAsync())
-					{
-						_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				ExceptionLogger.LogException(ex);
-				Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-			}
-			finally
-			{
-				AuthService.NewCreatedUser = null;
-			}
-		}
+		
 		private async Task InPrivateUser()
 		{
 			User newUser = new()
@@ -127,11 +78,11 @@ namespace Riverside.Graphite
 			};
 
 			AuthService.AddUser(newUser);
-			UserFolderManager.CreateUserFolders(newUser);
-			AuthService.CurrentUser.Username = newUser.Username;
+			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}", Name = newUser.Username }));
 			_ = AuthService.Authenticate(newUser.Username);
-			await CopyImageToUserDirectory(newUser);
-			await UserCreateDatabase();
+			UserFolderManager.CreateUserFolders(newUser);
+			await AddUserDefaults.CopyImageToUserDirectory(newUser, selectedImageName);
+			await UserCreateDatabase(newUser);
 
 		}
 		private async Task CreateUserOnStartup()
@@ -141,41 +92,23 @@ namespace Riverside.Graphite
 				Username = UserName.Text,
 			};
 
-			List<Riverside.Graphite.Core.User> users = new() { newUser };
+			
+			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}", Name = newUser.Username }));
 			UserFolderManager.CreateUserFolders(newUser);
-			//UserDataManager.SaveUsers(users);
-			AuthService.AddUser(newUser);
 			_ = AuthService.Authenticate(newUser.Username);
 
-			await CopyImageToUserDirectory(newUser);
-
-			await UserCreateDatabase();
+			await AddUserDefaults.CopyImageToUserDirectory(newUser, selectedImageName);
+		
+			await UserCreateDatabase(newUser);
 
 		}
 
-		async Task UserCreateDatabase()
+		async Task UserCreateDatabase(User user)
 		{
-			if (AuthService.IsUserAuthenticated)
-			{
-				_ = await databaseServices.DatabaseCreationValidation();
-				CreateCollections();
-				CreateNewSettings();
-			}
+				await databaseServices.DatabaseCreationValidation(user);
+				AddUserDefaults.CreateCollections(user);
+				AddUserDefaults.CreateNewSettings(user);
 		}
-		private async Task CopyImageToUserDirectory(Riverside.Graphite.Core.User user)
-		{
-			try
-			{
-				StorageFolder destinationFolder = await StorageFolder.GetFolderFromPathAsync(
-					Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username));
-				StorageFile imageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}"));
-				_ = await imageFile.CopyAsync(destinationFolder, "profile_image.jpg", NameCollisionOption.ReplaceExisting);
-			}
-			catch (Exception ex)
-			{
-				// Consider using a logging framework instead of Console.WriteLine
-				System.Diagnostics.Debug.WriteLine($"Error copying image: {ex.Message}");
-			}
-		}
+		
 	}
 }

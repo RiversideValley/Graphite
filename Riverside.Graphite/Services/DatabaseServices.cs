@@ -18,71 +18,71 @@ using System.Threading.Tasks;
 namespace Riverside.Graphite.Services;
 public class DatabaseServices : IDatabaseService
 {
-	public async Task<Task> InsertUserSettings()
-	{
-		Batteries_V2.Init();
-		if (!AuthService.IsUserAuthenticated)
-		{
-			return Task.FromResult(false);
-		}
+	//public async Task<Task> InsertUserSettings()
+	//{
+	//	Batteries_V2.Init();
+	//	if (!AuthService.IsUserAuthenticated)
+	//	{
+	//		return Task.FromResult(false);
+	//	}
 
-		try
-		{
-			SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
-			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-			{
-				await settingsActions.SettingsContext.Database.MigrateAsync();
-			}
-			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
-			{
-				if (await settingsActions.GetSettingsAsync() is null)
-				{
-					_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings ?? new Settings(true).Self);
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-			Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-			return Task.FromException(ex);
-		}
+	//	try
+	//	{
+	//		SettingsActions settingsActions = new(AuthService.CurrentUser.Username);
+	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+	//		{
+	//			await settingsActions.SettingsContext.Database.MigrateAsync();
+	//		}
+	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
+	//		{
+	//			if (await settingsActions.GetSettingsAsync() is null)
+	//			{
+	//				_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings ?? new Settings(true).Self);
+	//			}
+	//		}
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		ExceptionLogger.LogException(ex);
+	//		Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+	//		return Task.FromException(ex);
+	//	}
 
-		return Task.CompletedTask;
-	}
+	//	return Task.CompletedTask;
+	//}
 
-	public async Task<Task> InsertNewUserSettings()
-	{
-		Batteries_V2.Init();
-		if (!AuthService.IsUserAuthenticated)
-		{
-			return Task.FromResult(false);
-		}
+	//public async Task<Task> InsertNewUserSettings()
+	//{
+	//	Batteries_V2.Init();
+	//	if (!AuthService.IsUserAuthenticated)
+	//	{
+	//		return Task.FromResult(false);
+	//	}
 
-		try
-		{
-			SettingsActions settingsActions = new(AuthService.NewCreatedUser.Username);
-			if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser.Username, "Settings", "Settings.db")))
-			{
-				await settingsActions.SettingsContext.Database.MigrateAsync();
-			}
-			if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser.Username, "Settings", "Settings.db")))
-			{
-				if (await settingsActions.GetSettingsAsync() is null)
-				{
-					_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			ExceptionLogger.LogException(ex);
-			Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-			return Task.FromException(ex);
-		}
+	//	try
+	//	{
+	//		SettingsActions settingsActions = new(AuthService.NewCreatedUser.Username);
+	//		if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser.Username, "Settings", "Settings.db")))
+	//		{
+	//			await settingsActions.SettingsContext.Database.MigrateAsync();
+	//		}
+	//		if (File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser.Username, "Settings", "Settings.db")))
+	//		{
+	//			if (await settingsActions.GetSettingsAsync() is null)
+	//			{
+	//				_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
+	//			}
+	//		}
+	//	}
+	//	catch (Exception ex)
+	//	{
+	//		ExceptionLogger.LogException(ex);
+	//		Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+	//		return Task.FromException(ex);
+	//	}
 
-		return Task.CompletedTask;
-	}
+	//	return Task.CompletedTask;
+	//}
 
     private async Task ValidateDatabaseAsync(string username, string dbSubFolder, string dbName,  Func<DbContext> contextFactory, string errorMessage)
     {
@@ -111,7 +111,7 @@ public class DatabaseServices : IDatabaseService
         }
     }
 
-    public async Task<Task> DatabaseCreationValidation()
+    public async Task<Task> DatabaseCreationValidation(User user)
     {
         if (!AuthService.IsUserAuthenticated)
         {
@@ -119,9 +119,9 @@ public class DatabaseServices : IDatabaseService
         }
 
         
-		await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(AuthService.CurrentUser.Username), "Can't update your Settings database, please reset your application in the settings page");
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(AuthService.CurrentUser.Username), "Can't update your History database, please reset your application in the settings page");
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(AuthService.CurrentUser.Username), "Can't update your Downloads database, please reset your application in the settings page");
+		//await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(user.Username), "Can't update your Settings database, please reset your application in the settings page");
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(user.Username), "Can't update your History database, please reset your application in the settings page");
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(user.Username), "Can't update your Downloads database, please reset your application in the settings page");
 		// allow ui to flow. 
 		return Task.CompletedTask;
     }

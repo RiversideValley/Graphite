@@ -3,7 +3,6 @@ using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
 using Graphite.ViewModels;
-using Graphite.WindowCore;
 using Microsoft.Build.Framework;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -16,6 +15,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using NuGet.ContentModel;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
@@ -465,24 +465,40 @@ public sealed partial class MainWindow : Window
 		UserName.Text = currentUser.Username ?? "DefaultUser";
 	}
 
-	private void UpdateUIBasedOnSettings()
+	public async void UpdateUIBasedOnSettings()
 	{
-		Settings coreSet = SettingsService.CoreSettings; //  UserFolderManager.LoadcoreSet(AuthService.CurrentUser);
 
-		SetVisibility(AdBlock, coreSet.AdblockBtn is not false);
-		SetVisibility(ReadBtn, coreSet.ReadButton is not false);
-		SetVisibility(BtnTrans, coreSet.Translate is not false);
-		SetVisibility(BtnDark, coreSet.DarkIcon is not false);
-		SetVisibility(ToolBoxMore, coreSet.ToolIcon is not false);
-		SetVisibility(AddFav, coreSet.FavoritesL is not false);
-		SetVisibility(FavoritesButton, coreSet.Favorites is not false);
-		SetVisibility(DownBtn, coreSet.Downloads is not false);
-		SetVisibility(History, coreSet.Historybtn is not false);
-		SetVisibility(QrBtn, coreSet.QrCode is not false);
-		SetVisibility(BackBtn, coreSet.BackButton is not false);
-		SetVisibility(ForwBtn, coreSet.ForwardButton is not false);
-		SetVisibility(ReloadBtn, coreSet.RefreshButton is not false);
-		SetVisibility(HomeBtn, coreSet.HomeButton is not false);
+        SemaphoreSlim semaphoreSlim = new(1, 1);
+
+        await semaphoreSlim.WaitAsync();
+
+        try
+        {
+            // Get the new changes. 
+            SettingsService.Initialize();
+
+            Settings coreSet = SettingsService.CoreSettings; 
+            SetVisibility(AdBlock, coreSet.AdblockBtn is not false);
+            SetVisibility(ReadBtn, coreSet.ReadButton is not false);
+            SetVisibility(BtnTrans, coreSet.Translate is not false);
+            SetVisibility(BtnDark, coreSet.DarkIcon is not false);
+            SetVisibility(ToolBoxMore, coreSet.ToolIcon is not false);
+            SetVisibility(AddFav, coreSet.FavoritesL is not false);
+            SetVisibility(FavoritesButton, coreSet.Favorites is not false);
+            SetVisibility(DownBtn, coreSet.Downloads is not false);
+            SetVisibility(History, coreSet.Historybtn is not false);
+            SetVisibility(QrBtn, coreSet.QrCode is not false);
+            SetVisibility(BackBtn, coreSet.BackButton is not false);
+            SetVisibility(ForwBtn, coreSet.ForwardButton is not false);
+            SetVisibility(ReloadBtn, coreSet.RefreshButton is not false);
+            SetVisibility(HomeBtn, coreSet.HomeButton is not false);
+        }
+        finally
+        {
+            semaphoreSlim.Release();
+        }
+		// get the new changes. 
+		
 	}
 
 	private void SetVisibility(UIElement element, bool isVisible)
@@ -676,7 +692,11 @@ public async void NavigateToUrl(string uri)
 	{
 		try
 		{
-
+			if (TabContent is null)
+			{
+				TabManager.CreateNewTab(typeof(WebContent) , CreatePasser(uri));
+				return; 
+			}
 
 			if (TabContent.Content is not WebContent webContent)
 			{
@@ -722,7 +742,7 @@ public async void NavigateToUrl(string uri)
 		}
 	}
 
-	private void HandleFireBrowserUrl(string url)
+	private async void HandleFireBrowserUrl(string url)
 	{
 		Passer passer = new()
 		{
@@ -738,7 +758,13 @@ public async void NavigateToUrl(string uri)
 				SelectNewTab();
 				break;
 			case "firebrowser://settings":
-				TabManager.CreateNewTab(typeof(SettingsPage), passer);
+				
+				Window window = new();
+				Frame frm = new();
+				_ = frm.Navigate(typeof(SettingsPage), passer);
+				window.Content = frm;
+				await AppService.ConfigureSettingsWindow(window);
+
 				break;
 			case "firebrowser://modules":
 				TabManager.CreateNewTab(typeof(Pluginss));
@@ -869,20 +895,20 @@ public async void NavigateToUrl(string uri)
 
 		switch ((sender as Button).Tag)
 		{
-			case "Back":
+			case "Back" when TabContent is not null:
 				GoBack();
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
-			case "Forward":
+			case "Forward" when TabContent is not null:
 				GoForward();
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = ((Tabs.SelectedItem as GraphiteTabViewItem).Content as Frame).Content.GetType().Name;
 				break;
-			case "Refresh" when TabContent.Content is WebContent:
+			case "Refresh" when TabContent is not null && TabContent.Content is WebContent:
 				TabWebView.CoreWebView2.Reload();
 				_ = NotificationQueue.Show("Refreshing...", 1200);
 
 				break;
-			case "Home" when TabContent.Content is WebContent:
+			case "Home" when TabContent is not null && TabContent.Content is WebContent:
 				_ = incog == true ? TabContent.Navigate(typeof(InPrivate)) : TabContent.Navigate(typeof(NewTab));
 				UrlBox.Text = "";
 				passer.Tab.Header = WebContent.IsIncognitoModeEnabled ? "Incognito" : "NewTab";
@@ -891,6 +917,9 @@ public async void NavigateToUrl(string uri)
 					Symbol = WebContent.IsIncognitoModeEnabled ? Symbol.BlockContact : Symbol.Home
 				};
 				ViewModel.CurrentAddress = "";
+				break;
+			case "Home" when TabContent is null:
+				TabManager.CreateNewTab(typeof(NewTab));	
 				break;
 			case "Translate" when TabContent.Content is WebContent:
 				string url = (TabContent.Content as WebContent).WebViewElement.CoreWebView2.Source.ToString();
@@ -1069,7 +1098,7 @@ public async void NavigateToUrl(string uri)
 	}
 
 
-	private void TabMenuClick(object sender, RoutedEventArgs e)
+	private async void TabMenuClick(object sender, RoutedEventArgs e)
 	{
 		var messenger = new NotificationMessenger();
 
@@ -1092,8 +1121,14 @@ public async void NavigateToUrl(string uri)
 				}
 				break;
 			case "Settings":
-				TabManager.CreateNewTab(typeof(SettingsPage));
-				SelectNewTab();
+
+				Window win = new();
+				SettingsPage settingsPage = new();
+				win.Content = settingsPage;
+				win.Activate(); 
+				await AppService.ConfigureSettingsWindow(win);
+				 
+
 				break;
 			case "FullScreen":
 				GoFullScreen(isFull != true);

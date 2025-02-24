@@ -195,9 +195,8 @@
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch
                             x:Name="SearchHome"
-                            IsOn="True"
-                            Tag="HomeSearch"
-                            Toggled="SearchHome_Toggled" />
+                            Tag="IsSearchVisible"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show History On Home Page" Header="History Visible">
                         <labs:SettingsCard.HeaderIcon>
@@ -205,9 +204,8 @@
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch
                             x:Name="HistoryHome"
-                            IsOn="True"
-                            Tag="HomeHistory"
-                            Toggled="HistoryHome_Toggled" />
+                            Tag="IsHistoryVisible"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Favorites On Home Page" Header="Favorites Visible">
                         <labs:SettingsCard.HeaderIcon>
@@ -215,9 +213,8 @@
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch
                             x:Name="FavoritesHome"
-                            IsOn="True"
-                            Tag="HomeFavorites"
-                            Toggled="FavoritesHome_Toggled" />
+                            Tag="IsFavoritesVisible"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Trending On Home Page" Header="Trending Visible">
                         <labs:SettingsCard.HeaderIcon>
@@ -225,31 +222,26 @@
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch
                             x:Name="TrendingHome"
-                            IsOn="True"
-                            Tag="HomeTrending"
-                            Toggled="TrendingHome_Toggled" />
+                            Tag="IsTrendingVisible"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Logo On Home Page" Header="Logo Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEDE5;" />
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch
-         x:Name="LogoHome"
-         IsOn="True"
-         Tag="LogoHome"
-                            Toggled="LogoHome_Toggled"
-        />
+                            x:Name="LogoHome"
+                            Tag="IsLogoVisible"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Select Bar On Home Page" Header="Select Bar Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xEE64;" />
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch
- x:Name="SelectbarHome"
- IsOn="True"
- Tag="SelectbarHome"
-                            Toggled="SelectbarHome_Toggled"
-/>
+                            x:Name="SelectbarHome"
+                            Tag="NewTabSelectorBarVisible"
+                            Toggled="ToggleSetting_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>

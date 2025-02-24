@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Graphite.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Controls;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;

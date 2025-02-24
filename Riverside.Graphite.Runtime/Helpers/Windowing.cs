@@ -592,9 +592,8 @@ public class Windowing
 				appWindow.TitleBar.ButtonInactiveForegroundColor = Colors.Gray;
 
 				// Set window size
-				SizeInt32 size = new(600, 900);
+				SizeInt32 size = new(750, 900);
 				appWindow.Resize(size);
-
 				// Remove default window chrome
 				OverlappedPresenter presenter = appWindow.Presenter as OverlappedPresenter;
 				if (presenter != null)
@@ -602,6 +601,7 @@ public class Windowing
 					presenter.IsResizable = false;
 					presenter.SetBorderAndTitleBar(true, false);
 				}
+				Center(window);	
 			}
 		}
 		catch (Exception ex)

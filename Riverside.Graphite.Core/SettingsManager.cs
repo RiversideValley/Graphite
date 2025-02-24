@@ -19,7 +19,7 @@ namespace Riverside.Graphite.Core
             "EncryptSettings"
         };
 
-        private static string GetUserSettingsDbPath(string username)
+        public static string GetUserSettingsDbPath(string username)
         {
             return Path.Combine(UserManager.GraphiteDataPath, username, "Settings", "Settings.db");
         }
@@ -334,7 +334,7 @@ namespace Riverside.Graphite.Core
 
         private static async Task InitializeDefaultSettingsAsync(SqliteConnection connection)
         {
-            var defaultSettings = GetDefaultSettings();
+			var defaultSettings = new Settings(true).Self.ToDictionary(); // GetDefaultSettings();
             using var transaction = await connection.BeginTransactionAsync();
 
             try
@@ -362,100 +362,5 @@ namespace Riverside.Graphite.Core
             }
         }
 
-        public static Dictionary<string, object> GetDefaultSettings()
-        {
-            return new Dictionary<string, object>
-            {
-                // Browser Settings
-                { "PackageName", "FireBrowserWinUi3_" },
-                { "DisableJavaScript", false },
-                { "DisablePasswordSaving", false },
-                { "DisableWebMessaging", false },
-                { "DisableGeneralAutoFill", false },
-                { "EnableBrowserKeys", true },
-                { "EnableBrowserScripts", true },
-                { "UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" },
-                { "EnableOperatingSystemIntegration", true },
-                { "DefaultSearchEngine", "Google" },
-                { "SearchUrl", "https://www.google.com/search?q=" },
-                { "EnablePictureInPictureMode", true },
-                { "TrackingPreventionLevel", 2 },
-                { "EnableResourceSaving", true },
-                { "EnableAutoSave", true },
-
-                // UI Settings
-                { "BackgroundColor", "#000000" },
-                { "ToolbarColor", "#000000" },
-                { "TabViewColor", "#000000" },
-                { "NewTabPageTextColor", "#FFFFFF" },
-                { "BackgroundType", 0 },
-                { "UseLightMode", false },
-                { "BackdropStyle", "Mica" },
-                { "FontSize", 12 },
-                { "DisplayLanguage", "en-US" },
-
-                // UI Visibility Settings
-                { "ShowStatusBar", true },
-                { "ShowReadButton", true },
-                { "ShowAdBlockButton", true },
-                { "ShowDownloadsButton", true },
-                { "ShowTranslateButton", true },
-                { "ShowFavoritesButton", true },
-                { "ShowHistoryButton", true },
-                { "ShowQRCodeButton", true },
-                { "ShowFavoritesList", true },
-                { "ShowToolbarIcons", true },
-                { "ShowDarkModeIcon", true },
-                { "ShowDateTimeOnNewTab", true },
-                { "ShowExitDialog", false },
-                { "ShowConfirmCloseDialog", false },
-                { "ShowBackButton", true },
-                { "ShowForwardButton", true },
-                { "ShowRefreshButton", true },
-                { "ShowHomeButton", true },
-                { "ShowBrowserLogo", true },
-                { "ShowWelcomeMessage", true },
-
-                // Panel States
-                { "IsHistoryPanelToggled", false },
-                { "IsFavoritesPanelToggled", false },
-                { "IsSearchBoxToggled", false },
-                { "IsFavoritesPanelVisible", true },
-                { "IsHistoryPanelVisible", true },
-                { "IsSearchBarVisible", true },
-
-                // New Tab Settings
-                { "ShowNewTabPageCore", true },
-                { "ShowTrendingContent", true },
-                { "ShowDownloadsOnNewTab", false },
-                { "ShowFavoritesOnNewTab", false },
-                { "ShowHistoryOnNewTab", false },
-                { "ShowQuickLinksOnNewTab", false },
-                { "ShowNewTabSelectorBar", true },
-                { "OpenNewTabsInBackground", false },
-
-                // Security Settings
-                { "Enable2FA", true },
-                { "EncryptFavorites", false },
-                { "EncryptHistory", false },
-                { "EncryptSettings", false },
-                { "EncryptDatabase", false },
-                { "EncryptPermissions", false },
-
-                // Ad Blocker Settings
-                { "EnableAdBlocker", true },
-                { "AdBlockerType", 0 },
-
-                // Sync Settings
-                { "SyncBookmarks", true },
-                { "SyncHistory", false },
-
-                // Misc Settings
-                { "DefaultDownloadPath", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") },
-                { "ExceptionLoggingLevel", "Low" },
-                { "EnableAutoMode", false },
-                { "UserGender", "Unspecified" }
-            };
-        }
     }
 }

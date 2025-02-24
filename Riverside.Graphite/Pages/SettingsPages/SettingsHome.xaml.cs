@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Pages.Patch;
+using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
 using Riverside.Graphite.Services;
@@ -113,7 +114,10 @@ namespace Riverside.Graphite.Pages.SettingsPages
 		{
 			AppService.IsAppNewUser = string.IsNullOrEmpty(AuthService.NewCreatedUser?.Username);
 			Window window = new AddUserWindow();
-			await AppService.ConfigureSettingsWindow(window);
+			await Windowing.DialogWindow(window);
+			window.Activate();
+
+			//await AppService.ConfigureSettingsWindow(window);
 		}
 
 		public static async void OpenNewWindow(Uri uri)

@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
+using Riverside.Graphite.Controls;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages;
@@ -31,9 +32,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.UserDataAccounts.SystemAccess;
-using Graphite.UserSys;
-using Graphite;
-
 
 namespace Riverside.Graphite.ViewModels;
 public partial class HomeViewModel : ObservableRecipient
@@ -120,60 +118,72 @@ public partial class HomeViewModel : ObservableRecipient
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
 	public BackgroundManager ImageManager { get; internal set; }
-	private void LoadUISettings()
+	private async void LoadUISettings()
 	{
-		ImageManager = App.GetService<BackgroundManager>();	
 
-		NtpCoreVisibility = SettingsService.CoreSettings.NtpCoreVisibility ? Visibility.Visible : Visibility.Collapsed;
-		IsNtpTimeVisible = SettingsService.CoreSettings.NtpDateTime;
-		NtpTimeEnabled = SettingsService.CoreSettings.NtpDateTime;
-
-		IsFavoritesVisible = SettingsService.CoreSettings.IsFavoritesVisible ? Visibility.Visible : Visibility.Collapsed;
-		IsFavoriteCardEnabled = SettingsService.CoreSettings.IsFavoritesVisible;
-		IsHistoryVisible = SettingsService.CoreSettings.IsHistoryVisible ? Visibility.Visible : Visibility.Collapsed;
-		IsHistoryCardEnabled = SettingsService.CoreSettings.IsHistoryVisible;
-		IsSearchVisible = SettingsService.CoreSettings.IsSearchVisible ? Visibility.Visible : Visibility.Collapsed;
-		IsSelectBarEnabled = SettingsService.CoreSettings.NewTabSelectorBarVisible;
-		IsselectBarVisible = SettingsService.CoreSettings.NewTabSelectorBarVisible ? Visibility.Visible : Visibility.Collapsed;
-
-		IsSearchBoxEnabled = SettingsService.CoreSettings.IsSearchVisible;
-		IsTrendingVisible = SettingsService.CoreSettings.IsTrendingVisible ? Visibility.Visible : Visibility.Collapsed;
-		IslogoEnabled = SettingsService.CoreSettings.IsLogoVisible;
-		IsLogoVisible = SettingsService.CoreSettings.IsLogoVisible ? Visibility.Visible : Visibility.Collapsed;
-		SearchProvider = SearchProviders.ProvidersList.FirstOrDefault(t => t.ProviderName == SettingsService.CoreSettings.EngineFriendlyName);
-
-		IsFavoriteExpanded = SettingsService.CoreSettings.IsFavoritesToggled;
-		IsHistoryExpanded = SettingsService.CoreSettings.IsHistoryToggled;
-		if (SettingsService.CoreSettings.NtpTextColor != null)
+		SemaphoreSlim semaphore = new(1, 1);
+		await semaphore.WaitAsync();;	
+		try
 		{
-			BrushNtp = new SolidColorBrush((Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), SettingsService.CoreSettings.NtpTextColor));
+			ImageManager = App.GetService<BackgroundManager>();
+
+			NtpCoreVisibility = SettingsService.CoreSettings.NtpCoreVisibility ? Visibility.Visible : Visibility.Collapsed;
+			IsNtpTimeVisible = SettingsService.CoreSettings.NtpDateTime;
+			NtpTimeEnabled = SettingsService.CoreSettings.NtpDateTime;
+
+			IsFavoritesVisible = SettingsService.CoreSettings.IsFavoritesVisible ? Visibility.Visible : Visibility.Collapsed;
+			IsFavoriteCardEnabled = SettingsService.CoreSettings.IsFavoritesVisible;
+			IsHistoryVisible = SettingsService.CoreSettings.IsHistoryVisible ? Visibility.Visible : Visibility.Collapsed;
+			IsHistoryCardEnabled = SettingsService.CoreSettings.IsHistoryVisible;
+			IsSearchVisible = SettingsService.CoreSettings.IsSearchVisible ? Visibility.Visible : Visibility.Collapsed;
+			IsSelectBarEnabled = SettingsService.CoreSettings.NewTabSelectorBarVisible;
+			IsselectBarVisible = SettingsService.CoreSettings.NewTabSelectorBarVisible ? Visibility.Visible : Visibility.Collapsed;
+
+			IsSearchBoxEnabled = SettingsService.CoreSettings.IsSearchVisible;
+			IsTrendingVisible = SettingsService.CoreSettings.IsTrendingVisible ? Visibility.Visible : Visibility.Collapsed;
+			IslogoEnabled = SettingsService.CoreSettings.IsLogoVisible;
+			IsLogoVisible = SettingsService.CoreSettings.IsLogoVisible ? Visibility.Visible : Visibility.Collapsed;
+			SearchProvider = SearchProviders.ProvidersList.FirstOrDefault(t => t.ProviderName == SettingsService.CoreSettings.EngineFriendlyName);
+
+			IsFavoriteExpanded = SettingsService.CoreSettings.IsFavoritesToggled;
+			IsHistoryExpanded = SettingsService.CoreSettings.IsHistoryToggled;
+			if (SettingsService.CoreSettings.NtpTextColor != null)
+			{
+				BrushNtp = new SolidColorBrush((Windows.UI.Color)XamlBindingHelper.ConvertValue(typeof(Windows.UI.Color), SettingsService.CoreSettings.NtpTextColor));
+			}
+			OnPropertyChanged(nameof(SearchProvider));
+			OnPropertyChanged(nameof(NtpCoreVisibility));
+			OnPropertyChanged(nameof(IsNtpTimeVisible));
+			OnPropertyChanged(nameof(NtpTimeEnabled));
+
+			OnPropertyChanged(nameof(IsFavoritesVisible));
+			OnPropertyChanged(nameof(IsHistoryVisible));
+			OnPropertyChanged(nameof(IsSearchVisible));
+			OnPropertyChanged(nameof(IsTrendingVisible));
+			OnPropertyChanged(nameof(IstrendingEnabled));
+
+			OnPropertyChanged(nameof(IsSelectBarEnabled));
+			OnPropertyChanged(nameof(IsselectBarVisible));
+
+			OnPropertyChanged(nameof(IslogoEnabled));
+			OnPropertyChanged(nameof(IsLogoVisible));
+
+			OnPropertyChanged(nameof(IsSearchBoxEnabled));
+			OnPropertyChanged(nameof(IsFavoriteCardEnabled));
+			OnPropertyChanged(nameof(IsHistoryCardEnabled));
+
+			OnPropertyChanged(nameof(IsFavoriteExpanded));
+			OnPropertyChanged(nameof(IsHistoryExpanded));
 		}
-		OnPropertyChanged(nameof(SearchProvider));
-		OnPropertyChanged(nameof(NtpCoreVisibility));
-		OnPropertyChanged(nameof(IsNtpTimeVisible));
-		OnPropertyChanged(nameof(NtpTimeEnabled));
+		finally
+		{
+			semaphore.Release();
+		}
 
-		OnPropertyChanged(nameof(IsFavoritesVisible));
-		OnPropertyChanged(nameof(IsHistoryVisible));
-		OnPropertyChanged(nameof(IsSearchVisible));
-		OnPropertyChanged(nameof(IsTrendingVisible));
-		OnPropertyChanged(nameof(IstrendingEnabled));
-
-		OnPropertyChanged(nameof(IsSelectBarEnabled));
-		OnPropertyChanged(nameof(IsselectBarVisible));
-
-		OnPropertyChanged(nameof(IslogoEnabled));
-		OnPropertyChanged(nameof(IsLogoVisible));
-
-		OnPropertyChanged(nameof(IsSearchBoxEnabled));
-		OnPropertyChanged(nameof(IsFavoriteCardEnabled));
-		OnPropertyChanged(nameof(IsHistoryCardEnabled));
-
-		OnPropertyChanged(nameof(IsFavoriteExpanded));
-		OnPropertyChanged(nameof(IsHistoryExpanded));
 	}
 	private async void UpdateUIControls()
 	{
+
 		NtpCoreVisibility = SettingsService.CoreSettings.NtpDateTime ? Visibility.Visible : Visibility.Collapsed;
 		NtpTimeEnabled = SettingsService.CoreSettings.NtpDateTime;
 
@@ -267,7 +277,14 @@ public partial class HomeViewModel : ObservableRecipient
 		RightPaneService = rightPaneService;
 		NavigationService = navigationService;
 
-			// load ui settings from CoreSettings. 
+		Messenger.Register<Message_Settings_Actions>(this, (r, m) => { 
+			if (m.Status == EnumMessageStatus.Settings)
+			{
+				SettingsService.Initialize();
+				LoadUISettings();
+			}
+		});
+		// load ui settings from CoreSettings. 
 		LoadUISettings();
 	}
 	[RelayCommand]
@@ -394,15 +411,18 @@ public partial class HomeViewModel : ObservableRecipient
 	{
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
-			_ = (window.DispatcherQueue?.TryEnqueue(() =>
+			_ = (window.DispatcherQueue?.TryEnqueue(async () =>
 			{
 				if (sender is Button btn)
 				{
 					switch (btn.Tag.ToString())
 					{
 						case "Settings":
-							window.Tabs.TabItems.Add(window.TabManager.CreateNewTab(typeof(SettingsPage)));
-							window.SelectNewTab();
+							Window win = new();
+							SettingsPage settingsPage = new();
+							win.Content = settingsPage;
+							win.Activate();
+							await AppService.ConfigureSettingsWindow(win);
 							break;
 						case "Downloads":
 							window.UrlBox.Text = "firebrowser://downloads";
