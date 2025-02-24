@@ -7,12 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d"
-    >
+    xmlns:helpers="using:Graphite.Helpers"
+    mc:Ignorable="d">
 
     <ScrollViewer>
         <StackPanel Padding="20" Spacing="4">
-            <TextBlock Text="Tab Settings" 
+            <TextBlock Text="Tabs" 
                        Style="{ThemeResource TitleLargeTextBlockStyle}" 
                        Margin="0,0,0,12"/>
 
@@ -28,7 +28,7 @@
                             Auto Restore Tabs
                         </controls:SettingsCard.Header>
                         <ToggleSwitch x:Name="AutoRestoreToggle"
-                                    
+                                      Toggled="AutoRestoreToggle_Toggled"
                                       OnContent="Enabled"
                                       OffContent="Disabled"/>
                     </controls:SettingsCard>
@@ -36,12 +36,12 @@
                         <controls:SettingsCard.Header>
                             Maximum Number of Tabs
                         </controls:SettingsCard.Header>
-
                         <NumberBox x:Name="MaxTabsBox"
                                    Minimum="1"
-                                   Maximum="50"
+                                   Maximum="75"
                                    Value="10"
-                                   SpinButtonPlacementMode="Inline"/>
+                                   SpinButtonPlacementMode="Inline"
+                                   ValueChanged="MaxTabsBox_ValueChanged"/>
                     </controls:SettingsCard>
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
@@ -58,10 +58,11 @@
                             Tab Sleep Timer (minutes)
                         </controls:SettingsCard.Header>
                         <NumberBox x:Name="SleepTimerBox"
-                 Minimum="1"
-                 Maximum="120"
-                 Value="30"
-                 SpinButtonPlacementMode="Inline"/>
+                                   Minimum="1"
+                                   Maximum="120"
+                                   Value="30"
+                                   SpinButtonPlacementMode="Inline" 
+                                   ValueChanged="SleepTimerBox_ValueChanged"/>
                     </controls:SettingsCard>
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
@@ -75,21 +76,23 @@
                 <controls:SettingsExpander.Items>
                     <controls:SettingsCard>
                         <controls:SettingsCard.Header>
-                            Nummer Of Preloads Max 5
+                            Number Of Preloads Max 5
                         </controls:SettingsCard.Header>
                         <NumberBox x:Name="PreloadedTabsBox"
                                    Minimum="1"
                                    Maximum="5"
                                    Value="1"
-                                   SpinButtonPlacementMode="Inline"/>
+                                   SpinButtonPlacementMode="Inline" 
+                                   ValueChanged="PreloadedTabsBox_ValueChanged"/>
                     </controls:SettingsCard>
                     <controls:SettingsCard>
                         <controls:SettingsCard.Header>
-                            Enable PreLoading 
+                            Enable PreLoading
                         </controls:SettingsCard.Header>
                         <ToggleSwitch x:Name="PreloadTabsToggle"
                                       OnContent="Enabled"
-                                      OffContent="Disabled"/>
+                                      OffContent="Disabled" 
+                                      Toggled="PreloadTabsToggle_Toggled"/>
                     </controls:SettingsCard>
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
@@ -106,36 +109,87 @@
                             Enable Tab Grouping
                         </controls:SettingsCard.Header>
                         <ToggleSwitch x:Name="TabGroupingToggle"
-                   OnContent="Enabled"
-                   OffContent="Disabled"/>
+                                      OnContent="Enabled"
+                                      OffContent="Disabled" 
+                                      Toggled="TabGroupingToggle_Toggled"/>
                     </controls:SettingsCard>
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
 
-            <controls:SettingsExpander Header="Clear TabManager State And Manage"
-                                       Description="Reset all tab-related data And Manage"
-                                       IsExpanded="False">
-                <controls:SettingsExpander.HeaderIcon>
-                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE90F;" />
-                </controls:SettingsExpander.HeaderIcon>
-                <controls:SettingsExpander.Content>
-                    <Button Content="Clear TabManager State"
-x:Name="ClearTabHistoryButton"
-Style="{ThemeResource AccentButtonStyle}"
-HorizontalAlignment="Stretch"/>
-                </controls:SettingsExpander.Content>
-                <controls:SettingsExpander.Items>
-                    
-                    <controls:SettingsCard>
-                        <ListView>
-                            
-                        </ListView>
-                    </controls:SettingsCard>
-                </controls:SettingsExpander.Items>
 
-               
-            </controls:SettingsExpander>
+            <controls:SettingsCard Header="Open in new tab">
+                
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC6C;" />
+                </controls:SettingsCard.HeaderIcon>
+            
+                <ToggleSwitch
+            x:Name="OpenNew"
+            Tag="OpenTabHandel"
+             />
+            </controls:SettingsCard>
+
+            <controls:SettingsCard Header="Clear TabManager State And Manage"
+                       Description="Reset all tab-related data And Manage"
+                      >
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90F;" />
+                </controls:SettingsCard.HeaderIcon>
+                <controls:SettingsCard.Content>
+                    <StackPanel Spacing="8">
+                        <Button Content="Clear TabManager State"
+                    x:Name="ClearTabHistoryButton"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    HorizontalAlignment="Stretch"
+                    Click="ClearTabHistoryButton_Click"/>
+                    </StackPanel>
+                </controls:SettingsCard.Content>
+            </controls:SettingsCard>
+            <Grid>
+                <ListView x:Name="TabStateListView"
+MaxHeight="300"
+ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="helpers:TabState">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Bind Header}" 
+                 VerticalAlignment="Center"
+                 Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1"
+                 Text="{x:Bind Url}" 
+                 VerticalAlignment="Center"/>
+                                <Button Grid.Column="2"
+              Click="EditTabState_Click"
+              Margin="0,0,8,0">
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70F;"/>
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="Edit"/>
+                                    </ToolTipService.ToolTip>
+                                </Button>
+                                <Button Grid.Column="3"
+              Click="DeleteTabState_Click">
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;"/>
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="Delete"/>
+                                    </ToolTipService.ToolTip>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <TextBlock x:Name="NoItemsMessage"
+ Text="No states available"
+ HorizontalAlignment="Center"
+ VerticalAlignment="Center"
+ Visibility="Collapsed"/>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </Page>
-

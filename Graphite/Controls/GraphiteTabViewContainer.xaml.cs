@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Graphite.Helpers;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
+using Graphite.UserSys;
 
 namespace Graphite.Controls;
 
@@ -20,7 +21,8 @@ public sealed partial class GraphiteTabViewContainer : TabView
 		{
 			Style = (Style)Application.Current.Resources["DefaultTabViewStyle"]
 		};
-		TabManager = new TabManager(this);
+		string username = UserManager.GetCurrentUsername();
+		TabManager = new TabManager(this, username);
 		this.SelectionChanged += GraphiteTabViewContainer_SelectionChanged;
 	}
 

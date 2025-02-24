@@ -13,6 +13,7 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Security;
 using System.Text.Json;
+using System.Linq;
 
 namespace Graphite.UserSys
 {
@@ -1054,6 +1055,26 @@ namespace Graphite.UserSys
 			return null;
 		}
 
+		public static async Task<string> GetProfileImagePathAsync(string username)
+		{
+			try
+			{
+				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
+
+				var command = connection.CreateCommand();
+				command.CommandText = "SELECT ProfileImagePath FROM Users WHERE Username = $username";
+				command.Parameters.AddWithValue("$username", username);
+
+				var result = await command.ExecuteScalarAsync();
+				return result?.ToString();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to retrieve profile image path for user: {username}", ex);
+			}
+		}
+
 		private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
 		{
 			byte[] saltBytes = Convert.FromBase64String(storedSalt);
@@ -1061,6 +1082,35 @@ namespace Graphite.UserSys
 			{
 				byte[] hashBytes = pbkdf2.GetBytes(20);
 				return Convert.ToBase64String(hashBytes) == storedHash;
+			}
+		}
+
+		public static string GetCurrentUsername()
+		{
+			var sessionId = _activeSessions.FirstOrDefault(s => s.Value.ExpirationTime > DateTime.UtcNow).Key;
+			return sessionId != null ? _activeSessions[sessionId].Username : null;
+		}
+
+		public static async Task UpdateProfileImageAsync(string username, string newImagePath)
+		{
+			try
+			{
+				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
+
+				var command = connection.CreateCommand();
+				command.CommandText = @"
+        UPDATE Users 
+        SET ProfileImagePath = $profileImagePath
+        WHERE Username = $username";
+				command.Parameters.AddWithValue("$profileImagePath", newImagePath);
+				command.Parameters.AddWithValue("$username", username);
+
+				await command.ExecuteNonQueryAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to update profile image: {ex.Message}", ex);
 			}
 		}
 	}

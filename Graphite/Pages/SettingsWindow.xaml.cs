@@ -6,6 +6,7 @@ using Microsoft.UI;
 using Graphite.UserSys;
 using WinRT.Interop;
 using Graphite.Pages.SettingsPages;
+using Graphite.Pages.SettingPages;
 
 namespace Graphite.Pages
 {
@@ -22,7 +23,7 @@ namespace Graphite.Pages
 			SettingsNav.ItemInvoked += SettingsNav_ItemInvoked;
 
 			// Navigate to default page
-			ContentFrame.Navigate(typeof(TabSettings), USR);
+			ContentFrame.Navigate(typeof(GeneralSettings), USR);
 		}
 
 		public void TitleTop()
@@ -52,16 +53,17 @@ namespace Graphite.Pages
 			{
 				Type pageType = item.Tag.ToString() switch
 				{
-					"GeneralPage" => typeof(TabSettings),
-					"PrivacyPage" => typeof(TabSettings),
-					"AppearancePage" => typeof(TabSettings),
-					"DownloadsPage" => typeof(TabSettings),
-					"HomepagePage" => typeof(TabSettings),
-					"ShortcutsPage" => typeof(TabSettings),
-					"ExtensionsPage" => typeof(TabSettings),
+					"GeneralPage" => typeof(GeneralSettings),
+					"PrivacyPage" => typeof(PrivacySettings),
+					"WebViewPage" => typeof(WebViewSettings),
+					"AppearancePage" => typeof(AppearanceSettings),
+					"DownloadsPage" => typeof(DownloadsSettings),
+					"ShortcutsPage" => typeof(ShortcutSettings),
+					"ExtensionsPage" => typeof(ExtensionsSettings),
 					"TabsSettings" => typeof(TabSettings),
-					"AdvancedPage" => typeof(TabSettings),
-					"AboutPage" => typeof(TabSettings),
+					"Accessibility" => typeof(AccessibilitySettings),
+					"AdvancedPage" => typeof(AdvencedSettings),
+					"AboutPage" => typeof(AboutSettings),
 					_ => null
 				};
 

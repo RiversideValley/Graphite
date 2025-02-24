@@ -19,6 +19,7 @@ using Graphite.UserSys.Windows;
 using System.ComponentModel;
 using Graphite.Migration;
 using System.Linq;
+using Graphite.Helpers;
 
 namespace Graphite
 {
@@ -350,11 +351,6 @@ namespace Graphite
 		}
 	}
 
-	public class UserViewModel
-	{
-		public string Username { get; set; }
-		public string Email { get; set; }
-		public BitmapImage ProfileImageSource { get; set; }
-	}
+	
 }
 

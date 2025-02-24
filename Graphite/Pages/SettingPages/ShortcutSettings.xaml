@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.SettingPages.ShortcutSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages.SettingPages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    >
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="Keyboard Shortcuts" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,20"/>
+
+            <labs:SettingsExpander Header="Navigation Shortcuts" Description="Shortcuts for browser navigation">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72A;"/>
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="Back" Description="Current: Alt + Left">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72B;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="back">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+
+                    <labs:SettingsCard Header="Forward" Description="Current: Alt + Right">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72A;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="forward">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+
+                    <labs:SettingsCard Header="Refresh" Description="Current: F5">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="refresh">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+
+            <labs:SettingsExpander Header="Tab Management" Description="Shortcuts for managing browser tabs">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FD;"/>
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="New Tab" Description="Current: Ctrl + T">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="newtab">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+
+                    <labs:SettingsCard Header="Close Tab" Description="Current: Ctrl + W">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE711;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="closetab">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+
+            <labs:SettingsExpander Header="General Shortcuts" Description="General application shortcuts">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"/>
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="Settings" Description="Current: Ctrl + ,">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="settings">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+
+                    <labs:SettingsCard Header="Find in Page" Description="Current: Ctrl + F">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE721;"/>
+                        </labs:SettingsCard.HeaderIcon>
+                        <Button Click="EditShortcut_Click" Tag="find">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -8,20 +8,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="Welcome - To Graphite Browser">
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt"/>
+    </Window.SystemBackdrop>
     <Grid>
         <!-- Animated Background -->
         <Canvas x:Name="ParticleCanvas" />
 
         <!-- Main Content -->
         <Grid>
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#7B3AED" Offset="0.0" />
-                    <GradientStop Color="#FF6B00" Offset="0.33" />
-                    <GradientStop Color="#FF3D00" Offset="0.66" />
-                    <GradientStop Color="#4F46E5" Offset="1.0" />
-                </LinearGradientBrush>
-            </Grid.Background>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

@@ -13,6 +13,151 @@
 
     <Grid x:Name="RootGrid">
         <Grid.Resources>
+            <Flyout x:Name="ProfileCommander">
+                <Grid
+    Width="335"
+    Margin="0,0,16,0"
+    HorizontalAlignment="Left">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}">Your Profile</TextBlock>
+                        <PersonPicture
+            x:Name="RootImage"
+            Margin="0,10"
+             />
+                        <TextBlock
+            x:Name="UsernameDisplay"
+            Margin="0,0,0,5"
+            Style="{ThemeResource SubtitleTextBlockStyle}"
+            TextAlignment="Center">
+            FireBrowserUser
+                        </TextBlock>
+                        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+                            <Button
+                Margin="0,20"
+                HorizontalAlignment="Center"
+                Content="Edit Profile"
+                Style="{ThemeResource AccentButtonStyle}">
+                                <Button.Flyout>
+                                    <Flyout Placement="Bottom">
+                                        <StackPanel Margin="12">
+                                            <TextBlock
+                                Margin="0,0,0,16"
+                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                TextAlignment="Center">
+                                Edit Profile
+                                            </TextBlock>
+                                            <TextBox
+                                x:Name="username_box"
+                                Width="250"
+                                PlaceholderText="Please Fill In New Username Here?" />
+                                            <Button
+                                x:Name="ChangeUsername"
+                                Margin="0,16,0,0"
+                                HorizontalAlignment="Center"
+                                Content="Save Changes"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                            <Button
+                Width="48"
+                Height="32"
+                Margin="5,0,0,0"
+               
+                ToolTipService.ToolTip="Google Sign-In">
+                                <Image
+                    Width="14"
+                    Height="14"
+                    Source="ms-appx:///Assets//Icons/Products/Google.png" />
+                            </Button>
+                            <Button
+                Width="48"
+                Height="32"
+                Margin="5,0,0,0"
+               
+                ToolTipService.ToolTip="Microsoft Sign-In">
+                                <Image
+                    Width="16"
+                    Height="16"
+                    Source="ms-appx:///Assets/Icons/Products/Microsoft.png" />
+                            </Button>
+                            <Button
+                x:Name="toolbtnCopilot"
+                Width="48"
+                Height="32"
+                Margin="5,0,0,0"
+                VerticalAlignment="Center"
+                >
+                                <Image
+                    Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                    Height="{Binding Path=Height, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                    Source="ms-appx:///Assets/Icons/copilot.png" />
+                            </Button>
+                        </StackPanel>
+                        <Expander
+            HorizontalAlignment="Stretch"
+            Header="Profile Picture"
+            IsExpanded="False">
+                            <ComboBox
+                x:Name="pfpchanged"
+                Width="200"
+                Margin="5,0"
+                HorizontalAlignment="Left"
+                PlaceholderText="Pick a picture"
+                                SelectedItem=""
+                                SelectionChanged="pfpchanged_SelectionChanged"
+               >
+                                <ComboBox.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Foreground="White"/>
+                                    </DataTemplate>
+                                </ComboBox.HeaderTemplate>
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding ImagePath}" Width="32" Height="32" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Expander>
+                        <Expander
+            Margin="0,10"
+            HorizontalAlignment="Stretch"
+            Header="Password"
+            IsEnabled="False"
+            IsExpanded="False">
+                            <PasswordBox
+                Width="200"
+                Margin="40,0"
+                PlaceholderText="Enter a password" />
+                        </Expander>
+                    </StackPanel>
+                    <Button
+        x:Name="Info"
+        Padding="10"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Top"
+        CornerRadius="48"
+        ToolTipService.ToolTip="Tips">
+                        <FontIcon FontSize="12" Glyph="&#xE946;" />
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <StackPanel>
+                                    <TextBlock>Quick Search Youtube with youtube:</TextBlock>
+                                    <TextBlock>Quick Search Engine with search:</TextBlock>
+                                    <TextBlock>Enter 192 then it will autofill http://192</TextBlock>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+            </Flyout>
             <Flyout
                 x:Name="MoreFlyout"
                 x:FieldModifier="Public"
@@ -26,6 +171,7 @@
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
                             BorderBrush="Transparent"
+                            Click="MainUser_Click"
                             IsEnabled="True">
                             <StackPanel Orientation="Horizontal">
                                 <PersonPicture
@@ -53,42 +199,40 @@
                             Visibility="Collapsed" />
                         <StackPanel>
                             <Frame x:Name="UserFrame" Visibility="Collapsed">
-                                <ListView x:Name="UserListView" x:FieldModifier="Public">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <!--  For the profile picture  -->
-                                                    <ColumnDefinition Width="*" />
-                                                    <!--  For the username  -->
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <!--  For the "Switch" button  -->
-                                                </Grid.ColumnDefinitions>
+                                <Grid>
+                                    <ListView x:Name="UserListView" x:FieldModifier="Public">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:DataType="graphitehelper:UserViewModel">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
 
-                                                <PersonPicture
-                                                    Width="24"
-                                                    Height="24"
-                                                    Margin="6"
-                                                    ProfilePicture="{Binding PicturePath, Mode=TwoWay}" />
-                                                <!--  Username  -->
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Margin="5,0,5,0"
-                                                    VerticalAlignment="Center"
-                                                    Text="{Binding}" />
-                                                <!--  "Switch" button  -->
-                                                <Button
-                                                    x:Name="SwitchName"
-                                                    Grid.Column="2"
-                                                    Margin="10"
-                                                    Content="{graphitehelper:FluentIcon Glyph=&#xE748;}"
-                                                    IsEnabled="True"
-                                                    Style="{ThemeResource QuietButtonStyle}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
+                                                    <PersonPicture
+                            Width="24"
+                            Height="24"
+                            Margin="6"
+                            ProfilePicture="{x:Bind ProfileImageSource, Mode=OneWay}" />
+                                                    <TextBlock
+                            Grid.Column="1"
+                            Margin="5,0,5,0"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind Username}" />
+                                                    <Button
+                            x:Name="SwitchName"
+                            Grid.Column="2"
+                            Margin="10"
+                            Content="{graphitehelper:FluentIcon Glyph=&#xE748;}"
+                            IsEnabled="True"
+                            Style="{ThemeResource QuietButtonStyle}"
+                            Click="SwitchName_Click" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </Grid>
                             </Frame>
                         </StackPanel>
                         <Border
@@ -430,7 +574,8 @@
                     x:Name="Profile"
                     Width="32"
                     Height="32"
-                    Margin="5,25,0,0"/>
+                    Margin="5,25,0,0"
+                    PointerPressed="Profile_PointerPressed"/>
             </graphite:GraphiteTabViewContainer.TabStripHeader>
 
             <graphite:GraphiteTabViewContainer.TabStripFooter>
@@ -442,11 +587,14 @@
             </graphite:GraphiteTabViewContainer.TabStripFooter>
         </graphite:GraphiteTabViewContainer>
 
-        <Grid x:Name="ClassicToolbar" Height="37"
-            Margin="0,44,0,0"
+        <Grid x:Name="ClassicToolbar"
+            Height="35"
+            Margin="0,48,0,0"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-			<Grid.ColumnDefinitions>
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            BorderThickness="0">
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

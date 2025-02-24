@@ -15,12 +15,23 @@
   <ItemGroup>
     <Content Remove="Assets\Glyphs\SegoeFluentIcons.ttf" />
     <Content Remove="Assets\Glyphs\SegoeFluentIcons2.ttf" />
+    <Content Remove="Assets\Icons\Admin.png" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controls\QRCodeFlyout.xaml" />
     <None Remove="HomeWindow.xaml" />
     <None Remove="Pages\NewTab.xaml" />
     <None Remove="Pages\NewTabFleunt.xaml" />
+    <None Remove="Pages\SettingPages\AboutSettings.xaml" />
+    <None Remove="Pages\SettingPages\AccessibilitySettings.xaml" />
+    <None Remove="Pages\SettingPages\AdvencedSettings.xaml" />
+    <None Remove="Pages\SettingPages\AppearanceSettings.xaml" />
+    <None Remove="Pages\SettingPages\DownloadsSettings.xaml" />
+    <None Remove="Pages\SettingPages\ExtensionsSettings.xaml" />
+    <None Remove="Pages\SettingPages\GeneralSettings.xaml" />
+    <None Remove="Pages\SettingPages\PrivacySettings.xaml" />
+    <None Remove="Pages\SettingPages\ShortcutSettings.xaml" />
+    <None Remove="Pages\SettingPages\WebViewSettings.xaml" />
     <None Remove="Pages\SettingsWindow.xaml" />
     <None Remove="Pages\TabSettings.xaml" />
     <None Remove="Pages\WebContent.xaml" />
@@ -111,6 +122,59 @@
     <ProjectReference Include="..\Graphite.WindowCore\Graphite.WindowCore.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Assets\Icons\About.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Accessibility.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Appearance.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Apps.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\copilot.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Download.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Encryption.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Font.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Home.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Keyboard.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Privacy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Products\Google.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Products\Microsoft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Products\MicrosoftOffice.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Settings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\SiteSettings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Icons\Tabs.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="HomeWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -123,9 +187,42 @@
     <Page Update="Controls\QRCodeFlyout.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <None Update="Assets\Icons\Admin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Pages\SettingPages\WebViewSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\PrivacySettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\AppearanceSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\DownloadsSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\ShortcutSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\ExtensionsSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\AdvencedSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\AccessibilitySettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\AboutSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\SettingPages\GeneralSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\TabSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -147,8 +244,5 @@
     <Page Update="Styles\TabView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\SettingPages\" />
   </ItemGroup>
 </Project>

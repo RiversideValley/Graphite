@@ -1,0 +1,161 @@
+<Page
+    x:Class="Graphite.Pages.SettingPages.GeneralSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages.SettingPages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+   >
+
+    <ScrollViewer>
+        <StackPanel Margin="10,10,10,10" Spacing="2">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <PersonPicture x:Name="PersonImage" Width="64" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            x:Name="User"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                            Text="Graphite User" />
+                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Browser Account Local" />
+                    </StackPanel>
+                </StackPanel>
+                <Button
+                    x:Name="UserActionBtn"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+                    <Button.Content>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE712;" />
+                    </Button.Content>
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem
+                                x:Name="ImportBookmarksItem"
+                                Text="Import Bookmarks">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Name="LogOutItem"
+                                Text="Log Out">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <labs:SettingsCard Header="Check for internal component updates">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE777;" />
+                </labs:SettingsCard.HeaderIcon>
+                <Button
+                    x:Name="UpdateBtn"
+                    Content="Check For Updates" />
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Header="Reset App">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEBC4;" />
+                </labs:SettingsCard.HeaderIcon>
+                <Button
+                    x:Name="ResetBtn"
+                    Content="Reset Browser - Settings" />
+            </labs:SettingsCard>
+
+            <labs:SettingsExpander Header="Profiles">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC25;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <Grid>
+                        <ListView x:Name="UserListView">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="local:UserViewModel">
+                                    <Grid Padding="8" ColumnDefinitions="Auto,*,Auto,Auto">
+                                        <PersonPicture Width="32" Height="32" ProfilePicture="{x:Bind ProfileImage, Mode=OneWay}" />
+                                        <TextBlock
+                        x:Name="userName"
+                        Grid.Column="1"
+                        Margin="12,0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind Username}" />
+                                        <Button
+                        x:Name="Switch"
+                        Grid.Column="2"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Click="Switch_Click">
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;" />
+                                        </Button>
+                                        <Button
+                        x:Name="Delete"
+                        Grid.Column="3"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Click="Delete_Click">
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Grid x:Name="NoUsersMessageGrid" 
+      HorizontalAlignment="Center" 
+      VerticalAlignment="Center" 
+      Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <SymbolIcon Symbol="Help"
+                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                Height="48" 
+                Width="48" 
+                Margin="0,0,0,12"/>
+
+                            <TextBlock 
+        x:Name="NoUsersMessage"
+        Grid.Row="1"
+        Text="No Other Users"
+        Style="{ThemeResource SubtitleTextBlockStyle}"
+        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+        TextAlignment="Center"
+        TextWrapping="Wrap"
+        MaxWidth="300"/>
+                        </Grid>
+                    </Grid>
+                </labs:SettingsExpander.Items>
+                <Button
+                    x:Name="AddProfileBtn"
+                    Content="Add Profile"/>
+            </labs:SettingsExpander>
+
+            <labs:SettingsExpander Header="BackUp - Data Or Restore">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7B8;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="BackUp - Data">
+                        <Button
+                            x:Name="BackUpNowBtn"
+                            Content="BackUp Now" />
+                    </labs:SettingsCard>
+                    <labs:SettingsCard Header="Restore - Data">
+                        <Button
+                            x:Name="RestoreNowBtn"
+                            Content="Restore Now" />
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+
+            <TextBlock x:Name="Version" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

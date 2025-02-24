@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.SettingPages.AdvencedSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages.SettingPages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    >
+
+    <ScrollViewer>
+        <StackPanel Margin="20,10,20,0">
+            <TextBlock Text="Advanced" 
+  Style="{ThemeResource TitleLargeTextBlockStyle}" 
+  Margin="0,0,0,12"/>
+            <labs:SettingsExpander Header="Graphite AutoStart">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard ContentAlignment="Left">
+                        <CheckBox
+                            x:Name="LaunchOnStartupToggle"
+                            Click="LaunchOnStartupToggle_Click"
+                            Content="Launch Graphite on system startup" />
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+
+            <labs:SettingsCard Description="Change logger level" Header="Exception logging">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7BA;" />
+                </labs:SettingsCard.HeaderIcon>
+                <ComboBox x:Name="Logger" SelectionChanged="Logger_SelectionChanged">
+                    <x:String>Low</x:String>
+                    <x:String>High</x:String>
+                </ComboBox>
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Description="Change the Window Backdrop" Header="Window Backdrop">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                </labs:SettingsCard.HeaderIcon>
+                <ComboBox x:Name="BackDrop" >
+                    <x:String>Mica</x:String>
+                    <x:String>MicaAlt</x:String>
+                </ComboBox>
+            </labs:SettingsCard>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

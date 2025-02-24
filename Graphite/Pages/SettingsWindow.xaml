@@ -22,32 +22,89 @@
 
         <!-- Custom title bar -->
         <Grid x:Name="AppTitleBar" Height="32" Grid.Row="0">
-            <TextBlock x:Name="AppTitleTextBlock" Text="Browser Settings"
-                       VerticalAlignment="Center" Margin="48,0,0,0"
-                       Style="{StaticResource CaptionTextBlockStyle}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="Icon" Width="16" Height="16" Margin="15,0,-5,0" Source="/Assets/Icons/Settings.png" />
+
+            <TextBlock x:Name="AppTitleTextBlock" 
+               Text="Browser Settings"
+               Grid.Column="1"
+               VerticalAlignment="Center" 
+               Margin="12,0,0,0"
+               Style="{StaticResource CaptionTextBlockStyle}"/>
         </Grid>
 
         <muxc:NavigationView x:Name="SettingsNav"
                              Grid.Row="1"
                              IsSettingsVisible="False"
-                             IsBackButtonVisible="Visible"
+                             IsBackButtonVisible="Collapsed"
                              PaneDisplayMode="Left"
+                             CompositeMode="Inherit"
                              Background="Transparent"
                              IsTitleBarAutoPaddingEnabled="False">
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Icon="Globe" Content="General" Tag="GeneralPage"/>
-                <muxc:NavigationViewItem Icon="Permissions" Content="Privacy &amp; Security" Tag="PrivacyPage"/>
-                <muxc:NavigationViewItem Icon="FontColor" Content="Appearance" Tag="AppearancePage"/>
-                <muxc:NavigationViewItem Icon="Download" Content="Downloads" Tag="DownloadsPage"/>
-                <muxc:NavigationViewItem Icon="SetLockScreen" Content="Homepage" Tag="HomepagePage"/>
-                <muxc:NavigationViewItem Icon="Keyboard" Content="Shortcuts" Tag="ShortcutsPage"/>
-                <muxc:NavigationViewItem Icon="AllApps" Content="Extensions" Tag="ExtensionsPage"/>
-                <muxc:NavigationViewItem Icon="View" Content="Tabs" Tag="TabsSettings"/>
-                <muxc:NavigationViewItem Icon="Admin" Content="Advanced" Tag="AdvancedPage"/>
+                <muxc:NavigationViewItem Content="General" Tag="GeneralPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Home.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem  Content="Privacy &amp; Security" Tag="PrivacyPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Privacy.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem  Content="WebView" Tag="WebViewPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/SiteSettings.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem  Content="Appearance" Tag="AppearancePage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Appearance.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem  Content="Downloads" Tag="DownloadsPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Download.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+
+                <muxc:NavigationViewItem  Content="Shortcuts" Tag="ShortcutsPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Keyboard.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem  Content="Extensions" Tag="ExtensionsPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Apps.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem Content="Tabs" Tag="TabsSettings">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Tabs.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem Content="Accessibility" Tag="Accessibility">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Accessibility.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem Content="Advanced" Tag="AdvancedPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/Admin.png"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.FooterMenuItems>
-                <muxc:NavigationViewItem Icon="Help" Content="About" Tag="AboutPage"/>
+                <muxc:NavigationViewItem Content="About" Tag="AboutPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <ImageIcon Source="/Assets/Icons/About.png" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
             </muxc:NavigationView.FooterMenuItems>
 
             <Frame x:Name="ContentFrame" Padding="24" Background="{ThemeResource NavigationViewContentBackground}">

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.SettingPages.DownloadsSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages.SettingPages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+   >
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="Downloads" 
+                     Style="{ThemeResource TitleTextBlockStyle}" 
+                     Margin="0,0,0,20"/>
+
+            <labs:SettingsCard Header="Default Download Location"
+                             Description="Choose where downloaded files are saved by default">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                             Glyph="&#xE896;"/>
+                </labs:SettingsCard.HeaderIcon>
+                <StackPanel>
+                    <TextBox x:Name="DownloadPathTextBox"
+                            IsReadOnly="True"
+                            Margin="0,0,0,8"/>
+                    <Button Content="Change Location" 
+                            Click="ChangeDownloadLocation_Click"/>
+                </StackPanel>
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Header="Ask before downloading"
+                             Description="Show a confirmation dialog before starting downloads">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                             Glyph="&#xE8F4;"/>
+                </labs:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="AskBeforeDownloadToggle" 
+                             Toggled="AskBeforeDownload_Toggled"/>
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Header="Open downloads folder after downloading"
+                             Description="Automatically show the downloads folder when a download completes">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                             Glyph="&#xE838;"/>
+                </labs:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="OpenFolderAfterDownloadToggle" 
+                             Toggled="OpenFolderAfterDownload_Toggled"/>
+            </labs:SettingsCard>
+
+            <labs:SettingsCard Header="Clear Download History"
+                             Description="Remove all download history">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                             Glyph="&#xE74D;"/>
+                </labs:SettingsCard.HeaderIcon>
+                <Button Content="Clear History" 
+                        Click="ClearDownloadHistory_Click"/>
+            </labs:SettingsCard>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

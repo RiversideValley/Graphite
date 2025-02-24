@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Graphite.Pages.SettingPages.AboutSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Graphite.Pages.SettingPages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    >
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <StackPanel
+                Margin="0,10,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <Image
+                    Width="64"
+                    Height="64"
+                    Source="/Assets/SmallTile.scale-400.png" />
+                <TextBlock
+                    Text="Graphite"
+                    VerticalAlignment="Center"
+                    Margin="16,0,0,0"
+                    Style="{ThemeResource TitleTextBlockStyle}" />
+            </StackPanel>
+
+            <labs:SettingsCard
+                Header="GitHub"
+                Description="View our project on GitHub"
+                Click="AboutCardClicked"
+                IsClickEnabled="True"
+                Tag="GitHub">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71B;" />
+                </labs:SettingsCard.HeaderIcon>
+            </labs:SettingsCard>
+
+            <labs:SettingsCard
+            x:Uid="AboutDiscordLink"
+            Margin="0,0,0,0"
+            Click="AboutCardClicked"
+            Header="Discord"
+            IsClickEnabled="True"
+            Tag="Discord">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE71B;" />
+                </labs:SettingsCard.HeaderIcon>
+            </labs:SettingsCard>
+
+            <labs:SettingsExpander Header="Contributors" Description="People who have contributed to Graphite">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE77B;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="Jakub" />
+                    <labs:SettingsCard Header="jarno9981" />
+                    <labs:SettingsCard Header="JULIΛN (Pinguin2001)" />
+                    <labs:SettingsCard Header="Blindside - Labs" />
+                    <labs:SettingsCard Header="ErrorTek (jpbandroid)" />
+                    <labs:SettingsCard Header="FireCube" />
+                    <labs:SettingsCard Header="JohnDizzle" />
+                    <labs:SettingsCard Header="eligamii" />
+                    <labs:SettingsCard Header="Lamparter" />
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+
+            <labs:SettingsExpander Header="Libraries" Description="Libraries and tools used in Graphite">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7BC;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard Header="Windows Community Toolkit" />
+                    <labs:SettingsCard Header="SQLite" />
+                    <!-- Add more libraries as needed -->
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
+
+            <labs:SettingsCard
+                Header="License"
+                Description="View the Graphite license"
+                Click="AboutCardClicked"
+                IsClickEnabled="True"
+                Tag="License">
+                <labs:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C3;" />
+                </labs:SettingsCard.HeaderIcon>
+            </labs:SettingsCard>
+
+            <TextBlock 
+                x:Name="AppVer"
+                HorizontalAlignment="Center"
+                Margin="0,20,0,0"
+                Style="{ThemeResource CaptionTextBlockStyle}" />
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                Margin="0,10,0,0"
+                Orientation="Horizontal">
+                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE006;" />
+                <TextBlock Text="Special thanks to all our contributors and users!" Margin="8,0,0,0" Style="{ThemeResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
