@@ -192,9 +192,8 @@ namespace Riverside.Graphite
 						// Open the Welcome window
 						AuthUser = authenticatedUser;
 						if (AuthService.CurrentUser?.Username != authenticatedUser.Username  && AuthService.CurrentUser is not null)
-							await AppService.WindowsController(new CancellationToken());
+							await Windows.System.Launcher.LaunchUriAsync(new System.Uri($"firebrowseruser://{authenticatedUser.Username}"));
 
-						//await Windows.System.Launcher.LaunchUriAsync(new System.Uri($"firebrowseruser://{authenticatedUser.Username}"));
 
 						this.Close();
 						// Close the login window
