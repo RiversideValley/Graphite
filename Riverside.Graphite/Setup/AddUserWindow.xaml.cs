@@ -35,7 +35,7 @@ namespace Riverside.Graphite
 			{
 				await Task.Delay(420);
 
-				IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserCentral));
+				IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserDashBoard));
 				if (ucHwnd != IntPtr.Zero)
 				{
 					Windowing.Center(ucHwnd);

@@ -38,20 +38,20 @@
                 PaneDisplayMode="Top"
                 SelectionChanged="NavView_SelectionChanged">
                 <NavigationView.MenuItems>
-                    <NavigationViewItem Content="SetupUI" Tag="SetupUi" />
-                    <NavigationViewItem Content="SetupAlgemeen" Tag="SetupAlgemeen" />
-                    <NavigationViewItem Content="SetupPrivacy" Tag="SetupPrivacy" />
-                    <NavigationViewItem Content="SetupAccess" Tag="SetupAccess" />
-                    <NavigationViewItem Content="SetupWebView" Tag="SetupWebView" />
-                    <NavigationViewItem Content="SetupFinish" Tag="SetupFinish" />
+                    <NavigationViewItem Content="UI-Layout" Tag="SetupUi" />
+                    <NavigationViewItem Content="General Settings" Tag="SetupAlgemeen" />
+                    <NavigationViewItem Content="Privacy" Tag="SetupPrivacy" />
+                    <NavigationViewItem Content="Access" Tag="SetupAccess" />
+                    <NavigationViewItem Content="WebView" Tag="SetupWebView" />
+                    <NavigationViewItem Content="Finish" Tag="SetupFinish" />
                 </NavigationView.MenuItems>
             </NavigationView>
         </Grid>
 
         <Frame
             x:Name="ContentFrame"
-            Navigated="ContentFrame_Navigated"
             Grid.Row="1"
-            IsNavigationStackEnabled="False" />
+            IsNavigationStackEnabled="False"
+            Navigated="ContentFrame_Navigated" />
     </Grid>
 </Window>

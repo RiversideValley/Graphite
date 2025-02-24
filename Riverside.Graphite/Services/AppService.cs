@@ -364,6 +364,9 @@ public static class AppService
 	public static async void CreateNewUsersSettings()
 	{
 		ActiveWindow = new UserSettings();
+		
+		await Windowing.DialogWindow(ActiveWindow);	
+
 		ActiveWindow.Closed += async (s, e) =>
 		{
 			try
@@ -417,8 +420,7 @@ public static class AppService
 			appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .66), (int)(desktop?.Height * .66)));
 			appWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.ico");
 			appWindow.MoveInZOrderAtTop();
-			
-			appWindow.Title = "Settings for: " + AuthService.CurrentUser?.Username ?? AuthService.NewCreatedUser?.Username;
+			appWindow.Title = "SettingsPage";
 			AppWindowTitleBar titleBar = appWindow.TitleBar;
 			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;
