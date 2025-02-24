@@ -881,7 +881,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
                     Canvas.ZIndex="996"
-                    Command="{x:Bind ViewModel.OpenUserSysCommand}">
+                    Command="{x:Bind ViewModel.OpenUserSysCommand}"
+                    ToolTipService.ToolTip="User DashBoard">
                     <FontIcon
                         FontFamily="{StaticResource FluentIcons}"
                         FontSize="16"
