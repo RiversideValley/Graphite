@@ -7,8 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d"
-    >
+    mc:Ignorable="d">
 
     <ScrollViewer>
         <StackPanel Margin="20" Spacing="2">
@@ -37,6 +36,12 @@
                         </labs:SettingsCard.HeaderIcon>
                         <ToggleSwitch x:Name="BrowserScripts" Toggled="BrowserScripts_Toggled" />
                     </labs:SettingsCard>
+                    <labs:SettingsCard Description="Enable or disable operating system integration" Header="Operating System Integration">
+                        <labs:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F4;" />
+                        </labs:SettingsCard.HeaderIcon>
+                        <ToggleSwitch x:Name="EnableOSIntegration" Toggled="EnableOSIntegration_Toggled" />
+                    </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
 
@@ -54,6 +59,7 @@
                 <TextBox
                     x:Name="Agent"
                     Text="Graphite Web"
+                    MaxWidth="400"
                     TextChanged="Agent_TextChanged" />
             </labs:SettingsCard>
 
@@ -113,6 +119,49 @@
                 </labs:SettingsCard.HeaderIcon>
                 <ToggleSwitch x:Name="ResourceSaver" Toggled="ResourceSaver_Toggled" />
             </labs:SettingsCard>
+
+            <labs:SettingsExpander Description="Add environment variables for WebView2 (max 10)" Header="WebView2 Environment Variables">
+                <labs:SettingsExpander.HeaderIcon>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9F9;" />
+                </labs:SettingsExpander.HeaderIcon>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBox x:Name="EnvVarKey" PlaceholderText="Key" Width="150" />
+                    <TextBox x:Name="EnvVarValue" PlaceholderText="Value" Width="150" />
+                    <Button Content="Add" Click="AddEnvVar_Click" />
+                </StackPanel>
+                <labs:SettingsExpander.Items>
+                    <labs:SettingsCard>
+                        <ListView x:Name="EnvVarList" Height="200">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding Key}" Width="385" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,10,0" />
+                                            <TextBlock Text="{Binding Value}" Width="450" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,10,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                                            <Button Click="EditEnvVar_Click" Tag="{Binding}" 
+                                Width="40" Height="40" Padding="8"
+                                ToolTipService.ToolTip="Edit">
+                                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70F;"/>
+                                            </Button>
+                                            <Button Click="RemoveEnvVar_Click" Tag="{Binding}" 
+                                Width="40" Height="40" Padding="8"
+                                ToolTipService.ToolTip="Delete">
+                                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </labs:SettingsCard>
+                </labs:SettingsExpander.Items>
+            </labs:SettingsExpander>
         </StackPanel>
     </ScrollViewer>
 </Page>

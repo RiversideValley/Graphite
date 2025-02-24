@@ -75,6 +75,8 @@
                 <labs:SettingsExpander.Items>
                     <labs:SettingsCard Header="Windows Community Toolkit" />
                     <labs:SettingsCard Header="SQLite" />
+                    <labs:SettingsCard Header="Windows App Sdk 1.6" />
+
                     <!-- Add more libraries as needed -->
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>

@@ -7,8 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:labs="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d"
-   >
+    mc:Ignorable="d">
 
     <ScrollViewer>
         <StackPanel Margin="20,10,20,0">
@@ -20,7 +19,7 @@
                 <labs:SettingsCard.HeaderIcon>
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDA8;" />
                 </labs:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="AutoTog"  />
+                <ToggleSwitch x:Name="AutoTog" Toggled="Toggle_Toggled" />
             </labs:SettingsCard>
 
             <labs:SettingsCard Description="Change toolbar color" Header="Color Toolbar">
@@ -31,7 +30,7 @@
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF354;" />
                     <Button.Flyout>
                         <Flyout>
-                            <ColorPicker x:Name="ColorTBPicker" />
+                            <ColorPicker x:Name="ColorTBPicker" ColorChanged="ColorPicker_ColorChanged" />
                         </Flyout>
                     </Button.Flyout>
                 </Button>
@@ -45,7 +44,7 @@
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF354;" />
                     <Button.Flyout>
                         <Flyout>
-                            <ColorPicker x:Name="ColorTVPicker"  />
+                            <ColorPicker x:Name="ColorTVPicker" ColorChanged="ColorPicker_ColorChanged" />
                         </Flyout>
                     </Button.Flyout>
                 </Button>
@@ -59,7 +58,7 @@
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF354;" />
                     <Button.Flyout>
                         <Flyout>
-                            <ColorPicker x:Name="ColorNtpPicker"  />
+                            <ColorPicker x:Name="ColorNtpPicker" ColorChanged="ColorPicker_ColorChanged" />
                         </Flyout>
                     </Button.Flyout>
                 </Button>
@@ -78,13 +77,13 @@
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF354;" />
                             <Button.Flyout>
                                 <Flyout>
-                                    <ColorPicker x:Name="ColorBackGroundPicker"  />
+                                    <ColorPicker x:Name="ColorBackGroundPicker" ColorChanged="ColorPicker_ColorChanged" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
-                <ComboBox x:Name="Type" >
+                <ComboBox x:Name="Type" SelectionChanged="Type_SelectionChanged">
                     <x:String>Default</x:String>
                     <x:String>Featured</x:String>
                     <x:String>Custom</x:String>
@@ -100,37 +99,25 @@
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72B;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="BackSettings"
-                    Tag="BackButton"
-                    />
+                        <ToggleSwitch x:Name="BackSettings" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Forward">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72A;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="ForwardSettings"
-                    Tag="ForwardButton"
-                    />
+                        <ToggleSwitch x:Name="ForwardSettings" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Refresh">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="ReloadSettings"
-                    Tag="RefreshButton"
-                    />
+                        <ToggleSwitch x:Name="ReloadSettings" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Home">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="HomeSettings"
-                    Tag="HomeButton"
-                     />
+                        <ToggleSwitch x:Name="HomeSettings" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
@@ -144,55 +131,37 @@
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE896;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Dwbl"
-                    Tag="Downloads"
-                    />
+                        <ToggleSwitch x:Name="Dwbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Favorites List">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE728;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Frbl"
-                    Tag="FavoritesL"
-                    />
+                        <ToggleSwitch x:Name="Frbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Favorites">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE734;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="FlAd"
-                    Tag="Favorites"
-                    />
+                        <ToggleSwitch x:Name="FlAd" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="History">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Hsbl"
-                    Tag="Historybtn"
-                     />
+                        <ToggleSwitch x:Name="Hsbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="QR">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED14;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Qrbl"
-                    Tag="QrCode"
-                    />
+                        <ToggleSwitch x:Name="Qrbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Web Tools">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70F;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Tlbl"
-                    Tag="ToolIcon"
-                     />
+                        <ToggleSwitch x:Name="Tlbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
@@ -206,37 +175,25 @@
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Drbl"
-                    Tag="DarkIcon"
-                    />
+                        <ToggleSwitch x:Name="Drbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Translation">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE87E;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Trbl"
-                    Tag="Translate"
-                    />
+                        <ToggleSwitch x:Name="Trbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Reading Mode">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE736;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Read"
-                    Tag="ReadButton"
-                   />
+                        <ToggleSwitch x:Name="Read" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Header="Basic AdBlock">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA18;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="Adbl"
-                    Tag="AdblockBtn"
-                    />
+                        <ToggleSwitch x:Name="Adbl" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>
@@ -250,55 +207,37 @@
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF78B;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="SearchHome"
-                    Tag="IsSearchVisible"
-                     />
+                        <ToggleSwitch x:Name="SearchHome" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show History On Home Page" Header="History Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="HistoryHome"
-                    Tag="IsHistoryVisible"
-                    />
+                        <ToggleSwitch x:Name="HistoryHome" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Favorites On Home Page" Header="Favorites Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE734;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="FavoritesHome"
-                    Tag="IsFavoritesVisible"
-                     />
+                        <ToggleSwitch x:Name="FavoritesHome" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Trending On Home Page" Header="Trending Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B5;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="TrendingHome"
-                    Tag="IsTrendingVisible"
-                     />
+                        <ToggleSwitch x:Name="TrendingHome" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Logo On Home Page" Header="Logo Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDE5;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="LogoHome"
-                    Tag="IsLogoVisible"
-                     />
+                        <ToggleSwitch x:Name="LogoHome" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                     <labs:SettingsCard Description="Show Select Bar On Home Page" Header="Select Bar Visible">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEE64;" />
                         </labs:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                    x:Name="SelectbarHome"
-                    Tag="NewTabSelectorBarVisible"
-                     />
+                        <ToggleSwitch x:Name="SelectbarHome" Toggled="Toggle_Toggled" />
                     </labs:SettingsCard>
                 </labs:SettingsExpander.Items>
             </labs:SettingsExpander>

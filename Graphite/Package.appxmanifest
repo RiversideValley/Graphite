@@ -7,6 +7,7 @@
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
    xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   IgnorableNamespaces="uap rescap">
 
   <Identity
@@ -45,6 +46,14 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
+		<Extensions>
+			<uap5:Extension Category="windows.startupTask">
+				<uap5:StartupTask
+				  TaskId="GraphiteStartUp"
+				  Enabled="true"
+				  DisplayName="Graphite" />
+			</uap5:Extension>
+		</Extensions>
     </Application>
   </Applications>
 
@@ -53,5 +62,7 @@
     <Capability Name="internetClientServer"/>
     <Capability Name="internetClient"/>
     <Capability Name="privateNetworkClientServer"/>
+	  <uap3:Capability Name="backgroundMediaPlayback"/>
+	  <DeviceCapability Name="proximity"/>
   </Capabilities>
 </Package>

@@ -870,6 +870,131 @@ namespace Graphite.UserSys
 			}
 		}
 
+		public static string GetBrowserFolderPath()
+		{
+			string currentUsername = GetCurrentUsername();
+			if (string.IsNullOrEmpty(currentUsername))
+			{
+				throw new InvalidOperationException("No active user session found.");
+			}
+
+			string userFolderPath = Path.Combine(GraphiteDataPath, currentUsername);
+			string browserFolderPath = Path.Combine(userFolderPath, "Browser");
+
+			if (!Directory.Exists(browserFolderPath))
+			{
+				Directory.CreateDirectory(browserFolderPath);
+			}
+
+			return browserFolderPath;
+		}
+
+		public static async Task SaveWebViewEnvironmentVariablesAsync(Dictionary<string, string> newEnvVars)
+		{
+			string currentUsername = GetCurrentUsername();
+			if (string.IsNullOrEmpty(currentUsername))
+			{
+				throw new InvalidOperationException("No active user session found.");
+			}
+
+			// Retrieve existing environment variables
+			string existingJsonEnvVars = await SettingsManager.GetSettingAsync<string>(currentUsername, $"{currentUsername}_envweb", "[]");
+			var existingEnvVars = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(existingJsonEnvVars)
+				?? new List<Dictionary<string, string>>();
+
+			bool hasChanges = false;
+
+			// Merge new variables with existing ones
+			foreach (var newVar in newEnvVars)
+			{
+				var existingVar = existingEnvVars.FirstOrDefault(v => v["Key"] == newVar.Key);
+				if (existingVar != null)
+				{
+					// For WEBVIEW2_USER_DATA_FOLDER, don't update if it already exists
+					if (newVar.Key == "WEBVIEW2_USER_DATA_FOLDER")
+					{
+						continue;
+					}
+
+					// Update existing variable only if the value has changed
+					if (existingVar["Value"] != newVar.Value)
+					{
+						existingVar["Value"] = newVar.Value;
+						hasChanges = true;
+					}
+				}
+				else
+				{
+					// Add new variable
+					existingEnvVars.Add(new Dictionary<string, string> { { "Key", newVar.Key }, { "Value", newVar.Value } });
+					hasChanges = true;
+				}
+			}
+
+			// Serialize and save the updated list only if there are changes
+			if (hasChanges)
+			{
+				string updatedJsonEnvVars = JsonSerializer.Serialize(existingEnvVars);
+				await SettingsManager.UpdateSettingAsync(currentUsername, $"{currentUsername}_envweb", updatedJsonEnvVars);
+			}
+		}
+
+		public static async Task<Dictionary<string, string>> LoadWebViewEnvironmentVariablesAsync()
+		{
+			string currentUsername = GetCurrentUsername();
+			if (string.IsNullOrEmpty(currentUsername))
+			{
+				throw new InvalidOperationException("No active user session found.");
+			}
+
+			string jsonEnvVars = await SettingsManager.GetSettingAsync<string>(currentUsername, $"{currentUsername}_envweb", "{}");
+			return JsonSerializer.Deserialize<Dictionary<string, string>>(jsonEnvVars) ?? new Dictionary<string, string>();
+		}
+
+
+		public static async Task SetWebViewEnvironmentVariablesAsync()
+		{
+			try
+			{
+				string currentUsername = UserManager.GetCurrentUsername();
+				if (string.IsNullOrEmpty(currentUsername))
+				{
+					throw new InvalidOperationException("No active user session found.");
+				}
+
+				// Retrieve the stored environment variables
+				string jsonEnvVars = await SettingsManager.GetSettingAsync<string>(currentUsername, $"{currentUsername}_envweb", "{}");
+				var storedEnvVars = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(jsonEnvVars);
+
+				if (storedEnvVars != null)
+				{
+					foreach (var envVar in storedEnvVars)
+					{
+						if (envVar.TryGetValue("Key", out string key) && envVar.TryGetValue("Value", out string value))
+						{
+							// Special handling for WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS
+							if (key == "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS")
+							{
+								// Append the value to existing arguments, if any
+								string existingArgs = Environment.GetEnvironmentVariable(key) ?? "";
+								value = string.IsNullOrEmpty(existingArgs) ? value : $"{existingArgs} {value}";
+							}
+
+							// Set the environment variable
+							Environment.SetEnvironmentVariable(key, value);
+							Console.WriteLine($"Set environment variable: {key} = {value}");
+						}
+					}
+				}
+
+				Console.WriteLine("WebView environment variables set successfully.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error setting WebView environment variables: {ex.Message}");
+			}
+		}
+
 		private static async Task CreateGuestFolderStructureAsync(string guestUsername)
 		{
 			string guestFolderPath = Path.Combine(GraphiteDataPath, guestUsername);

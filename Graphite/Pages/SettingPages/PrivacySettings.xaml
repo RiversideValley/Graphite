@@ -30,7 +30,7 @@
                 <ToggleSwitch
                     x:Name="DisableJavaScriptToggle"
                     Tag="DisableJavaScriptToggle"
-                    Toggled="ToggleSetting_Toggled" />
+                    Toggled="DisableJavaScriptToggle_Toggled" />
             </labs:SettingsCard>
 
             <labs:SettingsCard Description="This will disable autofilling in browser ( Text fields will not be filled automatically )" Header="Disable General AutoFill">
@@ -40,7 +40,7 @@
                 <ToggleSwitch
                     x:Name="DisableGeneralAutoFillToggle"
                     Tag="DisableGeneralAutoFillToggle"
-                    Toggled="ToggleSetting_Toggled" />
+                    Toggled="DisableGeneralAutoFillToggle_Toggled" />
             </labs:SettingsCard>
 
             <labs:SettingsCard Description="This will disable Web Messages in the browser" Header="Disable Web Messages">
@@ -50,7 +50,7 @@
                 <ToggleSwitch
                     x:Name="DisableWebMessFillToggle"
                     Tag="DisableWebMessFillToggle"
-                    Toggled="ToggleSetting_Toggled" />
+                    Toggled="DisableWebMessFillToggle_Toggled" />
             </labs:SettingsCard>
 
             <labs:SettingsCard Description="This will disable password autosave" Header="Disable automatic password saving">
@@ -60,7 +60,7 @@
                 <ToggleSwitch
                     x:Name="PasswordWebMessFillToggle"
                     Tag="PasswordWebMessFillToggle"
-                    Toggled="ToggleSetting_Toggled" />
+                   Toggled="PasswordWebMessFillToggle_Toggled" />
             </labs:SettingsCard>
 
             <labs:SettingsCard IsEnabled="True">

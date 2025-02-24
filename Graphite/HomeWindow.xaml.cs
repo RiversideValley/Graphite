@@ -45,7 +45,14 @@ namespace Graphite
 			UserName.Text = _currentUser.Username;
 			UsernameDisplay.Text = _currentUser.Username;
 			_tabManager = new TabManager(Tabs, _currentUser.Username);
-			TitleTop();
+			var webViewEnvVars = new Dictionary<string, string>
+			{
+				{ "WEBVIEW2_USER_DATA_FOLDER", $"{UserManager.GetBrowserFolderPath()}" }
+			};
+
+			// Call the SaveWebViewEnvironmentVariablesAsync method
+		    UserManager.SaveWebViewEnvironmentVariablesAsync(webViewEnvVars); TitleTop();
+			UserManager.SetWebViewEnvironmentVariablesAsync();
 			InitializeAsync();
 			LoadUserImages();
 			this.Closed += HomeWindow_Closed;

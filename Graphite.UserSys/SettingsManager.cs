@@ -338,104 +338,122 @@ namespace Graphite.UserSys
 		public static Dictionary<string, object> GetDefaultSettings()
 		{
 			return new Dictionary<string, object>
+	{
+        // Browser Settings
+        { "PackageName", "Graphite_" },
+		{ "DisableJavaScript", false },
+		{ "DisablePasswordSaving", false },
+		{ "DisableWebMessaging", false },
+		{ "DisableGeneralAutoFill", false },
+		{ "EnableBrowserKeys", true },
+		{ "EnableBrowserScripts", true },
+		{ "UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" },
+		{ "EnableOperatingSystemIntegration", true },
+		{ "DefaultSearchEngine", "Google" },
+		{ "SearchUrl", "https://www.google.com/search?q=" },
+		{ "EnablePictureInPictureMode", true },
+		{ "TrackingPreventionLevel", 2 },
+		{ "EnableResourceSaving", true },
+		{ "EnableAutoSave", true },
+
+        // Tab Management Settings
+        { "TabGroupingEnabled", false },
+		{ "TabPreloading", true },
+		{ "TabSleepTime", "30" },
+		{ "GenaralTabAutoRestore", true },
+		{ "GenaralTabMaxNumber", "50" },
+
+        // UI Settings
+        { "BackgroundColor", "#00FFFFFF" },
+		{ "ToolbarColor", "#00FFFFFF" },
+		{ "TabViewColor", "#00FFFFFF" },
+		{ "NewTabPageTextColor", "#00FFFFFF" },
+		{ "BackgroundType", 0 },
+		{ "UseLightMode", false },
+		{ "BackdropStyle", "Mica" },
+		{ "FontSize", 12 },
+		{ "DisplayLanguage", "en-US" },
+		{ "LiteModeEnabled", false },
+
+        // UI Visibility Settings
+        { "ShowStatusBar", true },
+		{ "ShowReadButton", true },
+		{ "ShowAdBlockButton", true },
+		{ "ShowDownloadsButton", true },
+		{ "ShowTranslateButton", true },
+		{ "ShowFavoritesButton", true },
+		{ "ShowHistoryButton", true },
+		{ "ShowQRCodeButton", true },
+		{ "ShowFavoritesList", true },
+		{ "ShowToolbarIcons", true },
+		{ "ShowDarkModeIcon", true },
+		{ "ShowDateTimeOnNewTab", true },
+		{ "ShowExitDialog", false },
+		{ "ShowConfirmCloseDialog", false },
+		{ "ShowBackButton", true },
+		{ "ShowForwardButton", true },
+		{ "ShowRefreshButton", true },
+		{ "ShowHomeButton", true },
+		{ "ShowBrowserLogo", true },
+		{ "ShowWelcomeMessage", true },
+
+        // Panel States
+        { "IsHistoryPanelToggled", false },
+		{ "IsFavoritesPanelToggled", false },
+		{ "IsSearchBoxToggled", false },
+		{ "IsFavoritesPanelVisible", true },
+		{ "IsHistoryPanelVisible", true },
+		{ "IsSearchBarVisible", true },
+
+        // New Tab Settings
+        { "ShowNewTabPageCore", true },
+		{ "ShowTrendingContent", true },
+		{ "ShowDownloadsOnNewTab", false },
+		{ "ShowFavoritesOnNewTab", false },
+		{ "ShowHistoryOnNewTab", false },
+		{ "ShowQuickLinksOnNewTab", false },
+		{ "ShowNewTabSelectorBar", true },
+		{ "OpenNewTabsInBackground", false },
+
+        // Security Settings
+        { "Enable2FA", true },
+		{ "EncryptFavorites", false },
+		{ "EncryptHistory", false },
+		{ "EncryptSettings", false },
+		{ "EncryptDatabase", false },
+		{ "EncryptPermissions", false },
+
+        // Ad Blocker Settings
+        { "EnableAdBlocker", true },
+		{ "AdBlockerType", 0 },
+
+        // Sync Settings
+        { "SyncBookmarks", true },
+		{ "SyncHistory", false },
+
+		{ "DefaultDownloadPath", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") },
+		{ "AskBeforeDownloading", true },
+		{ "OpenDownloadsFolder", true },
+
+        // Misc Settings
+        { "ExceptionLoggingLevel", "Low" },
+		{ "EnableAutoMode", false },
+		{ "SpeechEngineLanguage", "English" },
+		{ "SpeechEngineGender", "Male" },
+
+        // WebView Environment Variables
+        {
+			$"{UserManager.GetCurrentUsername()}_envweb",
+			JsonSerializer.Serialize(new List<Dictionary<string, string>>
 			{
-                // Browser Settings
-                { "PackageName", "FireBrowserWinUi3_" },
-				{ "DisableJavaScript", false },
-				{ "DisablePasswordSaving", false },
-				{ "DisableWebMessaging", false },
-				{ "DisableGeneralAutoFill", false },
-				{ "EnableBrowserKeys", true },
-				{ "EnableBrowserScripts", true },
-				{ "UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" },
-				{ "EnableOperatingSystemIntegration", true },
-				{ "DefaultSearchEngine", "Google" },
-				{ "SearchUrl", "https://www.google.com/search?q=" },
-				{ "EnablePictureInPictureMode", true },
-				{ "TrackingPreventionLevel", 2 },
-				{ "EnableResourceSaving", true },
-				{ "EnableAutoSave", true },
-
-                // Tab Management Settings
-                { "TabGroupingEnabled", false },
-				{ "TabPreloading", true },
-				{ "TabSleepTime", "30" },  // Minutes before tab goes to sleep
-                { "GenaralTabAutoRestore", true },
-				{ "GenaralTabMaxNumber", "50" },
-
-                // UI Settings
-                { "BackgroundColor", "#00FFFFFF" },
-				{ "ToolbarColor", "#00FFFFFF" },
-				{ "TabViewColor", "#00FFFFFF" },
-				{ "NewTabPageTextColor", "#00FFFFFF" },
-				{ "BackgroundType", 0 },
-				{ "UseLightMode", false },
-				{ "BackdropStyle", "Mica" },
-				{ "FontSize", 12 },
-				{ "DisplayLanguage", "en-US" },
-
-                // UI Visibility Settings
-                { "ShowStatusBar", true },
-				{ "ShowReadButton", true },
-				{ "ShowAdBlockButton", true },
-				{ "ShowDownloadsButton", true },
-				{ "ShowTranslateButton", true },
-				{ "ShowFavoritesButton", true },
-				{ "ShowHistoryButton", true },
-				{ "ShowQRCodeButton", true },
-				{ "ShowFavoritesList", true },
-				{ "ShowToolbarIcons", true },
-				{ "ShowDarkModeIcon", true },
-				{ "ShowDateTimeOnNewTab", true },
-				{ "ShowExitDialog", false },
-				{ "ShowConfirmCloseDialog", false },
-				{ "ShowBackButton", true },
-				{ "ShowForwardButton", true },
-				{ "ShowRefreshButton", true },
-				{ "ShowHomeButton", true },
-				{ "ShowBrowserLogo", true },
-				{ "ShowWelcomeMessage", true },
-
-                // Panel States
-                { "IsHistoryPanelToggled", false },
-				{ "IsFavoritesPanelToggled", false },
-				{ "IsSearchBoxToggled", false },
-				{ "IsFavoritesPanelVisible", true },
-				{ "IsHistoryPanelVisible", true },
-				{ "IsSearchBarVisible", true },
-
-                // New Tab Settings
-                { "ShowNewTabPageCore", true },
-				{ "ShowTrendingContent", true },
-				{ "ShowDownloadsOnNewTab", false },
-				{ "ShowFavoritesOnNewTab", false },
-				{ "ShowHistoryOnNewTab", false },
-				{ "ShowQuickLinksOnNewTab", false },
-				{ "ShowNewTabSelectorBar", true },
-				{ "OpenNewTabsInBackground", false },
-
-                // Security Settings
-                { "Enable2FA", true },
-				{ "EncryptFavorites", false },
-				{ "EncryptHistory", false },
-				{ "EncryptSettings", false },
-				{ "EncryptDatabase", false },
-				{ "EncryptPermissions", false },
-
-                // Ad Blocker Settings
-                { "EnableAdBlocker", true },
-				{ "AdBlockerType", 0 },
-
-                // Sync Settings
-                { "SyncBookmarks", true },
-				{ "SyncHistory", false },
-
-                // Misc Settings
-                { "DefaultDownloadPath", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") },
-				{ "ExceptionLoggingLevel", "Low" },
-				{ "EnableAutoMode", false },
-				{ "UserGender", "Unspecified" }
-			};
+				new Dictionary<string, string> { { "Key", "WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS" }, { "Value", "1" } },
+				new Dictionary<string, string> { { "Key", "WEBVIEW2_CHANNEL_SEARCH_KIND" }, { "Value", "1" } },
+				new Dictionary<string, string> { { "Key", "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS" }, { "Value", "--window-size=0,0 --window-position=40000,40000" } },
+				new Dictionary<string, string> { { "Key", "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS" }, { "Value", "--enable-extensions" } },
+				new Dictionary<string, string> { { "Key", "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS" }, { "Value", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared" } }
+			})
+		}
+	};
 		}
 
 		// Event for notifying about setting changes
