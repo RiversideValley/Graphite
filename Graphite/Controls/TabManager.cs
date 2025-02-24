@@ -303,7 +303,7 @@ namespace Graphite.Controls
 			{
 				HorizontalAlignment = HorizontalAlignment.Stretch,
 				VerticalAlignment = VerticalAlignment.Stretch,
-				Margin = new Thickness(0, 37, 0, 0)
+				Margin = new Thickness(0) // Remove the top margin to align content properly
 			};
 
 			frame.Navigate(pageType, parameter);

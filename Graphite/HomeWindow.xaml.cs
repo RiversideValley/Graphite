@@ -2,18 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Graphite.Controls;
 using Graphite.Helpers;
 using Graphite.Pages;
+using Graphite.QrCode;
 using Graphite.UserSys;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Services.Maps;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using WinRT.Interop;
@@ -448,6 +451,129 @@ namespace Graphite
 			}
 		}
 
+		
+		public GraphiteTabViewContainer TabViewContainer => Tabs;
+
+		public async void ToolbarButtonClick(object sender, RoutedEventArgs e)
+		{
+			if (!(sender is Button button) || !(Tabs.SelectedItem is GraphiteTabViewItem selectedTab))
+			{
+				return;
+			}
+
+			Passer passer = new()
+			{
+				Tab = selectedTab,
+				TabView = Tabs,
+			};
+
+			switch (button.Tag)
+			{
+				case "Back":
+					if (GoBack(selectedTab))
+					{
+						UpdateTabHeader(selectedTab);
+					}
+					break;
+				case "Forward":
+					if (GoForward(selectedTab))
+					{
+						UpdateTabHeader(selectedTab);
+					}
+					break;
+				case "Refresh":
+					await RefreshTab(selectedTab);
+					break;
+				case "Home":
+					NavigateToNewTab(selectedTab, passer);
+					break;
+			}
+
+			// Update tab activity
+			_tabManager.UpdateTabActivity(selectedTab);
+		}
+
+		private bool CanNavigate(GraphiteTabViewItem tab, bool isBack)
+		{
+			if (tab.Content is Frame frame)
+			{
+				if (frame.Content is WebContent webContent)
+				{
+					return isBack ? webContent.WebViewElement?.CoreWebView2.CanGoBack ?? false
+								  : webContent.WebViewElement?.CoreWebView2.CanGoForward ?? false;
+				}
+				return isBack ? frame.CanGoBack : frame.CanGoForward;
+			}
+			return false;
+		}
+
+		private bool Go(GraphiteTabViewItem tab, bool isBack)
+		{
+			if (CanNavigate(tab, isBack) && tab.Content is Frame frame)
+			{
+				if (frame.Content is WebContent webContent)
+				{
+					if (isBack)
+					{
+						webContent.WebViewElement?.CoreWebView2.GoBack();
+					}
+					else
+					{
+						webContent.WebViewElement?.CoreWebView2.GoForward();
+					}
+				}
+				else
+				{
+					if (isBack)
+					{
+						frame.GoBack();
+					}
+					else
+					{
+						frame.GoForward();
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		private bool GoBack(GraphiteTabViewItem tab)
+		{
+			return Go(tab, true);
+		}
+
+		private bool GoForward(GraphiteTabViewItem tab)
+		{
+			return Go(tab, false);
+		}
+
+		private void UpdateTabHeader(GraphiteTabViewItem tab)
+		{
+			if (tab.Content is Frame frame)
+			{
+				tab.Header = frame.Content.GetType().Name;
+			}
+		}
+
+		private async Task RefreshTab(GraphiteTabViewItem tab)
+		{
+			if (tab.Content is Frame frame && frame.Content is WebContent webContent)
+			{
+				 webContent.WebViewElement.CoreWebView2.Reload();
+			}
+		}
+
+		private void NavigateToNewTab(GraphiteTabViewItem tab, Passer passer)
+		{
+			if (tab.Content is Frame frame)
+			{
+				frame.Navigate(typeof(NewTab), passer);
+				tab.Header = "New Tab";
+				tab.IconSource = new SymbolIconSource { Symbol = Symbol.Home };
+			}
+		}
+
 		public class UserImageItem
 		{
 			public string Name { get; set; }
@@ -459,5 +585,6 @@ namespace Graphite
 			public string Username { get; set; }
 			public BitmapImage ProfileImageSource { get; set; }
 		}
+
 	}
 }

@@ -600,22 +600,22 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Spacing="4">
-                <Button x:Name="BackBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72B;}" Tag="Back" Background="Transparent" BorderBrush="Transparent">
+                <Button x:Name="BackBtn" Click="ToolbarButtonClick" Content="{graphitehelper:FluentIcon Glyph=&#xE72B;}" Tag="Back" Background="Transparent" BorderBrush="Transparent">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="B" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
-                <Button x:Name="ForwBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72A;}" Tag="Forward" Background="Transparent" BorderBrush="Transparent">
+                <Button x:Name="ForwBtn" Click="ToolbarButtonClick" Content="{graphitehelper:FluentIcon Glyph=&#xE72A;}" Tag="Forward" Background="Transparent" BorderBrush="Transparent">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="F" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
-                <Button x:Name="ReloadBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE72C;}" Tag="Refresh" Background="Transparent" BorderBrush="Transparent">
+                <Button x:Name="ReloadBtn" Click="ToolbarButtonClick" Content="{graphitehelper:FluentIcon Glyph=&#xE72C;}" Tag="Refresh" Background="Transparent" BorderBrush="Transparent">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="R" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
-                <Button x:Name="HomeBtn" Content="{graphitehelper:FluentIcon Glyph=&#xE80F;}" Tag="Home" Background="Transparent" BorderBrush="Transparent">
+                <Button x:Name="HomeBtn" Click="ToolbarButtonClick" Content="{graphitehelper:FluentIcon Glyph=&#xE80F;}" Tag="Home" Background="Transparent" BorderBrush="Transparent">
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="H" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
