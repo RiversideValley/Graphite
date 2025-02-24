@@ -19,7 +19,7 @@ namespace Riverside.Graphite.Core
             "EncryptSettings"
         };
 
-        private static string GetUserSettingsDbPath(string username)
+        public static string GetUserSettingsDbPath(string username)
         {
             return Path.Combine(UserManager.GraphiteDataPath, username, "Settings", "Settings.db");
         }
@@ -334,7 +334,7 @@ namespace Riverside.Graphite.Core
 
         private static async Task InitializeDefaultSettingsAsync(SqliteConnection connection)
         {
-            var defaultSettings = GetDefaultSettings();
+			var defaultSettings = new Settings(true).Self.ToDictionary(); // GetDefaultSettings();
             using var transaction = await connection.BeginTransactionAsync();
 
             try

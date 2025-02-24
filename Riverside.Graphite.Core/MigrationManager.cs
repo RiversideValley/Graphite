@@ -286,7 +286,7 @@ namespace Riverside.Graphite.Core
 
 		private async Task UpdateDefaultSettingsAsync(SqliteConnection connection)
 		{
-			var defaultSettings = SettingsManager.GetDefaultSettings();
+			var defaultSettings = new Settings(true).Self.ToDictionary();// SettingsManager.GetDefaultSettings();
 
 			foreach (var setting in defaultSettings)
 			{

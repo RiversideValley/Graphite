@@ -343,7 +343,7 @@ public static class AppService
 		// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
 		_ = await dbServer.DatabaseCreationValidation(AuthService.CurrentUser);
 
-			_ = await dbServer.InsertUserSettings(); // new user add default from class
+			//_ = await dbServer.InsertUserSettings(); // new user add default from class
 
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
