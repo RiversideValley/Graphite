@@ -111,7 +111,7 @@ public class DatabaseServices : IDatabaseService
         }
     }
 
-    public async Task<Task> DatabaseCreationValidation()
+    public async Task<Task> DatabaseCreationValidation(User user)
     {
         if (!AuthService.IsUserAuthenticated)
         {
@@ -119,9 +119,9 @@ public class DatabaseServices : IDatabaseService
         }
 
         
-		await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(AuthService.CurrentUser.Username), "Can't update your Settings database, please reset your application in the settings page");
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(AuthService.CurrentUser.Username), "Can't update your History database, please reset your application in the settings page");
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(AuthService.CurrentUser.Username), "Can't update your Downloads database, please reset your application in the settings page");
+		await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(user.Username), "Can't update your Settings database, please reset your application in the settings page");
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(user.Username), "Can't update your History database, please reset your application in the settings page");
+        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(user.Username), "Can't update your Downloads database, please reset your application in the settings page");
 		// allow ui to flow. 
 		return Task.CompletedTask;
     }

@@ -43,7 +43,7 @@ public sealed partial class DownloadFlyout : Flyout
 				try
 				{
 					DatabaseServices db = new();
-					_ = await db.DatabaseCreationValidation();
+					_ = await db.DatabaseCreationValidation(AuthService.CurrentUser);
 					_ = await db.InsertUserSettings();
 				}
 				catch (Exception)

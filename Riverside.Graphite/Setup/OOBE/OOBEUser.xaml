@@ -3,8 +3,11 @@
     x:Class="Riverside.Graphite.Setup.OOBE.OOBEUser"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:Graphite.Setup.OOBE"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:Riverside.Graphite.Setup.OOBE"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="Transparent"
     mc:Ignorable="d">
@@ -211,5 +214,15 @@
                 </StackPanel>
             </Button>
         </StackPanel>
+        <InfoBar
+            MaxWidth="480"
+            Margin="25"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
+            <interactivity:Interaction.Behaviors>
+                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
+            </interactivity:Interaction.Behaviors>
+        </InfoBar>
     </Grid>
 </Page>

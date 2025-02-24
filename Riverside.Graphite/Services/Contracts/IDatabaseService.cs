@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Riverside.Graphite.Core;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Services.Contracts;
 public interface IDatabaseService
 {
-	Task<Task> DatabaseCreationValidation();
+	Task<Task> DatabaseCreationValidation(User user);
 }

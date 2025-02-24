@@ -3,6 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Helper="using:Riverside.Graphite.Core.Helper"
+    xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     Title="Add User">
 
     <Window.SystemBackdrop>
@@ -72,5 +76,15 @@
                 <Button Click="Button_Click_Close" Content="Cancel" />
             </StackPanel>
         </StackPanel>
+        <InfoBar
+            MaxWidth="480"
+            Margin="25"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
+            <interactivity:Interaction.Behaviors>
+                <behaviors:StackedNotificationsBehavior x:Name="NotificationQueue" x:FieldModifier="public" />
+            </interactivity:Interaction.Behaviors>
+        </InfoBar>
     </Grid>
 </Window>

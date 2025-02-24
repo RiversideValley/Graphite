@@ -2,17 +2,24 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
+using Riverside.Graphite.Core.Models;
 using Riverside.Graphite.Pages.SettingsPages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services;
+using Riverside.Graphite.Services.Contracts;
+using Riverside.Graphite.Services.Messages;
+using Riverside.Graphite.Setup.UserCreateFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.Storage;
+using Windows.UI.Notifications;
 using WinRT.Interop;
 
 namespace Riverside.Graphite
@@ -115,6 +122,13 @@ namespace Riverside.Graphite
 			{
 				return;
 			}
+			
+			if (AuthService.UserExists(enteredUsername) is User)
+			{
+				NotificationQueue.Show("User already exists\nPlease choose a different username", 2000, "User Creation");
+				Userbox.Text = string.Empty;
+				return;
+			}
 
 			User newUser = new()
 			{
@@ -124,16 +138,19 @@ namespace Riverside.Graphite
 				UserSettings = null
 			};
 
-			List<Riverside.Graphite.Core.User> users = new();
-			users.Add(newUser);
+			
+
+			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{iImage}", Name = newUser.Username }));
+			UserFolderManager.CreateUserFolders(newUser);
 
 			AuthService.AddUser(newUser);
 
 			UserFolderManager.CreateUserFolders(newUser);
 
-			string destinationFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, Userbox.Text.ToString());
+			//string destinationFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, Userbox.Text.ToString());
 
-			await CopyImageAsync(iImage.ToString(), destinationFolderPath);
+			await AddUserDefaults.CopyImageToUserDirectory(newUser, iImage); 
+			await UserCreateDatabase(newUser);	
 
 			AuthService.NewCreatedUser = newUser;
 
@@ -156,6 +173,13 @@ namespace Riverside.Graphite
 			}
 		}
 
+		async Task UserCreateDatabase(User user)
+		{
+			DatabaseServices databaseServices = new();
+			await databaseServices.DatabaseCreationValidation(user);
+			AddUserDefaults.CreateCollections(user);
+			AddUserDefaults.CreateNewSettings(user);
+		}
 		private void Button_Click_Close(object sender, RoutedEventArgs e)
 		{
 			IntPtr hUser = Windowing.FindWindow(null, nameof(UserCentral));

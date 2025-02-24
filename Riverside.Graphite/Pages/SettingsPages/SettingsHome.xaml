@@ -73,11 +73,11 @@
                 </labs:SettingsCard.HeaderIcon>
                 <StackPanel>
                     <Button
-    x:Name="PatchBtn"
-    Click="PatchBtn_Click"
-    Content="Check For Updates" />
+                        x:Name="PatchBtn"
+                        Click="PatchBtn_Click"
+                        Content="Check For Updates" />
                 </StackPanel>
-                
+
             </labs:SettingsCard>
 
             <labs:SettingsCard Header="Reset App">
@@ -109,48 +109,46 @@
                         <ListView x:Name="UserListView">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid
-                    Padding="8"
-                    ColumnDefinitions="Auto,*,Auto,Auto">
+                                    <Grid Padding="8" ColumnDefinitions="Auto,*,Auto,Auto">
                                         <PersonPicture Width="32" Height="32" />
                                         <TextBlock
-                        x:Name="userName"
-                        Grid.Column="1"
-                        Margin="12,0"
-                        VerticalAlignment="Center"
-                        Text="{Binding}" />
+                                            x:Name="userName"
+                                            Grid.Column="1"
+                                            Margin="12,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding}" />
                                         <Button
+                                            x:Name="Switch"
+                                            Grid.Column="2"
                                             Background="Transparent"
                                             BorderBrush="Transparent"
-                        x:Name="Switch"
-                        Grid.Column="2"
-                        Click="Switch_Click">
+                                            Click="Switch_Click">
                                             <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE748;" />
                                         </Button>
                                         <Button
-                        x:Name="Delete"
-                        Grid.Column="3"
-                        Click="Delete_Click"
+                                            x:Name="Delete"
+                                            Grid.Column="3"
                                             Background="Transparent"
-                                            BorderBrush="Transparent">
+                                            BorderBrush="Transparent"
+                                            Click="Delete_Click">
                                             <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE74D;" />
                                         </Button>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        <TextBlock 
-        x:Name="EmptyListMessage"
-        Text="No other users found." 
-        HorizontalAlignment="Center" 
-        VerticalAlignment="Center"
-        Visibility="Collapsed" />
+                        <TextBlock
+                            x:Name="EmptyListMessage"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="No other users found."
+                            Visibility="Collapsed" />
                     </Grid>
                 </labs:SettingsExpander.Items>
                 <Button
                     x:Name="Add"
                     Click="Add_Click"
-                    Content="Add"/>
+                    Content="Add" />
             </labs:SettingsExpander>
 
             <labs:SettingsExpander Header="BackUp - Data Or Restore">

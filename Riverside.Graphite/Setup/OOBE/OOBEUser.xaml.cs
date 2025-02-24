@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Core.Models;
@@ -75,11 +77,11 @@ public sealed partial class OOBEUser : Page
 
     private void DisableInputs()
     {
-        UserImageComboBox.IsEnabled = false;
-        UsernameTextBox.IsEnabled = false;
-        PasswordBox.IsEnabled = false;
-        EmailTextBox.IsEnabled = false;
-        CreateUserButton.IsEnabled = false;
+		UserImageComboBox.IsEnabled = !UserImageComboBox.IsEnabled;
+        UsernameTextBox.IsEnabled = !UsernameTextBox.IsEnabled; 
+        PasswordBox.IsEnabled = !PasswordBox.IsEnabled;
+        EmailTextBox.IsEnabled = !EmailTextBox.IsEnabled;
+        CreateUserButton.IsEnabled = !CreateUserButton.IsEnabled;
     }
 
     private void ValidateFields()
@@ -100,9 +102,18 @@ public sealed partial class OOBEUser : Page
             return; // Don't proceed if validation fails
         }
 
+
         try
         {
-            var selectedImage = UserImageComboBox.SelectedItem as UserImageItem;
+			if (AuthService.UserExists(UsernameTextBox.Text) is User)
+			{
+				NotificationQueue.Show("User already exists\nPlease choose a different username", 2000, "User Creation");
+				UsernameTextBox.Text = string.Empty;
+				DisableInputs();	
+				return;
+			}
+			
+			var selectedImage = UserImageComboBox.SelectedItem as UserImageItem;
             if (selectedImage == null)
             {
                 return;
@@ -115,23 +126,9 @@ public sealed partial class OOBEUser : Page
 					await UserImageHelper.GetImageStreamAsync(selectedImage)
 			);
 
-			// Convert the ms-appx URI to a StorageFile
-			//var imageUri = new Uri(selectedImage.ImagePath);
-   //         var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
+			
 
-   //         // Open the file as a stream
-   //         using (var imageStream = await imageFile.OpenReadAsync())
-   //         {
-   //             // Create a MemoryStream from the file stream
-   //             var memoryStream = new MemoryStream();
-   //             await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
-   //             memoryStream.Position = 0; // Reset the position to the beginning of the stream
-
-   //             // Call CreateUserAsync with the MemoryStream
-                
-   //         }
-
-            var authenticatedUser = await UserManager.AuthenticateAsync(UsernameTextBox.Text, PasswordBox.Password);
+			var authenticatedUser = await UserManager.AuthenticateAsync(UsernameTextBox.Text, PasswordBox.Password);
 
             if (authenticatedUser != null)
             {
