@@ -50,6 +50,7 @@
 
         <Frame
             x:Name="ContentFrame"
+            Navigated="ContentFrame_Navigated"
             Grid.Row="1"
             IsNavigationStackEnabled="False" />
     </Grid>

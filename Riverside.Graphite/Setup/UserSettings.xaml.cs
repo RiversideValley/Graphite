@@ -63,5 +63,21 @@ namespace Riverside.Graphite.Setup
 				NavView.SelectedItem = item;
 			}
 		}
+
+		private void ContentFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+		{
+
+			if (e.SourcePageType != null)
+			{
+				string pageName = e.SourcePageType.Name;
+				NavigationViewItem item = NavView.MenuItems.OfType<NavigationViewItem>()
+									.FirstOrDefault(navItem => GetPageType(navItem.Tag as string)?.Name == pageName);
+				if (item != null)
+				{
+					NavView.SelectedItem = item;
+				}
+			}
+
+		}
 	}
 }
