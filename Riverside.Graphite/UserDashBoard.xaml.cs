@@ -158,6 +158,7 @@ namespace Riverside.Graphite
 				UserManager.ActiveElement = (sender as UIElement);	
 				await AttemptLoginAsync(selectedUser.Username);
 			}
+	
 		}
 
 		private async Task AttemptLoginAsync(string username)

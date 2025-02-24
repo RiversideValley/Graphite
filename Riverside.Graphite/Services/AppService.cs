@@ -168,7 +168,6 @@ public static class AppService
                         if (!string.IsNullOrEmpty(username))
                         {
                             CheckNormal(username);
-                            await WindowsController(cancellationToken).ConfigureAwait(false);
                             return;
                         }
                     }},
@@ -178,7 +177,7 @@ public static class AppService
 
                 foreach (var action in urlActions)
                 {
-                    if (url.StartsWith(action.Key) || url.Contains(action.Key))
+                    if (url.StartsWith(action.Key))
                     {
                         action.Value.Invoke();
 						break;
