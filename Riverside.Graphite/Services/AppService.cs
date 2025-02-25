@@ -286,7 +286,7 @@ public static class AppService
 			WindowHandler.SetTitle("Graphite Browser");
 			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
 			App.Current.m_window.AppWindow.MoveInZOrderAtTop();
-			WindowHandler.AppWindow?.ShowOnceWithRequestedStartupState();
+			WindowHandler.MainWindow.Activate(); 
 		}
 
 		List<IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);

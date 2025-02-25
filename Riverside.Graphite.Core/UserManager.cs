@@ -788,33 +788,17 @@ namespace Riverside.Graphite.Core
 				try
 				{
 					// Check if the user exists and has a password
-					var checkCommand = connection.CreateCommand();
-					checkCommand.CommandText = @"
-					SELECT HasPassword, PasswordHash 
-					FROM Users 
-					WHERE Username = $username";
+					var user = await UserManager.GetUserAsync(username);
 
-					checkCommand.Parameters.AddWithValue("$username", username);
-
-					using var reader = await checkCommand.ExecuteReaderAsync();
-					if (!await reader.ReadAsync())
-					{
-						return false; // User not found
-					}
-
-					bool hasPassword = reader.GetBoolean(0);
-					string storedEncryptedPassword = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
+					if (user is null) return false;
 
 					// If the user has a password, verify it
-					if (hasPassword)
+					if (user.HasPassword)
 					{
-						if (string.IsNullOrEmpty(password))
-						{
-							if (!await ValidatePassWord(new UserV2 { Username = username }))
-								throw new UnauthorizedAccessException("Password required for user deletion.");
-						}
+						if (!await ValidatePassWord(new UserV2 { Username = username }))
+							throw new UnauthorizedAccessException("Password required for user deletion.");
 					}
-
+					
 					// Delete the user
 					var deleteCommand = connection.CreateCommand();
 					deleteCommand.CommandText = "DELETE FROM Users WHERE Username = $username";
@@ -827,20 +811,15 @@ namespace Riverside.Graphite.Core
 						await transaction.CommitAsync();
 
 						// Delete user folder
-						string userFolderPath = Path.Combine(GraphiteDataPath, username);
-						if (Directory.Exists(userFolderPath))
+						try
 						{
-							try
-							{
-								Directory.Delete(userFolderPath, true);
-							}
-							catch (IOException ex)
-							{
-								// Log the error but don't throw, as the user is already deleted from the database
-								Console.WriteLine($"Warning: Failed to delete user folder: {ex.Message}");
-							}
+							await UserDataManager.DeleteUser(username);
 						}
-
+						catch (Exception ex)
+						{
+							ExceptionLogger.LogException(new("Can't delete user data folder", ex));
+						}
+					
 						return true;
 					}
 

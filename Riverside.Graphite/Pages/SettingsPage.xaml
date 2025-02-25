@@ -1,12 +1,11 @@
 <Page
     x:Class="Riverside.Graphite.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid Margin="0,32,0,0">
-
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="0,32,0,0" Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparent}">
         <NavigationView
             x:Name="NavView"
+            Background="{ThemeResource AppBarBackgroundThemeBrush}"
             Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
             HorizontalAlignment="Stretch"
             IsBackButtonVisible="Collapsed"

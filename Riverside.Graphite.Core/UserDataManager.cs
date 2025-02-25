@@ -29,12 +29,15 @@ public static class UserDataManager
 			{
 				Directory.Delete(userFolderPath, true);
 			}
+
+			if (Directory.Exists(Path.Combine(UserManager.GraphiteDataPath, username))) {
+				Directory.Delete(Path.Combine(UserManager.GraphiteDataPath, username), true);
+			}
 			
 		}
 		catch(Exception ex)
 		{
 			Helper.Logging.ExceptionLogger.LogException(ex);
-			throw;
 		}
 	}
 }

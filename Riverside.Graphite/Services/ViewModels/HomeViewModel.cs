@@ -419,6 +419,7 @@ public partial class HomeViewModel : ObservableRecipient
 					{
 						case "Settings":
 							Window win = new();
+							AppService.FireWindows.Add(win);	
 							SettingsPage settingsPage = new();
 							win.Content = settingsPage;
 							win.Activate();

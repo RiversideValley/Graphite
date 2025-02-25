@@ -294,6 +294,18 @@ public class WindowHandler : IWindowHandler, IDisposable
 				int.TryParse(parts[2], out int width) &&
 				int.TryParse(parts[3], out int height))
 			{
+				if (x < 0 || y < 0)
+				{
+					x = 0;
+					y = 0;
+				}
+
+				if(width < 400 || height < 400)
+				{
+					width = 800;
+					height = 800;
+				}	
+
 				AppWindow.Move(new PointInt32(x, y));
 				AppWindow.Resize(new SizeInt32(width, height));
 			}

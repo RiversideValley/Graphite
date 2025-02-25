@@ -144,7 +144,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 					try
 					{
 						UserManager.ActiveElement = (sender as UIElement);
-						await UserDataManager.DeleteUser(clickedUserName);
+						await UserManager.DeleteUserAsync(clickedUserName);
 						UserListView.ItemsSource = null;
 						await LoadUsernames();
 						_ = (Messenger?.Send(new Message_Settings_Actions($"User: {clickedUserName} has been removed from FireBrowser", EnumMessageStatus.Removed)));
