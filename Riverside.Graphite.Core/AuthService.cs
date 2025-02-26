@@ -81,30 +81,14 @@ public class AuthService
 		return SwitchUser(username);
 	}
 
-	public static void AddUser(User newUser)
-	{
-		if (!Users.Any(u => u.Username.Equals(newUser.Username, StringComparison.OrdinalIgnoreCase)))
-		{
-			Users.Add(newUser);
-			NewCreatedUser = newUser;
-			//SaveUsers();
-		}
-	}
-
-
-	//[RequiresDynamicCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
-	//[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Serialize<TValue>(TValue, JsonSerializerOptions)")]
-	//private static void SaveUsers()
+	//public static void AddUser(User newUser)
 	//{
-	//	try
+	//	if (!Users.Any(u => u.Username.Equals(newUser.Username, StringComparison.OrdinalIgnoreCase)))
 	//	{
-	//		File.WriteAllText(UserDataFilePath, JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
+	//		Users.Add(newUser);
+	//		NewCreatedUser = newUser;
 	//	}
-	//	catch (Exception ex)
-	//	{
-	//		Console.WriteLine($"Error saving user data: {ex.Message}");
-	//	}
-	//}
+	//}  not used because Users is bassed on databaes of UserCore.   Add-> UserManager.CreateUserAsync
 
 #nullable enable
 	public static User? UserExists(string userName)

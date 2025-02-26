@@ -122,7 +122,7 @@ namespace Riverside.Graphite.Pages.SettingsPages
 
 		public static async void OpenNewWindow(Uri uri)
 		{
-			_ = await Windows.System.Launcher.LaunchUriAsync(uri);
+			await Windows.System.Launcher.LaunchUriAsync(uri);
 		}
 
 		private async void Switch_Click(object sender, RoutedEventArgs e)

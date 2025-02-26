@@ -143,8 +143,6 @@ namespace Riverside.Graphite
 			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{iImage}", Name = newUser.Username }));
 			UserFolderManager.CreateUserFolders(newUser);
 
-			AuthService.AddUser(newUser);
-
 			UserFolderManager.CreateUserFolders(newUser);
 
 			//string destinationFolderPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, Userbox.Text.ToString());

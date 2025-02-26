@@ -168,7 +168,7 @@ public static class AppService
                         if (!string.IsNullOrEmpty(username))
                         {
                             CheckNormal(username);
-                            return;
+                            //return;
                         }
                     }},
                     { "firebrowserincog", () => { AppArguments.FireBrowserIncog = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
@@ -197,15 +197,7 @@ public static class AppService
 
 						if (dash.AuthUser is not null)
 						{
-							AuthService.AddUser(new User
-							{
-								Email = dash.AuthUser.Email,
-								Id = Guid.Parse(dash.AuthUser.SessionId),
-								IsFirstLaunch = dash.AuthUser.IsFirstLaunch,
-								Password = dash.AuthUser.HasPassword.ToString(),
-								Username = dash.AuthUser.Username,
-								WindowsUserName = dash.AuthUser.WindowsUserName
-							});
+							dash.AuthUser.IsFirstLaunch = false;	
 							AuthService.Authenticate(dash.AuthUser.Username);	
 						}
 						else {
@@ -455,7 +447,6 @@ public static class AppService
 				UserSettings = null
 			};
 
-			AuthService.AddUser(newUser);
 			UserFolderManager.CreateUserFolders(newUser);
 		}
 

@@ -108,9 +108,19 @@
                     <Grid>
                         <ListView x:Name="UserListView">
                             <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="8" ColumnDefinitions="Auto,*,Auto,Auto">
-                                        <PersonPicture Width="32" Height="32" />
+                                <DataTemplate x:DataType="x:String">
+                                    <Grid Padding="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <PersonPicture
+                                            Grid.Column="0"
+                                            Width="32"
+                                            Height="32" />
                                         <TextBlock
                                             x:Name="userName"
                                             Grid.Column="1"

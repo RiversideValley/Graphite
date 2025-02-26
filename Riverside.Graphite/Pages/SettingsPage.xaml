@@ -5,9 +5,9 @@
     <Grid Margin="0,32,0,0" Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparent}">
         <NavigationView
             x:Name="NavView"
-            Background="{ThemeResource AppBarBackgroundThemeBrush}"
             Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
             HorizontalAlignment="Stretch"
+            Background="{ThemeResource AppBarBackgroundThemeBrush}"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="False"
             ItemInvoked="NavView_ItemInvoked"
@@ -67,6 +67,17 @@
                     IsTabStop="True"
                     NavigationFailed="ContentFrame_NavigationFailed" />
             </ScrollViewer>
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            x:Name="User"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                            Text="{x:Bind UserName, Mode=OneWay}" />
+                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Browser account" />
+                    </StackPanel>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
         </NavigationView>
     </Grid>
 </Page>

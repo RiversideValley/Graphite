@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using static Riverside.Graphite.MainWindow;
 namespace Riverside.Graphite.Pages;
 public sealed partial class SettingsPage : Page
 {
+	public string UserName => AuthService.CurrentUser?.Username ?? "Graphite"; 
 	public SettingsPage()
 	{
 		InitializeComponent();

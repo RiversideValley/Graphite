@@ -77,7 +77,6 @@ namespace Riverside.Graphite
 				UserSettings = null
 			};
 
-			AuthService.AddUser(newUser);
 			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}", Name = newUser.Username }));
 			_ = AuthService.Authenticate(newUser.Username);
 			UserFolderManager.CreateUserFolders(newUser);
