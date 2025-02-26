@@ -32,6 +32,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.UserDataAccounts.SystemAccess;
+using Windows.System;
 
 namespace Riverside.Graphite.ViewModels;
 public partial class HomeViewModel : ObservableRecipient
@@ -86,9 +87,9 @@ public partial class HomeViewModel : ObservableRecipient
 	private UIElement _TeachingPoint;
 	[ObservableProperty]
 	private TrendingItem _trendingItem;
-
 	[ObservableProperty]
 	private SearchProviders _SearchProvider;
+	
 	public SettingsService SettingsService { get; set; }
 
 	public INavigationService NavigationService { get; }
@@ -109,7 +110,7 @@ public partial class HomeViewModel : ObservableRecipient
 
 	[ObservableProperty]
 	private string _splitViewLabel;
-
+	
 	private DispatcherTimer timer { get; set; }
 
 	public CancellationToken CancellationTokenTimer { get; set; }
@@ -286,6 +287,32 @@ public partial class HomeViewModel : ObservableRecipient
 		});
 		// load ui settings from CoreSettings. 
 		LoadUISettings();
+
+		//DarkSkyUrl = new("ms-windows-store://pdp/?productId={9NP22DTFSCTS");
+
+	}
+
+	[RelayCommand]
+	private  async Task OpenSponserPage(Button btn) {
+		
+		if (btn is null && btn.Tag is not null)
+		{
+			return;
+		}
+
+		Uri outUrl = default ;
+
+		switch (btn.Tag as string)
+		{
+			case "DarkSky":
+				outUrl = new("ms-windows-store://pdp/?productId=9NP22DTFSCTS");	
+				break;
+			default:
+				break;
+		}
+		
+		await Launcher.LaunchUriAsync(outUrl);
+
 	}
 	[RelayCommand]
 	private void Promo()

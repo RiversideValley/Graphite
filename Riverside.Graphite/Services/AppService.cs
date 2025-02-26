@@ -6,6 +6,7 @@ using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using NuGet.Protocol;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
@@ -276,12 +277,15 @@ public static class AppService
 			////WindowHandler.CenterOnScreen();
 			WindowHandler.RestoreWindowPosition();
 			WindowHandler.SetTitle("Graphite Browser");
-			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
-			App.Current.m_window.AppWindow.MoveInZOrderAtTop();
-			WindowHandler.MainWindow.Activate(); 
+			WindowHandler.AppWindow.MoveInZOrderAtTop();
+			WindowHandler.AppWindow.Hide();
+			WindowHandler.MainWindow.Activate();
+			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowHandler.Hwnd != IntPtr.Zero ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
+			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowHandler.Hwnd != IntPtr.Zero ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
+			WindowHandler.AppWindow.Show(); 
 		}
 
-		List<IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);
+		List <IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);
 
 		if (windows.Count > 1)
 		{
