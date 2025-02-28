@@ -127,6 +127,12 @@ public sealed partial class SettingsPage : Page
 
 	private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
 	{
+		// Check if the clicked item is in the FooterMenuItems
+		if (sender.FooterMenuItems.Contains(args.InvokedItemContainer))
+		{
+			// Do nothing if it's a footer item
+			return;
+		}
 		if (args.IsSettingsInvoked == true)
 		{
 			NavView_Navigate("settings", args.RecommendedNavigationTransitionInfo);
@@ -140,16 +146,27 @@ public sealed partial class SettingsPage : Page
 
 	private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
 	{
+		if (args.SelectedItemContainer is NavigationViewItemHeader)
+		{
+			// Do nothing if it's a header item
+			return;
+		}
+
 		if (args.IsSettingsSelected == true)
 		{
 			NavView_Navigate("settings", args.RecommendedNavigationTransitionInfo);
 		}
 		else if (args.SelectedItemContainer != null)
 		{
-			string navItemTag = args.SelectedItemContainer.Tag.ToString();
-			NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
-			MainWindow window = (Application.Current as App)?.m_window as MainWindow;
-			window.UrlBox.Text = "firebrowser://" + navItemTag.ToString();
+			// Check if Tag is null before trying to use it
+			if (args.SelectedItemContainer.Tag != null)
+			{
+				string navItemTag = args.SelectedItemContainer.Tag.ToString();
+				NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
+				MainWindow window = (Application.Current as App)?.m_window as MainWindow;
+				window.UrlBox.Text = "firebrowser://" + navItemTag;
+			}
+			// If Tag is null, do nothing (this handles your footer item)
 		}
 	}
 }

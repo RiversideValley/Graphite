@@ -7,6 +7,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using NuGet.Protocol;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
@@ -422,7 +423,9 @@ public static class AppService
 			titleBar.ForegroundColor = Colors.WhiteSmoke;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
-			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped); 
+			winIncoming.SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt };
+
 		}
 
 		Windowing.Center(winIncoming);
