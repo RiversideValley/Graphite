@@ -100,7 +100,7 @@
                     IsEnabled="False" />
             </labs:SettingsCard>
 
-            <labs:SettingsExpander Header="Profiles">
+            <labs:SettingsExpander Header="Profiles" IsTapEnabled="False">
                 <labs:SettingsExpander.HeaderIcon>
                     <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEC25;" />
                 </labs:SettingsExpander.HeaderIcon>

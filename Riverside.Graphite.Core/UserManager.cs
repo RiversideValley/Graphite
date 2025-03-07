@@ -719,13 +719,13 @@ namespace Riverside.Graphite.Core
 			_activeSessions.TryRemove(sessionId, out _);
 		}
 
-		public static async Task<bool> MigrateUserToMandatoryPassword(UserV2 user) {
+		public static async Task<bool> MigrateUserToNewPassword(UserV2 user) {
 
-			var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
+			var passwordBox = new PasswordBox { PlaceholderText = "New password" };
 			var dialog = new ContentDialog
 			{
-				Title = $"Migrated Users are required to have a Password",
-				PrimaryButtonText = "Login",
+				Title = $"Password Manager",
+				PrimaryButtonText = "Create",
 				CloseButtonText = "Cancel",
 				DefaultButton = ContentDialogButton.Primary,
 				Content = passwordBox,

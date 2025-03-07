@@ -190,7 +190,7 @@ public static class AppService
 			else
 			{
 				ActiveWindow = new UserDashBoard();
-				await ConfigureSettingsWindow(ActiveWindow).ConfigureAwait(false);
+				await ConfigureSettingsWindow(ActiveWindow, "UserDashBoard").ConfigureAwait(false);
 				
 				ActiveWindow.Closed += async (s, e) =>
 				{
@@ -402,7 +402,7 @@ public static class AppService
 		await ConfigureSettingsWindow(ActiveWindow);
 	}
 
-	public static async Task ConfigureSettingsWindow(Window winIncoming)
+	public static async Task ConfigureSettingsWindow(Window winIncoming, string winTitle = null)
 	{
 		IntPtr hWnd = WindowNative.GetWindowHandle(winIncoming);
 		WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
@@ -416,7 +416,7 @@ public static class AppService
 			appWindow.MoveAndResize(new RectInt32(desktop.Value.Height / 2, desktop.Value.Width / 2, (int)(desktop?.Width * .66), (int)(desktop?.Height * .66)));
 			appWindow.SetIcon("ms-appx:///Assets/AppTiles/Logo.ico");
 			appWindow.MoveInZOrderAtTop();
-			appWindow.Title = "SettingsPage";
+			appWindow.Title = winTitle ?? "SettingsPage";
 			AppWindowTitleBar titleBar = appWindow.TitleBar;
 			Windows.UI.Color btnColor = Colors.Transparent;
 			titleBar.BackgroundColor = btnColor;

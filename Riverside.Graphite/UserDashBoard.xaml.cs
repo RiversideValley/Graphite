@@ -278,6 +278,7 @@ namespace Riverside.Graphite
 		{
 			if (sender is Button deleteButton && deleteButton.DataContext is UserViewModel vm)
 			{
+				await Task.Delay(100);	
 				UserManager.ActiveElement = (sender as UIElement);
 
 				if(await UserManager.DeleteUserAsync(vm.Username))
@@ -411,7 +412,47 @@ namespace Riverside.Graphite
 			Application.Current.Exit();	
 
 		}
-	}
+
+		private async void BtnNewPassInput_Click(object sender, RoutedEventArgs e)
+		{
+			if (sender is Button deleteButton && deleteButton.DataContext is UserViewModel vm)
+			{
+
+				await Task.Delay(100);
+reate
+				UserManager.ActiveElement = (sender as UIElement);
+				var user = await UserManager.GetUserAsync(vm.Username);
+
+				if (user != null)
+				{
+					if (user.HasPassword)
+					{
+						if (!await UserManager.ValidatePassWord(user))
+						{
+							await ShowErrorMessageAsync("Invalid password");	
+						}
+						else {
+
+							if (await UserManager.MigrateUserToNewPassword(user))
+								await ShowErrorMessageAsync("Password is saved !");
+						}
+
+
+					}
+					else {
+						
+						if (await UserManager.MigrateUserToNewPassword(user))
+							await ShowErrorMessageAsync("Password is saved !");
+					}
+
+
+					
+				}
+
+				await LoadUsersAsync();
+			}
+		}
+    }
 
 	public class UserViewModel
 	{
