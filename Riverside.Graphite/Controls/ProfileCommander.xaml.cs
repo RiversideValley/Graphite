@@ -91,6 +91,21 @@ public sealed partial class ProfileCommander : Flyout
 
 	private async void ChangeUsername_Click(object sender, RoutedEventArgs e)
 	{
+		
+		var user = await UserManager.GetUserAsync(AuthService.CurrentUser.Username);
+		if (user.HasPassword) {
+
+			UserManager.ActiveElement = this.RootImage; // Set the active element to the current control
+			if (!await UserManager.ValidatePassWord(user)) {
+
+				if (App.Current.m_window is MainWindow win) {
+					win.NotificationQueue.Show($"Incorrect Password for ${user.Username}", 2000, "Changing User Name");
+					return; 
+				}
+			} 
+		}
+
+
 		_ = Messenger.Send(new Message_Settings_Actions(EnumMessageStatus.Settings));
 
 		string olduser = UsernameDisplay.Text;
@@ -98,7 +113,7 @@ public sealed partial class ProfileCommander : Flyout
 		_ = AuthService.ChangeUsername(olduser, username_box.Text.ToString());
 		string tempFolderPath = Path.GetTempPath();
 		string jsonFilePath = Path.Combine(tempFolderPath, "changeusername.json");
-		await File.WriteAllTextAsync(jsonFilePath, JsonConvert.SerializeObject(AuthService.UserWhomIsChanging));
+await File.WriteAllTextAsync(jsonFilePath, JsonConvert.SerializeObject(AuthService.UserWhomIsChanging));
 
 		// must restart due to file locking allocation old user file are in use by webview, and dbservices.
 		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");

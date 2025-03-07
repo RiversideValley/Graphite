@@ -161,7 +161,7 @@
                     Content="Add" />
             </labs:SettingsExpander>
 
-            <labs:SettingsExpander Header="BackUp - Data Or Restore">
+            <labs:SettingsExpander Header="BackUp - Data Or Restore" IsTapEnabled="False">
                 <labs:SettingsExpander.HeaderIcon>
                     <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7B8;" />
                 </labs:SettingsExpander.HeaderIcon>

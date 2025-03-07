@@ -1,6 +1,8 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using NuGet.Common;
+using Riverside.Graphite.Core;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -26,8 +28,7 @@ public sealed partial class ChangeUsernameCore : Window
 		InitializeComponent();
 
 		title();
-		ChangeUsername();
-		SetupRestartTimer();
+		UpdateUser(); 
 	}
 
 
@@ -56,7 +57,7 @@ public sealed partial class ChangeUsernameCore : Window
 		}
 	}
 
-	public void ChangeUsername()
+	public async  Task ChangeUsername()
 	{
 		try
 		{
@@ -91,12 +92,30 @@ public sealed partial class ChangeUsernameCore : Window
 			{
 				Console.WriteLine($"Folder '{changeUsernameData.OldUsername}' not found.");
 			}
-			// authenicate jus in cause reequired by appservice ?? => delete if set somewhere else 
-			if (Directory.Exists(newUserFolderPath))
+
+			string usersFolderPathV2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore", "Users", UserManager.GraphiteDataPath);
+			string oldUserFolderPathV2 = Path.Combine(usersFolderPathV2, changeUsernameData.OldUsername);
+			string newUserFolderPathV2 = Path.Combine(usersFolderPathV2, changeUsernameData.NewUsername);
+
+			if (Directory.Exists(oldUserFolderPathV2))
 			{
-				_ = Authenticate(changeUsernameData.NewUsername);
+				Directory.Move(oldUserFolderPathV2, newUserFolderPathV2);
+				Console.WriteLine($"Folder renamed from '{changeUsernameData.OldUsername}' to '{changeUsernameData.NewUsername}'.");
 			}
+			else
+			{
+				Console.WriteLine($"Folder '{changeUsernameData.OldUsername}' not found.");
+			}
+			
 			// Remove the JSON file
+			var existingUser = await UserManager.GetUserAsync(changeUsernameData.OldUsername);
+
+			if (existingUser != null) {
+				existingUser.Username = changeUsernameData.NewUsername;
+				await UserManager.UpdateUserPropertiesAsync(existingUser, changeUsernameData.OldUsername);
+				await UserManager.UpdateSecurityInfoAsync(existingUser, changeUsernameData.OldUsername);
+			}
+
 			File.Delete(jsonFilePath);
 			Console.WriteLine("Change username JSON file deleted.");
 		}
@@ -104,37 +123,47 @@ public sealed partial class ChangeUsernameCore : Window
 		{
 			Console.WriteLine($"An error occurred: {ex.Message}");
 		}
+		
+		
 	}
 
-
-	private void SetupRestartTimer()
+	private async void UpdateUser()
 	{
-		restartTimer = new DispatcherTimer();
-		restartTimer.Tick += RestartTimer_Tick;
-		restartTimer.Interval = TimeSpan.FromSeconds(3); // Set the interval to 2 seconds too short
-		restartTimer.Start();
-	}
+		try
+		{
+			await ChangeUsername().ContinueWith(async t =>
+			{
+				await Task.Delay(500);
 
-	private async void RestartTimer_Tick(object sender, object e)
-	{
-		restartTimer.Stop();
+			});
 
-		string tempFolderPath = Path.GetTempPath();
-		string jsonFilePath = Path.Combine(tempFolderPath, "changeusername.json");
-		File.Delete(jsonFilePath);
-
-		await Task.Delay(500);
-
-		// no need to restart application run with. 
-		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+			string tempFolderPath = Path.GetTempPath();
+			string jsonFilePath = Path.Combine(tempFolderPath, "changeusername.json");
+			File.Delete(jsonFilePath);
+		}
+		catch (Exception)
+		{
+			;
+		}
+		finally {
+			_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+		}
+		
 	}
 
 	private void ManaulRestart_Click(object sender, RoutedEventArgs e)
 	{
 		// Read the JSON file
-		string tempFolderPath = Path.GetTempPath();
-		string jsonFilePath = Path.Combine(tempFolderPath, "changeusername.json");
-		File.Delete(jsonFilePath);
+		try
+		{
+			string tempFolderPath = Path.GetTempPath();
+			string jsonFilePath = Path.Combine(tempFolderPath, "changeusername.json");
+			File.Delete(jsonFilePath);
+		}
+		catch (Exception)
+		{
+			;
+		}
 		_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 	}
 }

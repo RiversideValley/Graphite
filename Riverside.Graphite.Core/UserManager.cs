@@ -97,12 +97,12 @@ namespace Riverside.Graphite.Core
                         Username TEXT PRIMARY KEY,
                         Hash TEXT,
                         Salt TEXT,
-                        FOREIGN KEY(Username) REFERENCES Users(Username) ON DELETE CASCADE
+                        FOREIGN KEY(Username) REFERENCES Users(Username) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                     CREATE TABLE IF NOT EXISTS blobs (
                         Username TEXT PRIMARY KEY,
                         Metadata TEXT,
-                        FOREIGN KEY(Username) REFERENCES Users(Username) ON DELETE CASCADE
+                        FOREIGN KEY(Username) REFERENCES Users(Username) ON DELETE CASCADE ON UPDATE CASCADE
                     );";
 				await command.ExecuteNonQueryAsync();
 			}
@@ -1233,6 +1233,109 @@ namespace Riverside.Graphite.Core
 
 			return null;
 		}
+
+		public static async Task<Task> UpdateSecurityInfoAsync(UserV2 user, string oldName = null)
+		{
+			string securityDbPath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+				"Graphite",
+				"Security",
+				"UserSecurity.db");
+
+			await using var connection = new SqliteConnection($"Data Source={securityDbPath}");
+			await connection.OpenAsync();
+
+			var command = connection.CreateCommand();
+			command.CommandText = "UPDATE UserSecurity SET Username = $name WHERE Username = $username"; 
+			command.Parameters.AddWithValue("$username", oldName ?? user.Username);
+			command.Parameters.AddWithValue("$name", user.Username);
+
+			await command.ExecuteNonQueryAsync();
+
+			return Task.CompletedTask; 
+		}
+
+		public static async Task<UserV2> UpdateUserPropertiesAsync(UserV2 user, string oldName = null)
+        {
+            try
+            {
+                await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+                await connection.OpenAsync();
+
+                using var transaction = await connection.BeginTransactionAsync();
+
+                try
+                {
+                    var command = connection.CreateCommand();
+                    var updateFields = new List<string>();
+                    var parameters = new Dictionary<string, object>();
+
+					if (!string.IsNullOrEmpty(oldName)) {
+
+						updateFields.Add("UserName = $name");
+						parameters.Add("$name", user.Username);
+					}
+
+                    if (!string.IsNullOrEmpty(user.Email))
+                    {
+                        updateFields.Add("Email = $email");
+                        parameters.Add("$email", user.Email);
+                    }
+
+                    if (!string.IsNullOrEmpty(user.WindowsUserName))
+                    {
+                        updateFields.Add("WindowsUserName = $windowsUserName");
+                        parameters.Add("$windowsUserName", user.WindowsUserName);
+                    }
+
+                    if (user.IsFirstLaunch)
+                    {
+                        updateFields.Add("IsFirstLaunch = $isFirstLaunch");
+                        parameters.Add("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
+                    }
+
+                    if (!string.IsNullOrEmpty(user.ProfileImagePath))
+                    {
+                        updateFields.Add("ProfileImagePath = $profileImagePath");
+                        parameters.Add("$profileImagePath", user.ProfileImagePath);
+                    }
+
+                    if (user.HasPassword)
+                    {
+                        updateFields.Add("HasPassword = $hasPassword");
+                        parameters.Add("$hasPassword", user.HasPassword ? 1 : 0);
+                    }
+
+                    if (updateFields.Count == 0)
+                    {
+                        throw new ArgumentException("No properties to update", nameof(user));
+                    }
+
+                    command.CommandText = $"UPDATE Users SET {string.Join(", ", updateFields)} WHERE Username = $username";
+                    command.Parameters.AddWithValue("$username", oldName ?? user.Username);
+
+                    foreach (var param in parameters)
+                    {
+                        command.Parameters.AddWithValue(param.Key, param.Value);
+                    }
+
+					var answer = await command.ExecuteNonQueryAsync();
+                    await transaction.CommitAsync();
+
+                    connection.Close();
+                    return user;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to update user properties: {ex.Message}", ex);
+            }
+        }
 
 		
 	}

@@ -34,7 +34,11 @@
             </TextBlock>
         </Grid>
 
-        <Grid Grid.Row="1" Padding="20">
+        <Grid
+            x:Name="GridMain"
+            Grid.Row="1"
+            Padding="20"
+            x:FieldModifier="public">
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

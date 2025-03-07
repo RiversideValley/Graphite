@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
@@ -110,6 +111,7 @@ public partial class App : Application
 		AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		InitializeComponent();
 		UnhandledException += Current_UnhandledException;
+		SetUpErrorHandlers();
 		SetWebView2EnvironmentVariables(); 
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
@@ -126,6 +128,30 @@ public partial class App : Application
 			throw;
 		}
 
+	}
+
+	private void SetUpErrorHandlers()
+	{
+		AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+		{
+			var exception = (System.Exception)args.ExceptionObject;
+			if(AppService.IsAppGoingToClose == false)
+				ExceptionLogger.LogException(exception);
+		};
+
+		TaskScheduler.UnobservedTaskException += (sender, args) =>
+		{
+			// Handle the exception
+			if (AppService.IsAppGoingToClose == false)
+				ExceptionLogger.LogException(args.Exception);
+			args.SetObserved();
+		};
+		
+		DispatcherQueue.GetForCurrentThread().ShutdownStarting += (sender, args) =>
+		{
+			// Handle the exception
+			
+		};
 	}
 
 	public void KillProcessByName(string processName)
