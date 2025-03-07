@@ -875,66 +875,7 @@
                         FontSize="16"
                         Glyph="&#xe7c1;" />
                 </Button>
-                <TextBlock
-                    x:Name="SponsorsText"
-                    Margin="10"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    x:FieldModifier="Public"
-                    FontFamily="Segoe Script"
-                    FontSize="24"
-                    FontWeight="Bold"
-                    Text="Sponsors" />
-                <Grid
-                    x:Name="DockingPanel"
-                    Width="150"
-                    Height="50"
-                    Padding="4"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
-                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTransparentBrush}"
-                    ColumnSpacing="4">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <Button
-                        Grid.Column="0"
-                        Command="{x:Bind ViewModel.OpenSponserPageCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
-                        Tag="DarkSky">
-                        <Image
-                            Width="32"
-                            Height="32"
-                            Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
-                            Source="/Assets/Experience/darksky.png"
-                            Stretch="UniformToFill" />
-                    </Button>
-
-                    <Image
-                        Grid.Column="1"
-                        Width="32"
-                        Height="32"
-                        Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
-                        Source="/Assets/Experience/ogInformation.png"
-                        Stretch="UniformToFill" />
-                    <Image
-                        Grid.Column="2"
-                        Width="32"
-                        Height="32"
-                        Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
-                        Source="/Assets/AppTiles/Logo.ico"
-                        Stretch="UniformToFill" />
-
-                    <Border
-                        Grid.ColumnSpan="3"
-                        BorderBrush="{ThemeResource AccentAAFillColorDefaultBrush}"
-                        BorderThickness="1,1,1,1"
-                        CornerRadius="10" />
-                </Grid>
+                
                 <Button
                     x:Name="UserBtn"
                     Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"

@@ -73,8 +73,7 @@ public sealed partial class NewTab : Page
 
 		InitializeComponent();
 
-		SponsersViewConfigure();
-
+	
 		DispatcherQueue.TryEnqueue(() => {
 
 			if (App.Current.m_window is MainWindow win)
@@ -87,71 +86,10 @@ public sealed partial class NewTab : Page
 				};
 			}
 		});
-		
-
-		
 
 	}
 
-	private void SponsersViewConfigure() {
-
-		bool IsPointerEntered = default(bool);
-		bool DockingPanelHovered = default(bool);
-
-		DockingPanel.Visibility = Visibility.Collapsed;
-
-		SponsorsText.PointerEntered += (s, e) =>
-		{
-			DockingPanel.Visibility = Visibility.Visible;
-			SponsorsText.Visibility = Visibility.Collapsed;
-		};	
-
-		SponsorsText.PointerExited += async(s, e) =>
-		{
-			await Task.Delay(500);
-			if (!IsPointerEntered && !DockingPanelHovered)
-			{
-				DockingPanel.Visibility = Visibility.Collapsed;
-			}
-		};	
-
-		DockingPanel.PointerEntered += (s, e) =>
-		{
-			DockingPanel.Visibility = Visibility.Visible;
-			DockingPanelHovered = true;
-		};
-		DockingPanel.PointerExited += async(s, e) =>
-		{
-			
-
-			await Task.Delay(500);
-			DockingPanelHovered = false;
-			
-			if (!IsPointerEntered && !DockingPanelHovered)
-			{
-				DockingPanel.Visibility = Visibility.Collapsed;
-				SponsorsText.Visibility = Visibility.Visible;
-			}
-		};
-
-		this.PointerEntered += (s, e) =>
-		{
-			var point = e.GetCurrentPoint(this).Position;
-
-			if (point.Y >= this.ActualHeight - DockingPanel.Height)
-			{
-				DockingPanel.Visibility = Visibility.Visible;
-			}
-		};
-
-		this.PointerExited += (s, e) =>
-		{
-			DockingPanel.Visibility = Visibility.Collapsed;
-		};
-
-
-
-	}
+	
 	public void Cleanup()
 	{
 

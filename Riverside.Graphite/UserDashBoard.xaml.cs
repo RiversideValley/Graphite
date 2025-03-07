@@ -253,11 +253,11 @@ namespace Riverside.Graphite
 			}
 		}
 
-		private async Task ShowErrorMessageAsync(string message)
+		private async Task ShowErrorMessageAsync(string message, string title = null)
 		{
 			var dialog = new ContentDialog
 			{
-				Title = "Error",
+				Title = title ?? "Error",
 				Content = message,
 				CloseButtonText = "OK",
 				XamlRoot = Content.XamlRoot
@@ -419,7 +419,7 @@ namespace Riverside.Graphite
 			{
 
 				await Task.Delay(100);
-reate
+
 				UserManager.ActiveElement = (sender as UIElement);
 				var user = await UserManager.GetUserAsync(vm.Username);
 
@@ -434,19 +434,16 @@ reate
 						else {
 
 							if (await UserManager.MigrateUserToNewPassword(user))
-								await ShowErrorMessageAsync("Password is saved !");
+								await ShowErrorMessageAsync("Password is saved !", "Success");
 						}
-
-
 					}
-					else {
-						
+					else
 						if (await UserManager.MigrateUserToNewPassword(user))
-							await ShowErrorMessageAsync("Password is saved !");
-					}
+							await ShowErrorMessageAsync("Password is saved !", "Success");
+						
 
 
-					
+
 				}
 
 				await LoadUsersAsync();

@@ -254,8 +254,8 @@
                                     Spacing="2">
                                     <PersonPicture
                                         x:Name="RootImage"
-                                        Width="100"
-                                        Height="100"
+                                        Width="75"
+                                        Height="75"
                                         HorizontalAlignment="Center"
                                         Background="{Binding CollectionName.BackgroundBrush}"
                                         Initials="{Binding CollectionName.Name, Converter={StaticResource SubstringConverter}, ConverterParameter='0,1'}" />
