@@ -133,7 +133,7 @@ public sealed partial class ChangeUsernameCore : Window
 		{
 			await ChangeUsername().ContinueWith(async t =>
 			{
-				await Task.Delay(500);
+				await Task.Delay(2000);
 
 			});
 
