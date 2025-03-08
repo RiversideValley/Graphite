@@ -186,9 +186,14 @@
             MaxWidth="800"
             Margin="32,16,32,32"
             Opacity="0.8"
-            Text="With Graphite profiles you can separate all your browsing data. Create profiles for friends and family, or split between work and personal use."
             TextAlignment="Center"
-            TextWrapping="Wrap" />
+            TextWrapping="Wrap">
+            <Run Text="With Graphite profiles you can separate all your browsing data." />
+            <LineBreak />
+            <Run Text="Create profiles for friends and family, or split between work and personal use." />
+            <LineBreak />
+            <Run Text="Users now have an option to secure their logins with an encrypted password." />
+        </TextBlock>
 
         <Grid
             x:Name="NoUsersGrid"
