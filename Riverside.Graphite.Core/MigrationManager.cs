@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
+using Riverside.Graphite.Core.Helper.Logging;
 
 namespace Riverside.Graphite.Core
 {
@@ -48,6 +49,10 @@ namespace Riverside.Graphite.Core
 				}
 
 				_logger.LogInformation("Full migration process completed");
+			}
+			catch(Exception ex) 
+			{
+				ExceptionLogger.LogException(ex);
 			}
 			finally
 			{
@@ -102,20 +107,29 @@ namespace Riverside.Graphite.Core
 
 		private async Task<string> MigrateProfileImageAsync(string oldUserPath, string newUserPath, string username)
 		{
-			string oldProfileImagePath = Path.Combine(oldUserPath, "profile_image.jpg");
-			string newProfileImagePath = Path.Combine(newUserPath, "profile_image.jpg");
+			try
+			{
+				string oldProfileImagePath = Path.Combine(oldUserPath, "profile_image.jpg");
+				string newProfileImagePath = Path.Combine(newUserPath, "profile_image.jpg");
 
-			if (File.Exists(oldProfileImagePath))
-			{
-				_logger.LogInformation($"Migrating profile image for user: {username}");
-				File.Copy(oldProfileImagePath, newProfileImagePath, true);
-				return newProfileImagePath;
+				if (File.Exists(oldProfileImagePath))
+				{
+					_logger.LogInformation($"Migrating profile image for user: {username}");
+					File.Copy(oldProfileImagePath, newProfileImagePath, true);
+					return newProfileImagePath;
+				}
+				else
+				{
+					_logger.LogWarning($"Profile image not found for user: {username}");
+					return null;
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				_logger.LogWarning($"Profile image not found for user: {username}");
+				ExceptionLogger.LogException(ex);
 				return null;
 			}
+			
 		}
 
 		private async Task MigrateUserToDatabaseAsync(UserMigrationData user)

@@ -75,7 +75,7 @@ namespace Riverside.Graphite.Core
         {
             var command = connection.CreateCommand();
             command.CommandText = @"
-                CREATE TABLE IF NOT EXISTS Settings (
+                CREATE TABLE IF NOT EXISTS Settings_V2 (
                     Key TEXT PRIMARY KEY,
                     Value TEXT NOT NULL,
                     Type TEXT NOT NULL,
@@ -83,8 +83,8 @@ namespace Riverside.Graphite.Core
                     Version INTEGER DEFAULT 1
                 );
                 
-                CREATE INDEX IF NOT EXISTS idx_settings_key ON Settings(Key);
-                CREATE INDEX IF NOT EXISTS idx_settings_modified ON Settings(LastModified);";
+                CREATE INDEX IF NOT EXISTS idx_settings_key ON Settings_V2(Key);
+                CREATE INDEX IF NOT EXISTS idx_settings_modified ON Settings_V2(LastModified);";
 
             await command.ExecuteNonQueryAsync();
         }
@@ -124,9 +124,9 @@ namespace Riverside.Graphite.Core
 				{
 					var command = connection.CreateCommand();
 					command.CommandText = @"
-                        INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
+                        INSERT OR REPLACE INTO Settings_V2 (Key, Value, Type, LastModified, Version)
                         VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
-                            COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
+                            COALESCE((SELECT Version + 1 FROM Settings_V2 WHERE Key = $key), 1))";
 
 					command.Parameters.AddWithValue("$key", key);
 					command.Parameters.AddWithValue("$value", value?.ToString() ?? "");
@@ -167,9 +167,9 @@ namespace Riverside.Graphite.Core
                     {
                         var command = connection.CreateCommand();
                         command.CommandText = @"
-                            INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
+                            INSERT OR REPLACE INTO Settings_V2 (Key, Value, Type, LastModified, Version)
                             VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
-                                COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
+                                COALESCE((SELECT Version + 1 FROM Settings_V2 WHERE Key = $key), 1))";
 
                         command.Parameters.AddWithValue("$key", setting.Key);
                         command.Parameters.AddWithValue("$value", setting.Value?.ToString() ?? "");
@@ -199,7 +199,7 @@ namespace Riverside.Graphite.Core
             return await ExecuteWithRetryAsync(username, async connection =>
             {
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Value, Type FROM Settings WHERE Key = $key";
+                command.CommandText = "SELECT Value, Type FROM Settings_V2 WHERE Key = $key";
                 command.Parameters.AddWithValue("$key", key);
 
                 using var reader = await command.ExecuteReaderAsync();
@@ -238,7 +238,7 @@ namespace Riverside.Graphite.Core
 				{
 					var settings = new Dictionary<string, object>();
 					var command = connection.CreateCommand();
-					command.CommandText = "SELECT Key, Value, Type FROM Settings";
+					command.CommandText = "SELECT Key, Value, Type FROM Settings_V2";
 
 					using var reader = await command.ExecuteReaderAsync();
 					while (await reader.ReadAsync())
@@ -293,9 +293,9 @@ namespace Riverside.Graphite.Core
 					{
 						var command = connection.CreateCommand();
 						command.CommandText = @"
-                            INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
+                            INSERT OR REPLACE INTO Settings_V2 (Key, Value, Type, LastModified, Version)
                             VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
-                                COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
+                                COALESCE((SELECT Version + 1 FROM Settings_V2 WHERE Key = $key), 1))";
 
 						command.Parameters.AddWithValue("$key", key);
 						command.Parameters.AddWithValue("$value", value.ToString());
@@ -343,7 +343,7 @@ namespace Riverside.Graphite.Core
                 {
                     var command = connection.CreateCommand();
                     command.CommandText = @"
-                        INSERT OR IGNORE INTO Settings (Key, Value, Type)
+                        INSERT OR IGNORE INTO Settings_V2 (Key, Value, Type)
                         VALUES ($key, $value, $type)";
 
                     command.Parameters.AddWithValue("$key", setting.Key);

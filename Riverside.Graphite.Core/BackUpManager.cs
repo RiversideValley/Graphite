@@ -144,7 +144,7 @@ namespace Riverside.Graphite.Core
 						entry.ExtractToFile(destinationPath, true);
 					}
 				}
-
+				
 				Console.WriteLine($"Backup restored successfully to: {restorePath}");
 				return Task.FromResult(true);
 			}
