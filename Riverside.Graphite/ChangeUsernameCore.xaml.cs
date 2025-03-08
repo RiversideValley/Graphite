@@ -131,10 +131,17 @@ public sealed partial class ChangeUsernameCore : Window
 	{
 		try
 		{
-			await ChangeUsername().ContinueWith(async t =>
+			await Task.Delay(2000).ContinueWith(async t =>
 			{
-				await Task.Delay(2000);
+				try
+				{
+					await ChangeUsername();
+				}
+				catch (Exception)
+				{
 
+					throw;
+				}
 			});
 
 			string tempFolderPath = Path.GetTempPath();

@@ -7,6 +7,7 @@ using Windows.Graphics;
 using WinRT.Interop;
 using System.Threading.Tasks;
 using Riverside.Graphite.Core;
+using Riverside.Graphite.Core.Helper.Logging;
 
 namespace Riverside.Graphite.Controls
 {

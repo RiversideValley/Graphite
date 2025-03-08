@@ -19,7 +19,7 @@ namespace Riverside.Graphite.Core.Helper
 
 				var memoryStream = new MemoryStream();
 				var imageUri = new Uri(selectedImage.ImagePath);
-			var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
+				var imageFile = await StorageFile.GetFileFromApplicationUriAsync(imageUri);
 
 			// Open the file as a stream
 			using (var imageStream = await imageFile.OpenReadAsync())

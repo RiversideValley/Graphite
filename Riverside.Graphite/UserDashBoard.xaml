@@ -205,7 +205,7 @@
                     HorizontalAlignment="Center"
                     FontSize="24"
                     FontWeight="SemiBold"
-                    Text="New To Graphite" />
+                    Text="Existing Users Need To Migrate" />
                 <Button
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

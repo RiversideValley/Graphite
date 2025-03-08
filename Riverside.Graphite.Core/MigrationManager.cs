@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Riverside.Graphite.Core.Helper.Logging;
+using Riverside.Graphite.Core.Models;
+using Windows.Storage;
 
 namespace Riverside.Graphite.Core
 {
@@ -57,7 +59,6 @@ namespace Riverside.Graphite.Core
 			finally
 			{
 				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
-				_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 			}
 		}
 
@@ -91,37 +92,62 @@ namespace Riverside.Graphite.Core
 			string oldUserPath = Path.Combine(_oldBasePath, "Users", user.Username);
 			string newUserPath = Path.Combine(_newBasePath, user.Username);
 
-			Directory.CreateDirectory(newUserPath);
-
-			string newProfileImagePath = await MigrateProfileImageAsync(oldUserPath, newUserPath, user.Username);
-			user.ProfileImagePath = newProfileImagePath;
-
-			await MigrateUserToDatabaseAsync(user);
-			await MigrateUserFilesAsync(oldUserPath, newUserPath);
-
-			// Apply fixes to the migrated settings.db
-			await ApplySettingsDbFixesAsync(user.Username);
-
-			_logger.LogInformation($"Migration completed for user: {user.Username}");
-		}
-
-		private async Task<string> MigrateProfileImageAsync(string oldUserPath, string newUserPath, string username)
-		{
 			try
 			{
-				string oldProfileImagePath = Path.Combine(oldUserPath, "profile_image.jpg");
-				string newProfileImagePath = Path.Combine(newUserPath, "profile_image.jpg");
+				Directory.CreateDirectory(newUserPath);
 
-				if (File.Exists(oldProfileImagePath))
+				string newProfileImagePath = await MigrateProfileImageAsync(oldUserPath, newUserPath, user.Username);
+				user.ProfileImagePath = newProfileImagePath;
+
+				await MigrateUserToDatabaseAsync(user);
+					// Apply fixes to the migrated settings.db
+				await ApplySettingsDbFixesAsync(user.Username);
+
+				_logger.LogInformation($"Migration completed for user: {user.Username}");
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				throw;
+			}
+			
+		}
+
+		private  async Task<string> MigrateProfileImageAsync(string oldUserPath, string newUserPath, string username)
+		{
+			string oldProfileImagePath = Path.Combine(oldUserPath, "profile_image.jpg");
+			string newProfileImagePath = Path.Combine(newUserPath, "profile_image.jpg");
+			try
+			{
+				try
 				{
-					_logger.LogInformation($"Migrating profile image for user: {username}");
-					File.Copy(oldProfileImagePath, newProfileImagePath, true);
-					return newProfileImagePath;
+
+					if (File.Exists(oldProfileImagePath))
+					{
+						var imageFile = await StorageFile.GetFileFromPathAsync(oldProfileImagePath);
+						var memoryStream = new MemoryStream();	
+
+						using (var imageStream = await imageFile.OpenReadAsync())
+						{
+							await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
+							memoryStream.Seek(0, SeekOrigin.Begin);
+						}
+						
+						File.WriteAllBytes(newProfileImagePath, memoryStream.ToArray());
+						memoryStream.Dispose();
+
+						return newProfileImagePath;
+						
+					}
+					else
+					{
+						_logger.LogWarning($"Profile image not found for user: {username}");
+						return null;
+					}
 				}
-				else
+				catch (Exception)
 				{
-					_logger.LogWarning($"Profile image not found for user: {username}");
-					return null;
+					throw; 					
 				}
 			}
 			catch (Exception ex)
@@ -169,54 +195,6 @@ namespace Riverside.Graphite.Core
 			connection.Close(); 
 		}
 
-		private async Task MigrateUserFilesAsync(string oldUserPath, string newUserPath)
-		{
-			// Migrate specific folders and databases
-			string[] foldersToMigrate = { "Browser", "Database", "Permissions", "Settings" };
-			string[] databasesToMigrate = { "History.db", "Favorites.db", "Downloads.db" };
-
-			foreach (var folder in foldersToMigrate)
-			{
-				string oldFolderPath = Path.Combine(oldUserPath, folder);
-				string newFolderPath = Path.Combine(newUserPath, folder);
-
-				if (Directory.Exists(oldFolderPath))
-				{
-					_logger.LogInformation($"Migrating folder: {folder}");
-					Directory.CreateDirectory(newFolderPath);
-					await CopyDirectoryAsync(oldFolderPath, newFolderPath);
-				}
-			}
-
-			foreach (var dbName in databasesToMigrate)
-			{
-				string oldDbPath = Path.Combine(oldUserPath, "Database", dbName);
-				string newDbPath = Path.Combine(newUserPath, "Database", dbName);
-
-				if (File.Exists(oldDbPath))
-				{
-					_logger.LogInformation($"Migrating database: {dbName}");
-					File.Copy(oldDbPath, newDbPath, true);
-				}
-			}
-		}
-
-		private async Task CopyDirectoryAsync(string sourceDir, string destinationDir)
-		{
-			foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
-			{
-				Directory.CreateDirectory(dirPath.Replace(sourceDir, destinationDir));
-			}
-
-			foreach (string filePath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
-			{
-				string newFilePath = filePath.Replace(sourceDir, destinationDir);
-				File.Copy(filePath, newFilePath, true);
-			}
-
-			await Task.CompletedTask; // This method doesn't have async operations, but we keep it async for consistency
-		}
-
 		private async Task ApplySettingsDbFixesAsync(string username)
 		{
 			_logger.LogInformation($"Applying fixes to settings.db for user: {username}");
@@ -234,17 +212,10 @@ namespace Riverside.Graphite.Core
 
 			try
 			{
-				// 1. Ensure the Settings table has the correct structure
-				await EnsureSettingsTableStructureAsync(connection);
-
+				// 1. Setup new version2 settings table for user
+				await SettingsManager.InitializeUserSettingsAsync(username); 
 				// 2. Update or add new default settings
-				await UpdateDefaultSettingsAsync(connection);
-
-				// 3. Remove any obsolete settings
-				await RemoveObsoleteSettingsAsync(connection);
-
-				// 4. Perform any necessary data type conversions
-				await PerformDataTypeConversionsAsync(connection);
+				await UpdateDefaultSettingsAsync(connection, username);
 
 				_logger.LogInformation($"Successfully applied fixes to settings.db for user: {username}");
 			}
@@ -258,126 +229,71 @@ namespace Riverside.Graphite.Core
 			}
 		}
 
-		private async Task EnsureSettingsTableStructureAsync(SqliteConnection connection)
-		{
-			var command = connection.CreateCommand();
+        private async Task UpdateDefaultSettingsAsync(SqliteConnection connection, string username = null)
+        {
+            var defaultSettings = new Settings(true).Self; // SettingsManager.GetDefaultSettings();
 
-			// First, check if the old table exists and drop it
-			command.CommandText = "DROP TABLE IF EXISTS OldSettingsTable";
-			await command.ExecuteNonQueryAsync();
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = @"SELECT * FROM Settings;";
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+					if (reader.HasRows)
+					{
+						while (await reader.ReadAsync())
+						{
+							for (var i = 0; i < (reader.FieldCount -1); i++)
+							{
+								var columnName = reader.GetName(i);
+								var columnValue = reader.GetValue(i)?.ToString();
 
-			// Now, create or recreate the Settings table
-			command.CommandText = @"
-                DROP TABLE IF EXISTS Settings;
-                CREATE TABLE Settings (
-                    Key TEXT PRIMARY KEY,
-                    Value TEXT NOT NULL,
-                    Type TEXT NOT NULL,
-                    LastModified DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    Version INTEGER DEFAULT 1
-                );
-                
-                CREATE INDEX IF NOT EXISTS idx_settings_key ON Settings(Key);
-                CREATE INDEX IF NOT EXISTS idx_settings_modified ON Settings(LastModified);";
+                                var property = defaultSettings.GetType().GetProperty(columnName);
+                                if (property != null && property.CanWrite)
+                                {
+                                    object convertedValue;
+                                    if (property.PropertyType == typeof(bool))
+                                    {
+                                        convertedValue = columnValue == "1";
+                                    }
+                                    else
+                                    {
+                                        convertedValue = Convert.ChangeType(columnValue, property.PropertyType);
+                                    }
+                                    property.SetValue(defaultSettings, convertedValue);
+                                }
+							}
+						}
+						if (username is not null)
+							await SettingsManager.UpdateSettingsAsync(username, defaultSettings.ToDictionary());
 
-			await command.ExecuteNonQueryAsync();
+						return; 
+					}
+                    
+                }
+            }
 
-			// Verify if the table structure is correct
-			command.CommandText = "PRAGMA table_info(Settings)";
-			using var reader = await command.ExecuteReaderAsync();
-			var columns = new List<string>();
-			while (await reader.ReadAsync())
-			{
-				columns.Add(reader.GetString(1)); // Column name is at index 1
-			}
+            // if user doesn't have existing settings add them.
+            foreach (var property in defaultSettings.GetType().GetProperties())
+            {
+                if (property.CanRead)
+                {
+                    var command = connection.CreateCommand();
+                    command.CommandText = @"
+                        INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
+                        VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
+                            COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
 
-			if (!columns.Contains("Key") || !columns.Contains("Value") || !columns.Contains("Type") ||
-				!columns.Contains("LastModified") || !columns.Contains("Version"))
-			{
-				throw new Exception("Failed to create the Settings table with the correct structure.");
-			}
-		}
+                    command.Parameters.AddWithValue("$key", property.Name);
+                    command.Parameters.AddWithValue("$value", property.GetValue(defaultSettings)?.ToString() ?? "");
+                    command.Parameters.AddWithValue("$type", property.PropertyType.FullName ?? "");
 
-		private async Task UpdateDefaultSettingsAsync(SqliteConnection connection)
-		{
-			var defaultSettings = new Settings(true).Self.ToDictionary();// SettingsManager.GetDefaultSettings();
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
 
-			foreach (var setting in defaultSettings)
-			{
-				var command = connection.CreateCommand();
-				command.CommandText = @"
-                    INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
-                    VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
-                        COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
-
-				command.Parameters.AddWithValue("$key", setting.Key);
-				command.Parameters.AddWithValue("$value", setting.Value?.ToString() ?? "");
-				command.Parameters.AddWithValue("$type", setting.Value?.GetType().FullName ?? "");
-
-				await command.ExecuteNonQueryAsync();
-			}
-		}
-
-		private async Task RemoveObsoleteSettingsAsync(SqliteConnection connection)
-		{
-			var obsoleteSettings = new[] { "OldSetting1", "OldSetting2" }; // Add any obsolete setting keys here
-
-			foreach (var setting in obsoleteSettings)
-			{
-				var command = connection.CreateCommand();
-				command.CommandText = "DELETE FROM Settings WHERE Key = $key";
-				command.Parameters.AddWithValue("$key", setting);
-				await command.ExecuteNonQueryAsync();
-			}
-		}
-
-		private async Task PerformDataTypeConversionsAsync(SqliteConnection connection)
-		{
-			// Example: Convert a setting from string to int
-			var command = connection.CreateCommand();
-			command.CommandText = @"
-                UPDATE Settings 
-                SET Value = CAST(Value AS INTEGER), 
-                    Type = 'System.Int32'
-                WHERE Key = 'SomeIntSetting' AND Type = 'System.String'";
-			await command.ExecuteNonQueryAsync();
-
-			// Add more conversions as needed
-		}
+		
 	}
 
-	public class UserMigrationData
-	{
-		public string Username { get; set; }
-		public string PasswordHash { get; set; }
-		public string Email { get; set; }
-		public string WindowsUserName { get; set; }
-		public bool IsFirstLaunch { get; set; }
-		public string ProfileImagePath { get; set; }
-		public bool HasPassword { get; set; }
-	}
-
-	public class FileLogger : ILogger<MigrationManager>
-	{
-		private readonly string _filePath;
-
-		public FileLogger()
-		{
-			string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			string logDirectory = Path.Combine(localAppData);
-			Directory.CreateDirectory(logDirectory);
-			_filePath = Path.Combine(logDirectory, $"MigrationLog_{DateTime.Now:yyyyMMddHHmmss}.txt");
-		}
-
-		public IDisposable BeginScope<TState>(TState state) => null;
-
-		public bool IsEnabled(LogLevel logLevel) => true;
-
-		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-		{
-			string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{logLevel}] {formatter(state, exception)}";
-			File.AppendAllText(_filePath, logMessage + Environment.NewLine);
-		}
-	}
 }
 
