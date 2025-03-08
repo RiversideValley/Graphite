@@ -9,6 +9,14 @@
     </Window.SystemBackdrop>
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush Opacity=".8" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0.0" Color="#FF3D00" />
+                <GradientStop Offset="0.33" Color="#4F46E5" />
+                <GradientStop Offset="0.66" Color="#7B3AED" />
+                <GradientStop Offset="1.0" Color="#FF6B00" />
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

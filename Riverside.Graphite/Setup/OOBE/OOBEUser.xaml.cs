@@ -12,6 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
+using NuGet.Common;
+using Riverside.Graphite.Services;
 
 namespace Riverside.Graphite.Setup.OOBE;
 
@@ -132,15 +134,24 @@ public sealed partial class OOBEUser : Page
 
             if (authenticatedUser != null)
             {
+				AuthService.Authenticate(authenticatedUser.Username);
 				// Navigate to the next page
 				//Frame.Navigate(typeof(OOBEPreferences), authenticatedUser);
 
 				// moving to an Imessenger later on.......
-				SetupWelcome.Instance?.Close();
+				
 				if (UserDashBoard.Instance is UserDashBoard dash) {
 					await dash.LoadUsersAsync(); 
 				}
-
+				if (authenticatedUser.IsFirstLaunch)
+				{
+					authenticatedUser.IsFirstLaunch = false;
+					await UserManager.UpdateUserPropertiesAsync(authenticatedUser);
+					AppService.IsAppNewUser = true; 
+					SetupWelcome.Instance?.Close(); 
+				}
+				
+				
             }
             else
             {
@@ -156,8 +167,11 @@ public sealed partial class OOBEUser : Page
             }
         }
         catch (Exception ex)
-        {
-        }
+		{
+			NotificationQueue.Show("An error occurred while creating the user account", 2000, "User Creation");
+			Console.WriteLine($"Error creating user account: {ex.Message}");
+			Riverside.Graphite.Core.Helper.Logging.ExceptionLogger.LogException(ex);
+		}
     }
 
     private void HelpButton_Click(object sender, RoutedEventArgs e)

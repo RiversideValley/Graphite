@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services;
 using System;
@@ -18,6 +19,10 @@ public sealed partial class SetupFinish : Page
 
 	private async void SetupFinish_Loaded(object sender, RoutedEventArgs e)
 	{
+		// add to new Settings Manager directly, not SettingsService no dj needed. 
+
+		await SettingsManager.UpdateSettingsAsync(AuthService.CurrentUser.Username, AppService.AppSettings.ToDictionary());
+
 		await Task.Delay(2400);
 
 		if (App.Current.m_window is not null)
@@ -41,7 +46,7 @@ public sealed partial class SetupFinish : Page
 		{
 			AppService.ActiveWindow?.Close();
 
-			IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserCentral));
+			IntPtr ucHwnd = Windowing.FindWindow(null, nameof(UserDashBoard));
 			if (ucHwnd != IntPtr.Zero)
 			{
 				AppService.ActiveWindow = UserCentral.Instance;

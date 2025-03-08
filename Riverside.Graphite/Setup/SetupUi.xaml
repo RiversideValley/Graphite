@@ -207,7 +207,7 @@
                             </ctr:SettingsCard.HeaderIcon>
                             <ToggleSwitch
                                 x:Name="TrendingHome"
-                                IsOn="True"
+                                IsOn="False"
                                 Toggled="TrendingHome_Toggled" />
                         </ctr:SettingsCard>
                     </ctr:SettingsExpander.Items>

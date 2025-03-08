@@ -17,6 +17,7 @@ using Graphite.Helpers;
 using CommunityToolkit.Mvvm.Input;
 using Riverside.Graphite.Pages.Patch;
 using Riverside.Graphite.Runtime.Helpers;
+using Riverside.Graphite.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -175,13 +176,26 @@ namespace Riverside.Graphite.Setup.OOBE
             buttonVisual.StartAnimation("Offset", offsetAnimation);
         }
 
-        private void NextSetupButton_Click(object sender, RoutedEventArgs e)
+        private async void NextSetupButton_Click(object sender, RoutedEventArgs e)
         {
-            Frame rootFrame = new Frame();
-            this.Content = rootFrame;
-            particleTimer.Stop();
-            rootFrame.Navigate(typeof(OOBEUser));
-        }
+			try
+			{
+				await UserManager.InitializeAsync();
+				GridWelcome.Visibility = Visibility.Collapsed;
+				FramGridUser.Navigate(typeof(OOBEUser));	
+				GridUser.Visibility = Visibility.Visible; 
+				
+			}
+			catch (Exception ex)
+			{
+				Riverside.Graphite.Core.Helper.Logging.ExceptionLogger.LogException(ex);
+				throw;
+			}
+			finally {
+				particleTimer.Stop();
+			}
+
+		}
 
         private async void RestoreBackupButton_Click(object sender, RoutedEventArgs e)
         {

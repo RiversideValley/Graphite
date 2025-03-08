@@ -22,6 +22,7 @@ using Riverside.Graphite.Services.ViewModels;
 using Riverside.Graphite.Services.WindowsHandler;
 using Riverside.Graphite.Services.WindowsHandler.Contracts;
 using Riverside.Graphite.Setup;
+using Riverside.Graphite.Setup.OOBE;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -107,7 +108,7 @@ public static class AppService
             if (!Directory.Exists(UserDataManager.CoreFolderPath))
             {
                 AppSettings = new Settings(true).Self;
-                ActiveWindow = new SetupWindow();
+                ActiveWindow = new SetupWelcome();
                 ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
                 await ConfigureSettingsWindow(ActiveWindow);
                 return;
@@ -363,41 +364,41 @@ public static class AppService
 		
 		await Windowing.DialogWindow(ActiveWindow);	
 
-		ActiveWindow.Closed += async (s, e) =>
-		{
-			try
-			{
-				if (AuthService.NewCreatedUser is not null)
-				{
-					SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
-					string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
+		//ActiveWindow.Closed += async (s, e) =>
+		//{
+		//	try
+		//	{
+		//		if (AuthService.NewCreatedUser is not null)
+		//		{
+		//			SettingsActions settingsActions = new(AuthService.NewCreatedUser?.Username);
+		//			string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.NewCreatedUser?.Username, "Settings", "Settings.db");
 
-					if (!File.Exists(settingsPath))
-					{
-						await settingsActions.SettingsContext.Database.MigrateAsync();
-					}
+		//			if (!File.Exists(settingsPath))
+		//			{
+		//				await settingsActions.SettingsContext.Database.MigrateAsync();
+		//			}
 
-					if (File.Exists(settingsPath))
-					{
-						_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
-					}
+		//			if (File.Exists(settingsPath))
+		//			{
+		//				_ = await settingsActions.SettingsContext.Database.CanConnectAsync();
+		//			}
 
-					if (await settingsActions.GetSettingsAsync() is null)
-					{
-						_ = await settingsActions.UpdateSettingsAsync(AppSettings);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				ExceptionLogger.LogException(ex);
-				Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
-			}
-			//finally
-			//{
-			//    AuthService.NewCreatedUser = null;
-			//}
-		};
+		//			if (await settingsActions.GetSettingsAsync() is null)
+		//			{
+		//				_ = await settingsActions.UpdateSettingsAsync(AppSettings);
+		//			}
+		//		}
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		ExceptionLogger.LogException(ex);
+		//		Console.WriteLine($"Error in Creating Settings Database: {ex.Message}");
+		//	}
+		//	//finally
+		//	//{
+		//	//    AuthService.NewCreatedUser = null;
+		//	//}
+		//};
 
 		await ConfigureSettingsWindow(ActiveWindow);
 	}

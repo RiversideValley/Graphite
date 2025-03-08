@@ -36,7 +36,7 @@ namespace Riverside.Graphite.Core
 		private static byte[] _cachedKey;
 		private static byte[] _cachedIV;
 
-		public static readonly string GraphiteDataPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, "V2_UserData");//
+		public static readonly string GraphiteDataPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath);//
 																																					  //
 																				//Path.Combine(GetFullPathToExe(), "V2_UserData");	
 
