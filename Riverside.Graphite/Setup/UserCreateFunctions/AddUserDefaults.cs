@@ -56,21 +56,10 @@ namespace Riverside.Graphite.Setup.UserCreateFunctions
 		{
 			try
 			{
-				SettingsActions settingsActions = new(user.Username);
-				string settingsPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, user.Username, "Settings", "Settings.db");
 
-				if (!File.Exists(settingsPath))
-				{
-					await settingsActions.SettingsContext.Database.MigrateAsync();
-				}
-
-				if (File.Exists(settingsPath))
-				{
-					if (await settingsActions.SettingsContext.Database.CanConnectAsync())
-					{
-						_ = await settingsActions.InsertUserSettingsAsync(AppService.AppSettings);
-					}
-				}
+				await SettingsManager.InitializeUserSettingsAsync(user.Username);
+				await SettingsManager.UpdateSettingsAsync(user.Username ,AppService.AppSettings.ToDictionary()); 
+				
 			}
 			catch (Exception ex)
 			{
