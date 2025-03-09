@@ -111,24 +111,31 @@ public sealed partial class MainWindow : Window
 
 
 		Closed += (s, e) =>
-		{	
-			foreach (Window win in AppService.FireWindows)
+		{
+			try
 			{
-
-				var obj = new object();
-				lock (obj)
+				foreach (Window win in AppService.FireWindows)
 				{
-					if (Windowing.IsWindow(WindowNative.GetWindowHandle(win)))
+
+					var obj = new object();
+					lock (obj)
 					{
-						win.Close();
+						if (Windowing.IsWindow(WindowNative.GetWindowHandle(win)))
+						{
+							win.Close();
+						}
 					}
 				}
+
+				App.Current.KillProcessByName("dotnet");
+				AppService.IsAppGoingToClose = true;
 			}
-
-			App.Current.KillProcessByName("dotnet");
-			AppService.IsAppGoingToClose = true;
-
+			catch (Exception)
+			{
+				throw;
+			}
 		};
+
 		SizeChanged += async (s, e) =>
 		{
 			try
