@@ -22,12 +22,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
+using Windows.UI.WebUI;
 using WinRT.Interop;
 
 
@@ -65,7 +67,7 @@ namespace Riverside.Graphite.Pages
 
 			string browserFolderPath = Path.Combine(UserDataManager.CoreFolderPath, "Users", currentUser.Username, "Browser");
 			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
-			Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
+			//Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 		}
 		public async Task UnloadContent()
 		{
@@ -211,11 +213,13 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceRequested += WebResourceRequested;
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
-
+			
 			AdBlockerService.Toggle(false);
 			await AdBlockerService.Initialize(WebView);
 		}
 
+		
+		
 		private async void ScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
 		{
 			var deferral = args.GetDeferral();
@@ -361,7 +365,7 @@ namespace Riverside.Graphite.Pages
 				AppService.IsAppUserAuthenicated = false;
 				Console.WriteLine("User has logged out.");
 				MainWindow window = (Application.Current as App)?.m_window as MainWindow;
-				window.TabContent.Navigate(typeof(NewTab));
+				//window.TabContent.Navigate(typeof(NewTab));
 				window.NotificationQueue.Show("You have been logged out of Microsoft", 2000, "Graphite Authorization");
 				window.ViewModelMain.IsMsLogin = false;
 				window.ViewModelMain.RaisePropertyChanges(nameof(window.ViewModelMain.IsMsLogin));
