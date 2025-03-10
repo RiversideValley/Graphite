@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
 using Graphite.Controls;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -122,6 +123,7 @@ namespace Riverside.Graphite.Pages
 
 		private void LoadSettings()
 		{
+			
 			CoreWebView2Settings webViewSettings = WebViewElement.CoreWebView2.Settings;
 			Settings coreSettings = SettingsService.CoreSettings;
 
@@ -168,25 +170,37 @@ namespace Riverside.Graphite.Pages
 
 			await WebViewElement.EnsureCoreWebView2Async();
 
-			LoadSettings();
-
 			if (param?.Param != null)
 			{
 				var uri = UrlValidater.GetValidateUrl(param.Param.ToString());
 				if (uri is not null)
-					WebViewElement.Source = (uri);
+					WebViewElement.CoreWebView2.Navigate(uri.AbsoluteUri);
+				else
+				{
+					if (App.Current.m_window is MainWindow win)
+						win.NotificationQueue.Show("Your requested url isn't supported!", 2000, "Web Navigation");
+					
+					return; 
+				}
+			}
+			else {
+				if (App.Current.m_window is MainWindow win) {
+					win.NotificationQueue.Show("Your requested page isn't loading correctly!\nPlease open a new tab and try agian", 2000, "Web Navigation");
+				}
+				return;  
 			}
 
-			WebView2 s = WebViewElement;
-
+			if (WebViewElement.CoreWebView2 is null)
+				return;
+			
 			string userAgent = SettingsService.CoreSettings?.Useragent ?? "1";
 
 			if (!string.IsNullOrEmpty(userAgent) && userAgent.Contains("Edg/"))
 			{
-				s.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
+				WebViewElement.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
 			}
-
-			await SetupEventHandlersAsync(s);
+			
+			await SetupEventHandlersAsync(WebViewElement);
 		}
 
 		private async Task SetupEventHandlersAsync(WebView2 s)
