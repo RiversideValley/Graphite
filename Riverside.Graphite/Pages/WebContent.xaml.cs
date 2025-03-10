@@ -173,8 +173,14 @@ namespace Riverside.Graphite.Pages
 			if (param?.Param != null)
 			{
 				var uri = UrlValidater.GetValidateUrl(param.Param.ToString());
-				if (uri is not null)
-					WebViewElement.CoreWebView2.Navigate(uri.AbsoluteUri);
+				if (uri is not null) {
+					if (WebViewElement.CoreWebView2 is null)
+					{
+						WebViewElement.Source = uri;
+						await Task.Delay(320); 
+					}
+					else { WebViewElement.CoreWebView2.Navigate(uri.AbsoluteUri); }
+				} 
 				else
 				{
 					if (App.Current.m_window is MainWindow win)
@@ -187,12 +193,14 @@ namespace Riverside.Graphite.Pages
 				if (App.Current.m_window is MainWindow win) {
 					win.NotificationQueue.Show("Your requested page isn't loading correctly!\nPlease open a new tab and try agian", 2000, "Web Navigation");
 				}
-				return;  
+				return;
 			}
-
+			await WebViewElement.EnsureCoreWebView2Async();
 			if (WebViewElement.CoreWebView2 is null)
 				return;
-			
+			else
+				LoadSettings(); 
+
 			string userAgent = SettingsService.CoreSettings?.Useragent ?? "1";
 
 			if (!string.IsNullOrEmpty(userAgent) && userAgent.Contains("Edg/"))
