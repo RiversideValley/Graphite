@@ -6,11 +6,15 @@ using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Riverside.Graphite.Helpers;
+using Riverside.Graphite.Services;
+using Riverside.Graphite.Pages;
+using System.Linq;
 
 namespace Riverside.Graphite.Controls;
 
 public sealed partial class GraphiteTabViewContainer : TabView
 {
+	Window Window = null; 
 	public TabManager TabManager { get; private set; }
 
 	public GraphiteTabViewContainer()
@@ -97,6 +101,8 @@ public sealed partial class GraphiteTabViewContainer : TabView
 		ViewModel.Tabs.Add(newTab);
 		this.TabItems.Add(newTab);
 	}
+
+	
 }
 
 public class SplitViewContainer : Grid

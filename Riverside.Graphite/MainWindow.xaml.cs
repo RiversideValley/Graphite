@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Newtonsoft.Json.Linq;
 using NuGet.ContentModel;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
@@ -66,7 +67,7 @@ public sealed partial class MainWindow : Window
 	public SettingsService SettingsService { get; set; }
 	public MainWindowViewModel ViewModelMain { get; set; }
 	public TabManager TabManager { get; set; }
-
+	public Window TearOutWindow { get; set; }
 	//public HubService HubService { get; set; }	
 	public string PicturePath { get; set; }
 	public MainWindow()
@@ -125,6 +126,12 @@ public sealed partial class MainWindow : Window
 							win.Close();
 						}
 					}
+				}
+
+				var isRestore = ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object Restored);
+				bool isRestored = Convert.ToBoolean(Restored);
+				if (isRestore) {
+					TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username).ConfigureAwait(false); 
 				}
 
 				App.Current.KillProcessByName("dotnet");
@@ -193,16 +200,44 @@ public sealed partial class MainWindow : Window
 
 		appWindow.Closing += AppWindow_Closing;
 	}
+	private void TabView_TabTearOutRequested(TabView sender, TabViewTabTearOutRequestedEventArgs args)
+	{
+		if (TearOutWindow?.Content is WebContent web && args.Tabs.FirstOrDefault() is GraphiteTabViewItem newTab)
+		{
+			Tabs.Tabs.Remove(newTab);
+			Tabs.Tabs.Add(newTab);
+			
+		}
+	}
 
+	private void TabView_TabTearOutWindowRequested(TabView sender, TabViewTabTearOutWindowRequestedEventArgs args)
+	{
+		TearOutWindow = new Window { SystemBackdrop = new MicaBackdrop() };
+		TearOutWindow.Content = new WebContent();
+		AppService.FireWindows.Add(TearOutWindow);
+		args.NewWindowId = TearOutWindow.AppWindow.Id;
+	}
+
+	private void TabView_ExternalTornOutTabsDropped(TabView sender, TabViewExternalTornOutTabsDroppedEventArgs args)
+	{
+
+	}
+
+	private void TabView_ExternalTornOutTabsDropping(TabView sender, TabViewExternalTornOutTabsDroppingEventArgs args)
+	{
+
+	}
 	public async Task StartupTabCheckAsync()
 	{
+	
 		var localSettings = ApplicationData.Current.LocalSettings;
 		string cacheKey = $"{AuthService.CurrentUser.Username}_{TabManager.TabStateKey}";
-
-		if (localSettings.Values.ContainsKey(cacheKey))
+		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
+		
+		if (Convert.ToBoolean(isRestore) && localSettings.Values.ContainsKey(cacheKey))
 		{
 			// Restore cache exists, attempt to restore tabs
-			await TabManager.RestoreTabsAsync(AuthService.CurrentUser.Username);
+			await TabManager.RestoreTabsAsync(AuthService.CurrentUser?.Username);
 		}
 
 		// Check if there are any tabs after restoration attempt

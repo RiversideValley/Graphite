@@ -24,7 +24,7 @@ namespace Riverside.Graphite
 	public sealed partial class UserDashBoard : Window
 	{
 		public UserV2? AuthUser { get; set; }
-		private ObservableCollection<UserViewModel>? Users { get; set; }
+		
 		private AppWindow? appWindow;
 		private readonly HttpClient _httpClient;
 		private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
@@ -77,7 +77,7 @@ namespace Riverside.Graphite
 		{
 			try
 			{
-				Users = new ObservableCollection<UserViewModel>();
+				ObservableCollection<UserViewModel> Users = new ObservableCollection<UserViewModel>();
 				string graphiteDataPath = UserManager.GraphiteDataPath;
 
 				// Create the directory if it doesn't exist
@@ -114,11 +114,12 @@ namespace Riverside.Graphite
 				//}
 				#endregion
 
-				UserListView.ItemsSource = Users;
+				ViewModel.Users = Users;
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.Users));	
 
 				// Show or hide the NoUsersGrid based on whether there are any users
-				NoUsersGrid.Visibility = Users.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-				UserListView.Visibility = Users.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+				NoUsersGrid.Visibility = ViewModel.Users.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+				UserListView.Visibility = ViewModel.Users.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 			}
 			catch (Exception ex)
 			{

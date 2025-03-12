@@ -369,13 +369,9 @@ namespace Riverside.Graphite.Pages
 				{
 					if (!await UrlValidater.IsLocalhostRunningAsync())
 					{
-						DispatcherQueue.TryEnqueue(async () =>
+						DispatcherQueue?.TryEnqueue(async () =>
 						{
 							await App.Current.StartChannelsAsync().ConfigureAwait(false);
-							
-							args.Response = sender.Environment.CreateWebResourceResponse(
-									null, 200, "OK", "Content-Type: text/html");
-							
 						});
 					}
 				}

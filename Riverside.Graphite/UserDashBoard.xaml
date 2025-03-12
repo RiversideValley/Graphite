@@ -227,6 +227,8 @@
             HorizontalAlignment="Center"
             IsItemClickEnabled="True"
             ItemClick="UserListView_ItemClick"
+            ItemsSource="{x:Bind ViewModel.Users, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             SelectionMode="None">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>

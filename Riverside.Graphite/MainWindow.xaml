@@ -216,6 +216,22 @@
                                 <TextBlock Margin="10,0,0,0" Text="New-Private" />
                             </StackPanel>
                         </Button>
+                        <StackPanel
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="Restore Tabs" />
+                            <ToggleSwitch
+                                HorizontalAlignment="Right"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                IsOn="{x:Bind ViewModelMain.IsRestoredTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
                         <Border
                             Height="1"
                             Margin="-8,4"
@@ -798,10 +814,15 @@
             AddTabButtonClick="Tabs_AddTabButtonClick"
             CanDragTabs="True"
             CanReorderTabs="True"
+            CanTearOutTabs="True"
+            ExternalTornOutTabsDropped="TabView_ExternalTornOutTabsDropped"
+            ExternalTornOutTabsDropping="TabView_ExternalTornOutTabsDropping"
             IsSplitViewActive="False"
             Loaded="Tabs_Loaded"
             Mode="Modern"
-            TabCloseRequested="Tabs_TabCloseRequested">
+            TabCloseRequested="Tabs_TabCloseRequested"
+            TabTearOutRequested="TabView_TabTearOutRequested"
+            TabTearOutWindowRequested="TabView_TabTearOutWindowRequested">
             <v2:GraphiteTabViewContainer.TabStripHeader>
                 <PersonPicture
                     x:Name="Profile"

@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics;
+using Windows.Storage;
 using WinRT.Interop;
 
 
@@ -38,6 +39,9 @@ public partial class MainWindowViewModel : ObservableRecipient
 	[ObservableProperty]
 	[NotifyCanExecuteChangedFor(nameof(ShowOfficeOptionsCommand))]
 	private bool isMsLogin;
+
+	[ObservableProperty]
+	private bool _IsRestoredTabs;
 
 	[ObservableProperty]
 	private BitmapImage msProfilePicture;
@@ -58,8 +62,19 @@ public partial class MainWindowViewModel : ObservableRecipient
 	{
 		Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 		MsOptionVisibility = Visibility.Collapsed;
+		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
+		IsRestoredTabs = Convert.ToBoolean(isRestore);
 	}
 
+	partial void OnIsRestoredTabsChanged(bool value)
+	{
+		if (ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object exist)){
+		   if(exist is not null)
+				ApplicationData.Current.LocalSettings.Values[$"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}"] = value;
+		}
+		else { ApplicationData.Current.LocalSettings.Values.Add($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", value); }
+		
+	}
 	partial void OnIsMsLoginChanged(bool value)
 	{
 		MsOptionVisibility = value ? Visibility.Visible : Visibility.Collapsed;

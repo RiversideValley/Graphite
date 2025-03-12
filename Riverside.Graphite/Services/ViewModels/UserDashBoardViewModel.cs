@@ -10,9 +10,11 @@ using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.Storage;
 using WinRT.Interop;
 
 namespace Riverside.Graphite
@@ -26,12 +28,18 @@ namespace Riverside.Graphite
 		public UserDashBoardViewModel(IMessenger messenger): base(messenger)
 		{
 			
-		}	
-		
+		}
+
+		[ObservableProperty]
+		private UserViewModel _selectedUser; 
+
+		[ObservableProperty]
+		private ObservableCollection<UserViewModel> _users;	
+
 		public Window ParentWindow { get; set; }
 		public UIElement ParentGrid { get; set; }
 		public bool IsCoreFolder => _IsCoreFolder();
-
+				
 		[ObservableProperty]
 		[NotifyPropertyChangedRecipients]
 		private bool _IsMsLogin;
@@ -56,7 +64,7 @@ namespace Riverside.Graphite
 			return false;
 		};
 
-
+		
 
 		[RelayCommand(CanExecute = nameof(IsMsLogin))]
 		private async Task MsLogOut()

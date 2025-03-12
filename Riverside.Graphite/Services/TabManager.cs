@@ -11,6 +11,9 @@ using Microsoft.UI.Dispatching;
 using System.Collections.Concurrent;
 using Riverside.Graphite.Pages;
 using Graphite.ViewModels;
+using Newtonsoft.Json.Linq;
+using Riverside.Graphite.Core;
+using System.Threading;
 
 namespace Riverside.Graphite.Controls;
 
@@ -31,23 +34,16 @@ public class TabManager
 	public TabManager(GraphiteTabViewContainer tabViewContainer)
 	{
 		_tabViewContainer = tabViewContainer;
-		_tabViewContainer.TabItemsChanged += TabViewContainer_TabItemsChanged;
 		_tabViewContainer.SelectionChanged += TabViewContainer_SelectionChanged;
 		InitializeSleepTimer();
+		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
+		_isRestoringTabs = Convert.ToBoolean(isRestore);
+
 		//InitializePreviewTimer();
 	}
 
-	private void TabViewContainer_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
-	{
-		if (args.CollectionChange == Windows.Foundation.Collections.CollectionChange.ItemInserted)
-		{
-			var newTab = sender.TabItems[(int)args.Index] as GraphiteTabViewItem;
-			if (newTab != null)
-			{
-				//SetupTabPreview(newTab);
-			}
-		}
-	}
+
+	
 
 	private void TabViewContainer_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
@@ -196,14 +192,9 @@ public class TabManager
 		}
 		else
 		{
-			if (!(newItem.Content is Frame))
-			{
-				newItem.Content = CreateFrame(pageType, parameter);
-			}
-			else
-			{
-				((Frame)newItem.Content).Navigate(pageType ?? typeof(WebContent), passer);
-			}
+				
+			newItem.Content = CreateFrame(pageType, passer);
+			
 		}
 
 
@@ -294,37 +285,53 @@ public class TabManager
 
 				foreach (var state in tabStates)
 				{
-					GraphiteTabViewItem newTab;
-					if (state.Url == "about:newtab" || string.IsNullOrEmpty(state.Url))
-					{
-						newTab = CreateNewTab(typeof(NewTab), null, state.IsSplitView, username);
+					SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+					
+					try
+					{	
+						await semaphore.WaitAsync();
+						GraphiteTabViewItem newTab;
+						if (state.Url == "about:newtab" || string.IsNullOrEmpty(state.Url))
+						{
+							newTab = CreateNewTab(typeof(NewTab), null, state.IsSplitView, username);
+						}
+						else
+						{
+							newTab = CreateNewTab(typeof(WebContent), state.Url, state.IsSplitView, username);
+						}
+
+						if (state.IsSleeping)
+						{
+							await PutTabToSleep(newTab);
+						}
+						else if (newTab.Content is Frame frame)
+						{
+							if (frame.Content is WebContent webContent)
+							{
+								webContent.WebView.Source = new(state.Url);
+								await webContent.WebView.EnsureCoreWebView2Async();
+								UpdateTabIcon(newTab, state.FaviconUrl);
+							}
+							else if (frame.Content is NewTab nT)
+							{
+								nT.ViewModel.SettingsService.Initialize();
+								// Update NewTab content if necessary
+							}
+						}
+						newTab.Header = state.Header;
+						newTab.IsPinned = state.IsPinned;
+						SetTabColor(newTab, state.CustomColor);
+						_lastActivityTimes[newTab] = state.LastAccessTime;
+						SetTabScrollPosition(newTab, state.ScrollPosition);
 					}
-					else
+					catch (Exception ex)
 					{
-						newTab = CreateNewTab(typeof(WebContent), state.Url, state.IsSplitView, username);
+						semaphore.Release();
+						System.Diagnostics.Debug.WriteLine($"Error restoring tab: {ex.Message}");
+						throw; 
 					}
 
-					if (state.IsSleeping)
-					{
-						await PutTabToSleep(newTab);
-					}
-					else if (newTab.Content is Frame frame)
-					{
-						if (frame.Content is WebContent webContent)
-						{
-							webContent.WebView.NavigateToString(state.Url.ToString());
-							UpdateTabIcon(newTab, state.FaviconUrl);
-						}
-						else if (frame.Content is NewTab)
-						{
-							// Update NewTab content if necessary
-						}
-					}
-					newTab.Header = state.Header;
-					newTab.IsPinned = state.IsPinned;
-					SetTabColor(newTab, state.CustomColor);
-					_lastActivityTimes[newTab] = state.LastAccessTime;
-					SetTabScrollPosition(newTab, state.ScrollPosition);
+					
 				}
 			});
 		}
@@ -338,7 +345,7 @@ public class TabManager
 		{
 			if (frame.Content is WebContent webContent)
 			{
-				return webContent.WebView.Source.AbsoluteUri;
+				return webContent.WebView.Source?.AbsoluteUri ?? "about:blank";
 			}
 			else if (frame.Content is NewTab)
 			{
@@ -462,6 +469,8 @@ public class TabManager
 			}
 			_lastActivityTimes.Remove(tab);
 		});
+
+		await Task.Delay(200);
 	}
 
 	public void UpdateTabActivity(GraphiteTabViewItem tab)
