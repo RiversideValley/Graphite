@@ -149,7 +149,7 @@ public class TabManager
 		}
 	}
 
-	public GraphiteTabViewItem CreateNewTab(Type pageType = null, object parameter = null, bool isSplitViewActive = false, string username = null)
+	public GraphiteTabViewItem CreateNewTab(Type pageType = null, object parameter = null, bool isSplitViewActive = false, string username = null, Guid? idTag = null )
 	{
 		GraphiteTabViewItem newItem;
 
@@ -169,6 +169,12 @@ public class TabManager
 				Style = (Style)Application.Current.Resources["FloatingTabViewItemStyle"]
 			};
 		}
+
+		if (idTag is null)
+		{
+			newItem.Tag = Guid.NewGuid();
+		}
+		else { newItem.Tag = idTag; }
 
 		Passer passer = new()
 		{
@@ -246,6 +252,7 @@ public class TabManager
 		{
 			var state = new TabState
 			{
+				Id = tab.Tag is not null ? (Guid)tab.Tag : Guid.NewGuid(),
 				Header = tab.Header.ToString(),
 				IsSleeping = tab.Header.ToString().StartsWith("Sleeping - "),
 				Url = GetTabUrl(tab),
@@ -282,7 +289,7 @@ public class TabManager
 			{
 				_tabViewContainer.TabItems.Clear();
 				_lastActivityTimes.Clear();
-
+				
 				foreach (var state in tabStates)
 				{
 					SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
@@ -293,11 +300,13 @@ public class TabManager
 						GraphiteTabViewItem newTab;
 						if (state.Url == "about:newtab" || string.IsNullOrEmpty(state.Url))
 						{
-							newTab = CreateNewTab(typeof(NewTab), null, state.IsSplitView, username);
+							newTab = CreateNewTab(typeof(NewTab), null, state.IsSplitView, username, state.Id);
+							
 						}
 						else
 						{
-							newTab = CreateNewTab(typeof(WebContent), state.Url, state.IsSplitView, username);
+							newTab = CreateNewTab(typeof(WebContent), state.Url, state.IsSplitView, username, state.Id);
+							
 						}
 
 						if (state.IsSleeping)

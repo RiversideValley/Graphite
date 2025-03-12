@@ -72,7 +72,7 @@ namespace Riverside.Graphite.Pages
 		}
 		public async Task UnloadContent()
 		{
-			await WebView.CoreWebView2.TrySuspendAsync();
+			await WebView.CoreWebView2?.TrySuspendAsync();
 			offlinePage.Visibility = Visibility.Visible;
 			Grid.Visibility = Visibility.Collapsed;
 		}

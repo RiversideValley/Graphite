@@ -1734,18 +1734,44 @@ public async void NavigateToUrl(string uri)
 		var btn = sender as Button;
 		if (btn is null) return;
 
-		var list = new ListView();
-		var fly = new Flyout();
-		fly.Content = list;
-
+		
 		var localSettings = ApplicationData.Current.LocalSettings;
 		if (localSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"TabState"}", out object jsonObj))
 		{
-			var json = jsonObj as string;
-			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
-			list.ItemsSource = tabStates.Select(t => t.Url);
-			FlyoutBase.SetAttachedFlyout(btn, fly);
-			FlyoutBase.ShowAttachedFlyout(btn);
+            var json = jsonObj as string;
+            var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
+			TabStateList.ItemsSource = tabStates; 
+			btn.Flyout.ShowAt(btn);
 		}
+	}
+
+	private async void TabStateList_ItemClick(object sender, ItemClickEventArgs e)
+	{
+		if (e.ClickedItem is TabState tabState)
+		{
+			Tabs.SelectedItem = tabState;
+			await Task.Delay(100); 
+		}	
+	}
+
+	private void TabStateList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (e.AddedItems.Count > 0) 
+			if(e.AddedItems[0] is TabState tabState)
+			{
+				foreach(var item in Tabs.TabItems)
+				{
+					if (item is GraphiteTabViewItem tab)
+					{
+						if (tab.Tag is Guid id)
+							if (id == tabState.Id)
+							{
+								Tabs.SelectedItem = tab;
+								break;
+							}
+						
+					}
+				}
+			}
 	}
 }
