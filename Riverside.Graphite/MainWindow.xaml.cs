@@ -43,6 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
@@ -1726,5 +1727,25 @@ public async void NavigateToUrl(string uri)
 	private void OpenCollectionsMenuItem_Click(object sender, RoutedEventArgs e)
 	{
 		TabContent.Navigate(typeof(CollectionsPage));
+	}
+
+	private void btnRestoreTabs_Click(object sender, RoutedEventArgs e)
+	{
+		var btn = sender as Button;
+		if (btn is null) return;
+
+		var list = new ListView();
+		var fly = new Flyout();
+		fly.Content = list;
+
+		var localSettings = ApplicationData.Current.LocalSettings;
+		if (localSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"TabState"}", out object jsonObj))
+		{
+			var json = jsonObj as string;
+			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
+			list.ItemsSource = tabStates.Select(t => t.Url);
+			FlyoutBase.SetAttachedFlyout(btn, fly);
+			FlyoutBase.ShowAttachedFlyout(btn);
+		}
 	}
 }

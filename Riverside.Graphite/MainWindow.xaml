@@ -217,19 +217,34 @@
                             </StackPanel>
                         </Button>
                         <StackPanel
-                            Margin="10"
+                            Margin="10,0,0,0"
                             VerticalAlignment="Center"
-                            Orientation="Horizontal">
+                            Orientation="Vertical">
                             <TextBlock
-                                Margin="0,0,10,0"
-                                HorizontalAlignment="Left"
+                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
                                 VerticalAlignment="Center"
                                 Text="Restore Tabs" />
                             <ToggleSwitch
-                                HorizontalAlignment="Right"
+                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                VerticalAlignment="Center"
                                 Background="Transparent"
                                 BorderBrush="Transparent"
                                 IsOn="{x:Bind ViewModelMain.IsRestoredTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button
+                                x:Name="btnRestoreTabs"
+                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                Click="btnRestoreTabs_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon
+                                        FontFamily="{StaticResource FluentIcons}"
+                                        FontSize="14"
+                                        Glyph="&#xE81C;" />
+                                    <TextBlock Margin="2,0,0,0" Text="Tabs" />
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
 
                         <Border
