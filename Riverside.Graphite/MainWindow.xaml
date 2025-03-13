@@ -239,7 +239,7 @@
                                 Click="btnRestoreTabs_Click">
                                 <Button.Flyout>
                                     <Flyout Placement="Left">
-                                        <ListView x:Name="TabStateList" SelectionChanged="TabStateList_SelectionChanged" >
+                                        <ListView x:Name="TabStateList" SelectionChanged="TabStateList_SelectionChanged">
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="v2:TabState">
                                                     <StackPanel Margin="5" Orientation="Horizontal">
@@ -857,13 +857,53 @@
             TabTearOutRequested="TabView_TabTearOutRequested"
             TabTearOutWindowRequested="TabView_TabTearOutWindowRequested">
             <v2:GraphiteTabViewContainer.TabStripHeader>
-                <PersonPicture
-                    x:Name="Profile"
-                    Width="32"
-                    Height="32"
-                    Margin="10,20,10,0"
-                    ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}"
-                    Tapped="Profile_Tapped" />
+                <StackPanel Orientation="Horizontal" Spacing="1">
+                    <PersonPicture
+                        x:Name="Profile"
+                        Width="32"
+                        Height="32"
+                        Margin="10,20,10,0"
+                        ProfilePicture="{person:ProfileImage ImageName=profile_image.jpg}"
+                        Tapped="Profile_Tapped" />
+                    <Button
+                        x:Name="btnTabsAll"
+                        Margin="0,20,0,0"
+                        Click="btnTabsAll_Click"
+                        ToolTipService.ToolTip="Tab Manager">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight">
+                                <ListView
+                                    x:Name="TabsList"
+                                    Padding="2"
+                                    Header="Open Tabs"
+                                    SelectionChanged="TabsList_SelectionChanged">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Horizontal">
+                                                <Image
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,5,0"
+                                                    Source="{Binding FaviconUrlString}" />
+                                                <TextBlock
+                                                    MaxWidth="400"
+                                                    VerticalAlignment="Center"
+                                                    MaxLines="4"
+                                                    Text="{Binding Header}"
+                                                    TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Flyout>
+                        </Button.Flyout>
+                        <FontIcon
+                            FontFamily="{StaticResource FluentIcons}"
+                            FontSize="14"
+                            Glyph="&#xf57f;" />
+                    </Button>
+                </StackPanel>
+
             </v2:GraphiteTabViewContainer.TabStripHeader>
             <v2:GraphiteTabViewContainer.TabStripFooter>
                 <Grid

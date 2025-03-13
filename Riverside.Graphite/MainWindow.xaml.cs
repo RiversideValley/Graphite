@@ -1,8 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
 using Graphite.Controls;
 using Graphite.ViewModels;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.Build.Framework;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -1774,4 +1776,50 @@ public async void NavigateToUrl(string uri)
 				}
 			}
 	}
+
+	private void TabsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (e.AddedItems.Count >0)
+			if (e.AddedItems[0] is TabAll tab)
+			{
+				foreach (GraphiteTabViewItem item in Tabs.TabItems)
+				{
+					if (tab.Tag is Guid id)
+						if (id == (Guid)item.Tag)
+						{
+							Tabs.SelectedItem = item;
+							break;
+						}
+				}
+			}
+	}
+
+	
+	private async void btnTabsAll_Click(object sender, RoutedEventArgs e)
+	{
+		var btn = sender as Button;
+		if (btn is null) return;
+
+		if (await TabManager.GetCurrentTabs())
+		{
+			TabsList.ItemsSource = TabManager.CurrentTabs.Select(x => new TabAll((Guid)x.Key.Tag, x.Key.Header.ToString(), null, x.Key.IconSource));
+			btn.Flyout.ShowAt(btn);
+		}
+	}
+	
+	public record TabAll(Guid Tag, string Header, string Url, IconSource FaviconUrl)
+	{
+		public BitmapImage FaviconUrlString => GetIconSourceUrl(FaviconUrl);
+
+		private BitmapImage GetIconSourceUrl(IconSource iconSource)
+		{
+			if (iconSource is ImageIconSource bitmapIconSource)
+			{
+				return (BitmapImage)bitmapIconSource.ImageSource; 
+			}
+			// Add more conditions if you have other types of IconSource
+			return null;
+		}
+	}
+	
 }

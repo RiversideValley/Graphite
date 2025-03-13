@@ -100,6 +100,25 @@ public partial class MainWindowViewModel : ObservableRecipient
 		});
 	}
 	[RelayCommand]
+	public void RemoveTab(MainWindow.TabAll tabAll) {
+
+		_ = MainView.DispatcherQueue.TryEnqueue(() =>
+		{
+			foreach(var item in MainView.Tabs.Tabs)
+			{
+				if (item is GraphiteTabViewItem tab)
+				{
+					if ((Guid)tab.Tag == tabAll.Tag)
+					{
+						MainView.Tabs.Tabs.Remove(tab);
+						break;
+					}
+				}
+			}	
+		});
+
+	}
+	[RelayCommand]
 	public Task GetActiveWebView()
 	{
 		MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;

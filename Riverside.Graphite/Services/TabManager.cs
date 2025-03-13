@@ -23,6 +23,7 @@ public class TabManager
 	public const string TabStateKey = "TabState";
 	private const int SleepTimeoutMinutes = 1;
 	public Dictionary<GraphiteTabViewItem, DateTime> _lastActivityTimes = new Dictionary<GraphiteTabViewItem, DateTime>();
+	public Dictionary<GraphiteTabViewItem, Guid> CurrentTabs { get; set; }
 	private DispatcherQueueTimer _sleepTimer;
 	private GraphiteTabViewItem _activeTab;
 	private ConcurrentQueue<GraphiteTabViewItem> _preloadedTabs = new ConcurrentQueue<GraphiteTabViewItem>();
@@ -43,7 +44,23 @@ public class TabManager
 	}
 
 
-	
+	public Task<bool> GetCurrentTabs()
+	{
+		CurrentTabs =  new Dictionary<GraphiteTabViewItem, Guid>();
+
+		foreach (var tab in _tabViewContainer.TabItems)
+		{
+			if (tab is GraphiteTabViewItem graphiteTab)
+			{
+				CurrentTabs.Add(graphiteTab, (Guid)graphiteTab.Tag);
+			}
+		}
+
+		if (CurrentTabs.Count > 0)
+			return Task.FromResult(true);
+		else
+			return Task.FromResult(false);
+	}	
 
 	private void TabViewContainer_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
