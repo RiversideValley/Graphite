@@ -20,6 +20,8 @@ using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Notifications.Toasts;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +29,7 @@ using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
 using WinRT.Interop;
+using static Riverside.Graphite.MainWindow;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -58,14 +61,25 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	[ObservableProperty]
 	private BitmapImage webViewContentPicture;
+	
+	[ObservableProperty]
+	private ObservableCollection<TabAll> _TabAlls;
 	public MainWindowViewModel(IMessenger messenger) : base(messenger)
 	{
 		Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 		MsOptionVisibility = Visibility.Collapsed;
 		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
 		IsRestoredTabs = Convert.ToBoolean(isRestore);
+		
 	}
 
+	public async Task<Task> LoadResetAllTabs() {
+
+		await MainView?.TabManager?.GetCurrentTabs();
+		TabAlls =  MainView?.TabManager?.CurrentTabs.Select(x => new TabAll((Guid)x.Key.Tag, x.Key.Header.ToString(), null, x.Key.IconSource)).ToObservableCollection();	
+		RaisePropertyChanges(nameof(TabAlls));
+		return Task.CompletedTask;
+	}
 	partial void OnIsRestoredTabsChanged(bool value)
 	{
 		if (ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object exist)){

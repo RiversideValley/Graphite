@@ -1744,37 +1744,7 @@ public async void NavigateToUrl(string uri)
 			NotificationQueue.Show("Your restored tabs have been cleared", 2000, "Graphite Tab Manager"); 
 		}
 	}
-
-	private async void TabStateList_ItemClick(object sender, ItemClickEventArgs e)
-	{
-		if (e.ClickedItem is TabState tabState)
-		{
-			Tabs.SelectedItem = tabState;
-			await Task.Delay(100); 
-		}	
-	}
-
-	private void TabStateList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-	{
-		if (e.AddedItems.Count > 0) 
-			if(e.AddedItems[0] is TabState tabState)
-			{
-				foreach(var item in Tabs.TabItems)
-				{
-					if (item is GraphiteTabViewItem tab)
-					{
-						if (tab.Tag is Guid id)
-							if (id == tabState.Id)
-							{
-								Tabs.SelectedItem = tab;
-								break;
-							}
-						
-					}
-				}
-			}
-	}
-
+		
 	private void TabsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (e.AddedItems.Count >0)
@@ -1794,42 +1764,37 @@ public async void NavigateToUrl(string uri)
 	}
 
 	
+
 	private async void btnTabsAll_Click(object sender, RoutedEventArgs e)
 	{
 		var btn = sender as Button;
 		if (btn is null) return;
 
-		if (await TabManager.GetCurrentTabs())
-		{
-			TabsList.ItemsSource = TabManager.CurrentTabs.Select(x => new TabAll((Guid)x.Key.Tag, x.Key.Header.ToString(), null, x.Key.IconSource));
-			btn.Flyout.ShowAt(btn);
-		}
+		btn.Flyout.ShowAt(btn);
+		await ViewModelMain.LoadResetAllTabs();
+		await Task.Delay(100);
+		
 	}
 
 	private async void TabFlyoutDelete(object sender, RoutedEventArgs e)
 	{
+	
 		var id = (sender.GetType().GetProperty("DataContext")?.GetValue(sender) as TabAll)?.Tag.ToString();
 		if (Guid.TryParse(id, out Guid guid))
 		{
 			var rTab = Tabs.TabItems.FirstOrDefault(x => (Guid)((x as GraphiteTabViewItem).Tag) == guid);
 			Tabs.TabItems.Remove((GraphiteTabViewItem)rTab);
-		}	
+		}
+		await ViewModelMain.LoadResetAllTabs();
 		await Task.Delay(100);
+
 	}
 
-    public record TabAll(Guid Tag, string Header, string Url, IconSource FaviconUrl)
+	private async void btnCloseAllTabs_Click(object sender, RoutedEventArgs e)
 	{
-		public BitmapImage FaviconUrlString => GetIconSourceUrl(FaviconUrl);
-
-		private BitmapImage GetIconSourceUrl(IconSource iconSource)
-		{
-			if (iconSource is ImageIconSource bitmapIconSource)
-			{
-				return (BitmapImage)bitmapIconSource.ImageSource; 
-			}
-			// Add more conditions if you have other types of IconSource
-			return null;
-		}
+		Tabs.TabItems.Clear();
+		await ViewModelMain.LoadResetAllTabs();
+		await Task.Delay(100); 
 	}
 	
 }

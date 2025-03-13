@@ -846,7 +846,7 @@
                                             Grid.Row="0"
                                             Margin="10,0,0,0"
                                             VerticalAlignment="Center"
-                                            Orientation="Horizontal">
+                                            Orientation="Vertical">
                                             <TextBlock
                                                 Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
                                                 VerticalAlignment="Center"
@@ -872,6 +872,21 @@
                                                     <TextBlock Margin="10,0,0,0" Text="Clear Tab State" />
                                                 </StackPanel>
                                             </Button>
+                                            <Button
+                                                x:Name="btnCloseAllTabs"
+                                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                                VerticalAlignment="Center"
+                                                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
+                                                BorderBrush="Transparent"
+                                                Click="btnCloseAllTabs_Click">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon
+                                                        FontFamily="{StaticResource FluentIcons}"
+                                                        FontSize="14"
+                                                        Glyph="&#xe74d;" />
+                                                    <TextBlock Margin="10,0,0,0" Text="Close All Tabs" />
+                                                </StackPanel>
+                                            </Button>
                                         </StackPanel>
                                     </Expander>
 
@@ -882,6 +897,7 @@
                                         Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
                                         Padding="2"
                                         Header="Open Tabs"
+                                        ItemsSource="{x:Bind ViewModelMain.TabAlls, Mode=OneWay}"
                                         SelectionChanged="TabsList_SelectionChanged">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
