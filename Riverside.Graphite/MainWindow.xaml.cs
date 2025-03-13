@@ -1788,6 +1788,7 @@ public async void NavigateToUrl(string uri)
 						if (id == (Guid)item.Tag)
 						{
 							Tabs.SelectedItem = item;
+							btnTabsAll.Flyout?.Hide();
 							break;
 						}
 				}
