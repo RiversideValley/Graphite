@@ -213,10 +213,14 @@ public sealed partial class MainWindow : Window
 		}
 	}
 
-	private void TabView_TabTearOutWindowRequested(TabView sender, TabViewTabTearOutWindowRequestedEventArgs args)
+	private async void TabView_TabTearOutWindowRequested(TabView sender, TabViewTabTearOutWindowRequestedEventArgs args)
 	{
 		TearOutWindow = new Window { SystemBackdrop = new MicaBackdrop() };
-		TearOutWindow.Content = new WebContent();
+		await AppService.ConfigureSettingsWindow(TearOutWindow, "Graphite Broswer");
+		Frame frm = new Frame();
+		frm.Background = new SolidColorBrush(Colors.Transparent);
+		frm.Navigate(typeof(WebContent), CreatePasser((TabView)sender.SelectedItem));
+		TearOutWindow.Content = frm; 
 		AppService.FireWindows.Add(TearOutWindow);
 		args.NewWindowId = TearOutWindow.AppWindow.Id;
 	}
@@ -1731,19 +1735,13 @@ public async void NavigateToUrl(string uri)
 		TabContent.Navigate(typeof(CollectionsPage));
 	}
 
-	private void btnRestoreTabs_Click(object sender, RoutedEventArgs e)
+	private void btnClearRestoredTabs_Click(object sender, RoutedEventArgs e)
 	{
-		var btn = sender as Button;
-		if (btn is null) return;
-
-		
 		var localSettings = ApplicationData.Current.LocalSettings;
 		if (localSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"TabState"}", out object jsonObj))
 		{
-            var json = jsonObj as string;
-            var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
-			TabStateList.ItemsSource = tabStates; 
-			btn.Flyout.ShowAt(btn);
+			localSettings.Values.Remove($"{AuthService.CurrentUser?.Username}_{"TabState"}");
+			NotificationQueue.Show("Your restored tabs have been cleared", 2000, "Graphite Tab Manager"); 
 		}
 	}
 
@@ -1807,8 +1805,19 @@ public async void NavigateToUrl(string uri)
 			btn.Flyout.ShowAt(btn);
 		}
 	}
-	
-	public record TabAll(Guid Tag, string Header, string Url, IconSource FaviconUrl)
+
+	private async void TabFlyoutDelete(object sender, RoutedEventArgs e)
+	{
+		var id = (sender.GetType().GetProperty("DataContext")?.GetValue(sender) as TabAll)?.Tag.ToString();
+		if (Guid.TryParse(id, out Guid guid))
+		{
+			var rTab = Tabs.TabItems.FirstOrDefault(x => (Guid)((x as GraphiteTabViewItem).Tag) == guid);
+			Tabs.TabItems.Remove((GraphiteTabViewItem)rTab);
+		}	
+		await Task.Delay(100);
+	}
+
+    public record TabAll(Guid Tag, string Header, string Url, IconSource FaviconUrl)
 	{
 		public BitmapImage FaviconUrlString => GetIconSourceUrl(FaviconUrl);
 

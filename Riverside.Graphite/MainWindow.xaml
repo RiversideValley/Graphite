@@ -216,55 +216,6 @@
                                 <TextBlock Margin="10,0,0,0" Text="New-Private" />
                             </StackPanel>
                         </Button>
-                        <StackPanel
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            Orientation="Vertical">
-                            <TextBlock
-                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
-                                VerticalAlignment="Center"
-                                Text="Restore Tabs" />
-                            <ToggleSwitch
-                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
-                                VerticalAlignment="Center"
-                                Background="Transparent"
-                                BorderBrush="Transparent"
-                                IsOn="{x:Bind ViewModelMain.IsRestoredTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button
-                                x:Name="btnRestoreTabs"
-                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
-                                VerticalAlignment="Center"
-                                Background="Transparent"
-                                BorderBrush="Transparent"
-                                Click="btnRestoreTabs_Click">
-                                <Button.Flyout>
-                                    <Flyout Placement="Left">
-                                        <ListView x:Name="TabStateList" SelectionChanged="TabStateList_SelectionChanged">
-                                            <ListView.ItemTemplate>
-                                                <DataTemplate x:DataType="v2:TabState">
-                                                    <StackPanel Margin="5" Orientation="Horizontal">
-                                                        <Image
-                                                            Width="16"
-                                                            Height="16"
-                                                            Margin="0,0,5,0"
-                                                            Source="{Binding FaviconUrl}" />
-                                                        <TextBlock VerticalAlignment="Center" Text="{Binding Url}" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ListView.ItemTemplate>
-                                        </ListView>
-                                    </Flyout>
-                                </Button.Flyout>
-                                <StackPanel Orientation="Horizontal">
-                                    <FontIcon
-                                        FontFamily="{StaticResource FluentIcons}"
-                                        FontSize="14"
-                                        Glyph="&#xE81C;" />
-                                    <TextBlock Margin="2,0,0,0" Text="Tabs" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-
                         <Border
                             Height="1"
                             Margin="-8,4"
@@ -871,30 +822,95 @@
                         Click="btnTabsAll_Click"
                         ToolTipService.ToolTip="Tab Manager">
                         <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedRight">
-                                <ListView
-                                    x:Name="TabsList"
-                                    Padding="2"
-                                    Header="Open Tabs"
-                                    SelectionChanged="TabsList_SelectionChanged">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}" Orientation="Horizontal">
-                                                <Image
-                                                    Width="16"
-                                                    Height="16"
-                                                    Margin="0,0,5,0"
-                                                    Source="{Binding FaviconUrlString}" />
-                                                <TextBlock
-                                                    MaxWidth="400"
-                                                    VerticalAlignment="Center"
-                                                    MaxLines="4"
-                                                    Text="{Binding Header}"
-                                                    TextWrapping="WrapWholeWords" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
+                            <Flyout
+                                AreOpenCloseAnimationsEnabled="True"
+                                LightDismissOverlayMode="Auto"
+                                Placement="BottomEdgeAlignedRight">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Expander
+                                        Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                        HorizontalAlignment="Center"
+                                        ExpandDirection="Down"
+                                        Header="Tab Manager Options"
+                                        IsExpanded="False">
+                                        <Expander.Transitions>
+                                            <TransitionCollection>
+                                                <EntranceThemeTransition FromVerticalOffset="100" />
+                                            </TransitionCollection>
+                                        </Expander.Transitions>
+                                        <StackPanel
+                                            Grid.Row="0"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <TextBlock
+                                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                                VerticalAlignment="Center"
+                                                Text="Restore Tabs" />
+                                            <ToggleSwitch
+                                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                IsOn="{x:Bind ViewModelMain.IsRestoredTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Button
+                                                x:Name="btnRestoreTabs"
+                                                Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                                VerticalAlignment="Center"
+                                                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefault}"
+                                                BorderBrush="Transparent"
+                                                Click="btnClearRestoredTabs_Click">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon
+                                                        FontFamily="{StaticResource FluentIcons}"
+                                                        FontSize="14"
+                                                        Glyph="&#xE8E6;" />
+                                                    <TextBlock Margin="10,0,0,0" Text="Clear Tab State" />
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+                                    </Expander>
+
+
+                                    <ListView
+                                        x:Name="TabsList"
+                                        Grid.Row="1"
+                                        Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                        Padding="2"
+                                        Header="Open Tabs"
+                                        SelectionChanged="TabsList_SelectionChanged">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel
+                                                    Margin="{ThemeResource XXXSmallLeftTopRightBottomMargin}"
+                                                    Orientation="Horizontal"
+                                                    Spacing="2">
+                                                    <Image
+                                                        Width="16"
+                                                        Height="16"
+                                                        Margin="0,0,5,0"
+                                                        Source="{Binding FaviconUrlString}" />
+                                                    <TextBlock
+                                                        MaxWidth="320"
+                                                        VerticalAlignment="Center"
+                                                        MaxLines="4"
+                                                        Text="{Binding Header}"
+                                                        TextWrapping="WrapWholeWords" />
+                                                    <StackPanel.ContextFlyout>
+                                                        <MenuFlyout Placement="Bottom">
+                                                            <MenuFlyoutItem Click="TabFlyoutDelete" Text="Close Tab" />
+                                                        </MenuFlyout>
+                                                    </StackPanel.ContextFlyout>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </Grid>
+
                             </Flyout>
                         </Button.Flyout>
                         <FontIcon
