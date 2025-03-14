@@ -56,6 +56,7 @@ using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Text;
 using WinRT.Interop;
+using static Riverside.Graphite.Controls.TabStates;
 using Settings = Riverside.Graphite.Core.Settings;
 using Windowing = Riverside.Graphite.Runtime.Helpers.Windowing;
 

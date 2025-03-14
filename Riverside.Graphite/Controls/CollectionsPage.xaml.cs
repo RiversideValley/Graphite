@@ -87,13 +87,13 @@ namespace Riverside.Graphite.Controls
 				if (App.Current.m_window is MainWindow window)
 				{
 					int current = window.TabViewContainer.SelectedIndex;
-					if (window.TabViewContainer.SelectedIndex == current)
+					if (window.TabViewContainer.SelectedIndex >= 0)
 					{
 						window.HandleNormalUrlOrSearch(selectedHistoryItem);
 					}
 					else
 					{
-						window.TabManager.CreateNewTab(typeof(WebContent), selectedHistoryItem);
+						window.TabManager.CreateNewTab(typeof(WebContent),  selectedHistoryItem);
 					}
 
 				}

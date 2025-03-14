@@ -2,9 +2,9 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 
-namespace Riverside.Graphite;
+namespace Riverside.Graphite.Controls;
 
-public sealed partial class MainWindow
+public partial class TabStates
 {
 	public record TabAll(Guid Tag, string Header, string Url, IconSource FaviconUrl)
 	{

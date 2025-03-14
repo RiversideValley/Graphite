@@ -29,6 +29,7 @@ using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Storage;
 using WinRT.Interop;
+using static Riverside.Graphite.Controls.TabStates;
 using static Riverside.Graphite.MainWindow;
 
 
@@ -114,7 +115,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		});
 	}
 	[RelayCommand]
-	public void RemoveTab(MainWindow.TabAll tabAll) {
+	public void RemoveTab(TabAll tabAll) {
 
 		_ = MainView.DispatcherQueue.TryEnqueue(() =>
 		{
