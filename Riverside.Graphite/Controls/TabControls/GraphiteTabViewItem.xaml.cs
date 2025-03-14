@@ -123,8 +123,13 @@ namespace Riverside.Graphite.Controls
 
 			if (viewTab.Content is Frame frame)
 			{
-				if (frame.Content is WebContent web)
+				
+				if (frame.Content is WebContent web )
 				{
+					await web.WebViewElement.EnsureCoreWebView2Async();
+
+					if (web.WebViewElement.CoreWebView2 is null)
+						throw new InvalidCastException("CoreWebView2-CoreWebView2-api-ISNULL"); 
 
 					if (web.PictureWebElement is BitmapImage)
 					{
@@ -132,6 +137,7 @@ namespace Riverside.Graphite.Controls
 						if (!viewTab.IsSelected)
 							ViewModel.WebPreview = web.PictureWebElement;
 					}
+
 
 					ViewModel.WebTitle = web.WebView.CoreWebView2?.DocumentTitle;
 

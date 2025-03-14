@@ -71,7 +71,8 @@ public sealed partial class MainWindow : Window
 	public SettingsService SettingsService { get; set; }
 	public MainWindowViewModel ViewModelMain { get; set; }
 	public TabManager TabManager { get; set; }
-	public Window TearOutWindow { get; set; }
+	public TabStateBackgroundService GetStateBackgroundService { get; set; }
+	public MainWindow TearOutWindow { get; set; }
 	//public HubService HubService { get; set; }	
 	public string PicturePath { get; set; }
 	public MainWindow()
@@ -89,8 +90,13 @@ public sealed partial class MainWindow : Window
 		
 		
 		InitializeComponent();
-		TabManager = new TabManager(Tabs);
-		_=	StartupTabCheckAsync();
+		TabManager = App.GetService<TabManager>();
+		TabManager.InitializeTabManager(Tabs);
+		GetStateBackgroundService = App.GetService<TabStateBackgroundService>();
+		GetStateBackgroundService.StartAsync(AppService.CancellationToken);
+
+		// new TabManager(Tabs);
+		_ =	StartupTabCheckAsync();
 
 		TitleTop();
 		//ArgsPassed();
@@ -204,28 +210,50 @@ public sealed partial class MainWindow : Window
 
 		appWindow.Closing += AppWindow_Closing;
 	}
+
+	//private void TabView_TabTearOutRequested(object sender, TabTearOutRequestedEventArgs e)
+	//{
+	//	// Handle the tab tear out request
+	//	var newWindow = new MainWindow();
+	//	newWindow.Show();
+	//	e.TabViewItem.ParentTabView.Items.Remove(e.TabViewItem);
+	//	newWindow.Tabs.Items.Add(e.TabViewItem);
+	//	e.Handled = true;
+	//}
+
+	//private void TabView_TabTearOutWindowRequested(object sender, TabTearOutWindowRequestedEventArgs e)
+	//{
+	//	// Handle the tab tear out window request
+	//	var newWindow = new MainWindow();
+	//	newWindow.Show();
+	//	e.Window = newWindow;
+	//	e.Handled = true;
+	//}
+	
+
+	private async void TabView_TabTearOutWindowRequested(TabView sender, TabViewTabTearOutWindowRequestedEventArgs args)
+	{
+		TearOutWindow = new MainWindow { SystemBackdrop = new MicaBackdrop() };
+		await AppService.ConfigureSettingsWindow(TearOutWindow, "Graphite Broswer");
+		TearOutWindow.Tabs.TabItems.Add(args.Tabs.FirstOrDefault()); 
+
+		//Frame frm = new Frame();
+		//frm.Background = new SolidColorBrush(Colors.Transparent);
+		//frm.Navigate(typeof(WebContent), CreatePasser((TabView)sender.SelectedItem));
+		//TearOutWindow.Content = frm; 
+		AppService.FireWindows.Add(TearOutWindow);
+		args.NewWindowId = TearOutWindow.AppWindow.Id;
+	}
+
 	private void TabView_TabTearOutRequested(TabView sender, TabViewTabTearOutRequestedEventArgs args)
 	{
 		if (TearOutWindow?.Content is WebContent web && args.Tabs.FirstOrDefault() is GraphiteTabViewItem newTab)
 		{
 			Tabs.Tabs.Remove(newTab);
 			Tabs.Tabs.Add(newTab);
-			
+
 		}
 	}
-
-	private async void TabView_TabTearOutWindowRequested(TabView sender, TabViewTabTearOutWindowRequestedEventArgs args)
-	{
-		TearOutWindow = new Window { SystemBackdrop = new MicaBackdrop() };
-		await AppService.ConfigureSettingsWindow(TearOutWindow, "Graphite Broswer");
-		Frame frm = new Frame();
-		frm.Background = new SolidColorBrush(Colors.Transparent);
-		frm.Navigate(typeof(WebContent), CreatePasser((TabView)sender.SelectedItem));
-		TearOutWindow.Content = frm; 
-		AppService.FireWindows.Add(TearOutWindow);
-		args.NewWindowId = TearOutWindow.AppWindow.Id;
-	}
-
 	private void TabView_ExternalTornOutTabsDropped(TabView sender, TabViewExternalTornOutTabsDroppedEventArgs args)
 	{
 

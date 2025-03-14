@@ -34,15 +34,21 @@ public class TabManager
 
 	public TabManager(GraphiteTabViewContainer tabViewContainer)
 	{
+		InitializeTabManager(tabViewContainer);
+	}
+
+	public TabManager()
+	{
+		// Empty constructor
+	}
+	public void InitializeTabManager(GraphiteTabViewContainer tabViewContainer)
+	{
 		_tabViewContainer = tabViewContainer;
 		_tabViewContainer.SelectionChanged += TabViewContainer_SelectionChanged;
 		InitializeSleepTimer();
 		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
 		_isRestoringTabs = Convert.ToBoolean(isRestore);
-
-		//InitializePreviewTimer();
-	}
-
+	}	
 
 	public Task<bool> GetCurrentTabs()
 	{
@@ -261,7 +267,7 @@ public class TabManager
 		return frame;
 	}
 
-	public Task SaveTabStateAsync(string username)
+	public Task<string> SaveTabStateAsync(string username)
 	{
 		var tabStates = new List<TabState>();
 
@@ -290,7 +296,7 @@ public class TabManager
 		var localSettings = ApplicationData.Current.LocalSettings;
 		localSettings.Values[$"{username}_{TabStateKey}"] = json;
 		
-		return Task.CompletedTask;	
+		return Task.FromResult(json ?? null);	
 	}
 
 	public Task RestoreTabsAsync(string username)
@@ -491,6 +497,7 @@ public class TabManager
 				{
 					tab.Header = "Sleeping - " + tab.Header.ToString();
 				}
+				
 				TabPutToSleep?.Invoke(this, tab);
 			}
 			_lastActivityTimes.Remove(tab);

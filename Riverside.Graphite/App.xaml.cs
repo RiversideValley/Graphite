@@ -4,6 +4,8 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using Riverside.Graphite.Controls;
+using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Contracts;
@@ -72,7 +74,13 @@ public partial class App : Application
 		_ = services.AddTransient<CollectionsPageViewModel>();
 		_ = services.AddTransient<GraphiteUpdateClient>();
 		_ = services.AddTransient<UpdateManager>();
-		
+		_ = services.AddSingleton<TabManager>();
+		_ = services.AddSingleton<TabStateBackgroundService>(provider =>
+		{
+			var tabManager = provider.GetRequiredService<TabManager>();
+			var username = AuthService.CurrentUser?.Username;
+			return new TabStateBackgroundService(tabManager, username);
+		});
 		//_ = services.AddSignalR(options =>
 		//{
 		//	options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(120000);

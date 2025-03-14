@@ -72,17 +72,34 @@ namespace Riverside.Graphite.Pages
 		}
 		public async Task UnloadContent()
 		{
-			await WebView.CoreWebView2?.TrySuspendAsync();
+			try
+			{
+				await WebView.CoreWebView2?.TrySuspendAsync();
+			}
+			catch (Exception e)
+			{
+				ExceptionLogger.LogException(e);
+			}
+			
 			offlinePage.Visibility = Visibility.Visible;
 			Grid.Visibility = Visibility.Collapsed;
 		}
 
 		public Task ReloadContent()
 		{
-			WebView.CoreWebView2.Resume();
+			try
+			{
+				WebView.CoreWebView2.Resume();
+			}
+			catch (Exception e)
+			{
+				ExceptionLogger.LogException(e);
+			}
+			
 			offlinePage.Visibility = Visibility.Collapsed;
 			Grid.Visibility = Visibility.Visible;
-			return Task.CompletedTask; 
+			
+			return Task.CompletedTask;
 		}
 		private async Task AfterComplete()
 		{
@@ -299,7 +316,7 @@ namespace Riverside.Graphite.Pages
 		{
 			await Task.Run(async () =>
 			{
-				await Task.Delay(1800);
+				await Task.Delay(2400);
 
 				try
 				{
@@ -339,10 +356,45 @@ namespace Riverside.Graphite.Pages
 			}
 		}
 
-		private void NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+		private async void NavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
 		{
 			ProgressLoading.IsIndeterminate = false;
 			ProgressLoading.Visibility = Visibility.Collapsed;
+
+			await Task.Run(async () =>
+			{
+				await Task.Delay(600);
+
+				try
+				{
+					DispatcherQueue.TryEnqueue(async () =>
+					{
+						using MemoryStream memoryStream = new();
+						try
+						{
+							await sender.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Jpeg, memoryStream.AsRandomAccessStream());
+							memoryStream.Seek(0, SeekOrigin.Begin);
+
+							BitmapImage bitmap = new() { DecodePixelHeight = 512, DecodePixelWidth = 640 };
+							await bitmap.SetSourceAsync(memoryStream.AsRandomAccessStream());
+							memoryStream.Seek(0, SeekOrigin.Begin);
+
+							PictureWebElement = bitmap;
+
+							MainWindow currentWindow = (Application.Current as App)?.m_window as MainWindow;
+						}
+						catch (Exception ex)
+						{
+							ExceptionLogger.LogException(ex);
+							Console.Write($"Error capturing preview of website:\n{ex.Message}");
+						}
+					});
+				}
+				catch (Exception ex)
+				{
+					ExceptionLogger.LogException(ex);
+				}
+			});
 		}
 
 		private void SourceChanged(CoreWebView2 sender, CoreWebView2SourceChangedEventArgs args)
@@ -510,7 +562,7 @@ namespace Riverside.Graphite.Pages
 		}
 		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
 		{
-			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize", "https://login.microsoftonline.com/common/oauth2/v2.0/token" };
+			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/common/login",  "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize", "https://login.microsoftonline.com/common/oauth2/v2.0/token" };
 			return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
 		}
 
