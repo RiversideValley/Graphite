@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
 using Graphite.Controls;
@@ -24,6 +25,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
@@ -36,6 +38,20 @@ using WinRT.Interop;
 
 namespace Riverside.Graphite.Pages
 {
+	public partial class WebContentViewModel : ObservableObject
+	{
+		[ObservableProperty]
+		private Uri _SourceUrl ;
+		public WebContentViewModel()
+		{
+			SourceUrl = new("about:blank");
+			OnPropertyChanged(nameof(SourceUrl));
+		}
+		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
+		{
+			OnPropertyChanged(propertyName);
+		}
+	}
 	public sealed partial class WebContent : Page
 	{
 		private Passer param;
@@ -46,11 +62,12 @@ namespace Riverside.Graphite.Pages
 		private AdBlockerWrapper AdBlockerService { get; }
 		private readonly SpeechSynthesizer synthesizer = new();
 		private bool isOffline = false;
-
+		WebContentViewModel ViewModel { get; set; }	
 		public WebContent()
 		{
 			SettingsService = App.GetService<SettingsService>();
 			AdBlockerService = App.GetService<AdBlockerWrapper>();
+			ViewModel = new();	
 
 			InitializeComponent();
 			WebView = WebViewElement;
@@ -185,25 +202,33 @@ namespace Riverside.Graphite.Pages
 			base.OnNavigatedTo(e);
 			param = e.Parameter as Passer;
 
-			await WebViewElement.EnsureCoreWebView2Async();
-
+			Uri u; 
+			
 			if (param?.Param != null)
 			{
-				var uri = UrlValidater.GetValidateUrl(param.Param.ToString());
-				if (uri is not null) {
-					if (WebViewElement.CoreWebView2 is null)
-					{
-						WebViewElement.Source = uri;
-						await Task.Delay(320); 
-					}
-					else { WebViewElement.CoreWebView2.Navigate(uri.AbsoluteUri); }
-				} 
-				else
+				if (param.Param is Passer pass)
 				{
-					if (App.Current.m_window is MainWindow win)
-						win.NotificationQueue.Show("Your requested url isn't supported!", 2000, "Web Navigation");
-					
-					return; 
+					u = UrlValidater.GetValidateUrl(pass.Param.ToString());
+
+				}
+				else {
+
+					u = UrlValidater.GetValidateUrl(param.Param.ToString());
+				}
+
+				if (u is not null)
+				{
+					try
+					{
+						await WebViewElement.EnsureCoreWebView2Async();
+						WebViewElement.CoreWebView2.Navigate(u.AbsoluteUri);
+						await SetupEventHandlersAsync(WebViewElement);
+					}
+					catch (Exception)
+					{
+
+						throw;
+					}
 				}
 			}
 			else {
@@ -212,7 +237,7 @@ namespace Riverside.Graphite.Pages
 				}
 				return;
 			}
-			await WebViewElement.EnsureCoreWebView2Async();
+			
 			if (WebViewElement.CoreWebView2 is null)
 				return;
 			else
@@ -225,7 +250,7 @@ namespace Riverside.Graphite.Pages
 				WebViewElement.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
 			}
 			
-			await SetupEventHandlersAsync(WebViewElement);
+
 		}
 
 		private async Task SetupEventHandlersAsync(WebView2 s)

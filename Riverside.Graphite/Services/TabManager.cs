@@ -405,7 +405,7 @@ public class TabManager
 	{
 		if (tab.Content is Frame frame && frame.Content is WebContent webContent)
 		{
-			return webContent.WebView.CoreWebView2.FaviconUri;
+			return webContent.WebView.CoreWebView2?.FaviconUri;
 		}
 		else if (tab.Content is SplitViewContainer splitView)
 		{

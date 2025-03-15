@@ -1592,12 +1592,23 @@ public async void NavigateToUrl(string uri)
 		}
 	}
 
-	private void HistoryTemp_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	private async void HistoryTemp_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if ((sender as ListView)?.SelectedItem is HistoryItem item && !string.IsNullOrEmpty(item.Url))
 		{
-			if (TabContent.Content is WebContent webContent) webContent.WebViewElement.CoreWebView2.Navigate(item.Url);
-			else _ = TabContent.Navigate(typeof(WebContent), CreatePasser(item.Url));
+			if (TabContent is null)
+			{
+				Tabs.TabManager.CreateNewTab(typeof(WebContent), CreatePasser(item.Url));
+			}
+			else {
+				if (TabContent.Content is WebContent webContent)
+				{
+					webContent.WebViewElement.Source = new(item.Url);
+					await webContent.WebViewElement.EnsureCoreWebView2Async();
+				}
+				else _ = TabContent.Navigate(typeof(WebContent), CreatePasser(item.Url));
+			}
+
 			((ListView)sender).ItemsSource = null;
 			HistoryFlyoutMenu.Hide();
 		}

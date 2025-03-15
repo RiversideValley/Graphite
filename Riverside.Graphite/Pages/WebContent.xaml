@@ -230,7 +230,8 @@
                     x:Name="WebViewElement"
                     x:FieldModifier="public"
                     AllowDrop="True"
-                    Canvas.ZIndex="2" />
+                    Canvas.ZIndex="2"
+                    Source="{x:Bind ViewModel.SourceUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Border>
         </Grid>
     </Grid>
