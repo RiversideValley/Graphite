@@ -221,7 +221,8 @@ namespace Riverside.Graphite.Pages
 					try
 					{
 						await WebViewElement.EnsureCoreWebView2Async();
-						WebViewElement.CoreWebView2.Navigate(u.AbsoluteUri);
+						ViewModel.SourceUrl = u;
+						ViewModel.RaisePropertyChanges(nameof(ViewModel.SourceUrl));
 						await SetupEventHandlersAsync(WebViewElement);
 					}
 					catch (Exception)
