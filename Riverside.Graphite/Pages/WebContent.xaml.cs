@@ -223,7 +223,8 @@ namespace Riverside.Graphite.Pages
 						await WebViewElement.EnsureCoreWebView2Async();
 						ViewModel.SourceUrl = u;
 						ViewModel.RaisePropertyChanges(nameof(ViewModel.SourceUrl));
-						await SetupEventHandlersAsync(WebViewElement);
+						if (WebViewElement.CoreWebView2 is not null)
+							await SetupEventHandlersAsync(WebViewElement);
 					}
 					catch (Exception)
 					{
@@ -278,8 +279,8 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceRequested += WebResourceRequested;
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
-			
-			AdBlockerService.Toggle(false);
+		
+			AdBlockerService.Toggle(true);
 			await AdBlockerService.Initialize(WebView);
 		}
 
@@ -342,7 +343,7 @@ namespace Riverside.Graphite.Pages
 		{
 			await Task.Run(async () =>
 			{
-				await Task.Delay(2400);
+				await Task.Delay(1200);
 
 				try
 				{
@@ -389,7 +390,7 @@ namespace Riverside.Graphite.Pages
 
 			await Task.Run(async () =>
 			{
-				await Task.Delay(600);
+				await Task.Delay(2400);
 
 				try
 				{

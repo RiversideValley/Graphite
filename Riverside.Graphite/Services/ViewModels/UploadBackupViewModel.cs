@@ -72,7 +72,10 @@ namespace Riverside.Graphite.Services.ViewModels
 				IsIconVisible = true,
 				Duration = TimeSpan.FromSeconds(3)
 			};
-			_ = (UpLoadBackup.Instance?.NotificationQueue.Show(note));
+			
+			_ = UpLoadBackup.Instance?.NotificationQueue.Show(note);
+			
+			
 		}
 
 		[RelayCommand]
@@ -81,6 +84,7 @@ namespace Riverside.Graphite.Services.ViewModels
 			BackUpDialog dlg = new();
 			dlg.XamlRoot = UpLoadBackup.Instance?.GridMainUploadBackup.XamlRoot;
 			_ = await dlg.ShowAsync();
+
 		}
 		//public async Task SendGraphEmailAsync(string toEmail, string sasUrl)
 		//{
@@ -168,9 +172,9 @@ namespace Riverside.Graphite.Services.ViewModels
             FileNewSas.BlobUrl = sasUrl;
 
             OnPropertyChanged(nameof(FileNewSas));
-
-            //await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
-            //await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
-        }
+			_ = UpLoadBackup.Instance?.FileNewSasText.Focus(FocusState.Programmatic);
+			//await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
+			//await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
+		}
 	}
 }
