@@ -14,6 +14,12 @@ using Graphite.ViewModels;
 using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Core;
 using System.Threading;
+using Microsoft.UI.Xaml.Media;
+using Windows.UI;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using System.Collections.ObjectModel;
+using Riverside.Graphite.Controls.Models;
+using System.Xml.Linq;
 
 namespace Riverside.Graphite.Controls;
 
@@ -29,6 +35,14 @@ public class TabManager
 	private ConcurrentQueue<GraphiteTabViewItem> _preloadedTabs = new ConcurrentQueue<GraphiteTabViewItem>();
 	private const int MAX_PRELOADED_TABS = 1;
 	private bool _isRestoringTabs = false;
+	private MenuFlyout _tabContextMenu;
+	private GraphiteTabViewItem _contextMenuTargetTab;
+	private ContentDialog _groupDialog;
+	private TextBox _groupNameTextBox;
+	private ColorPicker _colorPicker;
+
+	// Add a collection for tab groups
+	public ObservableCollection<GraphiteTabGroup> TabGroups { get; } = new ObservableCollection<GraphiteTabGroup>();
 
 	public event EventHandler<GraphiteTabViewItem> TabPutToSleep;
 
@@ -41,6 +55,7 @@ public class TabManager
 	{
 		// Empty constructor
 	}
+
 	public void InitializeTabManager(GraphiteTabViewContainer tabViewContainer)
 	{
 		_tabViewContainer = tabViewContainer;
@@ -48,11 +63,485 @@ public class TabManager
 		InitializeSleepTimer();
 		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
 		_isRestoringTabs = Convert.ToBoolean(isRestore);
-	}	
+
+		// Initialize the tab context menu
+		InitializeTabContextMenu();
+
+		// Register for tab item added event to attach context menu
+		_tabViewContainer.TabItemsChanged += TabViewContainer_TabItemsChanged;
+	}
+
+	private void InitializeTabContextMenu()
+	{
+		// Create the context menu
+		_tabContextMenu = new MenuFlyout();
+
+		// Create New Group
+		var createGroupItem = new MenuFlyoutItem { Text = "Create New Group" };
+		createGroupItem.Icon = new SymbolIcon(Symbol.Add);
+		createGroupItem.Click += CreateTabGroup_Click;
+		_tabContextMenu.Items.Add(createGroupItem);
+
+		// Add to Group submenu
+		var addToGroupSubMenu = new MenuFlyoutSubItem { Text = "Add to Group" };
+		addToGroupSubMenu.Icon = new SymbolIcon(Symbol.AddFriend);
+		var noGroupsPlaceholder = new MenuFlyoutItem { Text = "No groups available", IsEnabled = false };
+		addToGroupSubMenu.Items.Add(noGroupsPlaceholder);
+		_tabContextMenu.Items.Add(addToGroupSubMenu);
+
+		// Remove from Group
+		var removeFromGroupItem = new MenuFlyoutItem { Text = "Remove from Group" };
+		removeFromGroupItem.Icon = new SymbolIcon(Symbol.Remove);
+		removeFromGroupItem.Click += RemoveFromGroup_Click;
+		_tabContextMenu.Items.Add(removeFromGroupItem);
+
+		_tabContextMenu.Items.Add(new MenuFlyoutSeparator());
+
+		// Rename Group
+		var renameGroupItem = new MenuFlyoutItem { Text = "Rename Group" };
+		renameGroupItem.Icon = new SymbolIcon(Symbol.Rename);
+		renameGroupItem.Click += RenameGroup_Click;
+		_tabContextMenu.Items.Add(renameGroupItem);
+
+		// Change Group Color
+		var changeGroupColorItem = new MenuFlyoutItem { Text = "Change Group Color" };
+		changeGroupColorItem.Icon = new SymbolIcon(Symbol.FontColor);
+		changeGroupColorItem.Click += ChangeGroupColor_Click;
+		_tabContextMenu.Items.Add(changeGroupColorItem);
+
+		_tabContextMenu.Items.Add(new MenuFlyoutSeparator());
+
+		// Pin Tab
+		var pinTabItem = new MenuFlyoutItem { Text = "Pin Tab" };
+		pinTabItem.Icon = new SymbolIcon(Symbol.Pin);
+		pinTabItem.Click += PinTab_Click;
+		_tabContextMenu.Items.Add(pinTabItem);
+
+		// Unpin Tab
+		var unpinTabItem = new MenuFlyoutItem { Text = "Unpin Tab", Visibility = Visibility.Collapsed };
+		unpinTabItem.Icon = new SymbolIcon(Symbol.UnPin);
+		unpinTabItem.Click += UnpinTab_Click;
+		_tabContextMenu.Items.Add(unpinTabItem);
+
+		// Duplicate Tab
+		var duplicateTabItem = new MenuFlyoutItem { Text = "Duplicate Tab" };
+		duplicateTabItem.Icon = new SymbolIcon(Symbol.Copy);
+		duplicateTabItem.Click += DuplicateTab_Click;
+		_tabContextMenu.Items.Add(duplicateTabItem);
+
+		// Sleep/Wake Tab
+		var sleepTabItem = new MenuFlyoutItem { Text = "Sleep Tab" };
+		sleepTabItem.Icon = new SymbolIcon(Symbol.Edit);
+		sleepTabItem.Click += SleepTab_Click;
+		_tabContextMenu.Items.Add(sleepTabItem);
+
+		_tabContextMenu.Items.Add(new MenuFlyoutSeparator());
+
+		// Close Other Tabs
+		var closeOtherTabsItem = new MenuFlyoutItem { Text = "Close Other Tabs" };
+		closeOtherTabsItem.Icon = new SymbolIcon(Symbol.Clear);
+		closeOtherTabsItem.Click += CloseOtherTabs_Click;
+		_tabContextMenu.Items.Add(closeOtherTabsItem);
+
+		// Close Tabs to the Right
+		var closeTabsToRightItem = new MenuFlyoutItem { Text = "Close Tabs to the Right" };
+		closeTabsToRightItem.Icon = new SymbolIcon(Symbol.Delete);
+		closeTabsToRightItem.Click += CloseTabsToRight_Click;
+		_tabContextMenu.Items.Add(closeTabsToRightItem);
+	}
+
+	private void TabViewContainer_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
+	{
+		// When a new tab is added, attach the context menu
+		if (args.CollectionChange == Windows.Foundation.Collections.CollectionChange.ItemInserted)
+		{
+			var index = (int)args.Index;
+			if (index < _tabViewContainer.TabItems.Count)
+			{
+				var tabItem = _tabViewContainer.TabItems[index] as GraphiteTabViewItem;
+				if (tabItem != null)
+				{
+					AttachContextMenuToTab(tabItem);
+				}
+			}
+		}
+	}
+
+	// Add this method to attach the context menu to a tab
+	private void AttachContextMenuToTab(GraphiteTabViewItem tabItem)
+	{
+		tabItem.RightTapped -= TabItem_RightTapped; // Remove any existing handler
+		tabItem.RightTapped += TabItem_RightTapped;
+	}
+
+	// Add this method to handle right-click on a tab
+	private void TabItem_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+	{
+		var tabItem = sender as GraphiteTabViewItem;
+		if (tabItem != null)
+		{
+			_contextMenuTargetTab = tabItem;
+
+			// Update menu items based on tab state
+			UpdateContextMenuState();
+
+			// Show the context menu
+			_tabContextMenu.ShowAt(tabItem, e.GetPosition(tabItem));
+
+			e.Handled = true;
+		}
+	}
+
+	// Add this method to update the context menu state based on the target tab
+	private void UpdateContextMenuState()
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		// Get menu items by name
+		var pinTabItem = _tabContextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Text == "Pin Tab");
+		var unpinTabItem = _tabContextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Text == "Unpin Tab");
+		var removeFromGroupItem = _tabContextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Text == "Remove from Group");
+		var renameGroupItem = _tabContextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Text == "Rename Group");
+		var changeGroupColorItem = _tabContextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Text == "Change Group Color");
+		var sleepTabItem = _tabContextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Text == "Sleep Tab");
+
+		// Update sleep/wake menu item
+		if (sleepTabItem != null)
+		{
+			bool isSleeping = _contextMenuTargetTab.Header.ToString().StartsWith("Sleeping - ");
+			sleepTabItem.Text = isSleeping ? "Wake Tab" : "Sleep Tab";
+			sleepTabItem.Icon = new SymbolIcon(isSleeping ? Symbol.Play : Symbol.Edit);
+		}
+
+		// Update Add to Group submenu
+		var addToGroupSubMenu = _tabContextMenu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Text == "Add to Group");
+		if (addToGroupSubMenu != null)
+		{
+			addToGroupSubMenu.Items.Clear();
+
+			if (TabGroups.Count > 0)
+			{
+				foreach (var group in TabGroups)
+				{
+					var groupItem = new MenuFlyoutItem { Text = group.Name };
+					groupItem.Click += (s, e) => AddTabToGroup(_contextMenuTargetTab, group.Name);
+					addToGroupSubMenu.Items.Add(groupItem);
+				}
+			}
+			else
+			{
+				addToGroupSubMenu.Items.Add(new MenuFlyoutItem { Text = "No groups available", IsEnabled = false });
+			}
+		}
+
+		// Update pin/unpin visibility
+		if (pinTabItem != null && unpinTabItem != null)
+		{
+			if (_contextMenuTargetTab.IsPinned)
+			{
+				pinTabItem.Visibility = Visibility.Collapsed;
+				unpinTabItem.Visibility = Visibility.Visible;
+			}
+			else
+			{
+				pinTabItem.Visibility = Visibility.Visible;
+				unpinTabItem.Visibility = Visibility.Collapsed;
+			}
+		}
+
+		// Update group-related items visibility
+		bool hasGroup = _contextMenuTargetTab.Group != null;
+		if (removeFromGroupItem != null)
+			removeFromGroupItem.Visibility = hasGroup ? Visibility.Visible : Visibility.Collapsed;
+
+		if (renameGroupItem != null)
+			renameGroupItem.Visibility = hasGroup ? Visibility.Visible : Visibility.Collapsed;
+
+		if (changeGroupColorItem != null)
+			changeGroupColorItem.Visibility = hasGroup ? Visibility.Visible : Visibility.Collapsed;
+
+		// Update sleep/wake menu item
+		if (sleepTabItem != null)
+		{
+			bool isSleeping = _contextMenuTargetTab.Header.ToString().StartsWith("Sleeping - ");
+			sleepTabItem.Text = isSleeping ? "Wake Tab" : "Sleep Tab";
+			sleepTabItem.Icon = new SymbolIcon(isSleeping ? Symbol.Play : Symbol.Edit);
+		}
+	}
+
+	// Add these event handlers for the context menu items
+	private async void CreateTabGroup_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		// Create dialog for group name input
+		if (_groupDialog == null)
+		{
+			_groupDialog = new ContentDialog
+			{
+				Title = "Create New Group",
+				PrimaryButtonText = "Create",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary
+			};
+
+			_groupNameTextBox = new TextBox
+			{
+				PlaceholderText = "Enter group name",
+				Margin = new Thickness(0, 10, 0, 0)
+			};
+
+			_groupDialog.Content = _groupNameTextBox;
+		}
+
+		// Reset text box
+		_groupNameTextBox.Text = string.Empty;
+
+		// Set XamlRoot for the dialog
+		_groupDialog.XamlRoot = _tabViewContainer.XamlRoot;
+
+		// Show dialog
+		var result = await _groupDialog.ShowAsync();
+
+		if (result == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(_groupNameTextBox.Text))
+		{
+			AddTabToGroup(_contextMenuTargetTab, _groupNameTextBox.Text);
+		}
+	}
+
+	private void RemoveFromGroup_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null || _contextMenuTargetTab.Group == null)
+			return;
+
+		RemoveTabFromGroup(_contextMenuTargetTab);
+	}
+
+	private async void RenameGroup_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null || _contextMenuTargetTab.Group == null)
+			return;
+
+		var group = _contextMenuTargetTab.Group;
+
+		// Create dialog for group name input
+		if (_groupDialog == null)
+		{
+			_groupDialog = new ContentDialog
+			{
+				Title = "Rename Group",
+				PrimaryButtonText = "Rename",
+				CloseButtonText = "Cancel",
+				DefaultButton = ContentDialogButton.Primary
+			};
+
+			_groupNameTextBox = new TextBox
+			{
+				PlaceholderText = "Enter new group name",
+				Margin = new Thickness(0, 10, 0, 0)
+			};
+
+			_groupDialog.Content = _groupNameTextBox;
+		}
+
+		// Set current group name
+		_groupNameTextBox.Text = group.Name;
+
+		// Set XamlRoot for the dialog
+		_groupDialog.XamlRoot = _tabViewContainer.XamlRoot;
+
+		// Show dialog
+		var result = await _groupDialog.ShowAsync();
+
+		if (result == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(_groupNameTextBox.Text))
+		{
+			// Rename the group
+			string oldName = group.Name;
+			string newName = _groupNameTextBox.Text;
+
+			if (oldName != newName)
+			{
+				group.Name = newName;
+
+				// Update all tabs in this group
+				foreach (var tab in group.Tabs)
+				{
+					// Apply updated group style if needed
+					tab.ApplyGroupStyle(group);
+				}
+			}
+		}
+	}
+
+	private async void ChangeGroupColor_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null || _contextMenuTargetTab.Group == null)
+			return;
+
+		var group = _contextMenuTargetTab.Group;
+
+		// Create color picker dialog
+		var colorDialog = new ContentDialog
+		{
+			Title = "Choose Group Color",
+			PrimaryButtonText = "Apply",
+			CloseButtonText = "Cancel",
+			DefaultButton = ContentDialogButton.Primary,
+			XamlRoot = _tabViewContainer.XamlRoot
+		};
+
+		// Create color picker
+		if (_colorPicker == null)
+		{
+			_colorPicker = new ColorPicker
+			{
+				ColorSpectrumShape = ColorSpectrumShape.Box,
+				IsAlphaEnabled = false,
+				IsColorPreviewVisible = true,
+				IsColorSliderVisible = true,
+				IsHexInputVisible = true
+			};
+		}
+
+		// Try to parse current color
+		try
+		{
+			string colorHex = "#FF0078D7"; // Default color
+			if (!string.IsNullOrEmpty(group.Color))
+			{
+				colorHex = group.Color;
+			}
+
+			_colorPicker.Color = HexToColor(colorHex);
+		}
+		catch
+		{
+			// Use default color if parsing fails
+			_colorPicker.Color = Windows.UI.Color.FromArgb(255, 0, 120, 215);
+		}
+
+		colorDialog.Content = _colorPicker;
+
+		// Show dialog
+		var result = await colorDialog.ShowAsync();
+
+		if (result == ContentDialogResult.Primary)
+		{
+			// Get selected color
+			var color = _colorPicker.Color;
+			string colorHex = $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
+
+			// Update group color
+			group.Color = colorHex;
+
+			// Update all tabs in this group
+			foreach (var tab in group.Tabs)
+			{
+				// Apply updated group style
+				tab.ApplyGroupStyle(group);
+			}
+		}
+	}
+
+	private void PinTab_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		ToggleTabPin(_contextMenuTargetTab);
+	}
+
+	private void UnpinTab_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		ToggleTabPin(_contextMenuTargetTab);
+	}
+
+	private void DuplicateTab_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		// Get the URL or content type
+		string url = GetTabUrl(_contextMenuTargetTab);
+
+		// Create a new tab with the same content
+		GraphiteTabViewItem newTab;
+
+		if (url == "about:newtab" || string.IsNullOrEmpty(url))
+		{
+			newTab = CreateNewTab(typeof(NewTab), null, false);
+		}
+		else
+		{
+			newTab = CreateNewTab(typeof(WebContent), url, false);
+		}
+
+		// Copy group if any
+		if (_contextMenuTargetTab.Group != null)
+		{
+			AddTabToGroup(newTab, _contextMenuTargetTab.Group.Name);
+		}
+
+		// Select the new tab
+		_tabViewContainer.SelectedItem = newTab;
+	}
+
+	private async void SleepTab_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		await ToggleTabSleep(_contextMenuTargetTab);
+	}
+
+	private void CloseOtherTabs_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		// Store tabs to close
+		var tabsToClose = _tabViewContainer.TabItems.OfType<GraphiteTabViewItem>()
+			.Where(t => t != _contextMenuTargetTab && !t.IsPinned)
+			.ToList();
+
+		// Close tabs
+		foreach (var tab in tabsToClose)
+		{
+			CloseTab(tab);
+		}
+	}
+
+	private void CloseTabsToRight_Click(object sender, RoutedEventArgs e)
+	{
+		if (_contextMenuTargetTab == null)
+			return;
+
+		// Find index of current tab
+		int currentIndex = _tabViewContainer.TabItems.IndexOf(_contextMenuTargetTab);
+		if (currentIndex < 0)
+			return;
+
+		// Store tabs to close
+		var tabsToClose = _tabViewContainer.TabItems.OfType<GraphiteTabViewItem>()
+			.Skip(currentIndex + 1)
+			.Where(t => !t.IsPinned)
+			.ToList();
+
+		// Close tabs
+		foreach (var tab in tabsToClose)
+		{
+			CloseTab(tab);
+		}
+	}
 
 	public Task<bool> GetCurrentTabs()
 	{
-		CurrentTabs =  new Dictionary<GraphiteTabViewItem, Guid>();
+		CurrentTabs = new Dictionary<GraphiteTabViewItem, Guid>();
 
 		foreach (var tab in _tabViewContainer.TabItems)
 		{
@@ -66,7 +555,7 @@ public class TabManager
 			return Task.FromResult(true);
 		else
 			return Task.FromResult(false);
-	}	
+	}
 
 	private void TabViewContainer_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
@@ -75,7 +564,6 @@ public class TabManager
 			OnTabSelected(selectedTab);
 		}
 	}
-
 
 	private Task PreloadTabAsync()
 	{
@@ -108,7 +596,7 @@ public class TabManager
 	{
 		GraphiteTabViewItem newTab = null;
 
-		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+		_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 		{
 			if (_preloadedTabs.TryDequeue(out var preloadedTab))
 			{
@@ -125,6 +613,9 @@ public class TabManager
 			}
 
 			_tabViewContainer.TabItems.Add(newTab);
+
+			// Attach context menu to the new tab
+			AttachContextMenuToTab(newTab);
 
 			try
 			{
@@ -146,8 +637,8 @@ public class TabManager
 				}
 				await webContent?.WebView.EnsureCoreWebView2Async();
 
-				newTab.Header = webContent?.WebView.CoreWebView2.DocumentTitle ?? "New Tab";	
-				UpdateTabIcon(newTab,webContent?.WebView.CoreWebView2.FaviconUri);
+				newTab.Header = webContent?.WebView.CoreWebView2.DocumentTitle ?? "New Tab";
+				UpdateTabIcon(newTab, webContent?.WebView.CoreWebView2.FaviconUri);
 
 			}
 			catch (Exception ex)
@@ -172,7 +663,7 @@ public class TabManager
 		}
 	}
 
-	public GraphiteTabViewItem CreateNewTab(Type pageType = null, object parameter = null, bool isSplitViewActive = false, string username = null, Guid? idTag = null )
+	public GraphiteTabViewItem CreateNewTab(Type pageType = null, object parameter = null, bool isSplitViewActive = false, string username = null, Guid? idTag = null)
 	{
 		GraphiteTabViewItem newItem;
 
@@ -221,11 +712,10 @@ public class TabManager
 		}
 		else
 		{
-				
-			newItem.Content = CreateFrame(pageType, passer);
-			
-		}
 
+			newItem.Content = CreateFrame(pageType, passer);
+
+		}
 
 		if (newItem.Content is Frame frame)
 		{
@@ -241,7 +731,10 @@ public class TabManager
 
 		_tabViewContainer.AddTab(newItem);
 		UpdateTabActivity(newItem);
-		//SetupTabPreview(newItem);
+
+		// Attach context menu to the new tab
+		AttachContextMenuToTab(newItem);
+
 		_tabViewContainer.SelectedItem = newItem;
 
 		// Preload a new tab to replace the one we just used
@@ -259,7 +752,7 @@ public class TabManager
 		{
 			HorizontalAlignment = HorizontalAlignment.Stretch,
 			VerticalAlignment = VerticalAlignment.Stretch,
-			Margin = new Thickness(2,48,2,2)
+			Margin = new Thickness(2, 48, 2, 2)
 		};
 
 		frame.Navigate(pageType, parameter);
@@ -287,6 +780,9 @@ public class TabManager
 				IsPinned = tab.IsPinned,
 				CustomColor = GetTabColor(tab),
 				IsNewTab = tab.Content is Frame frame && frame.Content is NewTab,
+				// Add group information
+				GroupName = tab.Group?.Name,
+				GroupColor = tab.Group?.Color
 			};
 
 			tabStates.Add(state);
@@ -295,8 +791,8 @@ public class TabManager
 		var json = JsonSerializer.Serialize(tabStates);
 		var localSettings = ApplicationData.Current.LocalSettings;
 		localSettings.Values[$"{username}_{TabStateKey}"] = json;
-		
-		return Task.FromResult(json ?? null);	
+
+		return Task.FromResult(json ?? null);
 	}
 
 	public Task RestoreTabsAsync(string username)
@@ -308,28 +804,46 @@ public class TabManager
 			var json = jsonObj as string;
 			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
 
-			 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+			// First, clear any existing tab groups
+			TabGroups.Clear();
+
+			// Create all the groups first
+			var groupNames = tabStates.Where(s => !string.IsNullOrEmpty(s.GroupName))
+									 .Select(s => s.GroupName)
+									 .Distinct();
+
+			foreach (var groupName in groupNames)
+			{
+				var groupColor = tabStates.FirstOrDefault(s => s.GroupName == groupName)?.GroupColor;
+				TabGroups.Add(new GraphiteTabGroup
+				{
+					Name = groupName,
+					Color = !string.IsNullOrEmpty(groupColor) ? groupColor : "#FF0078D7"
+				});
+			}
+
+			_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 			{
 				_tabViewContainer.TabItems.Clear();
 				_lastActivityTimes.Clear();
-				
+
 				foreach (var state in tabStates)
 				{
 					SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
-					
+
 					try
-					{	
+					{
 						await semaphore.WaitAsync();
 						GraphiteTabViewItem newTab;
 						if (state.Url == "about:newtab" || string.IsNullOrEmpty(state.Url))
 						{
 							newTab = CreateNewTab(typeof(NewTab), null, state.IsSplitView, username, state.Id);
-							
+
 						}
 						else
 						{
 							newTab = CreateNewTab(typeof(WebContent), state.Url, state.IsSplitView, username, state.Id);
-							
+
 						}
 
 						if (state.IsSleeping)
@@ -352,6 +866,17 @@ public class TabManager
 						}
 						newTab.Header = state.Header;
 						newTab.IsPinned = state.IsPinned;
+
+						// Restore group if applicable
+						if (!string.IsNullOrEmpty(state.GroupName))
+						{
+							var group = TabGroups.FirstOrDefault(g => g.Name == state.GroupName);
+							if (group != null)
+							{
+								AddTabToGroup(newTab, group.Name);
+							}
+						}
+
 						SetTabColor(newTab, state.CustomColor);
 						_lastActivityTimes[newTab] = state.LastAccessTime;
 						SetTabScrollPosition(newTab, state.ScrollPosition);
@@ -360,10 +885,8 @@ public class TabManager
 					{
 						semaphore.Release();
 						System.Diagnostics.Debug.WriteLine($"Error restoring tab: {ex.Message}");
-						throw; 
+						throw;
 					}
-
-					
 				}
 			});
 		}
@@ -411,7 +934,7 @@ public class TabManager
 		{
 			if (splitView.PrimaryContent is Frame primaryFrame && primaryFrame.Content is WebContent primaryWebContent)
 			{
-				return primaryWebContent.WebView.CoreWebView2.FaviconUri; 
+				return primaryWebContent.WebView.CoreWebView2.FaviconUri;
 			}
 		}
 		return string.Empty;
@@ -439,13 +962,64 @@ public class TabManager
 
 	private string GetTabColor(GraphiteTabViewItem tab)
 	{
-		// Implement logic to get tab color
+		// Return the group color if the tab is in a group
+		if (tab.Group != null)
+		{
+			return tab.Group.Color;
+		}
 		return "";
 	}
 
 	private void SetTabColor(GraphiteTabViewItem tab, string color)
 	{
-		// Implement logic to set tab color
+		// If the tab is not in a group, we can set a custom color
+		if (tab.Group == null && !string.IsNullOrEmpty(color))
+		{
+			tab.BorderThickness = new Thickness(0, 0, 0, 3);
+			tab.BorderBrush = new SolidColorBrush(HexToColor(color));
+		}
+	}
+
+	private Windows.UI.Color HexToColor(string hex)
+	{
+		// Handle null or empty hex values
+		if (string.IsNullOrEmpty(hex))
+			return Windows.UI.Color.FromArgb(0, 0, 0, 0); // Return transparent color
+
+		hex = hex.Replace("#", string.Empty);
+		byte a = 255;
+		byte r = 0;
+		byte g = 0;
+		byte b = 0;
+
+		try
+		{
+			if (hex.Length == 8)
+			{
+				a = Convert.ToByte(hex.Substring(0, 2), 16);
+				hex = hex.Substring(2);
+			}
+
+			if (hex.Length == 6)
+			{
+				r = Convert.ToByte(hex.Substring(0, 2), 16);
+				g = Convert.ToByte(hex.Substring(2, 2), 16);
+				b = Convert.ToByte(hex.Substring(4, 2), 16);
+			}
+			else if (hex.Length == 3)
+			{
+				r = Convert.ToByte(hex[0] + hex[0].ToString(), 16);
+				g = Convert.ToByte(hex[1] + hex[1].ToString(), 16);
+				b = Convert.ToByte(hex[2] + hex[2].ToString(), 16);
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error parsing color hex: {ex.Message}");
+			return Windows.UI.Color.FromArgb(255, 0, 0, 0); // Return black as fallback
+		}
+
+		return Windows.UI.Color.FromArgb(a, r, g, b);
 	}
 
 	private void InitializeSleepTimer()
@@ -488,7 +1062,7 @@ public class TabManager
 			return; // Don't put the active tab to sleep
 		}
 
-		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+		_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 		{
 			if (tab.Content is Frame frame && frame.Content is WebContent webContent)
 			{
@@ -497,7 +1071,7 @@ public class TabManager
 				{
 					tab.Header = "Sleeping - " + tab.Header.ToString();
 				}
-				
+
 				TabPutToSleep?.Invoke(this, tab);
 			}
 			_lastActivityTimes.Remove(tab);
@@ -514,7 +1088,7 @@ public class TabManager
 
 	public async Task WakeUpTab(GraphiteTabViewItem tab)
 	{
-		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+		_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 		{
 			if (tab.Content is Frame frame && frame.Content is WebContent webContent)
 			{
@@ -529,6 +1103,12 @@ public class TabManager
 	{
 		if (tab != null)
 		{
+			// Remove from group if it belongs to one
+			if (tab.Group != null)
+			{
+				RemoveTabFromGroup(tab);
+			}
+
 			_tabViewContainer.TabItems.Remove(tab);
 			_lastActivityTimes.Remove(tab);
 
@@ -593,36 +1173,78 @@ public class TabManager
 		UpdateTabActivity(tab);
 	}
 
-	public void CreateTabGroup(IEnumerable<GraphiteTabViewItem> tabs, string groupName)
-	{
-		var tabGroup = new TabViewItem
-		{
-			Header = groupName,
-			IsSelected = true
-		};
+	// Tab Group Management Methods
 
-		var subTabView = new TabView();
-		foreach (var tab in tabs)
+	public void AddTabToGroup(GraphiteTabViewItem tabItem, string groupName)
+	{
+		// Find or create the group
+		var group = TabGroups.FirstOrDefault(g => g.Name == groupName);
+		if (group == null)
 		{
-			_tabViewContainer.TabItems.Remove(tab);
-			subTabView.TabItems.Add(tab);
+			group = new GraphiteTabGroup { Name = groupName };
+			TabGroups.Add(group);
 		}
 
-		tabGroup.Content = subTabView;
-		_tabViewContainer.TabItems.Add(tabGroup);
+		// Remove from previous group if any
+		if (tabItem.Group != null && tabItem.Group != group)
+		{
+			tabItem.Group.Tabs.Remove(tabItem);
+			if (tabItem.Group.Tabs.Count == 0)
+			{
+				TabGroups.Remove(tabItem.Group);
+			}
+		}
+
+		// Add to new group
+		tabItem.Group = group;
+		if (!group.Tabs.Contains(tabItem))
+		{
+			group.Tabs.Add(tabItem);
+		}
+
+		// Apply group style
+		tabItem.ApplyGroupStyle(group);
 	}
 
-	public void UnGroupTabs(TabViewItem groupTab)
+	public void RemoveTabFromGroup(GraphiteTabViewItem tabItem)
 	{
-		if (groupTab.Content is TabView subTabView)
+		if (tabItem.Group == null)
+			return;
+
+		var group = tabItem.Group;
+		group.Tabs.Remove(tabItem);
+		tabItem.Group = null;
+
+		// Remove empty group
+		if (group.Tabs.Count == 0)
 		{
-			int insertIndex = _tabViewContainer.TabItems.IndexOf(groupTab);
-			foreach (GraphiteTabViewItem tab in subTabView.TabItems)
+			TabGroups.Remove(group);
+		}
+
+		// Reset group style
+		tabItem.ResetGroupStyle();
+	}
+
+	public void CreateTabGroup(IEnumerable<GraphiteTabViewItem> tabs, string groupName)
+	{
+		var group = new GraphiteTabGroup { Name = groupName };
+		TabGroups.Add(group);
+
+		foreach (var tab in tabs)
+		{
+			AddTabToGroup(tab, groupName);
+		}
+	}
+
+	public void UnGroupTabs(string groupName)
+	{
+		var group = TabGroups.FirstOrDefault(g => g.Name == groupName);
+		if (group != null)
+		{
+			foreach (var tab in group.Tabs.ToList())
 			{
-				_tabViewContainer.TabItems.Insert(insertIndex, tab);
-				insertIndex++;
+				RemoveTabFromGroup(tab);
 			}
-			_tabViewContainer.TabItems.Remove(groupTab);
 		}
 	}
 
@@ -703,7 +1325,5 @@ public class TabManager
 
 		return new List<TabState>();
 	}
-
 }
-
 
