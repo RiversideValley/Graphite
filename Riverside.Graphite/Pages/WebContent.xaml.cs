@@ -280,7 +280,7 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
 		
-			AdBlockerService.Toggle(false);
+			AdBlockerService.Toggle(true);
 			await AdBlockerService.Initialize(WebView);
 		}
 
