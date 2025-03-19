@@ -46,6 +46,7 @@
       </PackageReference>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
+      <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3124.44" />
       <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
       <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
       <PackageReference Include="System.Net.Http" Version="4.3.4" />
