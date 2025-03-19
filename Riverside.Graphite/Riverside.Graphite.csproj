@@ -482,6 +482,7 @@
   <ItemGroup>
     <Folder Include="Assets\WebView\AppFrontend\src\" />
     <Folder Include="Controls\Downloads\" />
+    <Folder Include="Controls\Models\" />
     <Folder Include="Controls\TabControls\" />
     <Folder Include="Services\Migration\" />
   </ItemGroup>
