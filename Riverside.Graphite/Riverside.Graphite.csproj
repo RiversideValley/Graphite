@@ -22,7 +22,7 @@
     <AppxBundle>Always</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-	  <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
+	 
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\Workers\**" />
@@ -487,7 +487,6 @@
     <Folder Include="Services\Migration\" />
   </ItemGroup>
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <PublishTrimmed>False</PublishTrimmed>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
