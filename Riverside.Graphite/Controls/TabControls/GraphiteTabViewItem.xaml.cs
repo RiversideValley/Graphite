@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Graphite;
 using Riverside.Graphite.Pages;
@@ -78,9 +79,43 @@ namespace Riverside.Graphite.Controls
 				Text = "Pin",
 				Icon = new SymbolIcon(Symbol.Pin)
 			};
+
+			var closeAllTabsMenuItem = new MenuFlyoutItem
+			{
+				Text = "Close all tabs",
+				Icon = new SymbolIcon(Symbol.Delete)
+			};
+
+			var closeTabsToTheRightMenuItem = new MenuFlyoutItem
+			{
+				Text = "Close tabs to the right",
+				Icon = new SymbolIcon(Symbol.DockRight)
+			};	
+
+			closeAllTabsMenuItem.Click += (sender, e) =>
+			{
+				var tabView = (TabViewListView)Parent as TabViewListView;
+				tabView?.Items.Clear();	
+			};	
+
+          closeTabsToTheRightMenuItem.Click += (sender, e) =>
+            {
+                var tabView = (TabViewListView)Parent as TabViewListView;
+                var position = tabView?.Items.IndexOf(this);
+
+                if (position.HasValue && position.Value >= 0)
+                {
+                    for (int i = tabView.Items.Count - 1; i > position.Value; i--)
+                    {
+                        tabView.Items.RemoveAt(i);
+                    }
+                }
+            };
 			pinMenuItem.Click += PinMenuItem_Click;
 
 			contextMenu.Items.Add(pinMenuItem);
+			contextMenu.Items.Add(closeAllTabsMenuItem);
+			contextMenu.Items.Add(closeTabsToTheRightMenuItem);
 
 			this.ContextFlyout = contextMenu;
 		}
@@ -158,6 +193,7 @@ namespace Riverside.Graphite.Controls
 
 			e.Handled = true;
 		}
+        
 		
 	}
 }
