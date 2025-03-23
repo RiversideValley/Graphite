@@ -25,6 +25,18 @@ namespace Riverside.Graphite.Controls
 
 		public BitmapImage BitViewWebContent { get; set; }
 
+		public object TagIconSource
+		{
+			get => GetValue(TagIconSourceProperty);
+			set => SetValue(TagIconSourceProperty, value);
+		}
+
+		public static readonly DependencyProperty TagIconSourceProperty = DependencyProperty.Register(
+			nameof(TagIconSource),
+			typeof(object),
+			typeof(GraphiteTabViewItem),
+			null);
+
 		public string Value
 		{
 			get => (string)GetValue(ValueProperty);
@@ -42,6 +54,7 @@ namespace Riverside.Graphite.Controls
 			get => (bool)GetValue(IsPinnedProperty);
 			set => SetValue(IsPinnedProperty, value);
 		}
+		
 
 		public static readonly DependencyProperty IsPinnedProperty = DependencyProperty.Register(
 			nameof(IsPinned),
@@ -53,7 +66,8 @@ namespace Riverside.Graphite.Controls
 		{
 			if (d is GraphiteTabViewItem tabItem)
 			{
-				tabItem.UpdatePinnedAppearance();
+				//UpdatePinnedAppearance();
+				tabItem.UpdatePinMenuItemText(tabItem);
 			}
 		}
 
@@ -67,7 +81,7 @@ namespace Riverside.Graphite.Controls
 			{
 				this.Style = (Style)Application.Current.Resources["DefaultTabStyle"];
 			}
-			UpdatePinMenuItemText();
+		
 		}
 
 		private void InitializeContextMenu()
@@ -127,17 +141,40 @@ namespace Riverside.Graphite.Controls
 
 		private void PinMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			UpdatePinMenuItemText();
+			this.IsPinned = !this.IsPinned;	
+			//UpdatePinMenuItemText();
 		}
 
-		private void UpdatePinMenuItemText()
+		private void UpdatePinMenuItemText(GraphiteTabViewItem tabItem)
 		{
+			if (!tabItem.IsPinned)
+			{
+				if (tabItem.TagIconSource is ImageIconSource source)
+					tabItem.IconSource = source;
+				else 
+					tabItem.TagIconSource = tabItem.IconSource;
+			}
+			else
+			{
+				if (tabItem.IconSource is ImageIconSource source)
+				{
+					tabItem.TagIconSource = source; 
+				}
+				tabItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource
+				{
+					Symbol = Symbol.Pin
+				};
+			}
+
+			MoveTabItemToFirstIfNoPinned(tabItem);
+
 			if (ContextFlyout is MenuFlyout contextMenu)
 			{
 				var pinMenuItem = contextMenu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(item => item.Text.StartsWith("Pin") || item.Text.StartsWith("Unpin"));
 				if (pinMenuItem != null)
 				{
 					pinMenuItem.Text = IsPinned ? "Unpin" : "Pin";
+					pinMenuItem.Icon = new SymbolIcon(IsPinned ? Symbol.UnPin : Symbol.Pin);
 				}
 			}
 		}
@@ -193,6 +230,30 @@ namespace Riverside.Graphite.Controls
 
 			e.Handled = true;
 		}
+        private void MoveTabItemToFirstIfNoPinned(GraphiteTabViewItem tab)
+        {
+            var tabView = (TabViewListView)tab.Parent as TabViewListView;
+            if (tabView == null) return;
+
+            if (tab.IsPinned)
+            {
+                tabView.Items.Remove(this);
+                tabView.Items.Insert(0, this);
+            }
+
+			// exclude the current tab from the pinned items, set the tab position to the current tab position
+			var pinnedItems = tabView.Items.OfType<GraphiteTabViewItem>().Where(item => item.IsPinned && item != this).ToList();
+			var tabPosition = default(int);
+			
+			if (tab.IsPinned)
+				tabPosition = tabView.Items.IndexOf(tab); 
+
+			foreach (var pinnedItem in pinnedItems)
+            {
+                tabView.Items.Remove(pinnedItem);
+                tabView.Items.Insert(tabPosition > 0 ? ++tabPosition : 0, pinnedItem);
+            }
+        }
         
 		
 	}
