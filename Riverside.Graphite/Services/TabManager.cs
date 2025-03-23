@@ -14,6 +14,8 @@ using Graphite.ViewModels;
 using Newtonsoft.Json.Linq;
 using Riverside.Graphite.Core;
 using System.Threading;
+using Riverside.Graphite.Runtime.Helpers.Logging;
+using Riverside.Graphite.Services;
 
 namespace Riverside.Graphite.Controls;
 
@@ -29,6 +31,7 @@ public class TabManager
 	private ConcurrentQueue<GraphiteTabViewItem> _preloadedTabs = new ConcurrentQueue<GraphiteTabViewItem>();
 	private const int MAX_PRELOADED_TABS = 1;
 	private bool _isRestoringTabs = false;
+	public CancellationToken _CancellationToken { get; set; }	
 
 	public event EventHandler<GraphiteTabViewItem> TabPutToSleep;
 
@@ -269,34 +272,51 @@ public class TabManager
 
 	public Task<string> SaveTabStateAsync(string username)
 	{
-		var tabStates = new List<TabState>();
+		// need this to be thread safe
+		var obj = new SemaphoreSlim(1, 1);
 
-		foreach (GraphiteTabViewItem tab in _tabViewContainer.TabItems)
+		obj.Wait();
+		try
 		{
-			var state = new TabState
-			{
-				Id = tab.Tag is not null ? (Guid)tab.Tag : Guid.NewGuid(),
-				Header = tab.Header.ToString(),
-				IsSleeping = tab.Header.ToString().StartsWith("Sleeping - "),
-				Url = GetTabUrl(tab),
-				IsSplitView = tab.Content is SplitViewContainer,
-				FaviconUrl = GetTabFaviconUrl(tab),
-				LastAccessTime = _lastActivityTimes.ContainsKey(tab) ? _lastActivityTimes[tab] : DateTime.Now,
-				ScrollPosition = GetTabScrollPosition(tab),
-				PageTitle = GetTabTitle(tab),
-				IsPinned = tab.IsPinned,
-				CustomColor = GetTabColor(tab),
-				IsNewTab = tab.Content is Frame frame && frame.Content is NewTab,
-			};
+			var tabStates = new List<TabState>();
 
-			tabStates.Add(state);
+			foreach (GraphiteTabViewItem tab in _tabViewContainer.TabItems)
+			{
+				var state = new TabState
+				{
+					Id = tab.Tag is not null ? (Guid)tab.Tag : Guid.NewGuid(),
+					Header = tab.Header.ToString(),
+					IsSleeping = tab.Header.ToString().StartsWith("Sleeping - "),
+					Url = GetTabUrl(tab),
+					IsSplitView = tab.Content is SplitViewContainer,
+					FaviconUrl = GetTabFaviconUrl(tab),
+					LastAccessTime = _lastActivityTimes.ContainsKey(tab) ? _lastActivityTimes[tab] : DateTime.Now,
+					ScrollPosition = GetTabScrollPosition(tab),
+					PageTitle = GetTabTitle(tab),
+					IsPinned = tab.IsPinned,
+					CustomColor = GetTabColor(tab),
+					IsNewTab = tab.Content is Frame frame && frame.Content is NewTab,
+				};
+
+				tabStates.Add(state);
+			}
+
+			var json = JsonSerializer.Serialize(tabStates);
+			var localSettings = ApplicationData.Current.LocalSettings;
+			localSettings.Values[$"{username}_{TabStateKey}"] = json;
+			return Task.FromResult(json ?? null);
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);	
+		}
+		finally
+		{
+			obj.Release();
 		}
 
-		var json = JsonSerializer.Serialize(tabStates);
-		var localSettings = ApplicationData.Current.LocalSettings;
-		localSettings.Values[$"{username}_{TabStateKey}"] = json;
+		return null;
 		
-		return Task.FromResult(json ?? null);	
 	}
 
 	public Task RestoreTabsAsync(string username)
@@ -452,7 +472,16 @@ public class TabManager
 	{
 		_sleepTimer = _tabViewContainer.DispatcherQueue.CreateTimer();
 		_sleepTimer.Interval = TimeSpan.FromMinutes(1);
-		_sleepTimer.Tick += async (s, e) => await CheckAndSleepInactiveTabs();
+		_sleepTimer.Tick += async (s, e) =>
+		{
+			if (_CancellationToken.IsCancellationRequested)
+			{
+				_sleepTimer.Stop();
+				return;
+			}
+
+			await CheckAndSleepInactiveTabs();
+		};
 		_sleepTimer.Start();
 	}
 

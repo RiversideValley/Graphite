@@ -73,6 +73,8 @@ public sealed partial class MainWindow : Window
 	public TabManager TabManager { get; set; }
 	public TabStateBackgroundService GetStateBackgroundService { get; set; }
 	public MainWindow TearOutWindow { get; set; }
+
+	public CancellationToken CT_BackgroundServices { get; set; }
 	//public HubService HubService { get; set; }	
 	public string PicturePath { get; set; }
 	public MainWindow()
@@ -93,10 +95,10 @@ public sealed partial class MainWindow : Window
 		TabManager = App.GetService<TabManager>();
 		TabManager.InitializeTabManager(Tabs);
 		GetStateBackgroundService = App.GetService<TabStateBackgroundService>();
-		GetStateBackgroundService.StartAsync(AppService.CancellationToken);
+		GetStateBackgroundService.StartAsync(TabManager._CancellationToken);
 
 		// new TabManager(Tabs);
-		_ =	StartupTabCheckAsync();
+		StartupTabCheckAsync().ConfigureAwait(false);
 
 		TitleTop();
 		//ArgsPassed();
@@ -121,7 +123,7 @@ public sealed partial class MainWindow : Window
 		}
 
 
-		Closed += (s, e) =>
+		Closed += async (s, e) =>
 		{
 			try
 			{
@@ -138,11 +140,17 @@ public sealed partial class MainWindow : Window
 					}
 				}
 
+
 				var isRestore = ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object Restored);
 				bool isRestored = Convert.ToBoolean(Restored);
 				if (isRestore) {
-					TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username).ConfigureAwait(false); 
+					await TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username); 
 				}
+
+				// use this for backGround tasks - cancel token.
+				CancellationTokenSource cancel = new();
+				cancel.Cancel();
+				TabManager._CancellationToken = cancel.Token;
 
 				App.Current.KillProcessByName("dotnet");
 				AppService.IsAppGoingToClose = true;

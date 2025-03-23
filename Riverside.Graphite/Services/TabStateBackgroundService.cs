@@ -21,10 +21,12 @@ public class TabStateBackgroundService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var result = await _tabManager.SaveTabStateAsync(_username);
+			await Task.Delay(60000, stoppingToken); // Save tab state every 60 seconds
+
+			var result = await _tabManager.SaveTabStateAsync(_username);
 			_mangerLogger.LogInformation(result);
 
-			await Task.Delay(60000, stoppingToken); // Save tab state every 60 seconds
+			
         }
 
 		_mangerLogger.LogCritical("TabStateBackgroundService has been stopped");
