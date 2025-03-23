@@ -326,11 +326,6 @@ public class TabManager
 	{
 		_isRestoringTabs = true;
 
-		//var localSettings = ApplicationData.Current.LocalSettings;
-		//if (localSettings.Values.TryGetValue($"{username}_{TabStateKey}", out object jsonObj))
-		//{
-		//	var json = jsonObj as string;
-		//	var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
 		if (ReadSettingFromRegistry($"{username}_{TabStateKey}") is string json) {
 			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
 			_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
@@ -357,17 +352,14 @@ public class TabManager
 							
 						}
 
-						if (state.IsSleeping)
-						{
-							await PutTabToSleep(newTab);
-						}
-						else if (newTab.Content is Frame frame)
+						// set the url first before loading sleeping the tab. 
+						
+						if (newTab.Content is Frame frame)
 						{
 							if (frame.Content is WebContent webContent)
 							{
-								webContent.ViewModel.SourceUrl =  new(state.Url);
-								webContent.ViewModel.RaisePropertyChanges(nameof(webContent.ViewModel.SourceUrl));	
-								await webContent.WebView.EnsureCoreWebView2Async();
+								webContent.ViewModel.SourceUrl = new(state.Url);
+								webContent.ViewModel.RaisePropertyChanges(nameof(webContent.ViewModel.SourceUrl));
 								UpdateTabIcon(newTab, state.FaviconUrl);
 							}
 							else if (frame.Content is NewTab nT)
@@ -376,6 +368,12 @@ public class TabManager
 								// Update NewTab content if necessary
 							}
 						}
+
+						if (state.IsSleeping)
+						{
+							await PutTabToSleep(newTab);
+						}
+						
 						newTab.Header = state.Header;
 						newTab.IsPinned = state.IsPinned;
 						SetTabColor(newTab, state.CustomColor);
@@ -587,7 +585,7 @@ public class TabManager
 		_activeTab = tab;
 	}
 
-	public async Task WakeUpTab(GraphiteTabViewItem tab)
+	public  Task WakeUpTab(GraphiteTabViewItem tab)
 	{
 		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 		{
@@ -598,6 +596,7 @@ public class TabManager
 				UpdateTabActivity(tab);
 			}
 		});
+		return Task.CompletedTask;	
 	}
 
 	public void CloseTab(GraphiteTabViewItem tab)

@@ -17,6 +17,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.ContentModel;
 using Riverside.Graphite.Controls;
@@ -46,6 +47,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
@@ -1797,12 +1799,7 @@ public async void NavigateToUrl(string uri)
 
 	private void btnClearRestoredTabs_Click(object sender, RoutedEventArgs e)
 	{
-		var localSettings = ApplicationData.Current.LocalSettings;
-		if (localSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"TabState"}", out object jsonObj))
-		{
-			localSettings.Values.Remove($"{AuthService.CurrentUser?.Username}_{"TabState"}");
-			NotificationQueue.Show("Your restored tabs have been cleared", 2000, "Graphite Tab Manager"); 
-		}
+		TabManager.SaveSettingToRegistry($"{AuthService.CurrentUser?.Username}_{"TabState"}", JsonConvert.SerializeObject("[]"));
 	}
 		
 	private void TabsList_SelectionChanged(object sender, SelectionChangedEventArgs e)

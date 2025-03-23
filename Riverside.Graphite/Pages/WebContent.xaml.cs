@@ -44,8 +44,7 @@ namespace Riverside.Graphite.Pages
 		private Uri _SourceUrl ;
 		public WebContentViewModel()
 		{
-			SourceUrl = new("about:blank");
-			OnPropertyChanged(nameof(SourceUrl));
+			
 		}
 		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
 		{
@@ -63,12 +62,14 @@ namespace Riverside.Graphite.Pages
 		private readonly SpeechSynthesizer synthesizer = new();
 		private bool isOffline = false;
 		public WebContentViewModel ViewModel { get; set; }	
+		private object _locker = new();
 		public WebContent()
 		{
 			SettingsService = App.GetService<SettingsService>();
 			AdBlockerService = App.GetService<AdBlockerWrapper>();
-			ViewModel = new();	
-
+			ViewModel = new();
+			ViewModel.SourceUrl = new("about:blank");
+			ViewModel.RaisePropertyChanges(nameof(ViewModel.SourceUrl));
 			InitializeComponent();
 			WebView = WebViewElement;
 			Init();
@@ -87,11 +88,15 @@ namespace Riverside.Graphite.Pages
 			Environment.SetEnvironmentVariable("WEBVIEW2_USER_DATA_FOLDER", browserFolderPath);
 			//Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--enable-features=msSingleSignOnOSForPrimaryAccountIsShared");
 		}
-		public async Task UnloadContent()
+		public Task UnloadContent()
 		{
 			try
 			{
-				await WebView.CoreWebView2?.TrySuspendAsync();
+				lock (_locker)
+				{
+					WebView.CoreWebView2?.TrySuspendAsync();
+				}
+				
 			}
 			catch (Exception e)
 			{
@@ -100,15 +105,19 @@ namespace Riverside.Graphite.Pages
 			
 			offlinePage.Visibility = Visibility.Visible;
 			Grid.Visibility = Visibility.Collapsed;
+			return Task.CompletedTask;	
 		}
 
 		public Task ReloadContent()
 		{
 			try
 			{
-				ViewModel.RaisePropertyChanges(nameof(ViewModel.SourceUrl));
-				WebViewElement.EnsureCoreWebView2Async().GetResults();
-				WebView.CoreWebView2.Resume();
+				
+				lock (_locker)
+				{
+					WebView.CoreWebView2?.Resume();
+				}
+				
 			}
 			catch (Exception e)
 			{
