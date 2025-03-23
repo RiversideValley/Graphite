@@ -360,7 +360,8 @@ public class TabManager
 						{
 							if (frame.Content is WebContent webContent)
 							{
-								webContent.WebView.Source = new(state.Url);
+								webContent.ViewModel.SourceUrl =  new(state.Url);
+								webContent.ViewModel.RaisePropertyChanges(nameof(webContent.ViewModel.SourceUrl));	
 								await webContent.WebView.EnsureCoreWebView2Async();
 								UpdateTabIcon(newTab, state.FaviconUrl);
 							}

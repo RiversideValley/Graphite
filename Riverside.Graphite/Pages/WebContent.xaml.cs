@@ -62,7 +62,7 @@ namespace Riverside.Graphite.Pages
 		private AdBlockerWrapper AdBlockerService { get; }
 		private readonly SpeechSynthesizer synthesizer = new();
 		private bool isOffline = false;
-		WebContentViewModel ViewModel { get; set; }	
+		public WebContentViewModel ViewModel { get; set; }	
 		public WebContent()
 		{
 			SettingsService = App.GetService<SettingsService>();
