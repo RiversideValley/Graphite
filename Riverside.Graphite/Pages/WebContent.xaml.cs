@@ -106,6 +106,8 @@ namespace Riverside.Graphite.Pages
 		{
 			try
 			{
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.SourceUrl));
+				WebViewElement.EnsureCoreWebView2Async().GetResults();
 				WebView.CoreWebView2.Resume();
 			}
 			catch (Exception e)
