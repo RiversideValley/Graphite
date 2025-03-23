@@ -98,7 +98,7 @@ public sealed partial class MainWindow : Window
 		//GetStateBackgroundService.StartAsync(TabManager._CancellationToken);
 
 		// new TabManager(Tabs);
-		StartupTabCheckAsync().ConfigureAwait(false);
+		StartupTabCheckAsync().GetAwaiter().GetResult();
 
 		TitleTop();
 		//ArgsPassed();
@@ -140,12 +140,16 @@ public sealed partial class MainWindow : Window
 					}
 				}
 
-
-				var isRestore = ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object Restored);
-				bool isRestored = Convert.ToBoolean(Restored);
-				if (isRestore) {
-					await TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username); 
+				if(TabManager.ShouldRestoreTabs())
+				{
+					await TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username);
 				}
+
+				//var isRestore = ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object Restored);
+				//bool isRestored = Convert.ToBoolean(Restored);
+				//if (isRestore) {
+				//	await TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username); 
+				//}
 
 				// use this for backGround tasks - cancel token.
 				CancellationTokenSource cancel = new();
@@ -273,23 +277,31 @@ public sealed partial class MainWindow : Window
 	}
 	public async Task StartupTabCheckAsync()
 	{
-	
-		var localSettings = ApplicationData.Current.LocalSettings;
-		string cacheKey = $"{AuthService.CurrentUser.Username}_{TabManager.TabStateKey}";
-		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
-		
-		if (Convert.ToBoolean(isRestore) && localSettings.Values.ContainsKey(cacheKey))
-		{
-			// Restore cache exists, attempt to restore tabs
+
+		if (TabManager.ShouldRestoreTabs() | TabManager.ReadSettingFromRegistry($"{AuthService.CurrentUser?.Username}_TabState") is string json) {
+
 			await TabManager.RestoreTabsAsync(AuthService.CurrentUser?.Username);
 		}
+		else
+		{
+			TabManager.CreateNewTab(typeof(NewTab));	
+		}
+		//var localSettings = ApplicationData.Current.LocalSettings;
+		//string cacheKey = $"{AuthService.CurrentUser.Username}_{TabManager.TabStateKey}";
+		//ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
+		
+		//if (Convert.ToBoolean(isRestore) && localSettings.Values.ContainsKey(cacheKey))
+		//{
+		//	// Restore cache exists, attempt to restore tabs
+		//	await TabManager.RestoreTabsAsync(AuthService.CurrentUser?.Username);
+		//}
 
 		// Check if there are any tabs after restoration attempt
-		if (Tabs.TabItems.Count == 0)
-		{
-			// No tabs, create a default tab
-			TabManager.CreateNewTab(typeof(NewTab));
-		}
+		//if (Tabs.TabItems.Count == 0)
+		//{
+		//	// No tabs, create a default tab
+		//	TabManager.CreateNewTab(typeof(NewTab));
+		//}
 
 		await TabManager.StartPreloadingTabs();
 	}

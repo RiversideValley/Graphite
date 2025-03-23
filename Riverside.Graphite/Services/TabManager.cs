@@ -16,6 +16,7 @@ using Riverside.Graphite.Core;
 using System.Threading;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
+using Microsoft.Win32;
 
 namespace Riverside.Graphite.Controls;
 
@@ -276,6 +277,7 @@ public class TabManager
 		var obj = new SemaphoreSlim(1, 1);
 
 		obj.Wait();
+		
 		try
 		{
 			var tabStates = new List<TabState>();
@@ -302,8 +304,9 @@ public class TabManager
 			}
 
 			var json = JsonSerializer.Serialize(tabStates);
-			var localSettings = ApplicationData.Current.LocalSettings;
-			localSettings.Values[$"{username}_{TabStateKey}"] = json;
+			SaveSettingToRegistry($"{username}_{TabStateKey}", json);
+			//var localSettings = ApplicationData.Current.LocalSettings;
+			//localSettings.Values[$"{username}_{TabStateKey}"] = json;
 			return Task.FromResult(json ?? null);
 		}
 		catch (Exception ex)
@@ -322,13 +325,15 @@ public class TabManager
 	public Task RestoreTabsAsync(string username)
 	{
 		_isRestoringTabs = true;
-		var localSettings = ApplicationData.Current.LocalSettings;
-		if (localSettings.Values.TryGetValue($"{username}_{TabStateKey}", out object jsonObj))
-		{
-			var json = jsonObj as string;
-			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
 
-			 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+		//var localSettings = ApplicationData.Current.LocalSettings;
+		//if (localSettings.Values.TryGetValue($"{username}_{TabStateKey}", out object jsonObj))
+		//{
+		//	var json = jsonObj as string;
+		//	var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
+		if (ReadSettingFromRegistry($"{username}_{TabStateKey}") is string json) {
+			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
+			_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 			{
 				_tabViewContainer.TabItems.Clear();
 				_lastActivityTimes.Clear();
@@ -391,6 +396,46 @@ public class TabManager
 		_isRestoringTabs = false;
 		return Task.CompletedTask;
 	}
+
+	#region TabStateRegistry Methods
+	public string ReadSettingFromRegistry(string key)
+	{
+		using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey($"Software\\Graphite\\{AuthService.CurrentUser?.Username}"))
+		{
+			if (registryKey != null)
+			{
+				return registryKey.GetValue(key)?.ToString();
+			}
+		}
+		return null;
+	}
+
+
+	public void SaveSettingToRegistry(string key, string value)
+	{
+		using (RegistryKey registryKey = Registry.CurrentUser.CreateSubKey($"Software\\Graphite\\{AuthService.CurrentUser?.Username}"))
+		{
+			registryKey.SetValue(key, value);
+		}
+	}
+	public bool ShouldRestoreTabs()
+	{
+		string value = ReadSettingFromRegistry("RestoreTabs");
+		return bool.TryParse(value, out bool shouldRestore) && shouldRestore;
+	}
+	public void SaveRestoreTabsSetting(bool shouldRestore)
+	{
+		SaveSettingToRegistry("RestoreTabs", shouldRestore.ToString());
+	}
+
+	public void SetRestoreTabsPreference(bool shouldRestore)
+	{
+		SaveRestoreTabsSetting(shouldRestore);
+		_isRestoringTabs = shouldRestore;
+	}
+
+	#endregion
+
 
 	private string GetTabUrl(GraphiteTabViewItem tab)
 	{

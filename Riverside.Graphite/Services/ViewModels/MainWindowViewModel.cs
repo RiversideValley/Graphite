@@ -38,6 +38,7 @@ namespace Riverside.Graphite.Services.ViewModels;
 public partial class MainWindowViewModel : ObservableRecipient
 {
 	internal MainWindow MainView { get; set; }
+	internal TabManager TabManager { get; set; }	
 	public IMessenger MessengerMainWindowViewModel { get; set; }
 
 	[ObservableProperty]
@@ -65,12 +66,15 @@ public partial class MainWindowViewModel : ObservableRecipient
 	
 	[ObservableProperty]
 	private ObservableCollection<TabAll> _TabAlls;
-	public MainWindowViewModel(IMessenger messenger) : base(messenger)
+
+
+	public MainWindowViewModel(IMessenger messenger , TabManager tabManager) : base(messenger)
 	{
 		Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 		MsOptionVisibility = Visibility.Collapsed;
-		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
-		IsRestoredTabs = Convert.ToBoolean(isRestore);
+
+		TabManager = tabManager;
+		IsRestoredTabs = TabManager.ShouldRestoreTabs(); 
 		
 	}
 
@@ -83,11 +87,13 @@ public partial class MainWindowViewModel : ObservableRecipient
 	}
 	partial void OnIsRestoredTabsChanged(bool value)
 	{
-		if (ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object exist)){
-		   if(exist is not null)
-				ApplicationData.Current.LocalSettings.Values[$"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}"] = value;
-		}
-		else { ApplicationData.Current.LocalSettings.Values.Add($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", value); }
+		TabManager.SetRestoreTabsPreference(value);
+
+		//if (ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object exist)){
+		//   if(exist is not null)
+		//		ApplicationData.Current.LocalSettings.Values[$"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}"] = value;
+		//}
+		//else { ApplicationData.Current.LocalSettings.Values.Add($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", value); }
 		
 	}
 	partial void OnIsMsLoginChanged(bool value)
