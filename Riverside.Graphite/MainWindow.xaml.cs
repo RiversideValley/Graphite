@@ -71,7 +71,7 @@ public sealed partial class MainWindow : Window
 	public SettingsService SettingsService { get; set; }
 	public MainWindowViewModel ViewModelMain { get; set; }
 	public TabManager TabManager { get; set; }
-	public TabStateBackgroundService GetStateBackgroundService { get; set; }
+	//public TabStateBackgroundService GetStateBackgroundService { get; set; }
 	public MainWindow TearOutWindow { get; set; }
 
 	public CancellationToken CT_BackgroundServices { get; set; }
@@ -94,8 +94,8 @@ public sealed partial class MainWindow : Window
 		InitializeComponent();
 		TabManager = App.GetService<TabManager>();
 		TabManager.InitializeTabManager(Tabs);
-		GetStateBackgroundService = App.GetService<TabStateBackgroundService>();
-		GetStateBackgroundService.StartAsync(TabManager._CancellationToken);
+		//GetStateBackgroundService = App.GetService<TabStateBackgroundService>();
+		//GetStateBackgroundService.StartAsync(TabManager._CancellationToken);
 
 		// new TabManager(Tabs);
 		StartupTabCheckAsync().ConfigureAwait(false);

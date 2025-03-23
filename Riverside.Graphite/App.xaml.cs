@@ -75,12 +75,12 @@ public partial class App : Application
 		_ = services.AddTransient<GraphiteUpdateClient>();
 		_ = services.AddTransient<UpdateManager>();
 		_ = services.AddSingleton<TabManager>();
-		_ = services.AddSingleton<TabStateBackgroundService>(provider =>
-		{
-			var tabManager = provider.GetRequiredService<TabManager>();
-			var username = AuthService.CurrentUser?.Username;
-			return new TabStateBackgroundService(tabManager, username);
-		});
+		//_ = services.AddSingleton<TabStateBackgroundService>(provider =>
+		//{
+		//	var tabManager = provider.GetRequiredService<TabManager>();
+		//	var username = AuthService.CurrentUser?.Username;
+		//	return new TabStateBackgroundService(tabManager, username);
+		//});
 		//_ = services.AddSignalR(options =>
 		//{
 		//	options.ClientTimeoutInterval = TimeSpan.FromMilliseconds(120000);
