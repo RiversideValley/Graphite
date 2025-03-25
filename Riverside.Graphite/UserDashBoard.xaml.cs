@@ -93,26 +93,6 @@ namespace Riverside.Graphite
 					};
 					Users.Add(userViewModel);
 				}
-				#region obsolete gather users from firebrowsercore 
-				// Get all user directories
-				//var userDirs = Directory.GetDirectories(graphiteDataPath);
-				//foreach (var userDir in userDirs)
-				//{
-				//	var username = Path.GetFileName(userDir);
-				//	if (!username.Equals("Guest", StringComparison.OrdinalIgnoreCase))
-				//	{
-				//		var profileImagePath = Path.Combine(userDir, "profile_image.jpg");
-
-				//		var userViewModel = new UserViewModel
-				//		{
-				//			Username = username,
-				//			ProfileImageSource = await LoadProfileImageAsync(profileImagePath)
-				//		};
-
-				//		Users.Add(userViewModel);
-				//	}
-				//}
-				#endregion
 
 				ViewModel.Users = Users;
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.Users));	
