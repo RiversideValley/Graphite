@@ -101,7 +101,7 @@ namespace Riverside.Graphite.Tests
 
 			List<UserV2> users = await UserManager.GetAllUsersAsync();
 
-			TestContext.WriteLine(System.Text.Json.JsonSerializer.Serialize(users.FirstOrDefault()));
+			TestContext.WriteLine(System.Text.Json.JsonSerializer.Serialize(users.ToArray()));
 			
 			Assert.That(users, Is.Not.Null);
 			Assert.That(users, Is.Not.Empty);
