@@ -43,7 +43,7 @@ namespace Riverside.Graphite.Core
 		//Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),@"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
 
 		private const string MainDbName = "UserCore.db";
-		private static readonly string MainDbPath = Path.Combine(GraphiteDataPath, MainDbName);
+		public static string MainDbPath = Path.Combine(GraphiteDataPath, MainDbName);
 
 		// Login attempt tracking for brute force protection
 		private static readonly ConcurrentDictionary<string, (int Attempts, DateTime LastAttempt)> _loginAttempts =
@@ -281,28 +281,29 @@ namespace Riverside.Graphite.Core
 
 			try
 			{
-				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-				await connection.OpenAsync();
+				await using (var connection = new SqliteConnection($"Data Source={MainDbPath}"))
+				{ 
+					await connection.OpenAsync();
 
-				var command = connection.CreateCommand();
-				command.CommandText = "SELECT Username, Email, ProfileImagePath, HasPassword FROM Users";
+					var command = connection.CreateCommand();
+					command.CommandText = "SELECT Username, Email, ProfileImagePath, HasPassword FROM Users";
 
-				await using var reader = await command.ExecuteReaderAsync();
-				while (await reader.ReadAsync())
-				{
-					users.Add(new UserV2
-					{
-						Username = reader.IsDBNull(0) ? string.Empty : reader.GetString(0),
-						Email = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
-						ProfileImagePath = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-						HasPassword = reader.GetInt32(3) == 1,
-						WindowsUserName = Environment.UserName,
-						IsFirstLaunch = false
-					});
-				}
-
-				reader.Close();
-				connection.Close(); 
+					await using (var reader = await command.ExecuteReaderAsync()) { 
+						while (await reader.ReadAsync())
+						{
+							users.Add(new UserV2
+							{
+								Username = reader.IsDBNull(0) ? string.Empty : reader.GetString(0),
+								Email = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+								ProfileImagePath = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+								HasPassword = reader.GetInt32(3) == 1,
+								WindowsUserName = Environment.UserName,
+								IsFirstLaunch = false
+							});
+						}
+					};
+				};
+				
 			}
 			catch (Exception ex)
 			{
@@ -316,26 +317,29 @@ namespace Riverside.Graphite.Core
 		{
 			try
 			{
-				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-				await connection.OpenAsync();
+				await using (var connection = new SqliteConnection($"Data Source={MainDbPath}")) { 
+					await connection.OpenAsync();
 
-				var command = connection.CreateCommand();
-				command.CommandText = "SELECT Username, Email, ProfileImagePath, HasPassword, WindowsUserName, IsFirstLaunch FROM Users WHERE Username = $username";
-				command.Parameters.AddWithValue("$username", username);
+					var command = connection.CreateCommand();
+					command.CommandText = "SELECT Username, Email, ProfileImagePath, HasPassword, WindowsUserName, IsFirstLaunch FROM Users WHERE Username = $username";
+					command.Parameters.AddWithValue("$username", username);
 
-				await using var reader = await command.ExecuteReaderAsync();
-				if (await reader.ReadAsync())
-				{
-					return new UserV2
-					{
-						Username = reader.GetString(0),
-						Email = reader.IsDBNull(1) ? null : reader.GetString(1),
-						ProfileImagePath = reader.IsDBNull(2) ? null : reader.GetString(2),
-						HasPassword = reader.GetInt32(3) == 1,
-						WindowsUserName = reader.IsDBNull(4) ? null : reader.GetString(4),
-						IsFirstLaunch = reader.GetInt32(5) == 1
+					await using (var reader = await command.ExecuteReaderAsync()) { 
+						if (await reader.ReadAsync())
+						{
+							return new UserV2
+							{
+								Username = reader.GetString(0),
+								Email = reader.IsDBNull(1) ? null : reader.GetString(1),
+								ProfileImagePath = reader.IsDBNull(2) ? null : reader.GetString(2),
+								HasPassword = reader.GetInt32(3) == 1,
+								WindowsUserName = reader.IsDBNull(4) ? null : reader.GetString(4),
+								IsFirstLaunch = reader.GetInt32(5) == 1
+							};
+						}
 					};
-				}
+				};
+				
 			}
 			catch (Exception ex)
 			{
@@ -578,7 +582,7 @@ namespace Riverside.Graphite.Core
             }
         }
 
-        private static (string Hash, string Salt) HashPassword(string password)
+        public static (string Hash, string Salt) HashPassword(string password)
         {
             byte[] salt = new byte[16];
             RandomNumberGenerator.Fill(salt);

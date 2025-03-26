@@ -111,7 +111,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		});
 		
 	}
-
+	
 	[RelayCommand]
 	public void CloseMoreFlyout()
 	{

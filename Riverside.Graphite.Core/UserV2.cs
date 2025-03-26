@@ -17,7 +17,10 @@ public class UserV2
     public List<string> Profiles { get; set; }
     public string ActiveProfile { get; set; }
 	public string SessionId { get; set; }
-
+	public override string ToString()
+	{
+		return $"Username: {Username}, Email: {Email}, WindowsUserName: {WindowsUserName}, IsFirstLaunch: {IsFirstLaunch}";
+	}
 	public static explicit operator UserV2(Riverside.Graphite.Core.User source)
 	{
 		return new UserV2
