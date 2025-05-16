@@ -3,8 +3,8 @@ using System.IO;
 
 namespace Riverside.Graphite.Core
 {
-    public static class DirectoryHelper
-    {
+	public static class DirectoryHelper
+	{
 		public static void DeleteAllFilesRecursive(string directoryPath)
 		{
 			if (Directory.Exists(directoryPath))
@@ -43,30 +43,30 @@ namespace Riverside.Graphite.Core
 			}
 		}
 		public static void DeleteAllFiles(string directoryPath)
-        {
-            if (Directory.Exists(directoryPath))
-            {
-                // Get all files in the directory
-                string[] files = Directory.GetFiles(directoryPath);
+		{
+			if (Directory.Exists(directoryPath))
+			{
+				// Get all files in the directory
+				string[] files = Directory.GetFiles(directoryPath);
 
-                // Delete each file
-                foreach (string file in files)
-                {
-                    try
-                    {
-                        File.Delete(file);
-                        Console.WriteLine($"Deleted file: {file}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error deleting file {file}: {ex.Message}");
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Directory not found: {directoryPath}");
-            }
-        }
-    }
+				// Delete each file
+				foreach (string file in files)
+				{
+					try
+					{
+						File.Delete(file);
+						Console.WriteLine($"Deleted file: {file}");
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Error deleting file {file}: {ex.Message}");
+					}
+				}
+			}
+			else
+			{
+				Console.WriteLine($"Directory not found: {directoryPath}");
+			}
+		}
+	}
 }

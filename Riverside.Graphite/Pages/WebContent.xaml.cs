@@ -1,9 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Helpers;
-using Graphite.Controls;
-using Humanizer;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -24,7 +21,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +28,6 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;
-using Windows.UI.WebUI;
 using WinRT.Interop;
 
 
@@ -41,10 +36,10 @@ namespace Riverside.Graphite.Pages
 	public partial class WebContentViewModel : ObservableObject
 	{
 		[ObservableProperty]
-		private Uri _SourceUrl ;
+		private Uri _SourceUrl;
 		public WebContentViewModel()
 		{
-			
+
 		}
 		public void RaisePropertyChanges([CallerMemberName] string? propertyName = null)
 		{
@@ -61,7 +56,7 @@ namespace Riverside.Graphite.Pages
 		private AdBlockerWrapper AdBlockerService { get; }
 		private readonly SpeechSynthesizer synthesizer = new();
 		private bool isOffline = false;
-		public WebContentViewModel ViewModel { get; set; }	
+		public WebContentViewModel ViewModel { get; set; }
 		private object _locker = new();
 		public WebContent()
 		{
@@ -96,42 +91,42 @@ namespace Riverside.Graphite.Pages
 				{
 					WebView.CoreWebView2?.TrySuspendAsync();
 				}
-				
+
 			}
 			catch (Exception e)
 			{
 				ExceptionLogger.LogException(e);
 			}
-			
+
 			offlinePage.Visibility = Visibility.Visible;
 			Grid.Visibility = Visibility.Collapsed;
-			return Task.CompletedTask;	
+			return Task.CompletedTask;
 		}
 
 		public Task ReloadContent()
 		{
 			try
 			{
-				
+
 				lock (_locker)
 				{
 					WebView.CoreWebView2?.Resume();
 				}
-				
+
 			}
 			catch (Exception e)
 			{
 				ExceptionLogger.LogException(e);
 			}
-			
+
 			offlinePage.Visibility = Visibility.Collapsed;
 			Grid.Visibility = Visibility.Visible;
-			
+
 			return Task.CompletedTask;
 		}
 		private async Task AfterComplete()
 		{
-			
+
 			if (IsIncognitoModeEnabled) return;
 			await Task.Delay(500);
 			try
@@ -148,9 +143,9 @@ namespace Riverside.Graphite.Pages
 			}
 			catch (Exception e)
 			{
-				ExceptionLogger.LogException(e);	
+				ExceptionLogger.LogException(e);
 			}
-			
+
 		}
 
 		private void UpdateSecurityInfo(string source)
@@ -168,7 +163,7 @@ namespace Riverside.Graphite.Pages
 
 		private void LoadSettings()
 		{
-			
+
 			CoreWebView2Settings webViewSettings = WebViewElement.CoreWebView2.Settings;
 			Settings coreSettings = SettingsService.CoreSettings;
 
@@ -213,8 +208,8 @@ namespace Riverside.Graphite.Pages
 			base.OnNavigatedTo(e);
 			param = e.Parameter as Passer;
 
-			Uri u; 
-			
+			Uri u;
+
 			if (param?.Param != null)
 			{
 				if (param.Param is Passer pass)
@@ -222,7 +217,8 @@ namespace Riverside.Graphite.Pages
 					u = UrlValidater.GetValidateUrl(pass.Param.ToString());
 
 				}
-				else {
+				else
+				{
 
 					u = UrlValidater.GetValidateUrl(param.Param.ToString());
 				}
@@ -244,17 +240,19 @@ namespace Riverside.Graphite.Pages
 					}
 				}
 			}
-			else {
-				if (App.Current.m_window is MainWindow win) {
+			else
+			{
+				if (App.Current.m_window is MainWindow win)
+				{
 					win.NotificationQueue.Show("Your requested page isn't loading correctly!\nPlease open a new tab and try agian", 2000, "Web Navigation");
 				}
 				return;
 			}
-			
+
 			if (WebViewElement.CoreWebView2 is null)
 				return;
 			else
-				LoadSettings(); 
+				LoadSettings();
 
 			string userAgent = SettingsService.CoreSettings?.Useragent ?? "1";
 
@@ -262,7 +260,7 @@ namespace Riverside.Graphite.Pages
 			{
 				WebViewElement.CoreWebView2.Settings.UserAgent = userAgent[..userAgent.IndexOf("Edg/")];
 			}
-			
+
 
 		}
 
@@ -290,13 +288,13 @@ namespace Riverside.Graphite.Pages
 			s.CoreWebView2.WebResourceRequested += WebResourceRequested;
 			s.CoreWebView2.WebResourceResponseReceived += WebResourceResponseReceived;
 			s.CoreWebView2.PermissionRequested += PermissionRequested;
-		
+
 			AdBlockerService.Toggle(false);
 			await AdBlockerService.Initialize(WebView);
 		}
 
-		
-		
+
+
 		private async void ScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
 		{
 			var deferral = args.GetDeferral();
@@ -465,7 +463,7 @@ namespace Riverside.Graphite.Pages
 						});
 					}
 				}
-					
+
 			}
 
 			if (IsLogoutRequest(args.Request))
@@ -600,7 +598,7 @@ namespace Riverside.Graphite.Pages
 		}
 		private bool IsLoginRequest(CoreWebView2WebResourceRequest request)
 		{
-			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/common/login",  "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize", "https://login.microsoftonline.com/common/oauth2/v2.0/token" };
+			string[] loginUrls = { "https://login.live.com/login", "https://login.microsoftonline.com/common/login", "https://login.microsoftonline.com/login", "https://login.microsoftonline.com/common/oauth2/authorize", "https://login.microsoftonline.com/common/oauth2/v2.0/token" };
 			return loginUrls.Any(loginUrl => request.Uri.StartsWith(loginUrl, StringComparison.OrdinalIgnoreCase));
 		}
 

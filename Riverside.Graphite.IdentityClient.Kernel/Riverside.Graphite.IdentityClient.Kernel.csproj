@@ -54,11 +54,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.70.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.72.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.3916" />
   </ItemGroup>
 
   <ItemGroup>

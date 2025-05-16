@@ -1,10 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Windows.Networking.Sockets;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Services.Migration
 {

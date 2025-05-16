@@ -1,18 +1,16 @@
+using Microsoft.Data.Sqlite;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Riverside.Graphite.Core.Helper.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
-using System.Security.Cryptography;
-using Windows.Storage;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text.Json;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml;
-using Riverside.Graphite.Core.Helper.Logging;
-using Windows.UI.WindowManagement;
-using Windows.System;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Riverside.Graphite.Core
 {
@@ -37,8 +35,8 @@ namespace Riverside.Graphite.Core
 		private static byte[] _cachedIV;
 
 		public static readonly string GraphiteDataPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath);//
-																																					  //
-																				//Path.Combine(GetFullPathToExe(), "V2_UserData");	
+																																	   //
+																																	   //Path.Combine(GetFullPathToExe(), "V2_UserData");	
 
 		//Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),@"Packages\9617Riverside.Graphite_5272ve26\LocalState\GraphiteData");
 
@@ -56,7 +54,7 @@ namespace Riverside.Graphite.Core
 			new ConcurrentDictionary<string, (string Username, DateTime ExpirationTime)>();
 		private const int SessionExpirationMinutes = 30;
 
-		public static UIElement? ActiveElement { get; set; }	
+		public static UIElement? ActiveElement { get; set; }
 
 		public static string GetFullPathToExe()
 		{
@@ -121,7 +119,7 @@ namespace Riverside.Graphite.Core
 
 			try
 			{
-                string securityFolder = Path.GetDirectoryName(KeyFilePath) ?? throw new InvalidOperationException("KeyFilePath is invalid.");
+				string securityFolder = Path.GetDirectoryName(KeyFilePath) ?? throw new InvalidOperationException("KeyFilePath is invalid.");
 
 				// Ensure the security folder exists
 				if (!Directory.Exists(securityFolder))
@@ -282,13 +280,14 @@ namespace Riverside.Graphite.Core
 			try
 			{
 				await using (var connection = new SqliteConnection($"Data Source={MainDbPath}"))
-				{ 
+				{
 					await connection.OpenAsync();
 
 					var command = connection.CreateCommand();
 					command.CommandText = "SELECT Username, Email, ProfileImagePath, HasPassword FROM Users";
 
-					await using (var reader = await command.ExecuteReaderAsync()) { 
+					await using (var reader = await command.ExecuteReaderAsync())
+					{
 						while (await reader.ReadAsync())
 						{
 							users.Add(new UserV2
@@ -301,15 +300,17 @@ namespace Riverside.Graphite.Core
 								IsFirstLaunch = false
 							});
 						}
-					};
-				};
-				
+					}
+					;
+				}
+				;
+
 			}
 			catch (Exception ex)
 			{
 				throw new Exception("Failed to retrieve users.", ex);
 			}
-			
+
 			return users;
 		}
 
@@ -317,14 +318,16 @@ namespace Riverside.Graphite.Core
 		{
 			try
 			{
-				await using (var connection = new SqliteConnection($"Data Source={MainDbPath}")) { 
+				await using (var connection = new SqliteConnection($"Data Source={MainDbPath}"))
+				{
 					await connection.OpenAsync();
 
 					var command = connection.CreateCommand();
 					command.CommandText = "SELECT Username, Email, ProfileImagePath, HasPassword, WindowsUserName, IsFirstLaunch FROM Users WHERE Username = $username";
 					command.Parameters.AddWithValue("$username", username);
 
-					await using (var reader = await command.ExecuteReaderAsync()) { 
+					await using (var reader = await command.ExecuteReaderAsync())
+					{
 						if (await reader.ReadAsync())
 						{
 							return new UserV2
@@ -337,9 +340,11 @@ namespace Riverside.Graphite.Core
 								IsFirstLaunch = reader.GetInt32(5) == 1
 							};
 						}
-					};
-				};
-				
+					}
+					;
+				}
+				;
+
 			}
 			catch (Exception ex)
 			{
@@ -349,11 +354,12 @@ namespace Riverside.Graphite.Core
 			return null;
 		}
 
-		public static async Task<UserV2> UpdateUserInUserData(UserV2 user, string encryptedPassword) {
+		public static async Task<UserV2> UpdateUserInUserData(UserV2 user, string encryptedPassword)
+		{
 
 			try
 			{
-				
+
 				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
 				await connection.OpenAsync();
 
@@ -362,7 +368,7 @@ namespace Riverside.Graphite.Core
 				try
 				{
 					var command = connection.CreateCommand();
-				    command.CommandText = @"UPDATE Users 
+					command.CommandText = @"UPDATE Users 
                     SET PasswordHash = $passwordHash, 
                     Email = $email, 
                     WindowsUserName = $windowsUserName, 
@@ -383,7 +389,7 @@ namespace Riverside.Graphite.Core
 
 					// Insert metadata into blobs table
 					var metadataCommand = connection.CreateCommand();
-                    metadataCommand.CommandText = @"UPDATE blobs SET Metadata = $metadata WHERE Username = $username";
+					metadataCommand.CommandText = @"UPDATE blobs SET Metadata = $metadata WHERE Username = $username";
 					metadataCommand.Parameters.AddWithValue("$username", user.Username);
 					metadataCommand.Parameters.AddWithValue("$metadata", JsonSerializer.Serialize(new
 					{
@@ -408,16 +414,17 @@ namespace Riverside.Graphite.Core
 			{
 				throw new Exception($"Failed to create user in database: {ex.Message}", ex);
 			}
-			
+
 
 		}
-		public static async Task<UserV2> CreateUserInUserData(UserV2 user, string encryptedPassword) {
+		public static async Task<UserV2> CreateUserInUserData(UserV2 user, string encryptedPassword)
+		{
 
 			try
 			{
 				var isUser = await GetUserAsync(user.Username);
 				if (isUser is UserV2)
-					return await UpdateUserInUserData(isUser, encryptedPassword); 
+					return await UpdateUserInUserData(isUser, encryptedPassword);
 
 				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
 				await connection.OpenAsync();
@@ -472,12 +479,13 @@ namespace Riverside.Graphite.Core
 				throw new Exception($"Failed to create user in database: {ex.Message}", ex);
 			}
 		}
-		public static async Task<UserV2> CreateValidateUserFolders(UserV2 user,  string sanitizedUsername, Stream profileImageStream = null) {
+		public static async Task<UserV2> CreateValidateUserFolders(UserV2 user, string sanitizedUsername, Stream profileImageStream = null)
+		{
 
 			string userFolderPath = Path.Combine(GraphiteDataPath, sanitizedUsername);
 			if (Directory.Exists(userFolderPath))
 			{
-				return user; 
+				return user;
 			}
 
 			Directory.CreateDirectory(userFolderPath);
@@ -503,7 +511,7 @@ namespace Riverside.Graphite.Core
 					using (var fileStream = File.Create(profileImagePath))
 					{
 						await profileImageStream.CopyToAsync(fileStream);
-						profileImageStream.Close(); 
+						profileImageStream.Close();
 					}
 				}
 				catch (Exception ex)
@@ -532,67 +540,67 @@ namespace Riverside.Graphite.Core
 				}
 			}
 
-			return user; 
+			return user;
 
 		}
 
-        public static async Task<UserV2> CreateUserAsync(string username, string password = null, string email = null, Stream profileImageStream = null)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(username))
-                {
-                    throw new ArgumentException("Username is required.", nameof(username));
-                }
+		public static async Task<UserV2> CreateUserAsync(string username, string password = null, string email = null, Stream profileImageStream = null)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(username))
+				{
+					throw new ArgumentException("Username is required.", nameof(username));
+				}
 
-                // Sanitize username for folder name
-                string sanitizedUsername = string.Join("_", username.Split(Path.GetInvalidFileNameChars()));
+				// Sanitize username for folder name
+				string sanitizedUsername = string.Join("_", username.Split(Path.GetInvalidFileNameChars()));
 
-                var user = new UserV2
-                {
-                    Username = username,
-                    Email = email,
-                    WindowsUserName = Environment.UserName,
-                    IsFirstLaunch = true,
-                    HasPassword = !string.IsNullOrEmpty(password)
-                };
+				var user = new UserV2
+				{
+					Username = username,
+					Email = email,
+					WindowsUserName = Environment.UserName,
+					IsFirstLaunch = true,
+					HasPassword = !string.IsNullOrEmpty(password)
+				};
 
-                // Only encrypt password if it's provided
-                string? encryptedPassword = default;
-                string? passwordHash = default;
-                string? passwordSalt = default;
+				// Only encrypt password if it's provided
+				string? encryptedPassword = default;
+				string? passwordHash = default;
+				string? passwordSalt = default;
 
-                if (!string.IsNullOrEmpty(password))
-                {
-                    (passwordHash, passwordSalt) = HashPassword(password);
-                    encryptedPassword = await EncryptPassword(password);
-                    // Store hash and salt in a separate, more secure database
-                    await StoreSecurityInfoAsync(username, passwordHash, passwordSalt);
-                }
+				if (!string.IsNullOrEmpty(password))
+				{
+					(passwordHash, passwordSalt) = HashPassword(password);
+					encryptedPassword = await EncryptPassword(password);
+					// Store hash and salt in a separate, more secure database
+					await StoreSecurityInfoAsync(username, passwordHash, passwordSalt);
+				}
 
-                // Create user folder structure
-				var UserAndInfo =  await CreateValidateUserFolders(user, sanitizedUsername, profileImageStream);
+				// Create user folder structure
+				var UserAndInfo = await CreateValidateUserFolders(user, sanitizedUsername, profileImageStream);
 				// Create user in database
 				return await CreateUserInUserData(UserAndInfo, encryptedPassword ?? string.Empty);
 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to create user: {ex.Message}", ex);
-            }
-        }
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to create user: {ex.Message}", ex);
+			}
+		}
 
-        public static (string Hash, string Salt) HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            RandomNumberGenerator.Fill(salt);
+		public static (string Hash, string Salt) HashPassword(string password)
+		{
+			byte[] salt = new byte[16];
+			RandomNumberGenerator.Fill(salt);
 
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
-            {
-                byte[] hash = pbkdf2.GetBytes(20);
-                return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
-            }
-        }
+			using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
+			{
+				byte[] hash = pbkdf2.GetBytes(20);
+				return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
+			}
+		}
 
 		public static async Task<UserV2> AuthenticateAsync(string username, string password)
 		{
@@ -612,7 +620,7 @@ namespace Riverside.Graphite.Core
 			try
 			{
 				await SettingsManager.InitializeUserSettingsAsync(username);
-				
+
 				var existingUser = await GetUserAsync(username);
 				if (existingUser is UserV2 user)
 				{
@@ -641,7 +649,7 @@ namespace Riverside.Graphite.Core
 						user.SessionId = GenerateSessionId(username);
 						return user;
 					}
-				}	
+				}
 
 				IncrementLoginAttempts(username);
 
@@ -723,7 +731,8 @@ namespace Riverside.Graphite.Core
 			_activeSessions.TryRemove(sessionId, out _);
 		}
 
-		public static async Task<bool> MigrateUserToNewPassword(UserV2 user) {
+		public static async Task<bool> MigrateUserToNewPassword(UserV2 user)
+		{
 
 			var passwordBox = new PasswordBox { PlaceholderText = "New password" };
 			var dialog = new ContentDialog
@@ -746,19 +755,21 @@ namespace Riverside.Graphite.Core
 					user.Email
 				);
 
-				if (securityUser is UserV2 userV2) {
+				if (securityUser is UserV2 userV2)
+				{
 					var authenticatedUser = await UserManager.AuthenticateAsync(userV2.Username, passwordBox.Password);
 					if (authenticatedUser != null)
 						return true;
 				}
-				
+
 			}
 
 			return false;
 
 		}
-		public static async Task<bool> ValidatePassWord(UserV2 user) {
-			
+		public static async Task<bool> ValidatePassWord(UserV2 user)
+		{
+
 			var passwordBox = new PasswordBox { PlaceholderText = "Enter password" };
 			var dialog = new ContentDialog
 			{
@@ -775,7 +786,7 @@ namespace Riverside.Graphite.Core
 			{
 				var authenticatedUser = await UserManager.AuthenticateAsync(user.Username, passwordBox.Password);
 				if (authenticatedUser != null)
-					return true; 
+					return true;
 			}
 
 			return false;
@@ -802,7 +813,7 @@ namespace Riverside.Graphite.Core
 						if (!await ValidatePassWord(new UserV2 { Username = username }))
 							throw new UnauthorizedAccessException("Password required for user deletion.");
 					}
-					
+
 					// Delete the user
 					var deleteCommand = connection.CreateCommand();
 					deleteCommand.CommandText = "DELETE FROM Users WHERE Username = $username";
@@ -823,7 +834,7 @@ namespace Riverside.Graphite.Core
 						{
 							ExceptionLogger.LogException(new("Can't delete user data folder", ex));
 						}
-					
+
 						return true;
 					}
 
@@ -834,8 +845,9 @@ namespace Riverside.Graphite.Core
 					await transaction.RollbackAsync();
 					throw;
 				}
-				finally {
-				
+				finally
+				{
+
 					connection.Close();
 				}
 
@@ -844,18 +856,18 @@ namespace Riverside.Graphite.Core
 			{
 				throw new Exception($"Failed to delete user: {ex.Message}", ex);
 			}
-			
+
 		}
 
-        private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
-        {
-            byte[] saltBytes = Convert.FromBase64String(storedSalt);
-            using (var pbkdf2 = new Rfc2898DeriveBytes(inputPassword, saltBytes, 10000, HashAlgorithmName.SHA256))
-            {
-                byte[] hashBytes = pbkdf2.GetBytes(20);
-                return Convert.ToBase64String(hashBytes) == storedHash;
-            }
-        }
+		private static bool VerifyPassword(string inputPassword, string storedHash, string storedSalt)
+		{
+			byte[] saltBytes = Convert.FromBase64String(storedSalt);
+			using (var pbkdf2 = new Rfc2898DeriveBytes(inputPassword, saltBytes, 10000, HashAlgorithmName.SHA256))
+			{
+				byte[] hashBytes = pbkdf2.GetBytes(20);
+				return Convert.ToBase64String(hashBytes) == storedHash;
+			}
+		}
 
 		public static async Task SetPasswordAsync(string username, string newPassword)
 		{
@@ -1070,7 +1082,7 @@ namespace Riverside.Graphite.Core
 				profiles.Add(reader.GetString(0));
 			}
 			reader.Close();
-			connection.Close(); 
+			connection.Close();
 
 			return profiles;
 		}
@@ -1144,7 +1156,7 @@ namespace Riverside.Graphite.Core
 			return result?.ToString();
 		}
 
-		
+
 		public static async Task<bool> ValidateSecurityDatabase()
 		{
 
@@ -1179,15 +1191,15 @@ namespace Riverside.Graphite.Core
 				Helper.Logging.ExceptionLogger.LogException(ex);
 
 			}
-			
-			return false; 
+
+			return false;
 
 		}
 
 		private static async Task StoreSecurityInfoAsync(string username, string passwordHash, string passwordSalt)
 		{
 
-			if (! await ValidateSecurityDatabase()) throw new NotImplementedException("Security Database isn't available");
+			if (!await ValidateSecurityDatabase()) throw new NotImplementedException("Security Database isn't available");
 
 			string securityDbPath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
@@ -1250,98 +1262,99 @@ namespace Riverside.Graphite.Core
 			await connection.OpenAsync();
 
 			var command = connection.CreateCommand();
-			command.CommandText = "UPDATE UserSecurity SET Username = $name WHERE Username = $username"; 
+			command.CommandText = "UPDATE UserSecurity SET Username = $name WHERE Username = $username";
 			command.Parameters.AddWithValue("$username", oldName ?? user.Username);
 			command.Parameters.AddWithValue("$name", user.Username);
 
 			await command.ExecuteNonQueryAsync();
 
-			return Task.CompletedTask; 
+			return Task.CompletedTask;
 		}
 
 		public static async Task<UserV2> UpdateUserPropertiesAsync(UserV2 user, string oldName = null)
-        {
-            try
-            {
-                await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
-                await connection.OpenAsync();
+		{
+			try
+			{
+				await using var connection = new SqliteConnection($"Data Source={MainDbPath}");
+				await connection.OpenAsync();
 
-                using var transaction = await connection.BeginTransactionAsync();
+				using var transaction = await connection.BeginTransactionAsync();
 
-                try
-                {
-                    var command = connection.CreateCommand();
-                    var updateFields = new List<string>();
-                    var parameters = new Dictionary<string, object>();
+				try
+				{
+					var command = connection.CreateCommand();
+					var updateFields = new List<string>();
+					var parameters = new Dictionary<string, object>();
 
-					if (!string.IsNullOrEmpty(oldName)) {
+					if (!string.IsNullOrEmpty(oldName))
+					{
 
 						updateFields.Add("UserName = $name");
 						parameters.Add("$name", user.Username);
 					}
 
-                    if (!string.IsNullOrEmpty(user.Email))
-                    {
-                        updateFields.Add("Email = $email");
-                        parameters.Add("$email", user.Email);
-                    }
+					if (!string.IsNullOrEmpty(user.Email))
+					{
+						updateFields.Add("Email = $email");
+						parameters.Add("$email", user.Email);
+					}
 
-                    if (!string.IsNullOrEmpty(user.WindowsUserName))
-                    {
-                        updateFields.Add("WindowsUserName = $windowsUserName");
-                        parameters.Add("$windowsUserName", user.WindowsUserName);
-                    }
+					if (!string.IsNullOrEmpty(user.WindowsUserName))
+					{
+						updateFields.Add("WindowsUserName = $windowsUserName");
+						parameters.Add("$windowsUserName", user.WindowsUserName);
+					}
 
-                    if (user.IsFirstLaunch)
-                    {
-                        updateFields.Add("IsFirstLaunch = $isFirstLaunch");
-                        parameters.Add("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
-                    }
+					if (user.IsFirstLaunch)
+					{
+						updateFields.Add("IsFirstLaunch = $isFirstLaunch");
+						parameters.Add("$isFirstLaunch", user.IsFirstLaunch ? 1 : 0);
+					}
 
-                    if (!string.IsNullOrEmpty(user.ProfileImagePath))
-                    {
-                        updateFields.Add("ProfileImagePath = $profileImagePath");
-                        parameters.Add("$profileImagePath", user.ProfileImagePath);
-                    }
+					if (!string.IsNullOrEmpty(user.ProfileImagePath))
+					{
+						updateFields.Add("ProfileImagePath = $profileImagePath");
+						parameters.Add("$profileImagePath", user.ProfileImagePath);
+					}
 
-                    if (user.HasPassword)
-                    {
-                        updateFields.Add("HasPassword = $hasPassword");
-                        parameters.Add("$hasPassword", user.HasPassword ? 1 : 0);
-                    }
+					if (user.HasPassword)
+					{
+						updateFields.Add("HasPassword = $hasPassword");
+						parameters.Add("$hasPassword", user.HasPassword ? 1 : 0);
+					}
 
-                    if (updateFields.Count == 0)
-                    {
-                        throw new ArgumentException("No properties to update", nameof(user));
-                    }
+					if (updateFields.Count == 0)
+					{
+						throw new ArgumentException("No properties to update", nameof(user));
+					}
 
-                    command.CommandText = $"UPDATE Users SET {string.Join(", ", updateFields)} WHERE Username = $username";
-                    command.Parameters.AddWithValue("$username", oldName ?? user.Username);
+					command.CommandText = $"UPDATE Users SET {string.Join(", ", updateFields)} WHERE Username = $username";
+					command.Parameters.AddWithValue("$username", oldName ?? user.Username);
 
-                    foreach (var param in parameters)
-                    {
-                        command.Parameters.AddWithValue(param.Key, param.Value);
-                    }
+					foreach (var param in parameters)
+					{
+						command.Parameters.AddWithValue(param.Key, param.Value);
+					}
 
 					var answer = await command.ExecuteNonQueryAsync();
-                    await transaction.CommitAsync();
+					await transaction.CommitAsync();
 
-                    connection.Close();
-                    return user;
-                }
-                catch
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to update user properties: {ex.Message}", ex);
-            }
-        }
+					connection.Close();
+					return user;
+				}
+				catch
+				{
+					await transaction.RollbackAsync();
+					throw;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Failed to update user properties: {ex.Message}", ex);
+			}
+		}
 
-		
+
 	}
 
 }

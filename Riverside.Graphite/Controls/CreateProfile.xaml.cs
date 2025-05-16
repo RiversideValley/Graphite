@@ -5,56 +5,56 @@ using System;
 
 namespace Riverside.Graphite.Controls
 {
-    public sealed partial class CreateProfile : Window
-    {
-        private UserV2 _currentUser;
+	public sealed partial class CreateProfile : Window
+	{
+		private UserV2 _currentUser;
 
-        public CreateProfile(UserV2 user)
-        {
-            this.InitializeComponent();
-            _currentUser = user;
-        }
+		public CreateProfile(UserV2 user)
+		{
+			this.InitializeComponent();
+			_currentUser = user;
+		}
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+		private void CancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
 
-        private async void CreateButton_Click(object sender, RoutedEventArgs e)
-        {
-            string profileName = ProfileNameTextBox.Text.Trim();
-            string profileType = (ProfileTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-            string profileDescription = ProfileDescriptionTextBox.Text.Trim();
+		private async void CreateButton_Click(object sender, RoutedEventArgs e)
+		{
+			string profileName = ProfileNameTextBox.Text.Trim();
+			string profileType = (ProfileTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+			string profileDescription = ProfileDescriptionTextBox.Text.Trim();
 
-            if (string.IsNullOrEmpty(profileName))
-            {
-                await ShowErrorMessageAsync("Profile name cannot be empty.");
-                return;
-            }
+			if (string.IsNullOrEmpty(profileName))
+			{
+				await ShowErrorMessageAsync("Profile name cannot be empty.");
+				return;
+			}
 
-            if (string.IsNullOrEmpty(profileType))
-            {
-                await ShowErrorMessageAsync("Please select a profile type.");
-                return;
-            }
+			if (string.IsNullOrEmpty(profileType))
+			{
+				await ShowErrorMessageAsync("Please select a profile type.");
+				return;
+			}
 
-            // TODO: Implement profile creation logic here
-            // For example:
-            await UserManager.AddProfileAsync(_currentUser.Username.ToString(), profileName);
+			// TODO: Implement profile creation logic here
+			// For example:
+			await UserManager.AddProfileAsync(_currentUser.Username.ToString(), profileName);
 
-            this.Close();
-        }
+			this.Close();
+		}
 
-        private async System.Threading.Tasks.Task ShowErrorMessageAsync(string message)
-        {
-            ContentDialog errorDialog = new ContentDialog
-            {
-                Title = "Error",
-                Content = message,
-                CloseButtonText = "OK"
-            };
+		private async System.Threading.Tasks.Task ShowErrorMessageAsync(string message)
+		{
+			ContentDialog errorDialog = new ContentDialog
+			{
+				Title = "Error",
+				Content = message,
+				CloseButtonText = "OK"
+			};
 
-            await errorDialog.ShowAsync();
-        }
-    }
+			await errorDialog.ShowAsync();
+		}
+	}
 }

@@ -8,8 +8,6 @@ using Riverside.Graphite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -58,8 +56,8 @@ namespace Riverside.Graphite.Setup.UserCreateFunctions
 			{
 
 				await SettingsManager.InitializeUserSettingsAsync(user.Username);
-				await SettingsManager.UpdateSettingsAsync(user.Username ,AppService.AppSettings.ToDictionary()); 
-				
+				await SettingsManager.UpdateSettingsAsync(user.Username, AppService.AppSettings.ToDictionary());
+
 			}
 			catch (Exception ex)
 			{

@@ -20,7 +20,7 @@ public sealed partial class SetupFinish : Page
 	private async void SetupFinish_Loaded(object sender, RoutedEventArgs e)
 	{
 		// add to new Settings Manager directly, not SettingsService no dj needed. 
-		
+
 		await SettingsManager.UpdateSettingsAsync(AuthService.CurrentUser.Username, AppService.AppSettings.ToDictionary());
 
 		await Task.Delay(2400);

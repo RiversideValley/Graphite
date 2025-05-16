@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
-using Riverside.Graphite.Services; // Ensure you import your SettingsService namespace
 using System;
 
 namespace Riverside.Graphite.Services

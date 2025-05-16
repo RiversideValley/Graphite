@@ -1,14 +1,10 @@
 ﻿// To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-using Riverside.Graphite.Data.Core.Models;
-using System;
-using System.Collections;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using Riverside.Graphite.Data.Core.Models.Contacts;
 using Microsoft.UI.Xaml.Media;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Riverside.Graphite.Data.Core.Models
 {
@@ -23,7 +19,7 @@ namespace Riverside.Graphite.Data.Core.Models
 		public IEnumerable<Collection> Children { get; set; }
 
 		[NotMapped]
-		public SolidColorBrush BackgroundBrush { get; set; }	
+		public SolidColorBrush BackgroundBrush { get; set; }
 
 	}
 

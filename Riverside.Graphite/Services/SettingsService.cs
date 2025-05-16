@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
-using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
@@ -31,9 +29,9 @@ public class SettingsService : ISettingsService
 			if (AuthService.IsUserAuthenticated)
 			{
 				CurrentUser = AuthService.CurrentUser ?? null;
-		//		Actions = new SettingsActions(AuthService.CurrentUser.Username);
+				//		Actions = new SettingsActions(AuthService.CurrentUser.Username);
 				var settings = await SettingsManager.GetAllSettingsAsync(CurrentUser.Username);
-				CoreSettings = new(); 
+				CoreSettings = new();
 				CoreSettings.FromDictionary(settings);
 
 				//CoreSettings = await Actions?.GetSettingsAsync();
@@ -55,19 +53,19 @@ public class SettingsService : ISettingsService
 			}
 
 			AppService.AppSettings = settings;
-			
+
 			//if (!File.Exists(Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser.Username, "Settings", "Settings.db")))
 			//{
 			//	await Actions?.SettingsContext.Database.MigrateAsync();
 			//}
 			if (!File.Exists(SettingsManager.GetUserSettingsDbPath(AuthService.CurrentUser.Username)))
 			{
-				await SettingsManager.InitializeUserSettingsAsync(AuthService.CurrentUser.Username);	
+				await SettingsManager.InitializeUserSettingsAsync(AuthService.CurrentUser.Username);
 			}
 
 			var dictionary = settings.ToDictionary();
 
-			await SettingsManager.UpdateSettingsAsync(user.Username, dictionary);	
+			await SettingsManager.UpdateSettingsAsync(user.Username, dictionary);
 
 			//_ = await Actions?.UpdateSettingsAsync(settings);
 			// get new from database. 

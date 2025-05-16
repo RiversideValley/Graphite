@@ -28,14 +28,14 @@
   </ItemGroup>
 
   <ItemGroup>
-      <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.1.240916" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
-      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.3" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
-      <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3124.44" />
-      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
-      <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+      <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.5" />
+      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.5" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
+      <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3240.44" />
+      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
+      <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.3916" />
       <PackageReference Include="Moq" Version="4.20.72" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="NUnit" Version="4.3.2" />

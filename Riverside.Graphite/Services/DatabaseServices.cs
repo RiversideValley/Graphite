@@ -2,15 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Data.Core.Methods;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
-using SQLitePCL;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,47 +81,47 @@ public class DatabaseServices : IDatabaseService
 	//	return Task.CompletedTask;
 	//}
 
-    private async Task ValidateDatabaseAsync(string username, string dbSubFolder, string dbName,  Func<DbContext> contextFactory, string errorMessage)
-    {
-        try
-        {
-            var context = contextFactory();
-            var dbPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, dbSubFolder, dbName);
-            if (!File.Exists(dbPath))
-            {
-                await context.Database.MigrateAsync();
+	private async Task ValidateDatabaseAsync(string username, string dbSubFolder, string dbName, Func<DbContext> contextFactory, string errorMessage)
+	{
+		try
+		{
+			var context = contextFactory();
+			var dbPath = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, username, dbSubFolder, dbName);
+			if (!File.Exists(dbPath))
+			{
+				await context.Database.MigrateAsync();
 			}
-            if (File.Exists(dbPath))
-            {
-                if (context.Database.GetPendingMigrations().Any())
-                {
-                    if (!await Methods.ApplyPendingMigrations(context))
-                        throw new Exception(errorMessage);
-                }
-                _ = await context.Database.CanConnectAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error in Creating {dbName} Database: {ex.Message}");
-        }
-    }
+			if (File.Exists(dbPath))
+			{
+				if (context.Database.GetPendingMigrations().Any())
+				{
+					if (!await Methods.ApplyPendingMigrations(context))
+						throw new Exception(errorMessage);
+				}
+				_ = await context.Database.CanConnectAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+			Console.WriteLine($"Error in Creating {dbName} Database: {ex.Message}");
+		}
+	}
 
-    public async Task<Task> DatabaseCreationValidation(User user)
-    {
-        if (!AuthService.IsUserAuthenticated)
-        {
-            return Task.FromResult(false);
-        }
+	public async Task<Task> DatabaseCreationValidation(User user)
+	{
+		if (!AuthService.IsUserAuthenticated)
+		{
+			return Task.FromResult(false);
+		}
 
-        
+
 		//await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Settings",  "Settings.db", () => new SettingsContext(user.Username), "Can't update your Settings database, please reset your application in the settings page");
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "History.db", () => new HistoryContext(user.Username), "Can't update your History database, please reset your application in the settings page");
-        await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database",  "Downloads.db", () => new DownloadContext(user.Username), "Can't update your Downloads database, please reset your application in the settings page");
+		await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database", "History.db", () => new HistoryContext(user.Username), "Can't update your History database, please reset your application in the settings page");
+		await ValidateDatabaseAsync(AuthService.CurrentUser.Username, "Database", "Downloads.db", () => new DownloadContext(user.Username), "Can't update your Downloads database, please reset your application in the settings page");
 		// allow ui to flow. 
 		return Task.CompletedTask;
-    }
+	}
 
 	public async void CreateCollections()
 	{
@@ -158,10 +155,9 @@ public class DatabaseServices : IDatabaseService
 		{
 
 			ExceptionLogger.LogException(e);
-			return; 
+			return;
 		}
 
 	}
 }
 
-	

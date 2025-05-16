@@ -72,10 +72,10 @@ namespace Riverside.Graphite.Services.ViewModels
 				IsIconVisible = true,
 				Duration = TimeSpan.FromSeconds(3)
 			};
-			
+
 			_ = UpLoadBackup.Instance?.NotificationQueue.Show(note);
-			
-			
+
+
 		}
 
 		[RelayCommand]
@@ -138,40 +138,40 @@ namespace Riverside.Graphite.Services.ViewModels
 		//}
 
 		[RelayCommand]
-        private void GenerateAndSend(UserEntity file)
-        {
-            // no selected file leave
-            if (FileSelected is null)
-            {
-                _ = (UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file!", 3000, "Backups"));
-                return;
-            }
+		private void GenerateAndSend(UserEntity file)
+		{
+			// no selected file leave
+			if (FileSelected is null)
+			{
+				_ = (UpLoadBackup.Instance?.NotificationQueue.Show("Please select a file!", 3000, "Backups"));
+				return;
+			}
 
-            // get ref to file on Azure Blob Storage
-            string connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
-            BlobServiceClient blobServiceClient = new BlobServiceClient(connString);
-            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("firebackups");
-            BlobClient blobClient = containerClient.GetBlobClient(FileSelected.BlobName);
+			// get ref to file on Azure Blob Storage
+			string connString = Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] as string;
+			BlobServiceClient blobServiceClient = new BlobServiceClient(connString);
+			BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("firebackups");
+			BlobClient blobClient = containerClient.GetBlobClient(FileSelected.BlobName);
 
-            BlobSasBuilder sasBuilder = new BlobSasBuilder
-            {
-                BlobContainerName = containerClient.Name,
-                BlobName = blobClient.Name,
-                Resource = "b",
-                ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
-            };
-            sasBuilder.SetPermissions(BlobSasPermissions.Read);
+			BlobSasBuilder sasBuilder = new BlobSasBuilder
+			{
+				BlobContainerName = containerClient.Name,
+				BlobName = blobClient.Name,
+				Resource = "b",
+				ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
+			};
+			sasBuilder.SetPermissions(BlobSasPermissions.Read);
 
-            Uri sasUri = blobClient.GenerateSasUri(sasBuilder);
+			Uri sasUri = blobClient.GenerateSasUri(sasBuilder);
 
-            string sasUrl = sasUri.ToString();
-            _ = sasUrl.Append('/');
+			string sasUrl = sasUri.ToString();
+			_ = sasUrl.Append('/');
 
-            // Logic to send email
-            FileNewSas = FileSelected;
-            FileNewSas.BlobUrl = sasUrl;
+			// Logic to send email
+			FileNewSas = FileSelected;
+			FileNewSas.BlobUrl = sasUrl;
 
-            OnPropertyChanged(nameof(FileNewSas));
+			OnPropertyChanged(nameof(FileNewSas));
 			_ = UpLoadBackup.Instance?.FileNewSasText.Focus(FocusState.Programmatic);
 			//await SendEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);
 			//await SendGraphEmailAsync(SelectedUser.Email, sasUrl.ToString()).ConfigureAwait(false);

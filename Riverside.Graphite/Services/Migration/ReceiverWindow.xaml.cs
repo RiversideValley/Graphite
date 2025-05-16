@@ -1,19 +1,16 @@
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Windowing;
-using Microsoft.UI;
-using WinRT.Interop;
-using Windows.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
-using System.Threading;
-using System.Net;
-using System.Net.Sockets;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Collections.Generic;
-using Riverside.Graphite.Services.Migration;
+using WinRT.Interop;
 
 namespace Riverside.Graphite.Services.Migration
 {
@@ -206,11 +203,11 @@ namespace Riverside.Graphite.Services.Migration
 			try
 			{
 				string receivedCode = await protocol.ReceiveMessageAsync();
-				 DispatcherQueue.TryEnqueue(() =>
-				{
-					VerificationCodeTextBox.Text = receivedCode;
-					VerifyButton.IsEnabled = true;
-				});
+				DispatcherQueue.TryEnqueue(() =>
+			   {
+				   VerificationCodeTextBox.Text = receivedCode;
+				   VerifyButton.IsEnabled = true;
+			   });
 			}
 			catch (Exception ex)
 			{
@@ -292,11 +289,11 @@ namespace Riverside.Graphite.Services.Migration
 				connectedSocket = null;
 			}
 
-			 DispatcherQueue.TryEnqueue(() =>
-			{
-				VerifyButton.IsEnabled = false;
-				VerificationCodeTextBox.Text = string.Empty;
-			});
+			DispatcherQueue.TryEnqueue(() =>
+		   {
+			   VerifyButton.IsEnabled = false;
+			   VerificationCodeTextBox.Text = string.Empty;
+		   });
 
 			UpdateStatus("Disconnected. Waiting for new connection.", StatusType.Info);
 			StartListening();
@@ -304,7 +301,7 @@ namespace Riverside.Graphite.Services.Migration
 
 		private async Task UpdateStatusAsync(string message, StatusType type)
 		{
-			 DispatcherQueue.TryEnqueue(() => UpdateStatus(message, type));
+			DispatcherQueue.TryEnqueue(() => UpdateStatus(message, type));
 		}
 
 		private void UpdateStatus(string message, StatusType type)

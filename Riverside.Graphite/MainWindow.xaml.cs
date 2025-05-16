@@ -1,14 +1,7 @@
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Behaviors;
 using CommunityToolkit.WinUI.Collections;
-using Graphite.Controls;
 using Graphite.ViewModels;
-using Microsoft.AspNetCore.Http.Metadata;
-using Microsoft.Build.Framework;
 using Microsoft.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -18,8 +11,6 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NuGet.ContentModel;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
@@ -37,7 +28,6 @@ using Riverside.Graphite.Services.BarcodeHost;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.Services.Notifications;
 using Riverside.Graphite.Services.ViewModels;
-using Riverside.Graphite.ViewModels;
 using Riverside.Graphite.ViewModels.DataGetters;
 using System;
 using System.Collections.Generic;
@@ -46,8 +36,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
@@ -56,7 +44,6 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI.Text;
 using WinRT.Interop;
 using static Riverside.Graphite.Controls.TabStates;
 using Settings = Riverside.Graphite.Core.Settings;
@@ -91,8 +78,8 @@ public sealed partial class MainWindow : Window
 		ViewModelMain.MainView = this;
 		ViewModelMain.ProfileImage = new ImageHelper().LoadImage("profile_image.jpg");
 		Commander = new ProfileCommander(ViewModelMain);
-		
-		
+
+
 		InitializeComponent();
 		TabManager = App.GetService<TabManager>();
 		TabManager.InitializeTabManager(Tabs);
@@ -142,7 +129,7 @@ public sealed partial class MainWindow : Window
 					}
 				}
 
-				if(TabManager.ShouldRestoreTabs())
+				if (TabManager.ShouldRestoreTabs())
 				{
 					await TabManager.SaveTabStateAsync(AuthService.CurrentUser?.Username);
 				}
@@ -172,43 +159,43 @@ public sealed partial class MainWindow : Window
 			try
 			{
 
-			
-			SemaphoreSlim semaphoreSlim = new(3);
-			IntPtr hWnd = WindowNative.GetWindowHandle(this);
 
-			await Task.Delay(100);
+				SemaphoreSlim semaphoreSlim = new(3);
+				IntPtr hWnd = WindowNative.GetWindowHandle(this);
 
-			if (hWnd != IntPtr.Zero)
-			{
-				await semaphoreSlim.WaitAsync();
+				await Task.Delay(100);
 
-				_ = Windowing.GetWindowRect(hWnd, out Windowing.RECT rect);
-
-				Windows.Graphics.SizeInt32? sizeWindow = await Windowing.SizeWindow();
-				// Get the monitor dimensions
-				int screenWidth = sizeWindow.Value.Width;
-				int screenHeight = sizeWindow.Value.Height;
-
-				// Calculate the maximum allowed dimensions
-				int maxWidth = screenWidth / 4;
-				int maxHeight = screenHeight / 3;
-				
-				if (!Windowing.IsWindow(hWnd)) return; 
-
-				if (appWindow.Size.Width < maxWidth)
+				if (hWnd != IntPtr.Zero)
 				{
-					await Task.Delay(60);
-					_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, maxWidth, appWindow.Size.Height, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
-					Windowing.FlashWindow(hWnd);
+					await semaphoreSlim.WaitAsync();
+
+					_ = Windowing.GetWindowRect(hWnd, out Windowing.RECT rect);
+
+					Windows.Graphics.SizeInt32? sizeWindow = await Windowing.SizeWindow();
+					// Get the monitor dimensions
+					int screenWidth = sizeWindow.Value.Width;
+					int screenHeight = sizeWindow.Value.Height;
+
+					// Calculate the maximum allowed dimensions
+					int maxWidth = screenWidth / 4;
+					int maxHeight = screenHeight / 3;
+
+					if (!Windowing.IsWindow(hWnd)) return;
+
+					if (appWindow.Size.Width < maxWidth)
+					{
+						await Task.Delay(60);
+						_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, maxWidth, appWindow.Size.Height, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
+						Windowing.FlashWindow(hWnd);
+					}
+					if (appWindow.Size.Height < maxHeight)
+					{
+						await Task.Delay(60);
+						_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, appWindow.Size.Width, maxHeight, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
+						Windowing.FlashWindow(hWnd);
+					}
+					_ = semaphoreSlim.Release();
 				}
-				if (appWindow.Size.Height < maxHeight)
-				{
-					await Task.Delay(60);
-					_ = Windowing.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, appWindow.Size.Width, maxHeight, Windowing.SWP_NOZORDER | Windowing.SWP_SHOWWINDOW);
-					Windowing.FlashWindow(hWnd);
-				}
-				_ = semaphoreSlim.Release();
-			}
 			}
 			catch (Exception ex)
 			{
@@ -243,13 +230,13 @@ public sealed partial class MainWindow : Window
 	//	e.Window = newWindow;
 	//	e.Handled = true;
 	//}
-	
+
 
 	private async void TabView_TabTearOutWindowRequested(TabView sender, TabViewTabTearOutWindowRequestedEventArgs args)
 	{
 		TearOutWindow = new MainWindow { SystemBackdrop = new MicaBackdrop() };
 		await AppService.ConfigureSettingsWindow(TearOutWindow, "Graphite Broswer");
-		TearOutWindow.Tabs.TabItems.Add(args.Tabs.FirstOrDefault()); 
+		TearOutWindow.Tabs.TabItems.Add(args.Tabs.FirstOrDefault());
 
 		//Frame frm = new Frame();
 		//frm.Background = new SolidColorBrush(Colors.Transparent);
@@ -280,18 +267,19 @@ public sealed partial class MainWindow : Window
 	public async Task StartupTabCheckAsync()
 	{
 
-		if (TabManager.ShouldRestoreTabs() | TabManager.ReadSettingFromRegistry($"{AuthService.CurrentUser?.Username}_TabState") is string json) {
+		if (TabManager.ShouldRestoreTabs() | TabManager.ReadSettingFromRegistry($"{AuthService.CurrentUser?.Username}_TabState") is string json)
+		{
 
 			await TabManager.RestoreTabsAsync(AuthService.CurrentUser?.Username);
 		}
 		else
 		{
-			TabManager.CreateNewTab(typeof(NewTab));	
+			TabManager.CreateNewTab(typeof(NewTab));
 		}
 		//var localSettings = ApplicationData.Current.LocalSettings;
 		//string cacheKey = $"{AuthService.CurrentUser.Username}_{TabManager.TabStateKey}";
 		//ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
-		
+
 		//if (Convert.ToBoolean(isRestore) && localSettings.Values.ContainsKey(cacheKey))
 		//{
 		//	// Restore cache exists, attempt to restore tabs
@@ -369,9 +357,9 @@ public sealed partial class MainWindow : Window
 						{
 							Application.Current.Exit();
 
-							
 
-						});	
+
+						});
 					};
 					_ = await quickConfigurationDialog.ShowAsync();
 				}
@@ -568,37 +556,37 @@ public sealed partial class MainWindow : Window
 	public async void UpdateUIBasedOnSettings()
 	{
 
-        SemaphoreSlim semaphoreSlim = new(1, 1);
+		SemaphoreSlim semaphoreSlim = new(1, 1);
 
-        await semaphoreSlim.WaitAsync();
+		await semaphoreSlim.WaitAsync();
 
-        try
-        {
-            // Get the new changes. 
-            SettingsService.Initialize();
+		try
+		{
+			// Get the new changes. 
+			SettingsService.Initialize();
 
-            Settings coreSet = SettingsService.CoreSettings; 
-            SetVisibility(AdBlock, coreSet.AdblockBtn is not false);
-            SetVisibility(ReadBtn, coreSet.ReadButton is not false);
-            SetVisibility(BtnTrans, coreSet.Translate is not false);
-            SetVisibility(BtnDark, coreSet.DarkIcon is not false);
-            SetVisibility(ToolBoxMore, coreSet.ToolIcon is not false);
-            SetVisibility(AddFav, coreSet.FavoritesL is not false);
-            SetVisibility(FavoritesButton, coreSet.Favorites is not false);
-            SetVisibility(DownBtn, coreSet.Downloads is not false);
-            SetVisibility(History, coreSet.Historybtn is not false);
-            SetVisibility(QrBtn, coreSet.QrCode is not false);
-            SetVisibility(BackBtn, coreSet.BackButton is not false);
-            SetVisibility(ForwBtn, coreSet.ForwardButton is not false);
-            SetVisibility(ReloadBtn, coreSet.RefreshButton is not false);
-            SetVisibility(HomeBtn, coreSet.HomeButton is not false);
-        }
-        finally
-        {
-            semaphoreSlim.Release();
-        }
+			Settings coreSet = SettingsService.CoreSettings;
+			SetVisibility(AdBlock, coreSet.AdblockBtn is not false);
+			SetVisibility(ReadBtn, coreSet.ReadButton is not false);
+			SetVisibility(BtnTrans, coreSet.Translate is not false);
+			SetVisibility(BtnDark, coreSet.DarkIcon is not false);
+			SetVisibility(ToolBoxMore, coreSet.ToolIcon is not false);
+			SetVisibility(AddFav, coreSet.FavoritesL is not false);
+			SetVisibility(FavoritesButton, coreSet.Favorites is not false);
+			SetVisibility(DownBtn, coreSet.Downloads is not false);
+			SetVisibility(History, coreSet.Historybtn is not false);
+			SetVisibility(QrBtn, coreSet.QrCode is not false);
+			SetVisibility(BackBtn, coreSet.BackButton is not false);
+			SetVisibility(ForwBtn, coreSet.ForwardButton is not false);
+			SetVisibility(ReloadBtn, coreSet.RefreshButton is not false);
+			SetVisibility(HomeBtn, coreSet.HomeButton is not false);
+		}
+		finally
+		{
+			semaphoreSlim.Release();
+		}
 		// get the new changes. 
-		
+
 	}
 
 	private void SetVisibility(UIElement element, bool isVisible)
@@ -637,7 +625,7 @@ public sealed partial class MainWindow : Window
 	//		Header = "NewTab",
 	//		IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource { Symbol = Symbol.Home },
 	//		Style = (Style)Microsoft.UI.Xaml.Application.Current.Resources["FloatingTabViewItemStyle"]
-		
+
 	//	};
 
 	//	//ToolTipService.SetToolTip(newItem, null);
@@ -696,7 +684,7 @@ public sealed partial class MainWindow : Window
 	}
 
 
-	
+
 	//private void Apptitlebar_SizeChanged(object sender, SizeChangedEventArgs e)
 	//{
 	//	try
@@ -788,14 +776,14 @@ public sealed partial class MainWindow : Window
 	}
 
 
-public async void NavigateToUrl(string uri)
+	public async void NavigateToUrl(string uri)
 	{
 		try
 		{
 			if (TabContent is null)
 			{
-				TabManager.CreateNewTab(typeof(WebContent) , CreatePasser(uri));
-				return; 
+				TabManager.CreateNewTab(typeof(WebContent), CreatePasser(uri));
+				return;
 			}
 
 			if (TabContent.Content is not WebContent webContent)
@@ -858,7 +846,7 @@ public async void NavigateToUrl(string uri)
 				SelectNewTab();
 				break;
 			case "firebrowser://settings":
-				
+
 				Window window = new();
 				Frame frm = new();
 				_ = frm.Navigate(typeof(SettingsPage), passer);
@@ -902,7 +890,7 @@ public async void NavigateToUrl(string uri)
 		{
 			PerformSearch(input);
 		}
-		return Task.CompletedTask;	
+		return Task.CompletedTask;
 	}
 
 	private void PerformSearch(string query)
@@ -1019,7 +1007,7 @@ public async void NavigateToUrl(string uri)
 				ViewModel.CurrentAddress = "";
 				break;
 			case "Home" when TabContent is null:
-				TabManager.CreateNewTab(typeof(NewTab));	
+				TabManager.CreateNewTab(typeof(NewTab));
 				break;
 			case "Translate" when TabContent.Content is WebContent:
 				string url = (TabContent.Content as WebContent).WebViewElement.CoreWebView2.Source.ToString();
@@ -1226,9 +1214,9 @@ public async void NavigateToUrl(string uri)
 				AppService.FireWindows.Add(win);
 				SettingsPage settingsPage = new();
 				win.Content = settingsPage;
-				win.Activate(); 
+				win.Activate();
 				await AppService.ConfigureSettingsWindow(win);
-				 
+
 
 				break;
 			case "FullScreen":
@@ -1244,7 +1232,7 @@ public async void NavigateToUrl(string uri)
 				_ = TabContent.Navigate(typeof(Riverside.Graphite.Pages.TimeLinePages.MainTimeLine));
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = "History";
 				break;
-			case "Collections": 
+			case "Collections":
 				_ = TabContent.Navigate(typeof(CollectionsPage));
 				(Tabs.SelectedItem as GraphiteTabViewItem).Header = "Collections";
 				break;
@@ -1291,7 +1279,7 @@ public async void NavigateToUrl(string uri)
 			HistoryTemp.ItemsSource = null;
 
 			// send to other pages and viewmodel to update state if in view.. 
-			ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections)); 
+			ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
 		}
 		catch (Exception ex)
 		{
@@ -1299,21 +1287,21 @@ public async void NavigateToUrl(string uri)
 		}
 	}
 
-    public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
+	public IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem> browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(new BrowserHistoryCollection());
 
-    public void FetchBrowserHistory()
-    {
-        try
-        {
-            var graphiteHistory = new BrowserHistoryCollection();
-            browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
-            HistoryTemp.ItemsSource = browserHistory;
-        }
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-        }
-    }
+	public void FetchBrowserHistory()
+	{
+		try
+		{
+			var graphiteHistory = new BrowserHistoryCollection();
+			browserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
+			HistoryTemp.ItemsSource = browserHistory;
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+		}
+	}
 
 	#endregion
 
@@ -1425,7 +1413,7 @@ public async void NavigateToUrl(string uri)
 			TabManager.CloseTab(tabToClose);
 		}
 	}
-	
+
 	private string selectedHistoryItem;
 	private async void Grid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
 	{
@@ -1481,9 +1469,9 @@ public async void NavigateToUrl(string uri)
 		{
 			Text = "Collections",
 			Icon = new FontIcon { Glyph = "\xe71d" }
-		};	
+		};
 
-		var list = await  historyActions.GetAllCollectionNamesItems();
+		var list = await historyActions.GetAllCollectionNamesItems();
 		foreach (var item in list)
 		{
 			var menuItem = new MenuFlyoutItem()
@@ -1493,7 +1481,7 @@ public async void NavigateToUrl(string uri)
 				Background = RandomColors.GetRandomSolidColorBrush(),
 				Opacity = .9
 
-			}; 
+			};
 			menuItem.Click += async (s, args) =>
 			{
 				var answer = await historyActions.InsertCollectionsItem(historyItem, item);
@@ -1520,12 +1508,13 @@ public async void NavigateToUrl(string uri)
 						Duration = TimeSpan.FromSeconds(1.5)
 					};
 					_ = NotificationQueue.Show(note);
-				};
+				}
+				;
 			};
 			subMenu.Items.Add(menuItem);
 		}
 		flyout.Items.Add(deleteMenuItem);
-		flyout.Items.Add(subMenu);	
+		flyout.Items.Add(subMenu);
 		flyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
 	}
 	private void ClearHistoryDataMenuItem_Click(object sender, RoutedEventArgs e) { ClearDb(); }
@@ -1622,7 +1611,8 @@ public async void NavigateToUrl(string uri)
 			{
 				Tabs.TabManager.CreateNewTab(typeof(WebContent), CreatePasser(item.Url));
 			}
-			else {
+			else
+			{
 				if (TabContent.Content is WebContent webContent)
 				{
 					webContent.WebViewElement.Source = new(item.Url);
@@ -1801,10 +1791,10 @@ public async void NavigateToUrl(string uri)
 	{
 		TabManager.SaveSettingToRegistry($"{AuthService.CurrentUser?.Username}_{"TabState"}", JsonConvert.SerializeObject("[]"));
 	}
-		
+
 	private void TabsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (e.AddedItems.Count >0)
+		if (e.AddedItems.Count > 0)
 			if (e.AddedItems[0] is TabAll tab)
 			{
 				foreach (GraphiteTabViewItem item in Tabs.TabItems)
@@ -1820,7 +1810,7 @@ public async void NavigateToUrl(string uri)
 			}
 	}
 
-	
+
 
 	private async void btnTabsAll_Click(object sender, RoutedEventArgs e)
 	{
@@ -1830,12 +1820,12 @@ public async void NavigateToUrl(string uri)
 		btn.Flyout.ShowAt(btn);
 		await ViewModelMain.LoadResetAllTabs();
 		await Task.Delay(100);
-		
+
 	}
 
 	private async void TabFlyoutDelete(object sender, RoutedEventArgs e)
 	{
-	
+
 		var id = (sender.GetType().GetProperty("DataContext")?.GetValue(sender) as TabAll)?.Tag.ToString();
 		if (Guid.TryParse(id, out Guid guid))
 		{
@@ -1851,7 +1841,7 @@ public async void NavigateToUrl(string uri)
 	{
 		Tabs.TabItems.Clear();
 		await ViewModelMain.LoadResetAllTabs();
-		await Task.Delay(100); 
+		await Task.Delay(100);
 	}
-	
+
 }

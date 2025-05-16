@@ -8,13 +8,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using NuGet.Protocol.Plugins;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Core.Actions.Contracts;
 using Riverside.Graphite.Data.Core.Models;
-using Riverside.Graphite.Data.Core.Models.Contacts;
-using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Pages.TimeLinePages;
 using Riverside.Graphite.Runtime.Helpers;
@@ -23,10 +19,7 @@ using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
 using Riverside.Graphite.ViewModels.DataGetters;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
@@ -44,28 +37,29 @@ namespace Riverside.Graphite.Services.ViewModels
 		private HistoryItem _InternalHistoryItem;
 
 		[ObservableProperty]
-		private string _FilterText; 
+		private string _FilterText;
 
 		public HistoryTimeLine ParentHistoryTimeLine { get; set; }
-		public HistoryViewModel(IMessenger messenger): base(messenger) {
+		public HistoryViewModel(IMessenger messenger) : base(messenger)
+		{
 
 			Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 		}
 
-		private  void ReceivedStatus(Message_Settings_Actions m)
+		private void ReceivedStatus(Message_Settings_Actions m)
 		{
-		
-            switch (m.Status)
-            {
-                case EnumMessageStatus.Collections:
-                    FetchBrowserHistory();
-                    OnPropertyChanged(nameof(FetchBrowserHistory));
-                    OnPropertyChanged(nameof(SelectedHistoryItem));
-                    break;
-                default:
-                    break;
-            }
-		
+
+			switch (m.Status)
+			{
+				case EnumMessageStatus.Collections:
+					FetchBrowserHistory();
+					OnPropertyChanged(nameof(FetchBrowserHistory));
+					OnPropertyChanged(nameof(SelectedHistoryItem));
+					break;
+				default:
+					break;
+			}
+
 		}
 
 		partial void OnFilterTextChanged(string value)
@@ -79,7 +73,8 @@ namespace Riverside.Graphite.Services.ViewModels
 
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-				window.DispatcherQueue.TryEnqueue(() => {
+				window.DispatcherQueue.TryEnqueue(() =>
+				{
 					window.NavigateToUrl(SelectedHistoryItem.Url);
 				});
 			}
@@ -92,16 +87,16 @@ namespace Riverside.Graphite.Services.ViewModels
 			}
 
 			var graphiteHistory = new BrowserHistoryCollection();
-			
-			
+
+
 
 			// Filter and bind the browser history based on the search text
-			var filter = 
+			var filter =
 				BrowserHistory.Where(item =>
 					item.Url.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
 					item.Title?.Contains(searchText, StringComparison.OrdinalIgnoreCase) == true);
 
-			graphiteHistory.HistoryItems = filter.ToObservableCollection(); 
+			graphiteHistory.HistoryItems = filter.ToObservableCollection();
 
 			BrowserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
 
@@ -118,7 +113,7 @@ namespace Riverside.Graphite.Services.ViewModels
 			{
 				var graphiteHistory = new BrowserHistoryCollection();
 				BrowserHistory = new IncrementalLoadingCollection<BrowserHistoryCollection, HistoryItem>(graphiteHistory);
-				OnPropertyChanged(nameof(BrowserHistory)); 
+				OnPropertyChanged(nameof(BrowserHistory));
 
 			}
 			catch (Exception ex)
@@ -128,20 +123,21 @@ namespace Riverside.Graphite.Services.ViewModels
 		}
 
 		[RelayCommand]
-		private async Task CollectionShow(AppBarButton sender) {
+		private async Task CollectionShow(AppBarButton sender)
+		{
 
-			
+
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
 			MenuFlyout flyout = new();
 			flyout.Placement = FlyoutPlacementMode.LeftEdgeAlignedBottom;
 
-			var subMenu = new  MenuFlyoutSubItem
+			var subMenu = new MenuFlyoutSubItem
 			{
 				Margin = new Thickness(2),
 				Padding = new Thickness(1),
 				Text = "Collections",
-				Icon = new FontIcon { Glyph = "\xe71d" }, 
+				Icon = new FontIcon { Glyph = "\xe71d" },
 			};
 
 			var list = await historyActions.GetAllCollectionNamesItems();
@@ -169,14 +165,15 @@ namespace Riverside.Graphite.Services.ViewModels
 							Severity = InfoBarSeverity.Informational,
 							Duration = TimeSpan.FromSeconds(1.5)
 						};
-						
-						if (App.Current.m_window is MainWindow win) {
+
+						if (App.Current.m_window is MainWindow win)
+						{
 
 							_ = win.NotificationQueue.Show(note);
 							win.ViewModelMain.SendMessageOut(new Message_Settings_Actions(EnumMessageStatus.Collections));
 
 						}
-						
+
 					}
 					else
 					{
@@ -191,27 +188,29 @@ namespace Riverside.Graphite.Services.ViewModels
 						{
 							_ = win.NotificationQueue.Show(note);
 						}
-						
-					};
-					flyout.Hide(); 
+
+					}
+					;
+					flyout.Hide();
 				};
 				subMenu.Items.Add(menuItem);
 			}
-			
+
 			GeneralTransform transform = sender.TransformToVisual(sender);
 			Point point = transform.TransformPoint(new Point(0, 0));
 
 			flyout.Items.Add(subMenu);
-			flyout.ShowAt((FrameworkElement)sender,  point);
+			flyout.ShowAt((FrameworkElement)sender, point);
 
 		}
 
 		[RelayCommand]
-		private async Task DeleteItem(AppBarButton sender) {
+		private async Task DeleteItem(AppBarButton sender)
+		{
 
-			if (InternalHistoryItem is null) return; 
+			if (InternalHistoryItem is null) return;
 
-			
+
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			await historyActions.DeleteHistoryItem(InternalHistoryItem.Url);
 
@@ -233,18 +232,19 @@ namespace Riverside.Graphite.Services.ViewModels
 			{
 				Position = e.GetPosition(listView),
 			};
-			
+
 			ParentHistoryTimeLine.FlyDeleteItem.ShowAt(listView, options);
 			InternalHistoryItem = ((FrameworkElement)e.OriginalSource).DataContext as HistoryItem;
-			e.Handled = true; 
+			e.Handled = true;
 		}
-				
+
 		[RelayCommand]
-		private async Task RemoveAllHistory() {
+		private async Task RemoveAllHistory()
+		{
 
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 			await historyActions.DeleteAllHistoryItems();
-			FetchBrowserHistory(); 
+			FetchBrowserHistory();
 		}
 		public void OnNavigatedFrom()
 		{
@@ -253,7 +253,7 @@ namespace Riverside.Graphite.Services.ViewModels
 
 		public void OnNavigatedTo(object parameter)
 		{
-			FetchBrowserHistory(); 
+			FetchBrowserHistory();
 		}
 	}
 }

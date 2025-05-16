@@ -1,30 +1,20 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.Windows.AppNotifications.Builder;
-using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Assets;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper;
 using Riverside.Graphite.Core.Models;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Core.Models;
-using Riverside.Graphite.Helpers;
-using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Setup.UserCreateFunctions;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Riverside.Graphite
 {
 	public sealed partial class SetupUser : Page
 	{
 		private string selectedImageName = "clippy.png";
-		readonly DatabaseServices databaseServices = new();	
+		readonly DatabaseServices databaseServices = new();
 		public SetupUser()
 		{
 			databaseServices = new();
@@ -51,7 +41,7 @@ namespace Riverside.Graphite
 			if (AuthService.UserExists(UserName.Text) is User)
 			{
 				NotificationQueue.Show("User already exists\nPlease choose a different username", 2000, "User Creation");
-				UserName.Text = string.Empty; 
+				UserName.Text = string.Empty;
 				return;
 			}
 
@@ -66,7 +56,7 @@ namespace Riverside.Graphite
 			_ = Frame.Navigate(typeof(SetupUi));
 		}
 
-		
+
 		private async Task InPrivateUser()
 		{
 			User newUser = new()
@@ -91,23 +81,23 @@ namespace Riverside.Graphite
 				Username = UserName.Text,
 			};
 
-			
+
 			await UserManager.CreateUserAsync(newUser.Username, null, null, await UserImageHelper.GetImageStreamAsync(new UserImageItem { ImagePath = $"ms-appx:///Riverside.Graphite.Assets/Assets/{selectedImageName}", Name = newUser.Username }));
 			UserFolderManager.CreateUserFolders(newUser);
 			_ = AuthService.Authenticate(newUser.Username);
 
 			await AddUserDefaults.CopyImageToUserDirectory(newUser, selectedImageName);
-		
+
 			await UserCreateDatabase(newUser);
 
 		}
 
 		async Task UserCreateDatabase(User user)
 		{
-				await databaseServices.DatabaseCreationValidation(user);
-				AddUserDefaults.CreateCollections(user);
-				AddUserDefaults.CreateNewSettings(user);
+			await databaseServices.DatabaseCreationValidation(user);
+			AddUserDefaults.CreateCollections(user);
+			AddUserDefaults.CreateNewSettings(user);
 		}
-		
+
 	}
 }

@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Data.Core;
 
@@ -25,28 +23,28 @@ public class HistoryContext : DbContext
 	}
 
 	public static readonly string InformationFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "sql_event_logger.log");
-	
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
-        optionsBuilder.LogTo(Console.WriteLine);
-    }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Collection>()
-               .HasOne<DbHistoryItem>()
-               .WithMany()
-               .HasForeignKey(c => c.HistoryItemId)
-               .OnDelete(DeleteBehavior.Cascade);
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	{
+		optionsBuilder.UseSqlite($"Data Source={ConnectionPath}");
+		optionsBuilder.LogTo(Console.WriteLine);
+	}
 
-        modelBuilder.Entity<Collection>()
-            .HasOne<CollectionName>()
-            .WithMany()
-            .HasForeignKey(c => c.CollectionNameId)
-            .OnDelete(DeleteBehavior.Cascade);
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder.Entity<Collection>()
+			   .HasOne<DbHistoryItem>()
+			   .WithMany()
+			   .HasForeignKey(c => c.HistoryItemId)
+			   .OnDelete(DeleteBehavior.Cascade);
 
-            
-    }
+		modelBuilder.Entity<Collection>()
+			.HasOne<CollectionName>()
+			.WithMany()
+			.HasForeignKey(c => c.CollectionNameId)
+			.OnDelete(DeleteBehavior.Cascade);
+
+
+	}
 
 }

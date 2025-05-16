@@ -1,10 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Riverside.Graphite.IdentityClient.Dialogs;
-using Riverside.Graphite.IdentityClient.Models;
 using System;
-using Windows.ApplicationModel.DataTransfer;
 
 namespace Riverside.Graphite.IdentityClient.Controls
 {

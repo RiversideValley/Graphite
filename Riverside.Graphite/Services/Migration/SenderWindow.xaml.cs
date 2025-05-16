@@ -1,22 +1,19 @@
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Windowing;
-using WinRT.Interop;
-using Microsoft.UI;
 using System;
-using System.Threading.Tasks;
-using Windows.Networking;
-using Windows.Networking.Connectivity;
-using Windows.Networking.Sockets;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Threading;
-using Microsoft.UI.Xaml.Input;
-using System.Collections.ObjectModel;
 using System.Net.Sockets;
 using System.Text;
-using Riverside.Graphite.Services.Migration;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Networking;
+using Windows.Networking.Sockets;
+using WinRT.Interop;
 
 namespace Riverside.Graphite.Services.Migration
 {
@@ -257,7 +254,7 @@ namespace Riverside.Graphite.Services.Migration
 
 		private async Task UpdateStatusAsync(string message, StatusType type)
 		{
-			 DispatcherQueue.TryEnqueue(() => UpdateStatus(message, type));
+			DispatcherQueue.TryEnqueue(() => UpdateStatus(message, type));
 		}
 
 		private void UpdateStatus(string message, StatusType type)
@@ -408,31 +405,31 @@ namespace Riverside.Graphite.Services.Migration
 
 		private async Task AddOrUpdateReceiverAsync(string ip, string deviceName)
 		{
-			 DispatcherQueue.TryEnqueue(() =>
-			{
-				var existingReceiver = _discoveredReceivers.FirstOrDefault(r => r.IP == ip);
-				if (existingReceiver != null)
-				{
-					existingReceiver.LastSeen = DateTime.Now;
-				}
-				else
-				{
-					_discoveredReceivers.Add(new ReceiverInfo { IP = ip, DeviceName = deviceName, LastSeen = DateTime.Now });
-				}
+			DispatcherQueue.TryEnqueue(() =>
+		   {
+			   var existingReceiver = _discoveredReceivers.FirstOrDefault(r => r.IP == ip);
+			   if (existingReceiver != null)
+			   {
+				   existingReceiver.LastSeen = DateTime.Now;
+			   }
+			   else
+			   {
+				   _discoveredReceivers.Add(new ReceiverInfo { IP = ip, DeviceName = deviceName, LastSeen = DateTime.Now });
+			   }
 
-				// Remove receivers that haven't been seen in the last 30 seconds
-				var outdatedReceivers = _discoveredReceivers.Where(r => (DateTime.Now - r.LastSeen).TotalSeconds > 30).ToList();
-				foreach (var receiver in outdatedReceivers)
-				{
-					_discoveredReceivers.Remove(receiver);
-				}
+			   // Remove receivers that haven't been seen in the last 30 seconds
+			   var outdatedReceivers = _discoveredReceivers.Where(r => (DateTime.Now - r.LastSeen).TotalSeconds > 30).ToList();
+			   foreach (var receiver in outdatedReceivers)
+			   {
+				   _discoveredReceivers.Remove(receiver);
+			   }
 
-				UpdateStatus($"Found {_discoveredReceivers.Count} receiver(s)", StatusType.Info);
-			});
+			   UpdateStatus($"Found {_discoveredReceivers.Count} receiver(s)", StatusType.Info);
+		   });
 		}
 
-		
-		
+
+
 	}
 
 	public class ReceiverInfo

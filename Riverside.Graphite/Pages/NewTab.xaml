@@ -860,66 +860,7 @@
                         </VisualStateGroup>
                     </VisualStateManager.VisualStateGroups>
                 </Grid>
-
-
-
-                <Button
-                    x:Name="PromoBtn"
-                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Canvas.ZIndex="997"
-                    Command="{x:Bind ViewModel.PromoCommand}">
-                    <FontIcon
-                        FontFamily="{StaticResource FluentIcons}"
-                        FontSize="16"
-                        Glyph="&#xe7c1;" />
-                </Button>
-                
-                <Button
-                    x:Name="UserBtn"
-                    Margin="{ThemeResource XXSmallLeftTopRightBottomMargin}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    Canvas.ZIndex="996"
-                    Command="{x:Bind ViewModel.OpenUserSysCommand}"
-                    ToolTipService.ToolTip="User DashBoard">
-                    <FontIcon
-                        FontFamily="{StaticResource FluentIcons}"
-                        FontSize="16"
-                        Glyph="&#xE125;" />
-                </Button>
-
-                <TeachingTip
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
-                    IsLightDismissEnabled="True"
-                    IsOpen="{x:Bind ViewModel.IsPromoOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    PlacementMargin="{ThemeResource MediumBottomMargin}">
-                    <TeachingTip.Transitions>
-                        <TransitionCollection>
-                            <PaneThemeTransition Edge="Left" />
-                        </TransitionCollection>
-                    </TeachingTip.Transitions>
-                    <TeachingTip.HeroContent>
-                        <Image Source="ms-appx:///Assets/Experience/ogInformation.png" Stretch="Fill" />
-
-
-                    </TeachingTip.HeroContent>
-                    <TeachingTip.Content>
-                        <Grid>
-                            <PROMOTION:PromotionBar
-                                Height="100"
-                                VerticalAlignment="Bottom"
-                                ButtonText="Go to Promotion"
-                                Content="CodeBeaver: A Amazing AI for software testing - Now With 50% Discount With Our Special Code FIREBROWSER50"
-                                PromotionUrl="https://www.codebeaver.ai/pricing?promo=FIREBROWSER50" />
-                        </Grid>
-
-                    </TeachingTip.Content>
-                </TeachingTip>
-
+       
                 <InfoBar
                     Margin="{ThemeResource MediumTopMargin}"
                     HorizontalAlignment="Right"

@@ -1,14 +1,13 @@
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using System.Globalization;
 
 
 namespace Riverside.Graphite.Helpers
 {
-    public class UrlToImageSourceConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
+	public class UrlToImageSourceConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, string language)
 		{
 			if (value is string url)
 			{

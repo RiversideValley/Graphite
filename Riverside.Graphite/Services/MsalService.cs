@@ -6,8 +6,6 @@ using Microsoft.Identity.Client.Broker;
 using Microsoft.Identity.Client.Desktop;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Web.WebView2.Core;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
@@ -258,23 +256,23 @@ namespace Riverside.Graphite.Services
 				request.Headers.Add("Authorization", $"Bearer {result.AccessToken}");
 			}
 		}
-        public async Task SaveAuthorizationCookieAsync(AuthenticationResult result)
-        {
-            result ??= await GetTokenInteractivelyAsync();
+		public async Task SaveAuthorizationCookieAsync(AuthenticationResult result)
+		{
+			result ??= await GetTokenInteractivelyAsync();
 
-            if (result != null)
-            {
+			if (result != null)
+			{
 				string accessToken = result.AccessToken;
-                await SaveCookieToLocalStorageAsync(accessToken);
-            }
-        }
+				await SaveCookieToLocalStorageAsync(accessToken);
+			}
+		}
 
-        private  Task SaveCookieToLocalStorageAsync(string token)
-        {
+		private Task SaveCookieToLocalStorageAsync(string token)
+		{
 			if (string.IsNullOrEmpty(token)) return null;
 
 			Windows.Storage.ApplicationData.Current.LocalSettings.Values["MsalFireAccessToken"] = token;
 			return Task.CompletedTask;
-        }
+		}
 	}
 }

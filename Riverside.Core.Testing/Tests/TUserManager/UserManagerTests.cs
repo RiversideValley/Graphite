@@ -1,9 +1,5 @@
-using Riverside.Graphite.Core;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
-using System.IO;
-using NUnit.Framework;
+using Riverside.Graphite.Core;
 
 namespace Riverside.Graphite.Tests
 {
@@ -42,9 +38,9 @@ namespace Riverside.Graphite.Tests
                         Salt TEXT
                     );
                 ";
-				
+
 				await command.ExecuteNonQueryAsync();
-			
+
 				string username = "testuser";
 				string password = "PassW0rd!";
 				var (passwordHash, passwordSalt) = UserManager.HashPassword(password);
@@ -66,7 +62,7 @@ namespace Riverside.Graphite.Tests
 		[TearDown]
 		public void TearDown()
 		{
-			CloseDatabaseConnections(); 
+			CloseDatabaseConnections();
 
 			const int maxRetries = 3;
 			const int delay = 1000; // 1 second
@@ -102,7 +98,7 @@ namespace Riverside.Graphite.Tests
 			List<UserV2> users = await UserManager.GetAllUsersAsync();
 
 			TestContext.WriteLine(System.Text.Json.JsonSerializer.Serialize(users.ToArray()));
-			
+
 			Assert.That(users, Is.Not.Null);
 			Assert.That(users, Is.Not.Empty);
 			Assert.That(users[0].Username, Is.EqualTo("testuser"));
@@ -111,16 +107,16 @@ namespace Riverside.Graphite.Tests
 		[Test]
 		public async Task AuthenticateAsync_ShouldReturnUser_WhenCredentialsAreValid()
 		{
-			
+
 			UserManager.MainDbPath = TestDbPath;
 			string username = "testuser";
-			
-			
+
+
 			UserV2 user = await UserManager.GetUserAsync(username);
-			
+
 			if (user is not null)
 				TestContext.WriteLine(System.Text.Json.JsonSerializer.Serialize(user));
-			
+
 			Assert.That(user, Is.Not.Null);
 			Assert.That(user.Username, Is.EqualTo(username));
 		}

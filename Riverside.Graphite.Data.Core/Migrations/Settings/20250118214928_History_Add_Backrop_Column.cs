@@ -4,11 +4,11 @@
 
 namespace Riverside.Graphite.Data.Core.Migrations.Settings
 {
-    /// <inheritdoc />
-    public partial class History_Add_Backrop_Column : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+	/// <inheritdoc />
+	public partial class History_Add_Backrop_Column : Migration
+	{
+		/// <inheritdoc />
+		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.AddColumn<string>(
 				name: "BackDrop",
@@ -24,6 +24,6 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 				name: "BackDrop",
 				table: "Settings");
 		}
-        
-    }
+
+	}
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Security.Principal;
-using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Services.Migration
 {

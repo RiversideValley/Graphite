@@ -1,13 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using WinRT.Interop;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace Riverside.Graphite.Controls.FileDialogs
 {

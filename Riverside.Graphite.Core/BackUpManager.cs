@@ -112,7 +112,7 @@ namespace Riverside.Graphite.Core
 				// If FireBrowserUserCore exists, delete it 
 				if (Directory.Exists(restorePath))
 				{
-					DirectoryHelper.DeleteAllFilesRecursive(restorePath);	
+					DirectoryHelper.DeleteAllFilesRecursive(restorePath);
 
 					Console.WriteLine("Existing FireBrowserUserCore folder deleted.");
 				}
@@ -144,7 +144,7 @@ namespace Riverside.Graphite.Core
 						entry.ExtractToFile(destinationPath, true);
 					}
 				}
-				
+
 				Console.WriteLine($"Backup restored successfully to: {restorePath}");
 				return Task.FromResult(true);
 			}

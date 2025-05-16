@@ -2,14 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
-using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Newtonsoft.Json.Linq;
-using NuGet.Protocol.Plugins;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Favorites;
@@ -17,16 +14,12 @@ using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Services.Contracts;
 using Riverside.Graphite.Services.Messages;
-using Riverside.Graphite.Services.ViewModels.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Media.Core;
 using Windows.System;
 
 namespace Riverside.Graphite.Services.ViewModels
@@ -34,8 +27,8 @@ namespace Riverside.Graphite.Services.ViewModels
 	public partial class FavoritesViewModel : ObservableRecipient, INavigationAware
 	{
 		[ObservableProperty]
-		private string _SearchFilterText; 
-		
+		private string _SearchFilterText;
+
 		[ObservableProperty]
 		private ObservableCollection<FavItem> _Favorites;
 
@@ -46,15 +39,16 @@ namespace Riverside.Graphite.Services.ViewModels
 		private FavItem _InternalFavoriteItem;
 
 		public CommandBarFlyout FavoritesContextMenu { get; set; }
-		internal FavManager FavManager { get; set; }	
-		public FavoritesViewModel(IMessenger messenger):base(messenger) {
+		internal FavManager FavManager { get; set; }
+		public FavoritesViewModel(IMessenger messenger) : base(messenger)
+		{
 			FavManager = new();
 		}
 
 		static string oldValue { get; set; }
 		async partial void OnSearchFilterTextChanged(string value)
 		{
-			if (oldValue == value) return;	
+			if (oldValue == value) return;
 
 			if (string.IsNullOrEmpty(value))
 			{
@@ -65,24 +59,25 @@ namespace Riverside.Graphite.Services.ViewModels
 			var temp = FavManager.LoadFav().Where(t => t.Title.Contains(value, StringComparison.OrdinalIgnoreCase)).ToObservableCollection();
 			Favorites = temp;
 			RaisePropertyChanges(nameof(Favorites));
-		
+
 			await Task.Delay(50);
-			oldValue = value; 
+			oldValue = value;
 		}
 
 		partial void OnSelectedFavoriteItemChanged(FavItem value)
 		{
 			if (value is null) return;
 
-			InternalFavoriteItem = value; 
+			InternalFavoriteItem = value;
 
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-				window.DispatcherQueue?.TryEnqueue(async() => {
+				window.DispatcherQueue?.TryEnqueue(async () =>
+				{
 					window.NavigateToUrl(value.Url);
-					await Task.Delay(200); 
-				});	
-				
+					await Task.Delay(200);
+				});
+
 			}
 		}
 
@@ -128,7 +123,8 @@ namespace Riverside.Graphite.Services.ViewModels
 					{
 						answer = await historyActions.InsertCollectionsItem(historyItem, item);
 					}
-					else {
+					else
+					{
 
 						await historyActions.InsertHistoryItem(InternalFavoriteItem.Url, InternalFavoriteItem.Title, 0, 0, 0);
 						var items2 = await historyActions.GetAllHistoryItems();
@@ -174,13 +170,14 @@ namespace Riverside.Graphite.Services.ViewModels
 							_ = win.NotificationQueue.Show(note);
 						}
 
-					};
+					}
+					;
 					flyout.Hide();
 				};
 				subMenu.Items.Add(menuItem);
 			}
 
-			GeneralTransform transform =  sender.TransformToVisual(sender);
+			GeneralTransform transform = sender.TransformToVisual(sender);
 
 			Point point = transform.TransformPoint(new Point(0, 0));
 
@@ -190,16 +187,18 @@ namespace Riverside.Graphite.Services.ViewModels
 		}
 
 		[RelayCommand]
-		private async Task DeleteAllFavorites() {
-			
+		private async Task DeleteAllFavorites()
+		{
+
 			FavManager.ClearFavs();
 			await LoadFavorites();
 		}
 
 		[RelayCommand]
-		private async Task FavoriteItemContextClick(AppBarButton sender) {
+		private async Task FavoriteItemContextClick(AppBarButton sender)
+		{
 
-			if (InternalFavoriteItem is null) return; 
+			if (InternalFavoriteItem is null) return;
 
 			switch ((sender as AppBarButton).Tag)
 			{
@@ -220,18 +219,20 @@ namespace Riverside.Graphite.Services.ViewModels
 					break;
 					// Add other cases as needed
 			}
-			
-			if(sender.Parent is CommandBarFlyout cmdBar){
+
+			if (sender.Parent is CommandBarFlyout cmdBar)
+			{
 				cmdBar.Hide();
 			}
-			
+
 		}
 
-		public Task LoadFavorites() {
+		public Task LoadFavorites()
+		{
 
-			Favorites = FavManager.LoadFav().ToObservableCollection(); 
+			Favorites = FavManager.LoadFav().ToObservableCollection();
 			OnPropertyChanged(nameof(Favorites));
-			return Task.CompletedTask;  
+			return Task.CompletedTask;
 		}
 
 		public void RightTappedFavoriteItem(object sender, RightTappedRoutedEventArgs e)
@@ -244,7 +245,7 @@ namespace Riverside.Graphite.Services.ViewModels
 
 			FavoritesContextMenu.ShowAt(listView, options);
 			InternalFavoriteItem = ((FrameworkElement)e.OriginalSource).DataContext as FavItem;
-				
+
 		}
 		public async void OnNavigatedTo(object parameter)
 		{

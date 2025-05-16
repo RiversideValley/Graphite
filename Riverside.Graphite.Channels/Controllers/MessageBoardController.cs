@@ -30,7 +30,8 @@ namespace FireCore.Controllers
 				foreach (var cookie in Request.Cookies)
 				{ Response.Cookies.Delete(cookie.Key); }
 				Console.Write(e.Message!.ToString());
-			};
+			}
+			;
 
 			return Redirect("~/");
 

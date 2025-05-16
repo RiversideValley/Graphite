@@ -12,7 +12,7 @@ public sealed partial class DownloadsTimeLine : Page
 		Loaded += (s, e) => ViewModel.GetDownloadItems().ConfigureAwait(false);
 
 		InitializeComponent();
-		
+
 	}
 
 }

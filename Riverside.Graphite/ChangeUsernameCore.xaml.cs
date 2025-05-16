@@ -1,7 +1,6 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using NuGet.Common;
 using Riverside.Graphite.Core;
 using System;
 using System.IO;
@@ -28,7 +27,7 @@ public sealed partial class ChangeUsernameCore : Window
 		InitializeComponent();
 
 		title();
-		UpdateUser(); 
+		UpdateUser();
 	}
 
 
@@ -57,7 +56,7 @@ public sealed partial class ChangeUsernameCore : Window
 		}
 	}
 
-	public async  Task ChangeUsername()
+	public async Task ChangeUsername()
 	{
 		try
 		{
@@ -106,11 +105,12 @@ public sealed partial class ChangeUsernameCore : Window
 			{
 				Console.WriteLine($"Folder '{changeUsernameData.OldUsername}' not found.");
 			}
-			
+
 			// Remove the JSON file
 			var existingUser = await UserManager.GetUserAsync(changeUsernameData.OldUsername);
 
-			if (existingUser != null) {
+			if (existingUser != null)
+			{
 				existingUser.Username = changeUsernameData.NewUsername;
 				await UserManager.UpdateUserPropertiesAsync(existingUser, changeUsernameData.OldUsername);
 				await UserManager.UpdateSecurityInfoAsync(existingUser, changeUsernameData.OldUsername);
@@ -123,8 +123,8 @@ public sealed partial class ChangeUsernameCore : Window
 		{
 			Console.WriteLine($"An error occurred: {ex.Message}");
 		}
-		
-		
+
+
 	}
 
 	private async void UpdateUser()
@@ -152,10 +152,11 @@ public sealed partial class ChangeUsernameCore : Window
 		{
 			;
 		}
-		finally {
+		finally
+		{
 			_ = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
 		}
-		
+
 	}
 
 	private void ManaulRestart_Click(object sender, RoutedEventArgs e)

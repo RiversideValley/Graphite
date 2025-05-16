@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Riverside.Graphite;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.ViewModels;
 using System;
@@ -54,7 +53,7 @@ namespace Riverside.Graphite.Controls
 			get => (bool)GetValue(IsPinnedProperty);
 			set => SetValue(IsPinnedProperty, value);
 		}
-		
+
 
 		public static readonly DependencyProperty IsPinnedProperty = DependencyProperty.Register(
 			nameof(IsPinned),
@@ -81,7 +80,7 @@ namespace Riverside.Graphite.Controls
 			{
 				this.Style = (Style)Application.Current.Resources["DefaultTabStyle"];
 			}
-		
+
 		}
 
 		private void InitializeContextMenu()
@@ -104,27 +103,27 @@ namespace Riverside.Graphite.Controls
 			{
 				Text = "Close tabs to the right",
 				Icon = new SymbolIcon(Symbol.DockRight)
-			};	
+			};
 
 			closeAllTabsMenuItem.Click += (sender, e) =>
 			{
 				var tabView = (TabViewListView)Parent as TabViewListView;
-				tabView?.Items.Clear();	
-			};	
+				tabView?.Items.Clear();
+			};
 
-          closeTabsToTheRightMenuItem.Click += (sender, e) =>
-            {
-                var tabView = (TabViewListView)Parent as TabViewListView;
-                var position = tabView?.Items.IndexOf(this);
+			closeTabsToTheRightMenuItem.Click += (sender, e) =>
+			  {
+				  var tabView = (TabViewListView)Parent as TabViewListView;
+				  var position = tabView?.Items.IndexOf(this);
 
-                if (position.HasValue && position.Value >= 0)
-                {
-                    for (int i = tabView.Items.Count - 1; i > position.Value; i--)
-                    {
-                        tabView.Items.RemoveAt(i);
-                    }
-                }
-            };
+				  if (position.HasValue && position.Value >= 0)
+				  {
+					  for (int i = tabView.Items.Count - 1; i > position.Value; i--)
+					  {
+						  tabView.Items.RemoveAt(i);
+					  }
+				  }
+			  };
 			pinMenuItem.Click += PinMenuItem_Click;
 
 			contextMenu.Items.Add(pinMenuItem);
@@ -141,7 +140,7 @@ namespace Riverside.Graphite.Controls
 
 		private void PinMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			this.IsPinned = !this.IsPinned;	
+			this.IsPinned = !this.IsPinned;
 			//UpdatePinMenuItemText();
 		}
 
@@ -151,14 +150,14 @@ namespace Riverside.Graphite.Controls
 			{
 				if (tabItem.TagIconSource is ImageIconSource source)
 					tabItem.IconSource = source;
-				else 
+				else
 					tabItem.TagIconSource = tabItem.IconSource;
 			}
 			else
 			{
 				if (tabItem.IconSource is ImageIconSource source)
 				{
-					tabItem.TagIconSource = source; 
+					tabItem.TagIconSource = source;
 				}
 				tabItem.IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource
 				{
@@ -195,13 +194,13 @@ namespace Riverside.Graphite.Controls
 
 			if (viewTab.Content is Frame frame)
 			{
-				
-				if (frame.Content is WebContent web )
+
+				if (frame.Content is WebContent web)
 				{
 					await web.WebViewElement.EnsureCoreWebView2Async();
 
 					if (web.WebViewElement.CoreWebView2 is null)
-						throw new InvalidCastException("CoreWebView2-CoreWebView2-api-ISNULL"); 
+						throw new InvalidCastException("CoreWebView2-CoreWebView2-api-ISNULL");
 
 					if (web.PictureWebElement is BitmapImage)
 					{
@@ -230,32 +229,32 @@ namespace Riverside.Graphite.Controls
 
 			e.Handled = true;
 		}
-        private void MoveTabItemToFirstIfNoPinned(GraphiteTabViewItem tab)
-        {
-            var tabView = (TabViewListView)tab.Parent as TabViewListView;
-            if (tabView == null) return;
+		private void MoveTabItemToFirstIfNoPinned(GraphiteTabViewItem tab)
+		{
+			var tabView = (TabViewListView)tab.Parent as TabViewListView;
+			if (tabView == null) return;
 
-            if (tab.IsPinned)
-            {
-                tabView.Items.Remove(this);
-                tabView.Items.Insert(0, this);
-            }
+			if (tab.IsPinned)
+			{
+				tabView.Items.Remove(this);
+				tabView.Items.Insert(0, this);
+			}
 
 			// exclude the current tab from the pinned items, set the tab position to the current tab position
 			var pinnedItems = tabView.Items.OfType<GraphiteTabViewItem>().Where(item => item.IsPinned && item != this).ToList();
 			var tabPosition = default(int);
-			
+
 			if (tab.IsPinned)
-				tabPosition = tabView.Items.IndexOf(tab); 
+				tabPosition = tabView.Items.IndexOf(tab);
 
 			foreach (var pinnedItem in pinnedItems)
-            {
-                tabView.Items.Remove(pinnedItem);
-                tabView.Items.Insert(tabPosition > 0 ? ++tabPosition : 0, pinnedItem);
-            }
-        }
-        
-		
+			{
+				tabView.Items.Remove(pinnedItem);
+				tabView.Items.Insert(tabPosition > 0 ? ++tabPosition : 0, pinnedItem);
+			}
+		}
+
+
 	}
 }
 

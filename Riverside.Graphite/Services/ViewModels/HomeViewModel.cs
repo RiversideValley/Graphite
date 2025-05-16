@@ -1,20 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Graphite.Controls;
-using Microsoft.CodeAnalysis.Operations;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json;
-using Riverside.Graphite.Controls;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Data.Favorites;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.Pages.Models;
-using Riverside.Graphite.Pages.TimeLinePages;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Runtime.Models;
@@ -27,11 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.UserDataAccounts.SystemAccess;
 using Windows.System;
 
 namespace Riverside.Graphite.ViewModels;
@@ -89,7 +83,7 @@ public partial class HomeViewModel : ObservableRecipient
 	private TrendingItem _trendingItem;
 	[ObservableProperty]
 	private SearchProviders _SearchProvider;
-	
+
 	public SettingsService SettingsService { get; set; }
 
 	public INavigationService NavigationService { get; }
@@ -100,7 +94,7 @@ public partial class HomeViewModel : ObservableRecipient
 	private SplitViewDisplayMode _splitViewDisplayMode;
 
 	[ObservableProperty]
-	private string _fullScreenLabel; 
+	private string _fullScreenLabel;
 
 	[ObservableProperty]
 	private bool _isShellPaneOpen;
@@ -110,12 +104,12 @@ public partial class HomeViewModel : ObservableRecipient
 
 	[ObservableProperty]
 	private string _splitViewLabel;
-	
+
 	private DispatcherTimer timer { get; set; }
 
 	public CancellationToken CancellationTokenTimer { get; set; }
 	public ObservableCollection<TrendingItem> TrendingItems { get; set; }
-	public CancellationToken CancellationTokenClock { get; set; }	
+	public CancellationToken CancellationTokenClock { get; set; }
 	public ObservableCollection<HistoryItem> HistoryItems { get; set; }
 	public ObservableCollection<FavItem> FavoriteItems { get; set; }
 	public BackgroundManager ImageManager { get; internal set; }
@@ -123,7 +117,7 @@ public partial class HomeViewModel : ObservableRecipient
 	{
 
 		SemaphoreSlim semaphore = new(1, 1);
-		await semaphore.WaitAsync();;	
+		await semaphore.WaitAsync(); ;
 		try
 		{
 			ImageManager = App.GetService<BackgroundManager>();
@@ -207,7 +201,7 @@ public partial class HomeViewModel : ObservableRecipient
 		// - Use CoreSettings to save file access -> to Settings.json every 4 seconds handle in one place usings delegate...
 		await SettingsService?.SaveChangesToSettings(Riverside.Graphite.Core.AuthService.CurrentUser, SettingsService.CoreSettings);
 
-		
+
 
 		//if (IstrendingEnabled)
 		//	UpdateTrending().ConfigureAwait(false).GetAwaiter().GetResult();
@@ -278,7 +272,8 @@ public partial class HomeViewModel : ObservableRecipient
 		RightPaneService = rightPaneService;
 		NavigationService = navigationService;
 
-		Messenger.Register<Message_Settings_Actions>(this, (r, m) => { 
+		Messenger.Register<Message_Settings_Actions>(this, (r, m) =>
+		{
 			if (m.Status == EnumMessageStatus.Settings)
 			{
 				SettingsService.Initialize();
@@ -293,35 +288,37 @@ public partial class HomeViewModel : ObservableRecipient
 	}
 
 	[RelayCommand]
-	private  async Task OpenSponserPage(Button btn) {
-		
+	private async Task OpenSponserPage(Button btn)
+	{
+
 		if (btn is null && btn.Tag is not null)
 		{
 			return;
 		}
 
-		Uri outUrl = default ;
+		Uri outUrl = default;
 
 		switch (btn.Tag as string)
 		{
 			case "DarkSky":
-				outUrl = new("ms-windows-store://pdp/?productId=9NP22DTFSCTS");	
+				outUrl = new("ms-windows-store://pdp/?productId=9NP22DTFSCTS");
 				break;
 			default:
 				break;
 		}
-		
+
 		await Launcher.LaunchUriAsync(outUrl);
 
 	}
 	[RelayCommand]
 	private void Promo()
 	{
-		IsPromoOpen = !IsPromoOpen;	
+		IsPromoOpen = !IsPromoOpen;
 	}
 	[RelayCommand]
-	private async Task OpenUserSys() {
-		
+	private async Task OpenUserSys()
+	{
+
 		var win = new UserDashBoard();
 		await AppService.ConfigureSettingsWindow(win);
 		win.Activate();
@@ -368,11 +365,11 @@ public partial class HomeViewModel : ObservableRecipient
 	{
 		if (Application.Current is App app && app.m_window is MainWindow window)
 		{
-			RightPaneService.OpenInRightPane(typeof(CollectionsPageViewModel).FullName); 
+			RightPaneService.OpenInRightPane(typeof(CollectionsPageViewModel).FullName);
 		}
 	}
 
-	
+
 
 	[RelayCommand]
 	private async Task Chat(Button sender)
@@ -382,7 +379,7 @@ public partial class HomeViewModel : ObservableRecipient
 		{
 			if (Application.Current is App app && app.m_window is MainWindow window)
 			{
-				window.DispatcherQueue.TryEnqueue(()=> app.StartChannelsAsync().ConfigureAwait(false));
+				window.DispatcherQueue.TryEnqueue(() => app.StartChannelsAsync().ConfigureAwait(false));
 
 				if (await UrlValidater.IsLocalhostRunningAsync())
 				{
@@ -391,7 +388,7 @@ public partial class HomeViewModel : ObservableRecipient
 				else
 				{
 					_ = Messenger.Send(new Message_Settings_Actions("Can't navigate to the requested website", EnumMessageStatus.Informational));
-				}	
+				}
 			}
 
 		}
@@ -446,7 +443,7 @@ public partial class HomeViewModel : ObservableRecipient
 					{
 						case "Settings":
 							Window win = new();
-							AppService.FireWindows.Add(win);	
+							AppService.FireWindows.Add(win);
 							SettingsPage settingsPage = new();
 							win.Content = settingsPage;
 							win.Activate();
@@ -506,10 +503,10 @@ public partial class HomeViewModel : ObservableRecipient
 			catch (Exception)
 			{
 				ExceptionLogger.LogException(new Exception("Error updating clock"));
-				timer.Stop(); 
-			
+				timer.Stop();
+
 			}
-			
+
 		};
 		timer.Start();
 	}
@@ -539,7 +536,7 @@ public partial class HomeViewModel : ObservableRecipient
 		timer.Interval = TimeSpan.FromMinutes(4);
 		timer.Tick += (s, e) =>
 		{
-			if(CancellationTokenTimer.IsCancellationRequested)
+			if (CancellationTokenTimer.IsCancellationRequested)
 			{
 				timer.Stop();
 				return;
@@ -586,7 +583,7 @@ public partial class HomeViewModel : ObservableRecipient
 		return Task.CompletedTask;
 	}
 	public Brush NewTabBackGround { get; set; }
-	
+
 	public Settings.NewTabBackground BackgroundType
 	{
 		get => _backgroundType;

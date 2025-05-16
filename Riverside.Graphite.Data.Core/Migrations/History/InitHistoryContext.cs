@@ -1,16 +1,14 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Riverside.Graphite.Data.Core;
+using System;
 
 #nullable disable
 
 namespace Riverside.Graphite.Data.Core.Migrations.History
 {
-    [DbContext(typeof(HistoryContext))]
-    partial class InitHistoryContext : ModelSnapshot
-    {
+	[DbContext(typeof(HistoryContext))]
+	partial class InitHistoryContext : ModelSnapshot
+	{
 		protected override void BuildModel(ModelBuilder modelBuilder)
 		{
 #pragma warning disable 612, 618

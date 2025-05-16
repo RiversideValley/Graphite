@@ -91,18 +91,21 @@ public sealed partial class ProfileCommander : Flyout
 
 	private async void ChangeUsername_Click(object sender, RoutedEventArgs e)
 	{
-		
+
 		var user = await UserManager.GetUserAsync(AuthService.CurrentUser.Username);
-		if (user.HasPassword) {
+		if (user.HasPassword)
+		{
 
 			UserManager.ActiveElement = this.RootImage; // Set the active element to the current control
-			if (!await UserManager.ValidatePassWord(user)) {
+			if (!await UserManager.ValidatePassWord(user))
+			{
 
-				if (App.Current.m_window is MainWindow win) {
+				if (App.Current.m_window is MainWindow win)
+				{
 					win.NotificationQueue.Show($"Incorrect Password for ${user.Username}", 2000, "Changing User Name");
-					return; 
+					return;
 				}
-			} 
+			}
 		}
 
 

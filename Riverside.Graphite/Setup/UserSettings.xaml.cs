@@ -24,12 +24,14 @@ namespace Riverside.Graphite.Setup
 			InitializeComponent();
 			AppService.AppSettings = new Riverside.Graphite.Core.Settings(true).Self;
 			NavView.SelectedItem = NavView.MenuItems[0]; // Select the first item by default
-			this.Closed += async (s, e) => {
+			this.Closed += async (s, e) =>
+			{
 
-				if(Windowing.FindWindow(null, nameof(SettingsPage)) > 0 ){
-					Windowing.ShowWindow(Windowing.FindWindow(null, nameof(SettingsPage)), Windowing.WindowShowStyle.SW_SHOWNORMAL); 
+				if (Windowing.FindWindow(null, nameof(SettingsPage)) > 0)
+				{
+					Windowing.ShowWindow(Windowing.FindWindow(null, nameof(SettingsPage)), Windowing.WindowShowStyle.SW_SHOWNORMAL);
 				}
-				await Task.Delay(100); 
+				await Task.Delay(100);
 			};
 		}
 

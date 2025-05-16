@@ -1,18 +1,17 @@
 ﻿using Microsoft.UI;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
-using System;
-using System.Runtime.InteropServices;
-using Windows.Graphics;
-using WinRT;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
-using Windows.Storage;
-using System.Threading.Tasks;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Riverside.Graphite.Services.WindowsHandler.Contracts;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Windows.Graphics;
+using Windows.Storage;
+using WinRT;
 
 namespace Riverside.Graphite.Services.WindowsHandler;
 
@@ -300,11 +299,11 @@ public class WindowHandler : IWindowHandler, IDisposable
 					y = 0;
 				}
 
-				if(width < 400 || height < 400)
+				if (width < 400 || height < 400)
 				{
 					width = 800;
 					height = 800;
-				}	
+				}
 
 				AppWindow.Move(new PointInt32(x, y));
 				AppWindow.Resize(new SizeInt32(width, height));

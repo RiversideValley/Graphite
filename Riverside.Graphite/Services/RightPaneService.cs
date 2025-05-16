@@ -10,25 +10,25 @@ using System.Threading.Tasks;
 
 namespace WebDive.Services;
 
-	public class RightPaneService : IRightPaneService
+public class RightPaneService : IRightPaneService
+{
+	private readonly IPageService _pageService;
+
+	private SplitView _splitView;
+	private Frame _frame;
+	private object _lastParamUsed;
+
+	public RightPaneService(IPageService pageService)
 	{
-		private readonly IPageService _pageService;
+		_pageService = pageService;
+	}
 
-		private SplitView _splitView;
-		private Frame _frame;
-		private object _lastParamUsed;
-
-		public RightPaneService(IPageService pageService)
-		{
-			_pageService = pageService;
-		}
-
-		public void Initialize(Frame rightPaneFrame, SplitView splitView)
-		{
-			_splitView = splitView;
-			_frame = rightPaneFrame;
-			_frame.Navigated += OnNavigated;
-		}
+	public void Initialize(Frame rightPaneFrame, SplitView splitView)
+	{
+		_splitView = splitView;
+		_frame = rightPaneFrame;
+		_frame.Navigated += OnNavigated;
+	}
 
 	/*
 	 *  1. PageService Registers the ViewModels, and Pages. -> static ListofAllPages. 
@@ -38,63 +38,63 @@ namespace WebDive.Services;
 	 *  5. Cross Reference previos ViewModels to kill processes or event handlers with 'vmBeforeNavigatioin';
 	 *  2025-02-10 jd. 
 	 */
-	
+
 	public async void OpenInRightPane(string pageKey, object parameter = null)
 	{
 		SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
-		
+
 
 		using (_semaphoreSlim.WaitAsync())
-			{
+		{
 			// Don't open the same page multiple times
 			try
 			{
-					if (_frame.GetPageViewModel() == null || _frame.GetPageViewModel().GetType().FullName != pageKey || (parameter != null && !parameter.Equals(_lastParamUsed)))
+				if (_frame.GetPageViewModel() == null || _frame.GetPageViewModel().GetType().FullName != pageKey || (parameter != null && !parameter.Equals(_lastParamUsed)))
+				{
+					var pageType = _pageService.GetPageType(pageKey);
+					var vmBeforeNavigation = _frame.GetPageViewModel();
+					var navigationResult = _frame.Navigate(pageType, parameter);
+					if (navigationResult)
 					{
-						var pageType = _pageService.GetPageType(pageKey);
-						var vmBeforeNavigation = _frame.GetPageViewModel();
-						var navigationResult = _frame.Navigate(pageType, parameter);
-						if (navigationResult)
+						_lastParamUsed = parameter;
+						if (vmBeforeNavigation is INavigationAware navigationAware)
 						{
-							_lastParamUsed = parameter;
-							if (vmBeforeNavigation is INavigationAware navigationAware)
-							{
-								navigationAware.OnNavigatedFrom();
-							}
+							navigationAware.OnNavigatedFrom();
 						}
 					}
-					_splitView.OpenPaneLength = (App.Current.m_window.Bounds.Width * .33) >= 400 ? (App.Current.m_window.Bounds.Width * .33) : 400;
-					_splitView.IsPaneOpen = true;
-				await Task.Delay(100); 
 				}
-				catch (System.Exception ex)
-				{
-					ExceptionLogger.LogException(ex);	
-					
-				}
-				finally
-				{
-					_semaphoreSlim.Release();
-				}	
+				_splitView.OpenPaneLength = (App.Current.m_window.Bounds.Width * .33) >= 400 ? (App.Current.m_window.Bounds.Width * .33) : 400;
+				_splitView.IsPaneOpen = true;
+				await Task.Delay(100);
 			}
-		
-		}
-
-		public void CleanUp()
-		{
-			_frame.Navigated -= OnNavigated;
-		}
-
-		private void OnNavigated(object sender, NavigationEventArgs e)
-		{
-			if (sender is Frame frame)
+			catch (System.Exception ex)
 			{
-				frame.BackStack.Clear();
-				if (frame.GetPageViewModel() is INavigationAware navigationAware)
-				{
-					navigationAware.OnNavigatedTo(e.Parameter);
-				}
+				ExceptionLogger.LogException(ex);
+
+			}
+			finally
+			{
+				_semaphoreSlim.Release();
+			}
+		}
+
+	}
+
+	public void CleanUp()
+	{
+		_frame.Navigated -= OnNavigated;
+	}
+
+	private void OnNavigated(object sender, NavigationEventArgs e)
+	{
+		if (sender is Frame frame)
+		{
+			frame.BackStack.Clear();
+			if (frame.GetPageViewModel() is INavigationAware navigationAware)
+			{
+				navigationAware.OnNavigatedTo(e.Parameter);
 			}
 		}
 	}
+}
 

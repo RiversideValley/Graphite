@@ -601,7 +601,7 @@ public class Windowing
 					presenter.IsResizable = false;
 					presenter.SetBorderAndTitleBar(true, false);
 				}
-				Center(window);	
+				Center(window);
 			}
 		}
 		catch (Exception ex)

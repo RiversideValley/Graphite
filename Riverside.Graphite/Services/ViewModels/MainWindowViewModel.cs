@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Behaviors;
-using Graphite.Controls;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -27,10 +26,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Storage;
 using WinRT.Interop;
 using static Riverside.Graphite.Controls.TabStates;
-using static Riverside.Graphite.MainWindow;
 
 
 namespace Riverside.Graphite.Services.ViewModels;
@@ -38,7 +35,7 @@ namespace Riverside.Graphite.Services.ViewModels;
 public partial class MainWindowViewModel : ObservableRecipient
 {
 	internal MainWindow MainView { get; set; }
-	internal TabManager TabManager { get; set; }	
+	internal TabManager TabManager { get; set; }
 	public IMessenger MessengerMainWindowViewModel { get; set; }
 
 	[ObservableProperty]
@@ -63,25 +60,26 @@ public partial class MainWindowViewModel : ObservableRecipient
 
 	[ObservableProperty]
 	private BitmapImage webViewContentPicture;
-	
+
 	[ObservableProperty]
 	private ObservableCollection<TabAll> _TabAlls;
 
 
-	public MainWindowViewModel(IMessenger messenger , TabManager tabManager) : base(messenger)
+	public MainWindowViewModel(IMessenger messenger, TabManager tabManager) : base(messenger)
 	{
 		Messenger.Register<Message_Settings_Actions>(this, (r, m) => ReceivedStatus(m));
 		MsOptionVisibility = Visibility.Collapsed;
 
 		TabManager = tabManager;
-		IsRestoredTabs = TabManager.ShouldRestoreTabs(); 
-		
+		IsRestoredTabs = TabManager.ShouldRestoreTabs();
+
 	}
 
-	public async Task<Task> LoadResetAllTabs() {
+	public async Task<Task> LoadResetAllTabs()
+	{
 
 		await MainView?.TabManager?.GetCurrentTabs();
-		TabAlls =  MainView?.TabManager?.CurrentTabs.Select(x => new TabAll((Guid)x.Key.Tag, x.Key.Header.ToString(), null, x.Key.IconSource)).ToObservableCollection();	
+		TabAlls = MainView?.TabManager?.CurrentTabs.Select(x => new TabAll((Guid)x.Key.Tag, x.Key.Header.ToString(), null, x.Key.IconSource)).ToObservableCollection();
 		RaisePropertyChanges(nameof(TabAlls));
 		return Task.CompletedTask;
 	}
@@ -94,7 +92,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 		//		ApplicationData.Current.LocalSettings.Values[$"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}"] = value;
 		//}
 		//else { ApplicationData.Current.LocalSettings.Values.Add($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", value); }
-		
+
 	}
 	partial void OnIsMsLoginChanged(bool value)
 	{
@@ -109,9 +107,9 @@ public partial class MainWindowViewModel : ObservableRecipient
 			Messenger.Send(messageAction);
 			MainView?.MoreFlyout.Hide();
 		});
-		
+
 	}
-	
+
 	[RelayCommand]
 	public void CloseMoreFlyout()
 	{
@@ -121,11 +119,12 @@ public partial class MainWindowViewModel : ObservableRecipient
 		});
 	}
 	[RelayCommand]
-	public void RemoveTab(TabAll tabAll) {
+	public void RemoveTab(TabAll tabAll)
+	{
 
 		_ = MainView.DispatcherQueue.TryEnqueue(() =>
 		{
-			foreach(var item in MainView.Tabs.Tabs)
+			foreach (var item in MainView.Tabs.Tabs)
 			{
 				if (item is GraphiteTabViewItem tab)
 				{
@@ -135,7 +134,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 						break;
 					}
 				}
-			}	
+			}
 		});
 
 	}
@@ -402,7 +401,7 @@ public partial class MainWindowViewModel : ObservableRecipient
 				ShowErrorNotification(message.Payload!);
 				break;
 			case EnumMessageStatus.Collections:
-				break; 
+				break;
 			default:
 				ShowNotifyNotification(message.Payload!);
 				break;

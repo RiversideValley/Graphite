@@ -71,7 +71,7 @@ namespace Riverside.Graphite
 				ViewModel.RaisePropertyChanges(nameof(ViewModel.User));
 
 				AuthService.LoadUserFromDatabase();
-				
+
 
 				_ = AuthService.Authenticate(selectedUser.FireUser.Username);
 				// close active window if not Usercentral, and then assign it as usercentral and close to give -> windowscontroller notification of close usercentral 

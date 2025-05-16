@@ -276,27 +276,27 @@ namespace Riverside.Graphite.Services
 			byte[] hash = md5.ComputeHash(stream);
 			return Convert.ToBase64String(hash);
 		}
-        public async Task<ResponseAZFILE> UploadFileToBlobAsync(string blobName, IRandomAccessStream fileStream)
-        {
-            try
-            {
-                BlobServiceClient blobServiceClient = new BlobServiceClient(ConnString);
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("firebackups");
-                BlobClient blobClient = containerClient.GetBlobClient(blobName);
+		public async Task<ResponseAZFILE> UploadFileToBlobAsync(string blobName, IRandomAccessStream fileStream)
+		{
+			try
+			{
+				BlobServiceClient blobServiceClient = new BlobServiceClient(ConnString);
+				BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("firebackups");
+				BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
-                await blobClient.UploadAsync(fileStream.AsStream(), true);
+				await blobClient.UploadAsync(fileStream.AsStream(), true);
 
-                string sasToken = blobClient.GenerateSasUri( Azure.Storage.Sas.BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1)).ToString();
-                string sasUrl = blobClient.Uri.AbsoluteUri + sasToken;
+				string sasToken = blobClient.GenerateSasUri(Azure.Storage.Sas.BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1)).ToString();
+				string sasUrl = blobClient.Uri.AbsoluteUri + sasToken;
 
-                return new ResponseAZFILE(blobName, sasUrl);
-            }
-            catch (Exception ex)
-            {
-                ExceptionLogger.LogException(ex);
-                throw;
-            }
-        }
+				return new ResponseAZFILE(blobName, sasUrl);
+			}
+			catch (Exception ex)
+			{
+				ExceptionLogger.LogException(ex);
+				throw;
+			}
+		}
 		#endregion
 
 		#region WindowsGetUserBetaClasses

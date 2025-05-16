@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using Windows.UI;
 
@@ -65,7 +64,7 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 
 	public async Task DeleteAllHistoryItems()
 	{
-		
+
 		using (var tran = HistoryContext.Database.BeginTransaction())
 		{
 			try
@@ -111,32 +110,32 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 		}
 	}
 
-    public async Task<bool> InsertCollectionsItem(HistoryItem historyItem, CollectionName collectionName)
-    {
-        try
-        {
-            if (await HistoryContext.Collections.FirstOrDefaultAsync(t => t.HistoryItemId == historyItem.Id && t.CollectionNameId == collectionName.Id) is Collection item)
-            {
+	public async Task<bool> InsertCollectionsItem(HistoryItem historyItem, CollectionName collectionName)
+	{
+		try
+		{
+			if (await HistoryContext.Collections.FirstOrDefaultAsync(t => t.HistoryItemId == historyItem.Id && t.CollectionNameId == collectionName.Id) is Collection item)
+			{
 				return false;
 			}
-            else
-            {	
+			else
+			{
 				var newCollection = new Collection
-                {
-                    CreatedDate = DateTime.Now,
-                    HistoryItemId = historyItem.Id,
-                    CollectionNameId = collectionName.Id
-                };
-                await HistoryContext.Collections.AddAsync(newCollection);
+				{
+					CreatedDate = DateTime.Now,
+					HistoryItemId = historyItem.Id,
+					CollectionNameId = collectionName.Id
+				};
+				await HistoryContext.Collections.AddAsync(newCollection);
 			}
 
-            await HistoryContext.SaveChangesAsync();
+			await HistoryContext.SaveChangesAsync();
 			return true;
 		}
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error inserting collection item: {ex.Message}");
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+			Console.WriteLine($"Error inserting collection item: {ex.Message}");
 		}
 
 		return false;
@@ -145,7 +144,7 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 	public async Task DeleteCollectionsItem(int Id)
 	{
 
-		using(var tran = HistoryContext.Database.BeginTransaction())
+		using (var tran = HistoryContext.Database.BeginTransaction())
 		{
 			try
 			{
@@ -159,7 +158,7 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 				Console.WriteLine($"Error deleting history item: {ex.Message}");
 				tran.Rollback();
 			}
-		}	
+		}
 
 
 	}
@@ -169,30 +168,30 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 		throw new NotImplementedException();
 	}
 
-    public async Task<ObservableCollection<Collection>> GetAllCollectionsItems()
-    {
-        try
-        {
-            var list = await (from x in HistoryContext.Collections
-                              select new Collection
-                              {
-                                  Id = x.Id,
-                                  CreatedDate = x.CreatedDate,
-                                  HistoryItemId = x.HistoryItemId,
-                                  CollectionNameId = x.CollectionNameId,
-                                  ParentCollection = HistoryContext.CollectionNames.Where(cn => cn.Id == x.CollectionNameId).ToList(),
-                                  ItemsHistory = HistoryContext.Urls.Where(uh => uh.id == x.HistoryItemId).ToList()
-                              }).ToListAsync();
+	public async Task<ObservableCollection<Collection>> GetAllCollectionsItems()
+	{
+		try
+		{
+			var list = await (from x in HistoryContext.Collections
+							  select new Collection
+							  {
+								  Id = x.Id,
+								  CreatedDate = x.CreatedDate,
+								  HistoryItemId = x.HistoryItemId,
+								  CollectionNameId = x.CollectionNameId,
+								  ParentCollection = HistoryContext.CollectionNames.Where(cn => cn.Id == x.CollectionNameId).ToList(),
+								  ItemsHistory = HistoryContext.Urls.Where(uh => uh.id == x.HistoryItemId).ToList()
+							  }).ToListAsync();
 
-            return list.ToObservableCollection();
-        }
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error gathering Collections Items: {ex.Message}");
-            return new ObservableCollection<Collection>();
-        }
-    }
+			return list.ToObservableCollection();
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+			Console.WriteLine($"Error gathering Collections Items: {ex.Message}");
+			return new ObservableCollection<Collection>();
+		}
+	}
 
 	public Task InsertCollectionName(string NameOfCollection)
 	{
@@ -219,29 +218,29 @@ public class HistoryActions : IHistoryActions, ICollections, ICollectionNames
 	}
 
 	public async Task<ObservableCollection<CollectionName>> GetAllCollectionNamesItems()
-    {
-        try
-        {
-            var list = await (from cn in HistoryContext.CollectionNames
-                              select new CollectionName
-                              {
-                                  Id = cn.Id,
-                                  Name = cn.Name,
-                                  Children = HistoryContext.Collections.Where(c => c.CollectionNameId == cn.Id).ToList(),
+	{
+		try
+		{
+			var list = await (from cn in HistoryContext.CollectionNames
+							  select new CollectionName
+							  {
+								  Id = cn.Id,
+								  Name = cn.Name,
+								  Children = HistoryContext.Collections.Where(c => c.CollectionNameId == cn.Id).ToList(),
 							  }).ToListAsync();
 
 			foreach (var item in list)
 			{
-				item.BackgroundBrush =  GetRandomSolidColorBrush();
+				item.BackgroundBrush = GetRandomSolidColorBrush();
 			}
 
 			return list.ToObservableCollection();
-        }
-        catch (Exception ex)
-        {
-            ExceptionLogger.LogException(ex);
-            Console.WriteLine($"Error gathering Collection Names Items: {ex.Message}");
-            return new ObservableCollection<CollectionName>();
-        }
-    }
+		}
+		catch (Exception ex)
+		{
+			ExceptionLogger.LogException(ex);
+			Console.WriteLine($"Error gathering Collection Names Items: {ex.Message}");
+			return new ObservableCollection<CollectionName>();
+		}
+	}
 }

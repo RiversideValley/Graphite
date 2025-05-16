@@ -1,71 +1,70 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Core;
-public class AuthService 
+public class AuthService
 {
 	//private static readonly string UserDataFileName = "UsrCore.json";
 	//private static readonly string UserDataFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore", UserDataFileName);
-	private static List<User> users; 
+	private static List<User> users;
 	public static List<User> Users
 	{
 		get
 		{
-			return LoadUserFromDatabase().Result	; 
-			
+			return LoadUserFromDatabase().Result;
+
 		}
-		set { 
-			
-			users = value;	
+		set
+		{
+
+			users = value;
 		}
 	}
 
-	public  event PropertyChangedEventHandler PropertyChanged;
+	public event PropertyChangedEventHandler PropertyChanged;
 
 	public async static Task<List<User>> LoadUserFromDatabase()
-    {
-        try
-        {
-            var tmp = await UserManager.GetAllUsersAsync();
-            var converted = tmp.Select(u => new User
-            {
-                Id = Guid.NewGuid(),
-                Username = u.Username,
-                Email = u.Email,
-                WindowsUserName = u.WindowsUserName,
-                Password = string.Empty, // Assuming password is not available in UserV2
-                IsFirstLaunch = u.IsFirstLaunch,
-                UserSettings = new Settings() // Assuming default settings
-            }).ToList();
+	{
+		try
+		{
+			var tmp = await UserManager.GetAllUsersAsync();
+			var converted = tmp.Select(u => new User
+			{
+				Id = Guid.NewGuid(),
+				Username = u.Username,
+				Email = u.Email,
+				WindowsUserName = u.WindowsUserName,
+				Password = string.Empty, // Assuming password is not available in UserV2
+				IsFirstLaunch = u.IsFirstLaunch,
+				UserSettings = new Settings() // Assuming default settings
+			}).ToList();
 
-            return Users = converted;
-        }
-        catch (JsonException ex)
-        {
-            Console.WriteLine($"Error deserializing user data: {ex.Message}");
-        }
-        catch (IOException ex)
-        {
-            Console.WriteLine($"Error reading user data file: {ex.Message}");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            Console.WriteLine($"Unauthorized access to user data file: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error loading user data: {ex.Message}");
-        }
+			return Users = converted;
+		}
+		catch (JsonException ex)
+		{
+			Console.WriteLine($"Error deserializing user data: {ex.Message}");
+		}
+		catch (IOException ex)
+		{
+			Console.WriteLine($"Error reading user data file: {ex.Message}");
+		}
+		catch (UnauthorizedAccessException ex)
+		{
+			Console.WriteLine($"Unauthorized access to user data file: {ex.Message}");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Unexpected error loading user data: {ex.Message}");
+		}
 
-        return new List<User>();
-    }
+		return new List<User>();
+	}
 
 	public static User CurrentUser { get; private set; }
 
@@ -105,7 +104,7 @@ public class AuthService
 
 	public static List<string> GetAllUsernames()
 	{
-		return LoadUserFromDatabase().Result.Select(t=> t.Username).ToList();
+		return LoadUserFromDatabase().Result.Select(t => t.Username).ToList();
 
 	}
 

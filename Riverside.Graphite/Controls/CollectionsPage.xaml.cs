@@ -1,30 +1,16 @@
-using Microsoft.Bing.WebSearch;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using Riverside.Graphite.Core;
-using Riverside.Graphite.Data.Core;
 using Riverside.Graphite.Data.Core.Actions;
 using Riverside.Graphite.Data.Core.Models;
 using Riverside.Graphite.Pages;
 using Riverside.Graphite.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.WebUI;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -93,7 +79,7 @@ namespace Riverside.Graphite.Controls
 					}
 					else
 					{
-						window.TabManager.CreateNewTab(typeof(WebContent),  selectedHistoryItem);
+						window.TabManager.CreateNewTab(typeof(WebContent), selectedHistoryItem);
 					}
 
 				}
@@ -258,7 +244,7 @@ namespace Riverside.Graphite.Controls
 					HistoryActions historyActions = new(AuthService.CurrentUser?.Username);
 					historyActions.HistoryContext.CollectionNames.Add(new CollectionName { Name = collectionName });
 					await historyActions.HistoryContext.SaveChangesAsync();
-					ViewModel.Initialize();	
+					ViewModel.Initialize();
 					(App.Current.m_window as MainWindow).NotificationQueue.Show("Your collection has been added successfully", 2000, "Collections");
 				}
 				catch (Exception)
@@ -269,14 +255,15 @@ namespace Riverside.Graphite.Controls
 
 				AddCollectionTeachingTip.IsOpen = false;
 			}
-			else {
+			else
+			{
 				(App.Current.m_window as MainWindow).NotificationQueue.Show("Please provide a valid name for a new collection", 2000, "Collections");
 			}
 		}
 
 		private void HelpCollection_Click(object sender, RoutedEventArgs e)
 		{
-			HelpTeachingTip.IsOpen	= true;
+			HelpTeachingTip.IsOpen = true;
 		}
 	}
 }

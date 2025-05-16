@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading;
 using Windows.Networking.Sockets;
-using System.Net.Sockets;
 
 namespace Riverside.Graphite.Services.Migration
 {

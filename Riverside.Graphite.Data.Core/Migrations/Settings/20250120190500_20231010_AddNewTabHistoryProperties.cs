@@ -4,12 +4,12 @@
 
 namespace Riverside.Graphite.Data.Core.Migrations.Settings
 {
-    /// <inheritdoc />
-    public partial class AddTabHistoryProps_20231010 : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+	/// <inheritdoc />
+	public partial class AddTabHistoryProps_20231010 : Migration
+	{
+		/// <inheritdoc />
+		protected override void Up(MigrationBuilder migrationBuilder)
+		{
 			migrationBuilder.AddColumn<int>(
 				name: "NewTabHistoryQuick",
 				table: "Settings",
@@ -46,9 +46,9 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 				defaultValue: 0);
 		}
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+		/// <inheritdoc />
+		protected override void Down(MigrationBuilder migrationBuilder)
+		{
 			migrationBuilder.DropColumn(
 			   name: "NewTabHistoryQuick",
 			   table: "Settings");
@@ -69,5 +69,5 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 				name: "NewTabSelectorBarVisible",
 				table: "Settings");
 		}
-    }
+	}
 }

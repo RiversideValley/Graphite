@@ -9,7 +9,7 @@ public partial class TabViewItemViewModel : ObservableRecipient
 	[ObservableProperty] public bool _IsTooltipEnabled;
 	[ObservableProperty] public BitmapImage _webPreview;
 	[ObservableProperty] public string _webTitle;
-	[ObservableProperty] public string _webAddress; 
+	[ObservableProperty] public string _webAddress;
 	[ObservableProperty] public BitmapImage _IconImage;
 
 	public void RaisePropertyChange([CallerMemberName] string callerMemberName = null)

@@ -1,8 +1,6 @@
-using Windows.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using Windows.UI.Xaml;
 using Windows.System;
 
 namespace Riverside.Graphite.Controls

@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Riverside.Graphite.Controls.FileDialogs	
+namespace Riverside.Graphite.Controls.FileDialogs
 {
 	public sealed partial class OpenDialog : Window
 	{

@@ -14,11 +14,11 @@ public partial class TabStates
 		{
 			if (iconSource is ImageIconSource bitmapIconSource)
 			{
-				return (BitmapImage)bitmapIconSource.ImageSource; 
+				return (BitmapImage)bitmapIconSource.ImageSource;
 			}
 			// Add more conditions if you have other types of IconSource
 			return null;
 		}
 	}
-	
+
 }

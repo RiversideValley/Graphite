@@ -1,10 +1,10 @@
 using System;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
-using System.IO;
-using System.Security.Cryptography;
 
 namespace Riverside.Graphite.Services.Migration
 {

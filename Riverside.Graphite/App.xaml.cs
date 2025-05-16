@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Riverside.Graphite.Controls;
-using Riverside.Graphite.Core;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
 using Riverside.Graphite.Services.Contracts;
@@ -102,7 +101,7 @@ public partial class App : Application
 	public Task InitializeWindowHandler(Window window)
 	{
 		WindowHandler = App.GetService<IWindowHandler>();
-		return Task.FromResult(()=> WindowHandler.Initialize(window));
+		return Task.FromResult(() => WindowHandler.Initialize(window));
 	}
 
 	private void SetWebView2EnvironmentVariables()
@@ -120,7 +119,7 @@ public partial class App : Application
 		InitializeComponent();
 		UnhandledException += Current_UnhandledException;
 		SetUpErrorHandlers();
-		SetWebView2EnvironmentVariables(); 
+		SetWebView2EnvironmentVariables();
 		Windows.Storage.ApplicationData.Current.LocalSettings.Values["AzureStorageConnectionString"] = AzureStorage;
 
 		AppService.FireWindows = new HashSet<Window>();
@@ -143,7 +142,7 @@ public partial class App : Application
 		AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
 		{
 			var exception = (System.Exception)args.ExceptionObject;
-			if(AppService.IsAppGoingToClose == false)
+			if (AppService.IsAppGoingToClose == false)
 				ExceptionLogger.LogException(exception);
 		};
 
@@ -154,11 +153,11 @@ public partial class App : Application
 				ExceptionLogger.LogException(args.Exception);
 			args.SetObserved();
 		};
-		
+
 		DispatcherQueue.GetForCurrentThread().ShutdownStarting += (sender, args) =>
 		{
 			// Handle the exception
-			
+
 		};
 	}
 
@@ -210,7 +209,7 @@ public partial class App : Application
 			};
 
 			_webAppProcess = Process.Start(startInfo);
-			await _webAppProcess.WaitForExitAsync(); 
+			await _webAppProcess.WaitForExitAsync();
 		}
 		catch (Exception e)
 		{

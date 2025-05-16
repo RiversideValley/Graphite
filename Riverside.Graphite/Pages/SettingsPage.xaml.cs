@@ -1,4 +1,3 @@
-using Graphite.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -7,12 +6,11 @@ using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Riverside.Graphite.MainWindow;
 
 namespace Riverside.Graphite.Pages;
 public sealed partial class SettingsPage : Page
 {
-	public string UserName => AuthService.CurrentUser?.Username ?? "Graphite"; 
+	public string UserName => AuthService.CurrentUser?.Username ?? "Graphite";
 	public SettingsPage()
 	{
 		InitializeComponent();
@@ -117,11 +115,11 @@ public sealed partial class SettingsPage : Page
 			NavView.Header =
 				((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
 
-			if(passer is not null)
+			if (passer is not null)
 			{
 				passer.Tab.Header = ((NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
 			}
-			
+
 		}
 	}
 

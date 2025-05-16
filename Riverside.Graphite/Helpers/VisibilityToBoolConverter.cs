@@ -1,10 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Helpers
 {
@@ -23,7 +19,7 @@ namespace Riverside.Graphite.Helpers
 		{
 			if (value is bool visibility)
 			{
-				return visibility == true ? Visibility.Visible : Visibility.Collapsed;	
+				return visibility == true ? Visibility.Visible : Visibility.Collapsed;
 			}
 			return false;
 		}

@@ -408,7 +408,7 @@
                     <InfoBar
                         Title="App Update"
                         IsOpen="True"
-                        Message="Revamp Update &#x0a;In 6 Months"
+                        Message="App Is Redacted Moving To Zensurf"
                         Severity="Informational" />
                 </StackPanel>
             </Flyout>
@@ -819,6 +819,8 @@
                     <Button
                         x:Name="btnTabsAll"
                         Margin="0,20,0,0"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
                         Click="btnTabsAll_Click"
                         ToolTipService.ToolTip="Tab Manager">
                         <Button.Flyout>

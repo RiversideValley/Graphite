@@ -1,10 +1,8 @@
 using CommunityToolkit.WinUI.Controls;
-using Graphite.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Riverside.Graphite.Controls;
-using static Riverside.Graphite.MainWindow;
 
 namespace Riverside.Graphite.Pages.SettingsPages;
 

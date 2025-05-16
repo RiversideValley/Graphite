@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
-using Windows.Foundation;
+using System;
 
 namespace Graphite.Controls.SettingsControls.Converters
 {

@@ -107,10 +107,10 @@ namespace Riverside.Graphite.Pages.SettingsPages
 			}
 		}
 
-		private  void UpdateAppSetting(ToggleSwitch toggleSwitch, Action<bool> setter)
+		private void UpdateAppSetting(ToggleSwitch toggleSwitch, Action<bool> setter)
 		{
 			setter(toggleSwitch.IsOn);
-			
+
 		}
 
 		private async void TrendingHome_Toggled(object sender, RoutedEventArgs e)

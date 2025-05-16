@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Riverside.Graphite.Core;
@@ -15,13 +13,13 @@ public static class UserDataManager
 		return path[..pos];
 	}
 
-	public static readonly string CoreFolderPath =  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
+	public static readonly string CoreFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "FireBrowserUserCore");
 	public static readonly string UsersFolderPath = "Users";
 	public async static Task DeleteUser(string username)
 	{
 		try
 		{
-			await UserManager.DeleteUserAsync(username); 
+			await UserManager.DeleteUserAsync(username);
 
 			string userFolderPath = Path.Combine(CoreFolderPath, UsersFolderPath, username);
 
@@ -30,12 +28,13 @@ public static class UserDataManager
 				Directory.Delete(userFolderPath, true);
 			}
 
-			if (Directory.Exists(Path.Combine(UserManager.GraphiteDataPath, username))) {
+			if (Directory.Exists(Path.Combine(UserManager.GraphiteDataPath, username)))
+			{
 				Directory.Delete(Path.Combine(UserManager.GraphiteDataPath, username), true);
 			}
-			
+
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			Helper.Logging.ExceptionLogger.LogException(ex);
 		}

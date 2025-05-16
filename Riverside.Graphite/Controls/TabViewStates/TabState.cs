@@ -4,7 +4,7 @@ namespace Riverside.Graphite.Controls;
 
 public class TabState
 {
-	public Guid Id { get;  set; }
+	public Guid Id { get; set; }
 	public string Header { get; set; }
 	public bool IsSleeping { get; set; }
 	public string Url { get; set; }

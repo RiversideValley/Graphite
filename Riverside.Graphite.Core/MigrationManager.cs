@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Collections.Generic;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Riverside.Graphite.Core.Helper.Logging;
 using Riverside.Graphite.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Riverside.Graphite.Core
@@ -52,7 +52,7 @@ namespace Riverside.Graphite.Core
 
 				_logger.LogInformation("Full migration process completed");
 			}
-			catch(Exception ex) 
+			catch (Exception ex)
 			{
 				ExceptionLogger.LogException(ex);
 			}
@@ -63,7 +63,7 @@ namespace Riverside.Graphite.Core
 		}
 
 
-	
+
 
 		private async Task InitializeNewDatabaseAsync()
 		{
@@ -100,7 +100,7 @@ namespace Riverside.Graphite.Core
 				user.ProfileImagePath = newProfileImagePath;
 
 				await MigrateUserToDatabaseAsync(user);
-					// Apply fixes to the migrated settings.db
+				// Apply fixes to the migrated settings.db
 				await ApplySettingsDbFixesAsync(user.Username);
 
 				_logger.LogInformation($"Migration completed for user: {user.Username}");
@@ -110,10 +110,10 @@ namespace Riverside.Graphite.Core
 				ExceptionLogger.LogException(ex);
 				throw;
 			}
-			
+
 		}
 
-		private  async Task<string> MigrateProfileImageAsync(string oldUserPath, string newUserPath, string username)
+		private async Task<string> MigrateProfileImageAsync(string oldUserPath, string newUserPath, string username)
 		{
 			string oldProfileImagePath = Path.Combine(oldUserPath, "profile_image.jpg");
 			string newProfileImagePath = Path.Combine(newUserPath, "profile_image.jpg");
@@ -125,19 +125,19 @@ namespace Riverside.Graphite.Core
 					if (File.Exists(oldProfileImagePath))
 					{
 						var imageFile = await StorageFile.GetFileFromPathAsync(oldProfileImagePath);
-						var memoryStream = new MemoryStream();	
+						var memoryStream = new MemoryStream();
 
 						using (var imageStream = await imageFile.OpenReadAsync())
 						{
 							await imageStream.AsStreamForRead().CopyToAsync(memoryStream);
 							memoryStream.Seek(0, SeekOrigin.Begin);
 						}
-						
+
 						File.WriteAllBytes(newProfileImagePath, memoryStream.ToArray());
 						memoryStream.Dispose();
 
 						return newProfileImagePath;
-						
+
 					}
 					else
 					{
@@ -147,7 +147,7 @@ namespace Riverside.Graphite.Core
 				}
 				catch (Exception)
 				{
-					throw; 					
+					throw;
 				}
 			}
 			catch (Exception ex)
@@ -155,7 +155,7 @@ namespace Riverside.Graphite.Core
 				ExceptionLogger.LogException(ex);
 				return null;
 			}
-			
+
 		}
 
 		private async Task MigrateUserToDatabaseAsync(UserMigrationData user)
@@ -192,7 +192,7 @@ namespace Riverside.Graphite.Core
 			command.Parameters.AddWithValue("$hasPassword", user.HasPassword ? 1 : 0);
 
 			await command.ExecuteNonQueryAsync();
-			connection.Close(); 
+			connection.Close();
 		}
 
 		private async Task ApplySettingsDbFixesAsync(string username)
@@ -213,7 +213,7 @@ namespace Riverside.Graphite.Core
 			try
 			{
 				// 1. Setup new version2 settings table for user
-				await SettingsManager.InitializeUserSettingsAsync(username); 
+				await SettingsManager.InitializeUserSettingsAsync(username);
 				// 2. Update or add new default settings
 				await UpdateDefaultSettingsAsync(connection, username);
 
@@ -229,70 +229,70 @@ namespace Riverside.Graphite.Core
 			}
 		}
 
-        private async Task UpdateDefaultSettingsAsync(SqliteConnection connection, string username = null)
-        {
-            var defaultSettings = new Settings(true).Self; // SettingsManager.GetDefaultSettings();
+		private async Task UpdateDefaultSettingsAsync(SqliteConnection connection, string username = null)
+		{
+			var defaultSettings = new Settings(true).Self; // SettingsManager.GetDefaultSettings();
 
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = @"SELECT * FROM Settings;";
-                using (var reader = await command.ExecuteReaderAsync())
-                {
+			using (var command = connection.CreateCommand())
+			{
+				command.CommandText = @"SELECT * FROM Settings;";
+				using (var reader = await command.ExecuteReaderAsync())
+				{
 					if (reader.HasRows)
 					{
 						while (await reader.ReadAsync())
 						{
-							for (var i = 0; i < (reader.FieldCount -1); i++)
+							for (var i = 0; i < (reader.FieldCount - 1); i++)
 							{
 								var columnName = reader.GetName(i);
 								var columnValue = reader.GetValue(i)?.ToString();
 
-                                var property = defaultSettings.GetType().GetProperty(columnName);
-                                if (property != null && property.CanWrite)
-                                {
-                                    object convertedValue;
-                                    if (property.PropertyType == typeof(bool))
-                                    {
-                                        convertedValue = columnValue == "1";
-                                    }
-                                    else
-                                    {
-                                        convertedValue = Convert.ChangeType(columnValue, property.PropertyType);
-                                    }
-                                    property.SetValue(defaultSettings, convertedValue);
-                                }
+								var property = defaultSettings.GetType().GetProperty(columnName);
+								if (property != null && property.CanWrite)
+								{
+									object convertedValue;
+									if (property.PropertyType == typeof(bool))
+									{
+										convertedValue = columnValue == "1";
+									}
+									else
+									{
+										convertedValue = Convert.ChangeType(columnValue, property.PropertyType);
+									}
+									property.SetValue(defaultSettings, convertedValue);
+								}
 							}
 						}
 						if (username is not null)
 							await SettingsManager.UpdateSettingsAsync(username, defaultSettings.ToDictionary());
 
-						return; 
+						return;
 					}
-                    
-                }
-            }
 
-            // if user doesn't have existing settings add them.
-            foreach (var property in defaultSettings.GetType().GetProperties())
-            {
-                if (property.CanRead)
-                {
-                    var command = connection.CreateCommand();
-                    command.CommandText = @"
+				}
+			}
+
+			// if user doesn't have existing settings add them.
+			foreach (var property in defaultSettings.GetType().GetProperties())
+			{
+				if (property.CanRead)
+				{
+					var command = connection.CreateCommand();
+					command.CommandText = @"
                         INSERT OR REPLACE INTO Settings (Key, Value, Type, LastModified, Version)
                         VALUES ($key, $value, $type, CURRENT_TIMESTAMP, 
                             COALESCE((SELECT Version + 1 FROM Settings WHERE Key = $key), 1))";
 
-                    command.Parameters.AddWithValue("$key", property.Name);
-                    command.Parameters.AddWithValue("$value", property.GetValue(defaultSettings)?.ToString() ?? "");
-                    command.Parameters.AddWithValue("$type", property.PropertyType.FullName ?? "");
+					command.Parameters.AddWithValue("$key", property.Name);
+					command.Parameters.AddWithValue("$value", property.GetValue(defaultSettings)?.ToString() ?? "");
+					command.Parameters.AddWithValue("$type", property.PropertyType.FullName ?? "");
 
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
-        }
+					await command.ExecuteNonQueryAsync();
+				}
+			}
+		}
 
-		
+
 	}
 
 }

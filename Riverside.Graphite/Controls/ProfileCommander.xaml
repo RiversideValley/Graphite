@@ -5,7 +5,7 @@
     xmlns:person="using:Riverside.Graphite.Runtime.Helpers">
 
     <Grid
-        Width="335"
+        Width="360"
         Margin="0,0,16,0"
         HorizontalAlignment="Left">
         <StackPanel>
@@ -118,14 +118,19 @@
             <Expander
                 Margin="0,10"
                 HorizontalAlignment="Stretch"
-                Header="Password"
+                Header="Password Depracated Coming to Zensurf"
                 IsEnabled="False"
                 IsExpanded="False">
                 <PasswordBox
                     Width="200"
                     Margin="40,0"
-                    PlaceholderText="Enter a password" />
+                    PlaceholderText="Enter a password Depracated Coming to Zensurf" />
             </Expander>
+
+            <TextBlock  Margin="0,5" VerticalAlignment="Center" HorizontalAlignment="Center">Go To www.zensurf.vercel.app</TextBlock>
+       
+            <InfoBar Severity="Informational" IsOpen="True">This App Is Depracted Going To ZenSurf</InfoBar>
+
         </StackPanel>
         <Button
             x:Name="Info"

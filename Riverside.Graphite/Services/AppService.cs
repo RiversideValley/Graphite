@@ -1,19 +1,12 @@
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI;
-using Graphite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using NuGet.Protocol;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Core.Update;
-using Riverside.Graphite.Helpers;
 using Riverside.Graphite.Runtime.Helpers;
 using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services.Contracts;
@@ -25,10 +18,8 @@ using Riverside.Graphite.Setup;
 using Riverside.Graphite.Setup.OOBE;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -72,77 +63,77 @@ public static class AppService
 	public static DispatcherQueue Dispatcher { get; set; }
 	public static AppServiceViewModel AppServiceViewModel { get; set; } = new();
 
-    public static async Task WindowsController(CancellationToken cancellationToken)
-    {
-        try
-        {
-            var OperationsPending = new Dictionary<string, Action>
-            {
-                { "changeusername.json", () => OpenWindow(new ChangeUsernameCore(), cancellationToken) },
-                { "Reset.set", () => OpenWindow(new ResetCore(), cancellationToken) },
-                { "backup.fireback", () => OpenWindow(new CreateBackup(), cancellationToken) },
-                { "restore.fireback", () => OpenWindow(new RestoreBackUp(), cancellationToken) }
-            };
+	public static async Task WindowsController(CancellationToken cancellationToken)
+	{
+		try
+		{
+			var OperationsPending = new Dictionary<string, Action>
+			{
+				{ "changeusername.json", () => OpenWindow(new ChangeUsernameCore(), cancellationToken) },
+				{ "Reset.set", () => OpenWindow(new ResetCore(), cancellationToken) },
+				{ "backup.fireback", () => OpenWindow(new CreateBackup(), cancellationToken) },
+				{ "restore.fireback", () => OpenWindow(new RestoreBackUp(), cancellationToken) }
+			};
 
-            if (IsAppGoingToClose)
-            {
-                await CloseCancelToken(ref cancellationToken);
-                return;
-            }
+			if (IsAppGoingToClose)
+			{
+				await CloseCancelToken(ref cancellationToken);
+				return;
+			}
 
-            if (IsAppNewUser)
-            {
-                CreateNewUsersSettings();
-                return;
-            }
+			if (IsAppNewUser)
+			{
+				CreateNewUsersSettings();
+				return;
+			}
 
-            foreach (var ops in OperationsPending)
-            {
-                if (File.Exists(Path.Combine(Path.GetTempPath(), ops.Key)))
-                {
-                    ops.Value.Invoke();
-                    return;
-                }
-            }
+			foreach (var ops in OperationsPending)
+			{
+				if (File.Exists(Path.Combine(Path.GetTempPath(), ops.Key)))
+				{
+					ops.Value.Invoke();
+					return;
+				}
+			}
 
-            if (!Directory.Exists(UserDataManager.CoreFolderPath))
-            {
-                AppSettings = new Settings(true).Self;
-                ActiveWindow = new SetupWelcome();
-                ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
-                await ConfigureSettingsWindow(ActiveWindow);
-                return;
-            }
+			if (!Directory.Exists(UserDataManager.CoreFolderPath))
+			{
+				AppSettings = new Settings(true).Self;
+				ActiveWindow = new SetupWelcome();
+				ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
+				await ConfigureSettingsWindow(ActiveWindow);
+				return;
+			}
 
-            if (AuthService.CurrentUser == null)
-            {
-                await HandleProtocolActivation(cancellationToken);
-                return;
-            }
+			if (AuthService.CurrentUser == null)
+			{
+				await HandleProtocolActivation(cancellationToken);
+				return;
+			}
 
-            if (AuthService.CurrentUser != null && AuthService.IsUserAuthenticated)
-            {
-                await HandleAuthenticatedUser(cancellationToken);
-                return;
-            }
-        }
-        catch (Exception e)
-        {
-            await CloseCancelToken(ref cancellationToken);
-            _ = await Task.FromException<CancellationToken>(e);
-            throw;
-        }
+			if (AuthService.CurrentUser != null && AuthService.IsUserAuthenticated)
+			{
+				await HandleAuthenticatedUser(cancellationToken);
+				return;
+			}
+		}
+		catch (Exception e)
+		{
+			await CloseCancelToken(ref cancellationToken);
+			_ = await Task.FromException<CancellationToken>(e);
+			throw;
+		}
 
-        await Task.FromCanceled(cancellationToken);
-    }
+		await Task.FromCanceled(cancellationToken);
+	}
 
 	private static void OpenWindow(Window window, CancellationToken cancellationToken)
-    {
-        AuthService.Logout();
-        ActiveWindow = window;
-        ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
-        ActiveWindow.Activate();
-    }
+	{
+		AuthService.Logout();
+		ActiveWindow = window;
+		ActiveWindow.Closed += (s, e) => WindowsController(cancellationToken).ConfigureAwait(false);
+		ActiveWindow.Activate();
+	}
 	public static Task CloseCancelToken(ref CancellationToken cancellationToken)
 	{
 		// need to assign reference token in order to cancel !
@@ -158,41 +149,41 @@ public static class AppService
 			IActivatedEventArgs evt = AppInstance.GetActivatedEventArgs();
 			if (evt is ProtocolActivatedEventArgs protocolArgs && protocolArgs.Kind == ActivationKind.Protocol)
 			{
-                string url = protocolArgs.Uri.Scheme.ToString();
+				string url = protocolArgs.Uri.Scheme.ToString();
 
-                var urlActions = new Dictionary<string, Action>
-                {
-                    { "http", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
-                    { "https", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
-                    { "firebrowserwinui", () => { AppArguments.FireBrowserArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
-                    { "firebrowseruser", async () => {
+				var urlActions = new Dictionary<string, Action>
+				{
+					{ "http", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+					{ "https", () => { AppArguments.UrlArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+					{ "firebrowserwinui", () => { AppArguments.FireBrowserArgument = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+					{ "firebrowseruser", async () => {
 						AppArguments.FireUser = protocolArgs.Uri.AbsoluteUri;
-                        string username = ExtractUsernameFromUrl(protocolArgs.Uri.AbsoluteUri);
-                        if (!string.IsNullOrEmpty(username))
-                        {
-                            CheckNormal(username);
+						string username = ExtractUsernameFromUrl(protocolArgs.Uri.AbsoluteUri);
+						if (!string.IsNullOrEmpty(username))
+						{
+							CheckNormal(username);
                             //return;
                         }
-                    }},
-                    { "firebrowserincog", () => { AppArguments.FireBrowserIncog = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
-                    { ".pdf", () => { AppArguments.FireBrowserPdf = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } }
-                };
+					}},
+					{ "firebrowserincog", () => { AppArguments.FireBrowserIncog = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } },
+					{ ".pdf", () => { AppArguments.FireBrowserPdf = url; ValidateCreatePrivateUser(); CheckNormal("Private"); } }
+				};
 
-                foreach (var action in urlActions)
-                {
-                    if (url.StartsWith(action.Key))
-                    {
-                        action.Value.Invoke();
+				foreach (var action in urlActions)
+				{
+					if (url.StartsWith(action.Key))
+					{
+						action.Value.Invoke();
 						break;
-                    }
-                }
+					}
+				}
 				await ShowMainWindow(cancellationToken);
 			}
 			else
 			{
 				ActiveWindow = new UserDashBoard();
 				await ConfigureSettingsWindow(ActiveWindow, "UserDashBoard").ConfigureAwait(false);
-				
+
 				ActiveWindow.Closed += async (s, e) =>
 				{
 					if (ActiveWindow is UserDashBoard dash)
@@ -200,10 +191,11 @@ public static class AppService
 
 						if (dash.AuthUser is not null)
 						{
-							dash.AuthUser.IsFirstLaunch = false;	
-							AuthService.Authenticate(dash.AuthUser.Username);	
+							dash.AuthUser.IsFirstLaunch = false;
+							AuthService.Authenticate(dash.AuthUser.Username);
 						}
-						else {
+						else
+						{
 							if (dash.CancellationToken.IsCancellationRequested)
 							{
 								IsAppGoingToClose = true;
@@ -211,7 +203,7 @@ public static class AppService
 						}
 
 					}
-					
+
 					await WindowsController(cancellationToken).ConfigureAwait(false);
 				};
 
@@ -224,7 +216,7 @@ public static class AppService
 		}
 	}
 
-	
+
 
 	private static string ExtractUsernameFromUrl(string url)
 	{
@@ -233,11 +225,11 @@ public static class AppService
 		return urlParts.FirstOrDefault();
 	}
 
-	
+
 	private static async Task HandleAuthenticatedUser(CancellationToken cancellationToken)
 	{
 		string userExist = Path.Combine(UserDataManager.CoreFolderPath, UserDataManager.UsersFolderPath, AuthService.CurrentUser?.Username);
-		
+
 		if (!Directory.Exists(userExist))
 		{
 			UserFolderManager.CreateUserFolders(new User
@@ -264,13 +256,13 @@ public static class AppService
 
 	private static async Task ShowMainWindow(CancellationToken cancellationToken)
 	{
-		 
+
 		App.Current.m_window = new MainWindow();
 		await App.Current.InitializeWindowHandler(App.Current.m_window);
-		
+
 		if (App.Current.WindowHandler is IWindowHandler WindowHandler)
 		{
-			AppService.AppServiceWindowHandler = WindowHandler; 
+			AppService.AppServiceWindowHandler = WindowHandler;
 			WindowHandler.Initialize(App.Current.m_window);
 			WindowHandler.SetWindowBackdrop(BackdropType.MicaAlt);
 			WindowHandler.SetIcon("ms-appx:///Assets/Logo.ico");
@@ -284,10 +276,10 @@ public static class AppService
 			WindowHandler.MainWindow.Activate();
 			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowHandler.Hwnd != IntPtr.Zero ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
 			_ = Windowing.AnimateWindow(WindowHandler?.Hwnd != default ? WindowHandler.Hwnd : WindowHandler.Hwnd != IntPtr.Zero ? WindowHandler.Hwnd : WindowNative.GetWindowHandle(App.Current.m_window), 500, Windowing.AW_BLEND | Windowing.AW_VER_POSITIVE | Windowing.AW_HOR_POSITIVE);
-			WindowHandler.AppWindow.Show(); 
+			WindowHandler.AppWindow.Show();
 		}
 
-		List <IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);
+		List<IntPtr> windows = Windowing.FindWindowsByName(App.Current.m_window?.Title);
 
 		if (windows.Count > 1)
 		{
@@ -311,7 +303,7 @@ public static class AppService
 	{
 		try
 		{
-			return  UserManager.GetAllUsersAsync().Result.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
+			return UserManager.GetAllUsersAsync().Result.FirstOrDefault(u => !string.IsNullOrWhiteSpace(u.Username) && (userName == null || u.Username.Equals(userName, StringComparison.CurrentCultureIgnoreCase)))?.Username;
 		}
 		catch (Exception ex)
 		{
@@ -324,30 +316,31 @@ public static class AppService
 	private static async void CheckNormal(string userName = null)
 	{
 		if (userName is null)
-			return;	
+			return;
 
 		string coreFolderPath = UserDataManager.CoreFolderPath;
 		string username = UserExistDatabase(userName);
-	
+
 		AuthService.Authenticate(username);
 
-		if (!AuthService.IsUserAuthenticated) return; 
+		if (!AuthService.IsUserAuthenticated) return;
 
 		try
 		{
-		DatabaseServices dbServer = new();
+			DatabaseServices dbServer = new();
 
-		// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
-		_ = await dbServer.DatabaseCreationValidation(AuthService.CurrentUser);
+			// DATABASE EXISTS && CONNECTS AND MIGRATIONS. 
+			_ = await dbServer.DatabaseCreationValidation(AuthService.CurrentUser);
 
 			//_ = await dbServer.InsertUserSettings(); // new user add default from class
 
 			HistoryActions historyActions = new(AuthService.CurrentUser.Username);
 
-			if (await historyActions.HistoryContext.Database.CanConnectAsync()) {
+			if (await historyActions.HistoryContext.Database.CanConnectAsync())
+			{
 
 				if (historyActions.HistoryContext.CollectionNames.Count() == 0)
-					dbServer.CreateCollections(); 
+					dbServer.CreateCollections();
 			}
 		}
 		catch (Exception ex)
@@ -357,12 +350,12 @@ public static class AppService
 		}
 	}
 
-	
+
 	public static async void CreateNewUsersSettings()
 	{
 		ActiveWindow = new UserSettings();
-		
-		await Windowing.DialogWindow(ActiveWindow);	
+
+		await Windowing.DialogWindow(ActiveWindow);
 
 		//ActiveWindow.Closed += async (s, e) =>
 		//{
@@ -424,7 +417,7 @@ public static class AppService
 			titleBar.ForegroundColor = Colors.WhiteSmoke;
 			titleBar.ButtonBackgroundColor = btnColor;
 			titleBar.ButtonInactiveBackgroundColor = btnColor;
-			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped); 
+			appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 			winIncoming.SystemBackdrop = new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt };
 
 		}
@@ -477,5 +470,5 @@ public static class AppService
 			throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
 		}
 	}
-	
+
 }

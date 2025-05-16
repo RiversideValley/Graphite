@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 public class DataImporter
 {
-    private readonly HistoryContext _context;
+	private readonly HistoryContext _context;
 
-    public DataImporter(HistoryContext context)
-    {
-        _context = context;
-    }
+	public DataImporter(HistoryContext context)
+	{
+		_context = context;
+	}
 
-    public async Task ImportCollectionsAsync(string filePath)
-    {
+	public async Task ImportCollectionsAsync(string filePath)
+	{
 		try
 		{
-			var jsonData =  File.ReadAllText(filePath);
+			var jsonData = File.ReadAllText(filePath);
 			var collections = JsonSerializer.Deserialize<List<Collection>>(jsonData);
 
 			if (collections != null)
@@ -34,11 +34,11 @@ public class DataImporter
 			ExceptionLogger.LogException(e);
 			throw;
 		}
-		
-    }
 
-    public async Task ImportCollectionNamesAsync(string filePath)
-    {
+	}
+
+	public async Task ImportCollectionNamesAsync(string filePath)
+	{
 
 		try
 		{
@@ -56,6 +56,6 @@ public class DataImporter
 			ExceptionLogger.LogException(e);
 			throw;
 		}
-		
-    }
+
+	}
 }

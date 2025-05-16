@@ -1,22 +1,21 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using Windows.Storage.Streams;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System.IO;
-using Microsoft.UI.Windowing;
-using System.Net.Http;
-using System.Text.Json;
-using Windows.Devices.Geolocation;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Riverside.Graphite.Core;
-using System.Threading;
 using Riverside.Graphite.Services;
-using Riverside.Graphite;
 using Riverside.Graphite.Services.Migration;
 using Riverside.Graphite.Setup.OOBE;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
+using Windows.Storage.Streams;
 
 
 namespace Riverside.Graphite
@@ -24,30 +23,30 @@ namespace Riverside.Graphite
 	public sealed partial class UserDashBoard : Window
 	{
 		public UserV2? AuthUser { get; set; }
-		
+
 		private AppWindow? appWindow;
 		private readonly HttpClient _httpClient;
 		private const string WEATHER_API_KEY = "39dd21e1ba6f4a748d5144656253101"; // Replace with your API key
 		private bool _disposedValue;
-        private readonly ObservableRecipient? _recipient;
-		public UserDashBoardViewModel ViewModel { get; set; }	
+		private readonly ObservableRecipient? _recipient;
+		public UserDashBoardViewModel ViewModel { get; set; }
 		public CancellationToken CancellationToken { get; set; }
 		public static UserDashBoard? Instance { get; set; }
 
 		public UserDashBoard(ObservableRecipient recipient)
-        {
-            this.InitializeComponent();
-            InitializeAsync();
-            _httpClient = new HttpClient();
-            _recipient = recipient;
-        }
+		{
+			this.InitializeComponent();
+			InitializeAsync();
+			_httpClient = new HttpClient();
+			_recipient = recipient;
+		}
 		public UserDashBoard()
 		{
 			this.InitializeComponent();
 			Instance = this;
-			ViewModel = new UserDashBoardViewModel();	
+			ViewModel = new UserDashBoardViewModel();
 			ViewModel.ParentWindow = this;
-			ViewModel.ParentGrid = UserListView; 
+			ViewModel.ParentGrid = UserListView;
 			InitializeAsync();
 			this.Closed += (s, e) =>
 			{
@@ -67,13 +66,13 @@ namespace Riverside.Graphite
 
 
 		private async void InitializeAsync()
-		 {
+		{
 			await UserManager.InitializeAsync();
 			await UserManager.ValidateSecurityDatabase(); // Validate the security database
 			await LoadUsersAsync();
 		}
 
-		public  async Task LoadUsersAsync()
+		public async Task LoadUsersAsync()
 		{
 			try
 			{
@@ -95,7 +94,7 @@ namespace Riverside.Graphite
 				}
 
 				ViewModel.Users = Users;
-				ViewModel.RaisePropertyChanges(nameof(ViewModel.Users));	
+				ViewModel.RaisePropertyChanges(nameof(ViewModel.Users));
 
 				// Show or hide the NoUsersGrid based on whether there are any users
 				NoUsersGrid.Visibility = ViewModel.Users.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -136,10 +135,10 @@ namespace Riverside.Graphite
 		{
 			if (e.ClickedItem is UserViewModel selectedUser)
 			{
-				UserManager.ActiveElement = (sender as UIElement);	
+				UserManager.ActiveElement = (sender as UIElement);
 				await AttemptLoginAsync(selectedUser.Username);
 			}
-	
+
 		}
 
 		private async Task AttemptLoginAsync(string username)
@@ -172,7 +171,7 @@ namespace Riverside.Graphite
 					{
 						// Open the Welcome window
 						AuthUser = authenticatedUser;
-						if (AuthService.CurrentUser?.Username != authenticatedUser.Username  && AuthService.CurrentUser is not null)
+						if (AuthService.CurrentUser?.Username != authenticatedUser.Username && AuthService.CurrentUser is not null)
 							await Windows.System.Launcher.LaunchUriAsync(new System.Uri($"firebrowseruser://{authenticatedUser.Username}"));
 
 
@@ -215,7 +214,7 @@ namespace Riverside.Graphite
 					{
 						if (AuthService.CurrentUser.Username != authenticatedUser.Username)
 						{
-							AuthService.Authenticate(authenticatedUser.Username);	
+							AuthService.Authenticate(authenticatedUser.Username);
 
 							await Windows.System.Launcher.LaunchUriAsync(new System.Uri($"firebrowseruser://{authenticatedUser.Username}"));
 						}
@@ -249,23 +248,23 @@ namespace Riverside.Graphite
 		private async void CreateNewUser_Click(object sender, RoutedEventArgs e)
 		{
 			SetupWelcome setupWelcome = new SetupWelcome();
-			await AppService.ConfigureSettingsWindow(setupWelcome); 
+			await AppService.ConfigureSettingsWindow(setupWelcome);
 
 			setupWelcome.Activate();
-			
+
 		}
 
 		private async void Delete_Click(object sender, RoutedEventArgs e)
 		{
 			if (sender is Button deleteButton && deleteButton.DataContext is UserViewModel vm)
 			{
-				await Task.Delay(100);	
+				await Task.Delay(100);
 				UserManager.ActiveElement = (sender as UIElement);
 
-				if(await UserManager.DeleteUserAsync(vm.Username))
+				if (await UserManager.DeleteUserAsync(vm.Username))
 					NotificationQueue.Show("User deleted successfully", TimeSpan.FromSeconds(3).Seconds, "Graphite Users");
 
-				await LoadUsersAsync();	
+				await LoadUsersAsync();
 			}
 		}
 
@@ -376,7 +375,7 @@ namespace Riverside.Graphite
 			MigrationWindow ws = new MigrationWindow();
 			await AppService.ConfigureSettingsWindow(ws);
 			ws.Activate();
-			
+
 		}
 
 		private async void MigrateSys_Click(object sender, RoutedEventArgs e)
@@ -384,13 +383,13 @@ namespace Riverside.Graphite
 			MigrationWindow ws = new MigrationWindow();
 			await AppService.ConfigureSettingsWindow(ws);
 			ws.Activate();
-			
+
 		}
 
 		private void ExitSys_Click(object sender, RoutedEventArgs e)
 		{
 			CloseCancelToken(CancellationToken);
-			Application.Current.Exit();	
+			Application.Current.Exit();
 
 		}
 
@@ -410,9 +409,10 @@ namespace Riverside.Graphite
 					{
 						if (!await UserManager.ValidatePassWord(user))
 						{
-							await ShowErrorMessageAsync("Invalid password");	
+							await ShowErrorMessageAsync("Invalid password");
 						}
-						else {
+						else
+						{
 
 							if (await UserManager.MigrateUserToNewPassword(user))
 								await ShowErrorMessageAsync("Password is saved !", "Success");
@@ -420,8 +420,8 @@ namespace Riverside.Graphite
 					}
 					else
 						if (await UserManager.MigrateUserToNewPassword(user))
-							await ShowErrorMessageAsync("Password is saved !", "Success");
-						
+						await ShowErrorMessageAsync("Password is saved !", "Success");
+
 
 
 
@@ -430,7 +430,7 @@ namespace Riverside.Graphite
 				await LoadUsersAsync();
 			}
 		}
-    }
+	}
 
 	public class UserViewModel
 	{

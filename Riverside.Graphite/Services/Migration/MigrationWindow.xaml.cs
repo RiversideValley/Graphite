@@ -1,10 +1,10 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Windowing;
-using WinRT.Interop;
-using System;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using Riverside.Graphite.Controls;
 using Riverside.Graphite.Runtime.Helpers;
+using System;
+using WinRT.Interop;
 
 namespace Riverside.Graphite.Services.Migration
 {
@@ -50,7 +50,7 @@ namespace Riverside.Graphite.Services.Migration
 
 		private void ImportButton_Click(object sender, RoutedEventArgs e)
 		{
-			
+
 		}
 
 		private void ReceiverButton_Click(object sender, RoutedEventArgs e)
@@ -71,7 +71,7 @@ namespace Riverside.Graphite.Services.Migration
 		{
 			// Start the MigrationProgress window in UserSys
 			MigrationProgress migrationProgressWindow = new MigrationProgress();
-			Windowing.Center(migrationProgressWindow);	
+			Windowing.Center(migrationProgressWindow);
 			migrationProgressWindow.Activate();
 		}
 	}

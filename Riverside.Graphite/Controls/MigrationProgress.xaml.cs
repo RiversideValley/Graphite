@@ -1,13 +1,13 @@
-using Microsoft.UI.Windowing;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using Windows.Graphics;
-using WinRT.Interop;
-using System.Threading.Tasks;
 using Riverside.Graphite.Core;
 using Riverside.Graphite.Core.Helper.Logging;
+using System;
+using System.Threading.Tasks;
+using Windows.Graphics;
+using WinRT.Interop;
 
 namespace Riverside.Graphite.Controls
 {
@@ -54,8 +54,8 @@ namespace Riverside.Graphite.Controls
 			{
 				titleBar = appWindow.TitleBar;
 				titleBar.BackgroundColor = Colors.Transparent;
-				titleBar.ButtonBackgroundColor = Colors.Transparent;	
-				titleBar.ButtonForegroundColor	= Colors.Transparent;
+				titleBar.ButtonBackgroundColor = Colors.Transparent;
+				titleBar.ButtonForegroundColor = Colors.Transparent;
 				titleBar.ExtendsContentIntoTitleBar = true;
 			}
 

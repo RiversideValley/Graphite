@@ -1,19 +1,18 @@
-﻿using Microsoft.UI.Xaml.Markup;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Riverside.Graphite.Core;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.UI;
-using Microsoft.UI.Xaml.Media.Imaging;
 using System.IO;
 using System.Net.Http;
 using System.Net.Security;
-using Windows.Storage.Streams;
-using Windows.Storage;
 using System.Text.Json;
-using Riverside.Graphite.Runtime.Models;
-using Riverside.Graphite.Core;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.UI;
 using Settings = Riverside.Graphite.Runtime.Models.Settings;
 
 namespace Riverside.Graphite.Services

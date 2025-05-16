@@ -1,15 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Riverside.Graphite.Core;
-using Riverside.Graphite.Data.Core.Actions;
-using Riverside.Graphite.Data.Core.Models;
-using Riverside.Graphite.Helpers;
-using Riverside.Graphite.Runtime.Helpers.Logging;
 using Riverside.Graphite.Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Riverside.Graphite;
 public sealed partial class SetupWebView : Page
@@ -70,13 +62,13 @@ public sealed partial class SetupWebView : Page
 		}
 	}
 
-	
+
 
 	private void SetupWebViewBtn_Click(object sender, RoutedEventArgs e)
 	{
 		// allow user settings to be created from current setup user.
 		// synchronous call because I want to make sure database is created first before your time out on the setupfinish page...
-	
+
 		_ = Frame.Navigate(typeof(SetupFinish));
 	}
 }

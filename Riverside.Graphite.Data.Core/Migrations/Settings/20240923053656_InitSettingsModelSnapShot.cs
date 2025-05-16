@@ -70,7 +70,7 @@ namespace Riverside.Graphite.Data.Core.Migrations.Settings
 					IsSearchVisible = table.Column<bool>(type: "INTEGER", nullable: false),
 					IsTrendingVisible = table.Column<bool>(type: "INTEGER", nullable: false),
 					NtpCoreVisibility = table.Column<bool>(type: "INTEGER", nullable: false),
-					
+
 				},
 				constraints: table =>
 				{

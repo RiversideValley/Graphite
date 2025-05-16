@@ -133,28 +133,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Button
-            x:Name="SettingsButton"
-            Margin="8,8,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Style="{StaticResource TextButtonStyle}">
-            <FontIcon FontFamily="{StaticResource FluentIcons}" Glyph="&#xE713;" />
-            <Button.Flyout>
-                <Flyout>
-                    <StackPanel Width="125" Background="Transparent">
-                        <TextBlock
-                            Margin="0,0,0,12"
-                            FontWeight="SemiBold"
-                            Text="Settings" />
-                        <ToggleSwitch x:Name="ButtonsToggle" Header="Show Buttons" />
-                        <ToggleSwitch x:Name="CheckboxToggle" Header="Show Checkbox" />
-                        <ToggleSwitch x:Name="WeatherToggle" Header="Show Weather" />
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-
+  
         <TextBlock
             Margin="0,48,0,0"
             HorizontalAlignment="Center"
@@ -475,12 +454,6 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-
-            <CheckBox
-                Grid.Column="3"
-                Margin="16,0,0,0"
-                Content="Show on startup"
-                IsChecked="True" />
         </Grid>
     </Grid>
 </Window>

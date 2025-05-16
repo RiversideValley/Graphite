@@ -23,7 +23,7 @@ public class DownloadsViewModel : ObservableRecipient, IDownloadsViewModel, INav
 	{
 		ItemsListView = DataCore.DownloadItemControls;
 		OnPropertyChanged(nameof(ItemsListView));
-		await Task.CompletedTask; 		
+		await Task.CompletedTask;
 	}
 
 	public async Task GetDownloadItems()
@@ -42,7 +42,7 @@ public class DownloadsViewModel : ObservableRecipient, IDownloadsViewModel, INav
 	{
 		await GetDownloadItems();
 		DataCore.Handler_DownItemsChange += DataCore_Handler_DownItemsChange;
-		 
+
 	}
 
 	public void OnNavigatedFrom()

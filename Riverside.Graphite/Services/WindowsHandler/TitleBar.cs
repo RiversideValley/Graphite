@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Riverside.Graphite.Services.WindowsHandler.Contracts;
-using System;
 
 namespace Riverside.Graphite.Services.WindowsHandler;
 

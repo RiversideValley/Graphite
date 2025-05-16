@@ -1,22 +1,20 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Graphite.ViewModels;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Win32;
+using Riverside.Graphite.Core;
+using Riverside.Graphite.Pages;
+using Riverside.Graphite.Runtime.Helpers.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using System.Text.Json;
-using System.Linq;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Dispatching;
-using System.Collections.Concurrent;
-using Riverside.Graphite.Pages;
-using Graphite.ViewModels;
-using Newtonsoft.Json.Linq;
-using Riverside.Graphite.Core;
-using System.Threading;
-using Riverside.Graphite.Runtime.Helpers.Logging;
-using Riverside.Graphite.Services;
-using Microsoft.Win32;
 
 namespace Riverside.Graphite.Controls;
 
@@ -32,7 +30,7 @@ public class TabManager
 	private ConcurrentQueue<GraphiteTabViewItem> _preloadedTabs = new ConcurrentQueue<GraphiteTabViewItem>();
 	private const int MAX_PRELOADED_TABS = 1;
 	private bool _isRestoringTabs = false;
-	public CancellationToken _CancellationToken { get; set; }	
+	public CancellationToken _CancellationToken { get; set; }
 
 	public event EventHandler<GraphiteTabViewItem> TabPutToSleep;
 
@@ -52,11 +50,11 @@ public class TabManager
 		InitializeSleepTimer();
 		ApplicationData.Current.LocalSettings.Values.TryGetValue($"{AuthService.CurrentUser?.Username}_{"RestoreTabs"}", out object isRestore);
 		_isRestoringTabs = Convert.ToBoolean(isRestore);
-	}	
+	}
 
 	public Task<bool> GetCurrentTabs()
 	{
-		CurrentTabs =  new Dictionary<GraphiteTabViewItem, Guid>();
+		CurrentTabs = new Dictionary<GraphiteTabViewItem, Guid>();
 
 		foreach (var tab in _tabViewContainer.TabItems)
 		{
@@ -70,7 +68,7 @@ public class TabManager
 			return Task.FromResult(true);
 		else
 			return Task.FromResult(false);
-	}	
+	}
 
 	private void TabViewContainer_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
@@ -112,55 +110,55 @@ public class TabManager
 	{
 		GraphiteTabViewItem newTab = null;
 
-		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
-		{
-			if (_preloadedTabs.TryDequeue(out var preloadedTab))
-			{
-				newTab = preloadedTab;
-			}
-			else
-			{
-				newTab = new GraphiteTabViewItem()
-				{
-					Header = "Loading...",
-					IconSource = new SymbolIconSource { Symbol = Symbol.Refresh }
-				};
-				newTab.Content = new ProgressRing { IsActive = true };
-			}
+		_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+	   {
+		   if (_preloadedTabs.TryDequeue(out var preloadedTab))
+		   {
+			   newTab = preloadedTab;
+		   }
+		   else
+		   {
+			   newTab = new GraphiteTabViewItem()
+			   {
+				   Header = "Loading...",
+				   IconSource = new SymbolIconSource { Symbol = Symbol.Refresh }
+			   };
+			   newTab.Content = new ProgressRing { IsActive = true };
+		   }
 
-			_tabViewContainer.TabItems.Add(newTab);
+		   _tabViewContainer.TabItems.Add(newTab);
 
-			try
-			{
-				WebContent webContent;
-				if (newTab.Content is WebContent existingContent)
-				{
-					webContent = existingContent;
-					webContent.WebView.NavigateToString(url);
-				}
-				else
-				{
-					webContent = new WebContent();
-					webContent.WebView.NavigateToString(url);
-				}
+		   try
+		   {
+			   WebContent webContent;
+			   if (newTab.Content is WebContent existingContent)
+			   {
+				   webContent = existingContent;
+				   webContent.WebView.NavigateToString(url);
+			   }
+			   else
+			   {
+				   webContent = new WebContent();
+				   webContent.WebView.NavigateToString(url);
+			   }
 
-				if (!(newTab.Content is WebContent))
-				{
-					newTab.Content = webContent;
-				}
-				await webContent?.WebView.EnsureCoreWebView2Async();
+			   if (!(newTab.Content is WebContent))
+			   {
+				   newTab.Content = webContent;
+			   }
+			   await webContent?.WebView.EnsureCoreWebView2Async();
 
-				newTab.Header = webContent?.WebView.CoreWebView2.DocumentTitle ?? "New Tab";	
-				UpdateTabIcon(newTab,webContent?.WebView.CoreWebView2.FaviconUri);
+			   newTab.Header = webContent?.WebView.CoreWebView2.DocumentTitle ?? "New Tab";
+			   UpdateTabIcon(newTab, webContent?.WebView.CoreWebView2.FaviconUri);
 
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine($"Error creating lazy loading tab: {ex.Message}");
-				newTab.Header = "Error";
-				newTab.IconSource = new SymbolIconSource { Symbol = Symbol.GoToToday };
-			}
-		});
+		   }
+		   catch (Exception ex)
+		   {
+			   System.Diagnostics.Debug.WriteLine($"Error creating lazy loading tab: {ex.Message}");
+			   newTab.Header = "Error";
+			   newTab.IconSource = new SymbolIconSource { Symbol = Symbol.GoToToday };
+		   }
+	   });
 
 		// Preload a new tab to replace the one we just used
 		await PreloadTabAsync();
@@ -176,7 +174,7 @@ public class TabManager
 		}
 	}
 
-	public GraphiteTabViewItem CreateNewTab(Type pageType = null, object parameter = null, bool isSplitViewActive = false, string username = null, Guid? idTag = null )
+	public GraphiteTabViewItem CreateNewTab(Type pageType = null, object parameter = null, bool isSplitViewActive = false, string username = null, Guid? idTag = null)
 	{
 		GraphiteTabViewItem newItem;
 
@@ -225,9 +223,9 @@ public class TabManager
 		}
 		else
 		{
-				
+
 			newItem.Content = CreateFrame(pageType, passer);
-			
+
 		}
 
 
@@ -263,7 +261,7 @@ public class TabManager
 		{
 			HorizontalAlignment = HorizontalAlignment.Stretch,
 			VerticalAlignment = VerticalAlignment.Stretch,
-			Margin = new Thickness(2,48,2,2)
+			Margin = new Thickness(2, 48, 2, 2)
 		};
 
 		frame.Navigate(pageType, parameter);
@@ -277,7 +275,7 @@ public class TabManager
 		var obj = new SemaphoreSlim(1, 1);
 
 		obj.Wait();
-		
+
 		try
 		{
 			var tabStates = new List<TabState>();
@@ -311,7 +309,7 @@ public class TabManager
 		}
 		catch (Exception ex)
 		{
-			ExceptionLogger.LogException(ex);	
+			ExceptionLogger.LogException(ex);
 		}
 		finally
 		{
@@ -319,41 +317,42 @@ public class TabManager
 		}
 
 		return null;
-		
+
 	}
 
 	public Task RestoreTabsAsync(string username)
 	{
 		_isRestoringTabs = true;
 
-		if (ReadSettingFromRegistry($"{username}_{TabStateKey}") is string json) {
+		if (ReadSettingFromRegistry($"{username}_{TabStateKey}") is string json)
+		{
 			var tabStates = JsonSerializer.Deserialize<List<TabState>>(json);
 			_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
 			{
 				_tabViewContainer.TabItems.Clear();
 				_lastActivityTimes.Clear();
-				
+
 				foreach (var state in tabStates)
 				{
 					SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
-					
+
 					try
-					{	
+					{
 						await semaphore.WaitAsync();
 						GraphiteTabViewItem newTab;
 						if (state.Url == "about:newtab" || string.IsNullOrEmpty(state.Url))
 						{
 							newTab = CreateNewTab(typeof(NewTab), null, state.IsSplitView, username, state.Id);
-							
+
 						}
 						else
 						{
 							newTab = CreateNewTab(typeof(WebContent), state.Url, state.IsSplitView, username, state.Id);
-							
+
 						}
 
 						// set the url first before loading sleeping the tab. 
-						
+
 						if (newTab.Content is Frame frame)
 						{
 							if (frame.Content is WebContent webContent)
@@ -373,7 +372,7 @@ public class TabManager
 						{
 							await PutTabToSleep(newTab);
 						}
-						
+
 						newTab.Header = state.Header;
 						newTab.IsPinned = state.IsPinned;
 						SetTabColor(newTab, state.CustomColor);
@@ -384,10 +383,10 @@ public class TabManager
 					{
 						semaphore.Release();
 						System.Diagnostics.Debug.WriteLine($"Error restoring tab: {ex.Message}");
-						throw; 
+						throw;
 					}
 
-					
+
 				}
 			});
 		}
@@ -475,7 +474,7 @@ public class TabManager
 		{
 			if (splitView.PrimaryContent is Frame primaryFrame && primaryFrame.Content is WebContent primaryWebContent)
 			{
-				return primaryWebContent.WebView.CoreWebView2.FaviconUri; 
+				return primaryWebContent.WebView.CoreWebView2.FaviconUri;
 			}
 		}
 		return string.Empty;
@@ -561,20 +560,20 @@ public class TabManager
 			return; // Don't put the active tab to sleep
 		}
 
-		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
-		{
-			if (tab.Content is Frame frame && frame.Content is WebContent webContent)
-			{
-				await webContent.UnloadContent();
-				if (!tab.Header.ToString().StartsWith("Sleeping - "))
-				{
-					tab.Header = "Sleeping - " + tab.Header.ToString();
-				}
-				
-				TabPutToSleep?.Invoke(this, tab);
-			}
-			_lastActivityTimes.Remove(tab);
-		});
+		_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+	   {
+		   if (tab.Content is Frame frame && frame.Content is WebContent webContent)
+		   {
+			   await webContent.UnloadContent();
+			   if (!tab.Header.ToString().StartsWith("Sleeping - "))
+			   {
+				   tab.Header = "Sleeping - " + tab.Header.ToString();
+			   }
+
+			   TabPutToSleep?.Invoke(this, tab);
+		   }
+		   _lastActivityTimes.Remove(tab);
+	   });
 
 		await Task.Delay(200);
 	}
@@ -585,18 +584,18 @@ public class TabManager
 		_activeTab = tab;
 	}
 
-	public  Task WakeUpTab(GraphiteTabViewItem tab)
+	public Task WakeUpTab(GraphiteTabViewItem tab)
 	{
-		 _tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
-		{
-			if (tab.Content is Frame frame && frame.Content is WebContent webContent)
-			{
-				await webContent.ReloadContent();
-				tab.Header = tab.Header.ToString().Replace("Sleeping - ", "");
-				UpdateTabActivity(tab);
-			}
-		});
-		return Task.CompletedTask;	
+		_tabViewContainer.DispatcherQueue.TryEnqueue(async () =>
+	   {
+		   if (tab.Content is Frame frame && frame.Content is WebContent webContent)
+		   {
+			   await webContent.ReloadContent();
+			   tab.Header = tab.Header.ToString().Replace("Sleeping - ", "");
+			   UpdateTabActivity(tab);
+		   }
+	   });
+		return Task.CompletedTask;
 	}
 
 	public void CloseTab(GraphiteTabViewItem tab)

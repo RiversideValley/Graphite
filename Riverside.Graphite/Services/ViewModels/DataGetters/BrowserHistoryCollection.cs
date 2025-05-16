@@ -9,23 +9,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Riverside.Graphite.ViewModels.DataGetters ;
+namespace Riverside.Graphite.ViewModels.DataGetters;
 public partial class BrowserHistoryCollection : ObservableObject, IIncrementalSource<HistoryItem>
 {
-    private ObservableCollection<HistoryItem> _historyItems = new();
+	private ObservableCollection<HistoryItem> _historyItems = new();
 
-    public ObservableCollection<HistoryItem> HistoryItems
-    {
-        get => _historyItems;
-        set => SetProperty(ref _historyItems, value);
-    }
+	public ObservableCollection<HistoryItem> HistoryItems
+	{
+		get => _historyItems;
+		set => SetProperty(ref _historyItems, value);
+	}
 
-    public async Task<IEnumerable<HistoryItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
-    {
-        HistoryActions historyActions = new(AuthService.CurrentUser.Username);
-        ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
-        _historyItems = new ObservableCollection<HistoryItem>(allItems.OrderByDescending(t=> t.LastVisitTime).Skip(pageIndex * pageSize).Take(pageSize));
+	public async Task<IEnumerable<HistoryItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+	{
+		HistoryActions historyActions = new(AuthService.CurrentUser.Username);
+		ObservableCollection<HistoryItem> allItems = await historyActions.GetAllHistoryItems();
+		_historyItems = new ObservableCollection<HistoryItem>(allItems.OrderByDescending(t => t.LastVisitTime).Skip(pageIndex * pageSize).Take(pageSize));
 		//ExceptionLogger.LogInformation($"{DateTime.Now.ToLocalTime()} getItems: {pageSize} indexPage: {pageIndex} totalItems: {allItems.Count}"); 
 		return HistoryItems;
-    }
+	}
 }
